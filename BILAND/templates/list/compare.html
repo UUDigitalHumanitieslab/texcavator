@@ -1,0 +1,44 @@
+<html>
+  <head>
+    <title></title>
+    <meta content="">
+    <style></style>
+    {% load i18n %}
+  </head>
+
+  <body>
+    Lexicon1 id: {{ lexicon1_tag }}<br/>
+    Lexicon1 title: {{ lexicon1_title }}<br/>
+    Lexicon1 count: {{ lexicon1_count }}<br/>
+
+    Lexicon2 id: {{ lexicon2_tag }}<br/>
+    Lexicon2 title: {{ lexicon2_title }}<br/>
+    Lexicon2 count: {{ lexicon2_count }}<br/>
+
+    Metadatas: {{ metadata_count }}<br/>
+
+    {% if lists_data %}
+      <table cellspacing="0" border="1">
+        <tr>
+          <th>#</th>
+          <th>{% trans "Lex 1" %} </th>
+          <th>{% trans "Lex 2" %} </th>
+          <th>{% trans "Docid" %} </th>
+        </tr>
+
+        {% for nums, in_1, in_2, doc in lists_data %}
+          <tr>
+            <th>
+              {{ nums }}
+            </th> 
+            <td align="right"> {{ in_1 }} </td>
+            <td align="right"> {{ in_2 }} </td>
+            <td align="left">  {{ doc }}  </td>
+          </tr>
+        {% endfor %}
+
+      </table>
+    {% endif %}
+
+  </body>
+</html>

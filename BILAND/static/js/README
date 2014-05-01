@@ -1,0 +1,3 @@
+INSTALL
+Add dojo, dijit, dojox and util folders to this directory.
+(or in a Dojo subdir.)

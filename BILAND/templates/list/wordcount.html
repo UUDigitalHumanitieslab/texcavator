@@ -1,0 +1,39 @@
+<html>
+  <head>
+    <title>wordcount</title>
+    <meta content="">
+    <style></style>
+    {% load i18n %}
+  </head>
+
+  <body>
+    Lexicon id: {{ lexicon_tag }}<br/>
+    Lexicon title: {{ lexicon_title }}<br/>
+    Terms in cloud: {{ term_count }}<br/>
+    Terms shown: {{ show_count }}<br/>
+
+    {% if lists_data %}
+      <table cellspacing="0" border="1">
+        <tr>
+          <th>#</th>
+          <th>{% trans "Word" %} </th>
+          <th>{% trans "Count" %} </th>
+          <th>{% trans "Score" %} </th>
+        </tr>
+
+        {% for num, word, count, score in lists_data %}
+          <tr>
+            <th>
+              {{ num }}
+            </th> 
+            <td align="center"> {{ word }} </td>
+            <td align="center"> {{ count }} </td>
+            <td align="right"> {{ score }} </td>
+          </tr>
+        {% endfor %}
+
+      </table>
+    {% endif %}
+
+  </body>
+</html>
