@@ -12,7 +12,7 @@ FL-26-Mar-2013: Created
 FL-09-Sep-2013: Changed
 """
 
-from django.conf.urls.defaults import *
+from django.conf.urls import patterns, include, url 
 
 # some URLs do not end with '$' because their path varies and may be longer
 urlpatterns = patterns( 'services.views',

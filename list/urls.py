@@ -12,7 +12,7 @@ FL-15-Nov-2011: Created
 FL-26-Aug-2013: Changed
 """
 
-from django.conf.urls.defaults import *
+from django.conf.urls import patterns, include, url
 
 urlpatterns = patterns( 'list.views',
 	url( r'^http404$',                            'http404' ),

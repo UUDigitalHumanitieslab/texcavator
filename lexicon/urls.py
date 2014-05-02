@@ -2,7 +2,7 @@
 
 # FL-26-Aug-2013:	Changed
 
-from django.conf.urls.defaults import *
+from django.conf.urls import patterns, include, url
 
 import djcelery.views
 from lexicon.tasks import addLexiconItemToXtas
