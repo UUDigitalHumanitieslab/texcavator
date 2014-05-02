@@ -23,20 +23,12 @@ admin.autodiscover()
 
 from django.http import HttpResponse
 
-if settings.DJANGO_MAJ_MIN < 1.5:
-	from django.views.generic.simple import direct_to_template
-	urlpatterns = patterns( 'django.views.generic.simple',
-		url( r'^favicon\.ico$',	'redirect_to',        { 'url': '/static/image/icon/favicon.ico' } ),
-		url( r'^robots\.txt$',	'direct_to_template', { 'template': 'robots.txt', 'mimetype': 'text/plain' } ),
-		url( r'^js/tests/$',    'redirect_to',        { 'url': '/js/tests/index.html' } ),
-	)
-else:
-	from django.views.generic import RedirectView, TemplateView
-	urlpatterns = patterns( '',
-		url( r'^favicon\.ico$', RedirectView.as_view( url = '/static/image/icon/favicon.ico' ) ),
-		url( r'^js/tests/$',    RedirectView.as_view( url = '/js/tests/index.html' ) ),
-		url( r'^robots\.txt$',  TemplateView.as_view( template_name = 'robots.txt', content_type = 'text/plain' ) ),
-	)
+from django.views.generic import RedirectView, TemplateView
+urlpatterns = patterns( '',
+	url( r'^favicon\.ico$', RedirectView.as_view( url = '/static/image/icon/favicon.ico' ) ),
+	url( r'^js/tests/$',    RedirectView.as_view( url = '/js/tests/index.html' ) ),
+	url( r'^robots\.txt$',  TemplateView.as_view( template_name = 'robots.txt', content_type = 'text/plain' ) ),
+)
 
 
 urlpatterns += patterns( '', 
