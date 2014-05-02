@@ -27,23 +27,17 @@ FL-12-Nov-2013: Changed
 import os
 import sys
 
-from settings_local import PROJECT_GRANNY, PROJECT_PARENT, PROJECT_ROOT, PROJECT_CELERY, PROJECT_HAYSTACK
+from settings_local import PROJECT_GRANNY, PROJECT_PARENT, PROJECT_ROOT, PROJECT_CELERY
 
 PROJECT_GRANNY = os.path.normpath( PROJECT_GRANNY )		# zap trailing `/'
 PROJECT_PARENT = os.path.normpath( PROJECT_PARENT )		# zap trailing `/'
 PROJECT_ROOT   = os.path.normpath( PROJECT_ROOT )		# zap trailing `/'
 
-#DEBUG = True
-#DEBUG = False
 from texcavator.__init__ import DEBUG
 TEMPLATE_DEBUG = DEBUG
 
-ADMINS = (
-#	('Daan Odijk', 'd.odijk@uva.nl'),
-	('Fons Laan',  'a.c.laan@uva.nl'),
-)
-
-MANAGERS = ADMINS
+# ADMINS
+# MANAGERS
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
@@ -90,7 +84,6 @@ MEDIA_URL = ''
 # To collect the static files in the STATIC_ROOT dir: 
 #   $ ./manage.py collectstatic
 # Notice: staticfiles with dev server requires DEBUG = True
-#STATIC_ROOT = os.path.join( PROJECT_PARENT, "BILAND_static" ) + os.sep
 STATIC_ROOT = os.path.join( PROJECT_GRANNY, "texcavator_static" ) + os.sep
 
 # URL prefix for static files.
@@ -132,11 +125,6 @@ TEMPLATE_LOADERS = (
 #	 'django.template.loaders.eggs.Loader',
 )
 
-# OAuth for Clarin
-TEMPLATE_CONTEXT_PROESSORS = (
-	'django.core.context_processors.request',
-)
-
 MIDDLEWARE_CLASSES = (
 	'django.middleware.common.CommonMiddleware',
 	'django.contrib.sessions.middleware.SessionMiddleware',
@@ -157,10 +145,9 @@ TEMPLATE_DIRS = (
 )
 
 INSTALLED_APPS = (
-	'django.contrib.auth',			# required for admin
-	'django.contrib.admin',			# managers admin site
-	'django.contrib.admindocs',		# managers admin docs
-
+	'django.contrib.auth',		# required for admin
+	'django.contrib.admin',		# managers admin site
+	'django.contrib.admindocs',	# managers admin docs
 	'django.contrib.contenttypes',
 	'django.contrib.sessions',
 	'django.contrib.sites',
@@ -168,20 +155,9 @@ INSTALLED_APPS = (
 	'django.contrib.flatpages',
 	'django.contrib.staticfiles',
 
-	'haystack',						# added 2014.01.13
-
-#	'south',						# South, for db migrations
-
-#	'registration',					# django-registration
-
-#	'django_assets',				# webassets JS compression
-
-	'django.contrib.sites',			# OAuth for Clarin
-#	'socialregistration',			# OAuth for Clarin		try django-allauth instaed
-
-	'services',						# biland
-	'lexicon',						# biland
-	'list',							# biland
+	'services',			# biland
+	'lexicon',			# biland
+	'list',				# biland
 )
 
 if PROJECT_CELERY:					# Celery
@@ -316,21 +292,9 @@ LOGGING = {
 	}
 }
 
-# on zookst18, without setting LOGGING_CONFIG to None, we get:
-#	KeyError at /services/xtas/key
-#	"Attempt to overwrite 'module' in LogRecord"
-#LOGGING_CONFIG = None	# None only means that the configuration process is disabled, not logging itself.
-# Django will still make logging calls, falling back to whatever default logging behavior is defined.
-if DEBUG == True:
-	try:
-		print >> sys.stderr, "LOGGING_CONFIG:", LOGGING_CONFIG
-	except:
-		pass
-
 # django-registration
 ACCOUNT_ACTIVATION_DAYS = 2
 LOGIN_REDIRECT_URL = '/'
-
 
 # local settings: db, ...
 try:
@@ -338,7 +302,6 @@ try:
 except ImportError:
 	print >> sys.stderr, "No settings_local"
 	pass
-
 
 # Project Date range
 # WAHSP			1900-1945

@@ -25,12 +25,10 @@ from socket import gethostname, gethostbyaddr
 PROJECT_ROOT   = os.path.abspath( os.path.dirname( __file__ ) )
 PROJECT_PARENT = os.path.dirname( PROJECT_ROOT )
 PROJECT_GRANNY = os.path.dirname( PROJECT_PARENT )
-PROJECT_CELERY = False				# do we need Celery?
 # now also disabled automatic starting of celeryd in /etc/rc.d/rc.local
-PROJECT_HAYSTACK = ''
+PROJECT_CELERY = False
 
 sys.path.append( PROJECT_PARENT )
-
 
 from texcavator.__init__ import DEBUG
 
@@ -50,13 +48,6 @@ except:		# add perlbrew to PATH; take PERLBREW_PATH from .perlbrew/init
 if DEBUG == True:
 	print >> sys.stderr, "PATH:", os.environ[ "PATH" ]
 
-from django import get_version
-django_version_str = get_version()
-django_version_lst =  django_version_str.split( '.' )
-DJANGO_MAJ_MIN = float( django_version_lst[0] + '.' + django_version_lst[1] )	# ignore [2] = rev
-if DEBUG == True:
-	print >> sys.stderr, "Django version: %s" % DJANGO_MAJ_MIN
-
 # Which hardware?
 ( hostname, aliaslist, ipaddrlist ) = gethostbyaddr( gethostname() )
 HOSTNAME = hostname
@@ -69,7 +60,6 @@ if DEBUG == True:
 #	raise Exception( "Your host '%s' was not found!" % hostname )
 #	sys.exit( 1 )
 
-#DEV_SERVER_PORT = 8000		# $ python manage.py runserver 0.0.0.0:8000
 DEV_SERVER_PORT = 8001		# $ python manage.py runserver 0.0.0.0:8001
 WEB_SERVER_PORT = 8008
 SUB_SITE = "/biland/"		# used for WEB_SERVER_PORT
@@ -79,23 +69,15 @@ if DEBUG == True:
 	print >> sys.stderr, "SUB_SITE: %s" % SUB_SITE
 
 
-ELASTICSEARCH_HOST = "localhost"	# 
+ELASTICSEARCH_HOST = "localhost" 
 ELASTICSEARCH_PORT = 9200
-#ELASTICSEARCH_HOST = "zookst22.science.uva.nl"	# 
-#ELASTICSEARCH_PORT = 9004						# zookst22
-#ELASTICSEARCH_HOST = "zookst23.science.uva.nl"	# 
-#ELASTICSEARCH_PORT = 8005						# zookst23
-#ES_INDEX_KONBIB    = "kb_2013"
 ES_INDEX_KONBIB    = "kb_sample"
 ES_INDEX_STABI     = "stabi"
-#ES_INDEX_DOCTYPE_KONBIB = "doc"			# kb_all
-ES_INDEX_DOCTYPE_KONBIB = "doc"			# kb_sample
-#ES_INDEX_DOCTYPE_KONBIB = "expression"	# kb_2013
+ES_INDEX_DOCTYPE_KONBIB = "doc"
 ES_INDEX_DOCTYPE_STABI  = "doc"
 
 # Notice: for retrieving (not storing!) documents, 
 # sometimes DSTORE_KBRESOLVER is used inside the code
-#XTAS_DATASTORE = "DSTORE_MONGODB"				# NOT ON zookst18 !
 XTAS_DATASTORE  = "DSTORE_ELASTICSEARCH"
 XTAS_COLLECTION = ES_INDEX_KONBIB
 # default collection; notice: hardcoded in:
@@ -105,14 +87,10 @@ XTAS_COLLECTION = ES_INDEX_KONBIB
 XTAS_FLUSH_CACHE = False						# default False for ES, True is for testing
 
 if XTAS_DATASTORE == "DSTORE_ELASTICSEARCH":
-#	XTAS_HOST        = 'zookst18.science.uva.nl'	# with ElasticSearch Ork
-#	XTAS_HOST        = '192.168.70.31'				# zookst22 infiniband
-#	XTAS_HOST        = 'zookst22.science.uva.nl'	# 
-	XTAS_HOST        = 'localhost'	# 
+	XTAS_HOST        = 'localhost'	
 	XTAS_PREFIX      = 'api'
-#	XTAS_PORT        =  9006						# zookst22 
-	XTAS_PORT        =  8088						# localhost Janneke 
-	XTAS_API_KEY     = 'xtasapikey'						# no other keys
+	XTAS_PORT        = 8088 
+	XTAS_API_KEY     = 'xtasapikey'
 	XTAS_DOC_ID      = "METADATAKEY"				# new: used by Ridho
 	XTAS_DOCS_SELECT = "LIST"						# only by docid list
 
@@ -120,12 +98,8 @@ else:
 	print >> sys.stderr, "No xTAS datastore ?"
 	sys.exit( 1 )
 
-#	XTAS_HOST    = 'zookst17.science.uva.nl'	# spare server
-#	XTAS_PREFIX  = 'legacy'
-
 XTAS_MAX_CLOUD_DOCS_WARN  =  2500				# servers
 XTAS_MAX_CLOUD_DOCS_ERROR = 10000				# servers
-
 
 STABI_IMG_DOWNLOAD = "BILAND_scans/_Preussische_Amtspresse_35pct"
 
@@ -176,20 +150,11 @@ if DEBUG == True:
 
 	print >> sys.stderr, "ILPS_LOGGING:     %s" % ILPS_LOGGING
 
-# database settings for sqlite3
-#DATABASE_ENGINE   = 'django.db.backends.sqlite3'
-#DATABASE_NAME     = os.path.join( PROJECT_ROOT, 'BILANDpython256.db' )		# sqlite3 path
-#DATABASE_USER     = ''
-#DATABASE_PASSWORD = ''
-
 # database settings for mysql
 DATABASE_NAME     = 'test_db_texcavator'
 DATABASE_USER     = 'root'
-#DATABASE_ENGINE   = 'django.db.backends.sqlite3'
 DATABASE_ENGINE   = 'django.db.backends.mysql'
 DATABASE_PASSWORD = 'geheim'
-#DATABASE_ENGINE   = 'django.db.backends.postgresql_psycopg2'
-#DATABASE_PASSWORD = 'postgresbiland'
 
 DATABASES = {
 	'default': {
@@ -199,9 +164,6 @@ DATABASES = {
 		'PASSWORD' : DATABASE_PASSWORD,		# Not used with sqlite3.
 		'HOST'     : '',					# Set to empty string for localhost. Not used with sqlite3.
 		'PORT'     : '',					# Set to empty string for default. Not used with sqlite3.
-	#	'OPTIONS'  : {
-	#		'unix_socket' : '/tmp/mysql.sock'	# instead of default /var/lib/mysql/mysql.sock
-	#	},
 	}
 }
 
@@ -212,12 +174,5 @@ if PROJECT_CELERY:
 		print >> sys.stderr, "CELERYD_LOG_FILE: %s" % CELERYD_LOG_FILE
 else:
 	CELERY_OWNER = None
-
-HAYSTACK_CONNECTIONS = {
-    'default': {
-        'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
-        'URL': 'http://127.0.0.1:9200/',
-    },
-}
 
 # [eof]
