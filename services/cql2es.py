@@ -30,15 +30,7 @@ import json
 from django.conf import settings
 from django.http import HttpResponse
 
-#from settings import PROJECT_ROOT
-from BILAND.settings import PROJECT_PARENT, PROJECT_ROOT, DEBUG
-#try:
-#	from BILAND.settings import PROJECT_PARENT, PROJECT_ROOT, DEBUG
-#except:
-#	PROJECT_PARENT="/datastore/aclaan/python/django/biland/BiLand"
-#	PROJECT_ROOT="/datastore/aclaan/python/django/biland/BiLand/BILAND"
-#	DEBUG = False
-
+from texcavator.settings import PROJECT_PARENT, PROJECT_ROOT, DEBUG
 
 def cql2es_error( exc_value, query_str ):
 	if DEBUG: print >> stderr, exc_value

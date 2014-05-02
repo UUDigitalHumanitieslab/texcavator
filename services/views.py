@@ -44,7 +44,7 @@ from django.http import HttpResponse, HttpResponseNotFound
 from django.utils.http import urlencode
 from django.views.decorators.csrf import csrf_exempt
 
-from BILAND.views import get_server_info
+from texcavator.views import get_server_info
 from services.analytics import analytics
 from services.celery import celery_check
 from services.cql2es import callperl, cql2es_error

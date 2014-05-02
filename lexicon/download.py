@@ -58,7 +58,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from services.cql2es import cql2es_error, callperl
 from services.request import request2article_types, request2article_distrib, request2parms
-from BILAND.views import get_ext_server_info
+from texcavator.views import get_ext_server_info
 
 
 def request2extra4log( request ):
