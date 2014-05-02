@@ -34,7 +34,7 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.views.decorators.csrf import csrf_exempt
 
-from BILAND.timestamp import TIMESTAMP
+from texcavator.timestamp import TIMESTAMP
 
 
 def get_server_info( request ):

@@ -32,7 +32,7 @@ PROJECT_HAYSTACK = ''
 sys.path.append( PROJECT_PARENT )
 
 
-from BILAND.__init__ import DEBUG
+from texcavator.__init__ import DEBUG
 
 if DEBUG == True:
 	print >> sys.stderr, "PROJECT_GRANNY:", PROJECT_GRANNY

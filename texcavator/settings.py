@@ -35,7 +35,7 @@ PROJECT_ROOT   = os.path.normpath( PROJECT_ROOT )		# zap trailing `/'
 
 #DEBUG = True
 #DEBUG = False
-from BILAND.__init__ import DEBUG
+from texcavator.__init__ import DEBUG
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
@@ -91,7 +91,7 @@ MEDIA_URL = ''
 #   $ ./manage.py collectstatic
 # Notice: staticfiles with dev server requires DEBUG = True
 #STATIC_ROOT = os.path.join( PROJECT_PARENT, "BILAND_static" ) + os.sep
-STATIC_ROOT = os.path.join( PROJECT_GRANNY, "BILAND_static" ) + os.sep
+STATIC_ROOT = os.path.join( PROJECT_GRANNY, "texcavator_static" ) + os.sep
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
@@ -147,7 +147,7 @@ MIDDLEWARE_CLASSES = (
 	'django.middleware.locale.LocaleMiddleware',				# i18n
 )
 
-ROOT_URLCONF = 'BILAND.urls'
+ROOT_URLCONF = 'texcavator.urls'
 
 TEMPLATE_DIRS = (
 	# Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
@@ -287,7 +287,7 @@ LOGGING = {
 		'log_file':{
 			'level': 'DEBUG',
 			'class': 'logging.handlers.RotatingFileHandler',
-			'filename': os.path.join( PROJECT_ROOT, "BILAND_Django.log" ),		# and ensure write access for apache!
+			'filename': os.path.join( PROJECT_ROOT, "Texcavator_Django.log" ),		# and ensure write access for apache!
 			'maxBytes': 1024*1024*16,		# 16 Megabytes
 			'formatter': 'webformat'
 		},
