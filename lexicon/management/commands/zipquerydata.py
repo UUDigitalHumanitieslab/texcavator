@@ -27,10 +27,7 @@ from sys import stderr, exc_info
 import logging
 logger = logging.getLogger( __name__ )
 
-try:
-	import json						# Python-2.6+
-except:
-	import django.utils.simplejson as json
+import json
 
 from django.conf import settings
 from django.core.management.base import BaseCommand

@@ -18,11 +18,7 @@ FL-10-Sep-2013: Changed
 import os
 from sys import stderr, exc_info
 import requests
-
-try:
-	import json						# Python-2.6+
-except:
-	import django.utils.simplejson as json
+import json
 
 from django.conf import settings
 

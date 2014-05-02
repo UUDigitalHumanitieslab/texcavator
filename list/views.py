@@ -28,11 +28,7 @@ FL-05-Jul-2013: Changed
 
 from sys import exit, stderr, exc_info
 import requests
-
-try:
-	import json						# Python-2.6+
-except:
-	import django.utils.simplejson as json
+import json
 
 from django.conf import settings
 from django.http import HttpResponse

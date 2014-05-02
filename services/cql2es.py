@@ -25,11 +25,7 @@ from types import *
 
 import base64
 import subprocess
-
-try:
-	import json						# Python-2.6+
-except:
-	import django.utils.simplejson as json
+import json
 
 from django.conf import settings
 from django.http import HttpResponse

@@ -21,11 +21,7 @@ FL-06-Nov-2013: Changed
 """
 
 from sys import stderr
-
-try:
-	import json						# Python-2.6+
-except:
-	import django.utils.simplejson as json
+import json
 
 from django.conf import settings
 from django.contrib import auth

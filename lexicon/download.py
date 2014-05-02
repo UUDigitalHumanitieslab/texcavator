@@ -46,10 +46,7 @@ import subprocess
 import logging
 logger = logging.getLogger( __name__ )
 
-try:
-	import json						# Python-2.6+
-except:
-	import django.utils.simplejson as json
+import json
 
 from django.contrib import auth
 from django.conf import settings

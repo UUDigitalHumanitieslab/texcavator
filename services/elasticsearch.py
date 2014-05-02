@@ -27,10 +27,7 @@ import requests
 from lxml import etree
 from lxml.html import fromstring
 
-try:
-	import json						# Python-2.6+
-except:
-	import django.utils.simplejson as json
+import json
 
 #from celery.utils.log import get_task_logger	# celery-3: 
 #logger = get_task_logger( __name__ ) 			# logger now defined at module level instead of function level

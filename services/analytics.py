@@ -15,10 +15,7 @@ FL-26-Aug-2013: Changed
 from sys import stderr, exc_info
 from datetime import date
 
-try:
-	import json						# Python-2.6+
-except:
-	import django.utils.simplejson as json
+import json
 
 from django.conf import settings
 from django.http import HttpResponse

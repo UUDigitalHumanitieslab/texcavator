@@ -50,10 +50,7 @@ except ImportError:
 				except ImportError:
 					print >> stderr, "Failed to import ElementTree from any known place"
 
-try:
-	import json						# Python-2.6+
-except:
-	import django.utils.simplejson as json
+import json
 
 from django.core.management.base import BaseCommand
 

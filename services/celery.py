@@ -15,11 +15,7 @@ FL-26-Aug-2013:
 import os
 from sys import stderr, exc_info
 import subprocess
-
-try:
-	import json						# Python-2.6+
-except:
-	import django.utils.simplejson as json
+import json
 
 from django.conf import settings
 
