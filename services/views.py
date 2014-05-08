@@ -48,8 +48,8 @@ from texcavator.views import get_server_info
 from services.analytics import analytics
 from services.celery import celery_check
 from services.cql2es import callperl, cql2es_error
-from services.elasticsearch import es_doc_count, query2docids
-from services.elasticsearch import search_xtas_elasticsearch, retrieve_xtas_elasticsearch
+from services.elasticsearch_biland import es_doc_count, query2docids
+from services.elasticsearch_biland import search_xtas_elasticsearch, retrieve_xtas_elasticsearch
 from services.export import export_csv
 from services.request import request2article_types, is_literal
 from services.moses import moses

@@ -93,7 +93,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from lexicon.models import LexiconItem, LexiconArticle, StopWord, DayStatistic
 
-from services.elasticsearch import query2docidsdate
+from services.elasticsearch_biland import query2docidsdate
 
 
 @csrf_exempt
