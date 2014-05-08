@@ -54,6 +54,15 @@ from services.export import export_csv
 from services.request import request2article_types, is_literal
 from services.moses import moses
 
+def search( request ):
+	# Maak elasticsearch instance met juiste server (nu: localhost)
+
+	# Maak query op basis van informatie uit request
+
+	# voer query uit op elasticsearch instance
+
+	# geef resultaten terug
+	return HttpResponse("Search results")
 
 def request2extra4log( request ):
 	# pop conflicting keys
