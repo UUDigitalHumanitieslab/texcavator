@@ -459,7 +459,7 @@ def elasticsearch_htmlresp( collection, start_record, chunk_size, es_dict ):
 	html_str = '<head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></head>'
 	html_str += '<body>'
 	if hits_retrieved != hits_total:	# did not get everything
-		if start_record > 0:
+		if start_record > 1:
 			have_prev = True
 		else:
 			have_prev = False
@@ -487,7 +487,7 @@ def elasticsearch_htmlresp( collection, start_record, chunk_size, es_dict ):
 		html_str += '<p>Found ' + "%s" % hits_total + ' records, '
 		html_str += 'max score = ' + "%1.2f" % hits_max_score + '.</p>'
 
-	html_str += '<ol start="' + '%s' % str(start_record+1) + '">'
+	html_str += '<ol start="' + '%s' % start_record + '">'
 
 	datastore = settings.XTAS_DATASTORE
 
@@ -505,24 +505,24 @@ def elasticsearch_htmlresp( collection, start_record, chunk_size, es_dict ):
 		print >> stderr, hit
 
 		if collection == settings.ES_INDEX_KONBIB:
-			article_dc_title       = hit[ "fields" ][ "article_dc_title" ]
-			paper_dcterms_temporal = hit[ "fields" ][ "paper_dcterms_temporal" ]
-			paper_dcterms_spatial  = hit[ "fields" ][ "paper_dcterms_spatial" ]
+			article_dc_title       = hit[ "fields" ][ "article_dc_title" ][0]
+			paper_dcterms_temporal = hit[ "fields" ][ "paper_dcterms_temporal" ][0]
+			paper_dcterms_spatial  = hit[ "fields" ][ "paper_dcterms_spatial" ][0]
 		else:
 			try:
-				article_dc_title = hit[ "fields" ][ "article_dc_title" ]
+				article_dc_title = hit[ "fields" ][ "article_dc_title" ][0]
 			except:
 				article_dc_title = ""
 			paper_dcterms_temporal = ""
 			paper_dcterms_spatial  = ""
 
 		try:
-			zipfile = hit[ "fields" ][ "zipfile" ]
+			zipfile = hit[ "fields" ][ "zipfile" ][0]
 		except:
 			zipfile = ""
 
-		paper_dc_title = hit[ "fields" ][ "paper_dc_title" ]
-		paper_dc_date  = hit[ "fields" ][ "paper_dc_date" ]
+		paper_dc_title = hit[ "fields" ][ "paper_dc_title" ][0]
+		paper_dc_date  = hit[ "fields" ][ "paper_dc_date" ][0]
 
 		item_str = "<li>"
 	#	item_str += '<a href=javascript:dojo.publish("/es/record/selected",["' + _id + '"]); '
