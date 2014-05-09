@@ -44,25 +44,32 @@ from django.http import HttpResponse, HttpResponseNotFound
 from django.utils.http import urlencode
 from django.views.decorators.csrf import csrf_exempt
 
+from es import do_search
+
 from texcavator.views import get_server_info
 from services.analytics import analytics
 from services.celery import celery_check
 from services.cql2es import callperl, cql2es_error
 from services.elasticsearch_biland import es_doc_count, query2docids
 from services.elasticsearch_biland import search_xtas_elasticsearch, retrieve_xtas_elasticsearch
+from services.elasticsearch_biland import elasticsearch_htmlresp
+
 from services.export import export_csv
 from services.request import request2article_types, is_literal
 from services.moses import moses
 
 def search( request ):
-	# Maak elasticsearch instance met juiste server (nu: localhost)
-
-	# Maak query op basis van informatie uit request
+	query_str = request.REQUEST['query']
+	start = int(request.REQUEST.get('startRecord', 0))
+	result_size = int(request.REQUEST.get('maximumRecords', 20))
 
 	# voer query uit op elasticsearch instance
+  	res = do_search("kb_sample", "doc", query_str, start, result_size)
 
+	html_str = elasticsearch_htmlresp(settings.ES_INDEX_KONBIB, start, 
+                                      result_size, res)
 	# geef resultaten terug
-	return HttpResponse("Search results")
+	return HttpResponse(html_str)
 
 def request2extra4log( request ):
 	# pop conflicting keys
