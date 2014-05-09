@@ -60,11 +60,13 @@ from services.moses import moses
 
 def search( request ):
 	query_str = request.REQUEST['query']
-	start = int(request.REQUEST.get('startRecord', 0))
+	start = int(request.REQUEST.get('startRecord', 1))
+	# elasticsearch uses zero-based numbering
+	start_es = start - 1
 	result_size = int(request.REQUEST.get('maximumRecords', 20))
 
 	# voer query uit op elasticsearch instance
-  	res = do_search("kb_sample", "doc", query_str, start, result_size)
+  	res = do_search("kb_sample", "doc", query_str, start_es, result_size)
 
 	html_str = elasticsearch_htmlresp(settings.ES_INDEX_KONBIB, start, 
                                       result_size, res)
