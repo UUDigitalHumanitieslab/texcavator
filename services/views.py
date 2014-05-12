@@ -46,7 +46,7 @@ from django.http import HttpResponse, HttpResponseNotFound
 from django.utils.http import urlencode
 from django.views.decorators.csrf import csrf_exempt
 
-from es import do_search
+from es import do_search, _KB_DISTRIBUTION_VALUES
 
 from texcavator.settings import TEXCAVATOR_DATE_RANGE
 from texcavator.views import get_server_info
@@ -67,11 +67,19 @@ def search( request ):
     # elasticsearch uses zero-based numbering
     start_es = start - 1
     result_size = int(request.REQUEST.get('maximumRecords', 20))
+    
     date_range_str = request.REQUEST.get('dateRange', TEXCAVATOR_DATE_RANGE)
     dates = daterange2dates(date_range_str)
 
+    distributions = []
+    for ds in _KB_DISTRIBUTION_VALUES.keys():
+        use_ds = json.loads(request.REQUEST.get(ds,"true"))
+        if not use_ds:
+            distributions.append(ds)
+
     # voer query uit op elasticsearch instance
-    res = do_search("kb_sample", "doc", query_str, start_es, result_size, dates)
+    res = do_search("kb_sample", "doc", query_str, start_es, result_size, 
+                    dates, distributions)
 
     html_str = elasticsearch_htmlresp(settings.ES_INDEX_KONBIB, start, 
                                       result_size, res)
