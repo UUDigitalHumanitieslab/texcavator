@@ -14,7 +14,7 @@ _ES_RETURN_FIELDS = ('article_dc_title',
                      'paper_dc_title', 
                      'paper_dc_date')
 
-def do_search(idx, typ, query, start, num):
+def do_search(idx, typ, query, start, num, date_range):
     """Fetch all documents matching the query and return a list of elasticsearch
     results.
 
@@ -27,18 +27,20 @@ def do_search(idx, typ, query, start, num):
         query. Functionality to handle more complex queries needs to be added.
     start : integer representing the index of the first result to be retrieved
     num : the total number of results to be retrieved
+    date_range : a dictionary containg the upper and lower dates of the 
+        requested date dateRange
 
     Returns
     -------
     results : list
         A list of elasticsearch results.
     """
-    q = create_query(query)
+    q = create_query(query, date_range)
 
     return _es().search(index=idx, doc_type=typ, body=q, 
                         fields=_ES_RETURN_FIELDS, from_=start, size=num)
 
-def create_query(query_str):
+def create_query(query_str, date_range):
     """Create elasticsearch query from input string.
     
     Returns a dict that represents the query in the elasticsearch query DSL.
@@ -69,8 +71,8 @@ def create_query(query_str):
                 'filter': {
                     'range': {
                         'paper_dc_date': {
-                            'gte': '1850-01-01',
-                            'lte': '1990-12-31' 
+                            'gte': date_range['lower'],
+                            'lte': date_range['upper'] 
                     
                         }
                     }
