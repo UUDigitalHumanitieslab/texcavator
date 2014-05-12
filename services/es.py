@@ -21,7 +21,12 @@ _KB_DISTRIBUTION_VALUES = {'sd_national': 'Landelijk',
                            'sd_surinam': 'Suriname',
                            'sd_indonesia': 'Nederlands-Indië / Indonesië' }
 
-def do_search(idx, typ, query, start, num, date_range, dist):
+_KB_ARTICLE_TYPE_VALUES = {'st_article': 'artikel',
+				           'st_advert': 'advertentie',
+				           'st_illust': 'illustratie met onderschrift',
+                           'st_family': 'familiebericht'}
+
+def do_search(idx, typ, query, start, num, date_range, dist, art_types):
     """Fetch all documents matching the query and return a list of elasticsearch
     results.
 
@@ -36,21 +41,23 @@ def do_search(idx, typ, query, start, num, date_range, dist):
     num : the total number of results to be retrieved
     date_range : a dictionary containg the upper and lower dates of the 
         requested date dateRange
-    dist: list of distribution strings respresenting distribution that should be
-        excluded from search (the values in the list only contain keys of the 
+    dist : list of distribution strings respresenting distribution that should 
+        be excluded from search (the values in the list only contain keys of the 
         _KB_DISTRIBUTION_VALUES dict).
+    art_types : list of article types (entry values are specified by the keys 
+        of the _KB_ARTICLE_TYPE_VALUES dict.
 
     Returns
     -------
     results : list
         A list of elasticsearch results.
     """
-    q = create_query(query, date_range, dist)
+    q = create_query(query, date_range, dist, art_types)
 
     return _es().search(index=idx, doc_type=typ, body=q, 
                         fields=_ES_RETURN_FIELDS, from_=start, size=num)
 
-def create_query(query_str, date_range, dist):
+def create_query(query_str, date_range, dist, art_types):
     """Create elasticsearch query from input string.
     
     Returns a dict that represents the query in the elasticsearch query DSL.
@@ -66,6 +73,11 @@ def create_query(query_str, date_range, dist):
     for ds in dist:
         filter_must_not.append(
             {"term": {"paper_dcterms_spatial": _KB_DISTRIBUTION_VALUES[ds]}} )
+
+    
+    for typ in art_types:
+        filter_must_not.append(
+            {"term": { "article_dc_subject": _KB_ARTICLE_TYPE_VALUES[typ] }})
         
     query = {
         'query': {

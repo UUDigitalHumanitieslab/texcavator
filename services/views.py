@@ -46,7 +46,7 @@ from django.http import HttpResponse, HttpResponseNotFound
 from django.utils.http import urlencode
 from django.views.decorators.csrf import csrf_exempt
 
-from es import do_search, _KB_DISTRIBUTION_VALUES
+from es import do_search, _KB_DISTRIBUTION_VALUES, _KB_ARTICLE_TYPE_VALUES
 
 from texcavator.settings import TEXCAVATOR_DATE_RANGE
 from texcavator.views import get_server_info
@@ -76,10 +76,16 @@ def search( request ):
         use_ds = json.loads(request.REQUEST.get(ds,"true"))
         if not use_ds:
             distributions.append(ds)
+    
+    article_types = []
+    for typ in _KB_ARTICLE_TYPE_VALUES:
+        use_type = json.loads(request.REQUEST.get(typ,"true"))
+        if not use_type:
+            article_types.append(typ)
 
     # voer query uit op elasticsearch instance
     res = do_search("kb_sample", "doc", query_str, start_es, result_size, 
-                    dates, distributions)
+                    dates, distributions, article_types)
 
     html_str = elasticsearch_htmlresp(settings.ES_INDEX_KONBIB, start, 
                                       result_size, res)
