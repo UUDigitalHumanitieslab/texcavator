@@ -66,7 +66,7 @@ def create_query(query_str, date_range, dist, art_types):
     query. Functionality to handle more complex queries needs to be added, as
     well as updating the date filter with the appropriate date range.
 
-    Returns dict with ES DSL results
+    Returns dict with an ES DSL query
     """
 
     filter_must_not = []
