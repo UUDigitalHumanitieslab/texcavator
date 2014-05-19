@@ -245,7 +245,7 @@ def cloud_bytaskid( request ):
 @csrf_exempt
 def cloud( request ):
 
-    ids = request.REQUEST.get('ids').split(',')
+    ids = request.REQUEST.get('ids', '').split(',')
 
     if len(ids) == 1:
         # Word cloud for single document

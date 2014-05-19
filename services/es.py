@@ -143,7 +143,10 @@ def single_document_word_cloud(idx, typ, doc_id):
     """
 
     if not doc_id:
-        doc_id = 'ERROR'
+        return {
+            'status': 'error',
+            'error': 'No document id provided.'
+        }
 
     bdy = {
         'fields': [_DOCUMENT_TEXT_FIELD]
