@@ -142,28 +142,37 @@ def single_document_word_cloud(idx, typ, doc_id):
     }
     """
 
+    if not doc_id:
+        doc_id = 'ERROR'
+
     bdy = {
         'fields': [_DOCUMENT_TEXT_FIELD]
     }
     t_vector = _es().termvector(index=idx, doc_type=typ, id=doc_id, body=bdy)
 
-    result = []
-    max_count = 0
-    for term, count_dict in t_vector.get('term_vectors'). \
-            get(_DOCUMENT_TEXT_FIELD).get('terms').iteritems():
+    if t_vector.get('found', False):
+        result = []
+        max_count = 0
+        for term, count_dict in t_vector.get('term_vectors'). \
+                get(_DOCUMENT_TEXT_FIELD).get('terms').iteritems():
 
-        count = count_dict.get('term_freq')
-        if count > max_count:
-            max_count = count
+            count = count_dict.get('term_freq')
+            if count > max_count:
+                max_count = count
 
-        result.append(
-            {
-                'term': term,
-                'count': count
-            })
+            result.append(
+                {
+                    'term': term,
+                    'count': count
+                })
+
+        return {
+            'max_count': max_count,
+            'result': result,
+            'status': 'ok'
+        }
 
     return {
-        'max_count': max_count,
-        'result': result,
-        'status': 'ok'
+        'status': 'error',
+        'error': 'Document with id "%s" could not be found.' % doc_id
     }
