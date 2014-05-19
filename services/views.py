@@ -46,7 +46,8 @@ from django.http import HttpResponse, HttpResponseNotFound
 from django.utils.http import urlencode
 from django.views.decorators.csrf import csrf_exempt
 
-from es import do_search, _KB_DISTRIBUTION_VALUES, _KB_ARTICLE_TYPE_VALUES
+from es import do_search, single_document_word_cloud, \
+        _KB_DISTRIBUTION_VALUES, _KB_ARTICLE_TYPE_VALUES
 
 from texcavator.settings import TEXCAVATOR_DATE_RANGE
 from texcavator.views import get_server_info
@@ -243,6 +244,30 @@ def cloud_bytaskid( request ):
 
 @csrf_exempt
 def cloud( request ):
+
+    ids = request.REQUEST.get('ids').split(',')
+
+    if len(ids) == 1:
+        # Word cloud for single document
+        t_vector = single_document_word_cloud('kb_sample', 'doc', ids[0])
+
+        print >> stderr, t_vector
+        
+        ctype = 'application/json; charset=UTF-8'
+        return HttpResponse(json.dumps(t_vector), content_type = ctype)
+    else:
+        # Word cloud for multiple ids
+        # Is this used at all?
+        msg = "muliple ids; functionality not yet implemented";
+        resp_dict =  { "status" : "error", "msg" : msg }
+        json_list = json.dumps( resp_dict )
+        ctype = 'application/json; charset=UTF-8'
+        return HttpResponse( json_list, content_type = ctype )
+ 
+    ##########################################################################
+    # Old code starts here
+    ##########################################################################
+
     # cloud by tags or docids
     if settings.DEBUG == True:
         print >> stderr, "cloud()"

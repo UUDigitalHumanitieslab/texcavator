@@ -23,6 +23,8 @@ _KB_ARTICLE_TYPE_VALUES = {'st_article': 'artikel',
                            'st_illust': 'illustratie met onderschrift',
                            'st_family': 'familiebericht'}
 
+_DOCUMENT_TEXT_FIELD = 'text'
+
 
 def _es():
     return Elasticsearch(ELASTICSEARCH_HOST + ":" + str(ELASTICSEARCH_PORT))
@@ -118,3 +120,50 @@ def create_query(query_str, date_range, dist, art_types):
     }
 
     return query
+
+
+def single_document_word_cloud(idx, typ, doc_id):
+    """Return data required to draw a word cloud for a single document.
+
+    Returns a dict that contains word frequencies for all the terms in the
+    document. The data returned is formatted according to what is expected by
+    the user interface:
+    {
+        'status': 'ok'
+        'max_count': ...
+        'result':
+            [
+                {
+                    'term': ...
+                    'count': ...
+                },
+                ...
+            ]
+    }
+    """
+
+    bdy = {
+        'fields': [_DOCUMENT_TEXT_FIELD]
+    }
+    t_vector = _es().termvector(index=idx, doc_type=typ, id=doc_id, body=bdy)
+
+    result = []
+    max_count = 0
+    for term, count_dict in t_vector.get('term_vectors'). \
+            get(_DOCUMENT_TEXT_FIELD).get('terms').iteritems():
+
+        count = count_dict.get('term_freq')
+        if count > max_count:
+            max_count = count
+
+        result.append(
+            {
+                'term': term,
+                'count': count
+            })
+
+    return {
+        'max_count': max_count,
+        'result': result,
+        'status': 'ok'
+    }

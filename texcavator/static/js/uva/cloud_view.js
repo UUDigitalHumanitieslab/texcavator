@@ -516,8 +516,8 @@ var placeCloudInTarget = function( cloud_src, json_data, target )
 	var stopshort  = config[ "cloud" ][ "stopshort" ];
 	var stoplimit  = config[ "cloud" ][ "stoplimit" ];
 
-	var wordCountMax = cloud_data[ 0 ].count;		// assume sorted from high-to-low frequency
-//	console.log( "wordCountMax: " + wordCountMax );
+	var wordCountMax = json_data.max_count 
+	console.log( "wordCountMax: " + wordCountMax );
 
 	var nerType2Color = function( nertype )
 	{
