@@ -962,34 +962,23 @@ def applyXSLT( request, data, stylesheet ):
 
 
 def test_cql2es( request ):
+    """ Test whether cql2es returns a valid query.
+
+    Now always returns {'status': 'ok'} (Function will be removed.)
+    """
     if settings.DEBUG == True:
         print >> stderr, "cql2es()"
 
-    req_dict = request.REQUEST
-
-    try:
-        query_str = req_dict[ "query" ]
-    except:
+    query = request.REQUEST.get('query', None)
+    
+    if not query:
         resp_dict = { "status" : "error", "msg" : "Missing query" }
         json_list = json.dumps( resp_dict )
         ctype = 'application/json; charset=UTF-8'
         return HttpResponse( json_list, content_type = ctype )
 
-    literal = is_literal( query_str )
-
-    try:
-        es_query_str = callperl( query_str, literal )   # call Perl: CQL -> ES JSON
-    except:
-        type, value, tb = exc_info()
-        return cql2es_error( value, query_str )
-
-    if settings.DEBUG == True:
-        print >> stderr, "es_query: %s" % es_query_str
-
-    resp_dict = { "status" : "ok" }
-    json_list = json.dumps( resp_dict )
+    json_list = json.dumps({'status':'ok'})
     ctype = 'application/json; charset=UTF-8'
     return HttpResponse( json_list, content_type = ctype )
-
 
 # [eof]
