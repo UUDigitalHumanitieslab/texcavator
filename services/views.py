@@ -51,7 +51,7 @@ from es import do_search, count_search_results, single_document_word_cloud, \
 
 from texcavator.settings import TEXCAVATOR_DATE_RANGE
 from texcavator.views import get_server_info
-from texcavator.utils import json_error_message
+from texcavator.utils import json_response_message
 from services.analytics import analytics
 from services.celery import celery_check
 from lexicon.models import LexiconItem
@@ -143,14 +143,15 @@ def doc_count( request ):
             logger.error( msg )
             if settings.DEBUG:
                 print >> stderr, msg
-            return json_error_message(msg)
+            return json_response_message('error', msg)
         except DatabaseError:
-            return json_error_message('Database error while retrieving lexicon')
+            return json_response_message('error', 
+                'Database error while retrieving lexicon')
     else:
-        return json_error_message('Missing lexicon id.')
+        return json_response_message('error', 'Missing lexicon id.')
 
     if not query:
-        return json_error_message('No query found.')
+        return json_response_message('error', 'No query found.')
     
     date_range_str = request.REQUEST.get('dateRange', TEXCAVATOR_DATE_RANGE)
     dates = daterange2dates(date_range_str)
@@ -175,17 +176,11 @@ def doc_count( request ):
     doc_count = result.get('count', 'error')
 
     if not doc_count == 'error':
-        resp_dict = {
-                'status' : 'ok', 
-                'msg' : '', 
-                'doc_count' : str(doc_count)
-        }
-        json_list = json.dumps( resp_dict )
-        ctype = 'application/json; charset=UTF-8'
-        return HttpResponse( json_list, content_type = ctype )
+        params = {'doc_count' : str(doc_count)}
+        return json_response_message('ok', 'Retrieved document count.', params)
     
-    return json_error_message('Unable to retrieve document count for ' \
-                              'query "{query}"' % query )
+    return json_response_message('error', 'Unable to retrieve document count' \
+                              ' for query "{query}"' % query )
 
 
 @csrf_exempt
