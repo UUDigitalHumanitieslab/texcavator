@@ -51,6 +51,7 @@ from es import do_search, count_search_results, single_document_word_cloud, \
 
 from texcavator.settings import TEXCAVATOR_DATE_RANGE
 from texcavator.views import get_server_info
+from texcavator.utils import json_error_message
 from services.analytics import analytics
 from services.celery import celery_check
 from lexicon.models import LexiconItem
@@ -142,18 +143,14 @@ def doc_count( request ):
             logger.error( msg )
             if settings.DEBUG:
                 print >> stderr, msg
-            return HttpResponse(json.dumps({'status': 'error'}), 
-                                content_type='application/json; charset=UTF-8')
+            return json_error_message(msg)
         except DatabaseError:
-            return HttpResponse(json.dumps({'status': 'error'}), 
-                                content_type='application/json; charset=UTF-8')
+            return json_error_message('Database error while retrieving lexicon')
     else:
-        return HttpResponse(json.dumps({'status': 'error'}), 
-                            content_type='application/json; charset=UTF-8')
+        return json_error_message('Missing lexicon id.')
 
     if not query:
-        return HttpResponse(json.dumps({'status': 'error'}), 
-                            content_type='application/json; charset=UTF-8')
+        return json_error_message('No query found.')
     
     date_range_str = request.REQUEST.get('dateRange', TEXCAVATOR_DATE_RANGE)
     dates = daterange2dates(date_range_str)
@@ -180,15 +177,15 @@ def doc_count( request ):
     if not doc_count == 'error':
         resp_dict = {
                 'status' : 'ok', 
-                'msg' : 'Helemaal prima!', 
+                'msg' : '', 
                 'doc_count' : str(doc_count)
         }
         json_list = json.dumps( resp_dict )
         ctype = 'application/json; charset=UTF-8'
         return HttpResponse( json_list, content_type = ctype )
     
-    return HttpResponse(json.dumps({'status': 'error'}), 
-                        content_type='application/json; charset=UTF-8')
+    return json_error_message('Unable to retrieve document count for ' \
+                              'query "{query}"' % query )
 
 
 @csrf_exempt
