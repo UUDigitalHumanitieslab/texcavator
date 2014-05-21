@@ -63,6 +63,14 @@ def do_search(idx, typ, query, start, num, date_range, dist, art_types):
                         fields=_ES_RETURN_FIELDS, from_=start, size=num)
 
 
+def count_search_results(idx, typ, query, date_range, dist, art_types):
+    """Returns the result of an Elasticsearch count query
+    """
+    q = create_query(query, date_range, dist, art_types)
+
+    return _es().count(index=idx, doc_type=typ, body=q)
+
+
 def create_query(query_str, date_range, dist, art_types):
     """Create elasticsearch query from input string.
 

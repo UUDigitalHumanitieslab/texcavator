@@ -46,13 +46,14 @@ from django.http import HttpResponse, HttpResponseNotFound
 from django.utils.http import urlencode
 from django.views.decorators.csrf import csrf_exempt
 
-from es import do_search, single_document_word_cloud, \
+from es import do_search, count_search_results, single_document_word_cloud, \
         _KB_DISTRIBUTION_VALUES, _KB_ARTICLE_TYPE_VALUES
 
 from texcavator.settings import TEXCAVATOR_DATE_RANGE
 from texcavator.views import get_server_info
 from services.analytics import analytics
 from services.celery import celery_check
+from lexicon.models import LexiconItem
 from services.cql2es import callperl, cql2es_error
 from services.elasticsearch_biland import es_doc_count, query2docids
 from services.elasticsearch_biland import search_xtas_elasticsearch, retrieve_xtas_elasticsearch
@@ -125,55 +126,69 @@ def daterange2dates( date_range_str ):
 
 @csrf_exempt
 def doc_count( request ):
-    if settings.DEBUG == True:
+    if settings.DEBUG:
         print >> stderr, "doc_count()"
-    req_dict = request.REQUEST
+    
+    lexiconID = request.REQUEST.get('lexiconID', None)
 
-    try:
-        lexiconID = req_dict[ "lexiconID" ]
-    except:
-        raise Exception( "Missing lexiconID parameter" )
-    if settings.DEBUG == True:
-        print >> stderr, "lexiconID:", lexiconID
-
-    try:
-        datastore = req_dict[ "datastore" ]
-    except:
-        raise Exception( "Missing datastore parameter" )
-    if settings.DEBUG == True:
-        print >> stderr, "datastore:", datastore
-
-    try:
-        collection = req_dict[ "collection" ]
-    except:
-        msg = "missing collection parameter";
-        resp_dict =  { "status" : "error", "msg" : msg }
-        json_list = json.dumps( resp_dict )
-        ctype = 'application/json; charset=UTF-8'
-        return HttpResponse( json_list, content_type = ctype )
-
-    try:
-        dateRange_str = req_dict[ "dateRange" ]
-    except:
-        raise Exception( "Missing dateRange parameter" )
-    if settings.DEBUG == True:
-        print >> stderr, "dateRange:", dateRange_str
-
-#   date_begin, date_end = daterange2dates( dateRange_str )
-
-    if datastore == "DSTORE_ELASTICSEARCH":
-    #   status, msg, doc_count = es_doc_count( lexiconID, collection, date_begin, date_end )
-        status, msg, doc_count = es_doc_count( req_dict )
+    query = None
+    if lexiconID:
+	    # get the query string from the Django db
+        try:
+            li = LexiconItem.objects.get(pk=lexiconID)
+            query = li.query
+        except LexiconItem.DoesNotExist:
+            msg = "Lexicon with id %s cannot be found." % lexiconID
+            logger.error( msg )
+            if settings.DEBUG:
+                print >> stderr, msg
+            return HttpResponse(json.dumps({'status': 'error'}), 
+                                content_type='application/json; charset=UTF-8')
+        except DatabaseError:
+            return HttpResponse(json.dumps({'status': 'error'}), 
+                                content_type='application/json; charset=UTF-8')
     else:
-        resp_dict = { "status" : "error", "msg" : "ElasticSearch only" }
+        return HttpResponse(json.dumps({'status': 'error'}), 
+                            content_type='application/json; charset=UTF-8')
+
+    if not query:
+        return HttpResponse(json.dumps({'status': 'error'}), 
+                            content_type='application/json; charset=UTF-8')
+    
+    date_range_str = request.REQUEST.get('dateRange', TEXCAVATOR_DATE_RANGE)
+    dates = daterange2dates(date_range_str)
+
+    distributions = []
+    for ds in _KB_DISTRIBUTION_VALUES.keys():
+        use_ds = json.loads(request.REQUEST.get(ds,"true"))
+        if not use_ds:
+            distributions.append(ds)
+    
+    article_types = []
+    for typ in _KB_ARTICLE_TYPE_VALUES:
+        use_type = json.loads(request.REQUEST.get(typ,"true"))
+        if not use_type:
+            article_types.append(typ)
+    
+    collection = request.REQUEST.get('collection', 'kb_sample')
+
+    result = count_search_results(collection, 'doc', query, dates, 
+                                  distributions, article_types)
+
+    doc_count = result.get('count', 'error')
+
+    if not doc_count == 'error':
+        resp_dict = {
+                'status' : 'ok', 
+                'msg' : 'Helemaal prima!', 
+                'doc_count' : str(doc_count)
+        }
         json_list = json.dumps( resp_dict )
         ctype = 'application/json; charset=UTF-8'
         return HttpResponse( json_list, content_type = ctype )
-
-    resp_dict = { "status" : status, "msg" : msg, "doc_count" : "%d" % doc_count }
-    json_list = json.dumps( resp_dict )
-    ctype = 'application/json; charset=UTF-8'
-    return HttpResponse( json_list, content_type = ctype )
+    
+    return HttpResponse(json.dumps({'status': 'error'}), 
+                        content_type='application/json; charset=UTF-8')
 
 
 @csrf_exempt
