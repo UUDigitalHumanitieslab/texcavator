@@ -246,6 +246,12 @@ def multiple_document_word_cloud(idx, typ, query, date_range, dist, art_types):
 
 def get_search_parameters(req_dict):
     """Return a tuple of search parameters extracted from a dictionary"""
+    query_str = req_dict.get('query', None)
+    
+    start = int(req_dict.get('startRecord', 1))
+    
+    result_size = int(req_dict.get('maximumRecords', 20))
+    
     date_range_str = req_dict.get('dateRange', TEXCAVATOR_DATE_RANGE)
     dates = daterange2dates(date_range_str)
 
@@ -263,7 +269,15 @@ def get_search_parameters(req_dict):
     
     collection = req_dict.get('collection', 'kb_sample')
     
-    return dates, distributions, article_types, collection
+    return {
+        'query': query_str,
+        'start': start,
+        'result_size': result_size,
+        'dates': dates,
+        'distributions': distributions,
+        'article_types': article_types, 
+        'collection': collection
+   }
 
 
 def daterange2dates( date_range_str ):

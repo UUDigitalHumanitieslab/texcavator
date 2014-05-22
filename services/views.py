@@ -283,15 +283,19 @@ def cloud( request ):
         if not query:
             return response
 
-        dates, dist, art_types, coll = get_search_parameters(request.REQUEST)
+        params = get_search_parameters(request.REQUEST)
 
         # for some reason, the collection to be searched is stored in parameter
         # 'collections' (with s added) instead of 'collection' as expected by 
         # get_search_parameters.
         coll = request.REQUEST.get('collections', 'kb_sample')
 
-        result = multiple_document_word_cloud(coll, 'doc', query, dates, dist,
-                                              art_types)
+        result = multiple_document_word_cloud(params.get('collection'), 
+                                              'doc', 
+                                              query, 
+                                              params.get('dates'),
+                                              params.get('distributions'),
+                                              params.get('article_types'))
 
         if settings.DEBUG:
             print >> stderr, result
