@@ -2,9 +2,12 @@
 """Elasticsearch functionality"""
 
 
+import json
+from datetime import datetime
 from elasticsearch import Elasticsearch
 
-from texcavator.settings import ELASTICSEARCH_HOST, ELASTICSEARCH_PORT
+from texcavator.settings import ELASTICSEARCH_HOST, ELASTICSEARCH_PORT, \
+    TEXCAVATOR_DATE_RANGE
 
 _ES_RETURN_FIELDS = ('article_dc_title',
                      'paper_dcterms_temporal',
@@ -24,7 +27,7 @@ _KB_ARTICLE_TYPE_VALUES = {'st_article': 'artikel',
                            'st_family': 'familiebericht'}
 
 _DOCUMENT_TEXT_FIELD = 'text'
-
+_AGG_FIELD = 'text'
 
 def _es():
     return Elasticsearch(ELASTICSEARCH_HOST + ":" + str(ELASTICSEARCH_PORT))
@@ -130,6 +133,29 @@ def create_query(query_str, date_range, dist, art_types):
     return query
 
 
+def create_word_cloud_query(query, date_range, dist, art_types, agg_name, 
+                            num_words=100):
+    """Create elasticsearch aggregation query from input string.
+
+    Returns a dict that represents the query in the elasticsearch query DSL.
+    """
+    
+    q = create_query(query, date_range, dist, art_types)
+
+    agg = {
+        agg_name: {
+            'terms': { 
+                'field': _AGG_FIELD,
+                'size': num_words
+            }
+        }
+    }
+
+    q['aggs'] = agg
+
+    return q
+
+
 def single_document_word_cloud(idx, typ, doc_id):
     """Return data required to draw a word cloud for a single document.
 
@@ -187,3 +213,69 @@ def single_document_word_cloud(idx, typ, doc_id):
         'status': 'error',
         'error': 'Document with id "%s" could not be found.' % doc_id
     }
+
+
+def multiple_document_word_cloud(idx, typ, query, date_range, dist, art_types):
+    """Return data required to draw a word cloud for multiple documents (i.e.,
+    the results of a search query.
+
+    See single_document_word_cloud().
+    """
+    agg_name = 'words'
+    q = create_word_cloud_query(query, date_range, dist, art_types, agg_name)
+    
+    aggr = _es().search(index=idx, doc_type=typ, body=q, size=0)
+
+    aggr_result_list = aggr.get('aggregations').get(agg_name).get('buckets')
+    max_count = aggr_result_list[0].get('doc_count')
+
+    result = []
+    for term in aggr_result_list:
+        result.append({
+            'term': term.get('key'),
+            'count': term.get('doc_count')
+        })
+
+
+    return {
+        'max_count': max_count,
+        'result': result,
+        'status': 'ok'
+    }
+
+
+def get_search_parameters(req_dict):
+    """Return a tuple of search parameters extracted from a dictionary"""
+    date_range_str = req_dict.get('dateRange', TEXCAVATOR_DATE_RANGE)
+    dates = daterange2dates(date_range_str)
+
+    distributions = []
+    for ds in _KB_DISTRIBUTION_VALUES.keys():
+        use_ds = json.loads(req_dict.get(ds,"true"))
+        if not use_ds:
+            distributions.append(ds)
+    
+    article_types = []
+    for typ in _KB_ARTICLE_TYPE_VALUES:
+        use_type = json.loads(req_dict.get(typ,"true"))
+        if not use_type:
+            article_types.append(typ)
+    
+    collection = req_dict.get('collection', 'kb_sample')
+    
+    return dates, distributions, article_types, collection
+
+
+def daterange2dates( date_range_str ):
+    """Return a dictionary containing the date boundaries specified. 
+    
+    If the input string does not specify two dates, the maximum date range is 
+    retrieved from the settings.
+    """
+    dates_str = date_range_str.split(',')
+    if not len(dates_str) == 2:
+        return daterange2dates(settings.TEXCAVATOR_DATE_RANGE)
+        
+    dates = [str(datetime.strptime(date, '%Y%m%d').date()) \
+             for date in dates_str]
+    return {'lower': min(dates), 'upper': max(dates)}   

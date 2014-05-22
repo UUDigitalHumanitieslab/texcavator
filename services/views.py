@@ -46,7 +46,8 @@ from django.http import HttpResponse, HttpResponseNotFound
 from django.utils.http import urlencode
 from django.views.decorators.csrf import csrf_exempt
 
-from es import do_search, count_search_results, single_document_word_cloud, \
+from es import get_search_parameters, do_search, count_search_results, \
+        single_document_word_cloud, multiple_document_word_cloud, \
         _KB_DISTRIBUTION_VALUES, _KB_ARTICLE_TYPE_VALUES
 
 from texcavator.settings import TEXCAVATOR_DATE_RANGE
@@ -55,6 +56,7 @@ from texcavator.utils import json_response_message
 from services.analytics import analytics
 from services.celery import celery_check
 from lexicon.models import LexiconItem
+from lexicon.utils import get_query
 from services.cql2es import callperl, cql2es_error
 from services.elasticsearch_biland import es_doc_count, query2docids
 from services.elasticsearch_biland import search_xtas_elasticsearch, retrieve_xtas_elasticsearch
@@ -251,33 +253,59 @@ def cloud_bytaskid( request ):
 
 @csrf_exempt
 def cloud( request ):
+    if settings.DEBUG:
+        print >> stderr, "cloud()"
 
-    ids = request.REQUEST.get('ids', '').split(',')
+    ids = request.REQUEST.get('ids')
+    
+    # Cloud by ids
+    if ids:
+        ids = ids.split(',')
 
-    if len(ids) == 1:
-        # Word cloud for single document
-        t_vector = single_document_word_cloud('kb_sample', 'doc', ids[0])
+        if len(ids) == 1:
+            # Word cloud for single document
+            t_vector = single_document_word_cloud('kb_sample', 'doc', ids[0])
 
-        print >> stderr, t_vector
-        
+            ctype = 'application/json; charset=UTF-8'
+            return HttpResponse(json.dumps(t_vector), content_type = ctype)
+        else:
+            # Word cloud for multiple ids
+            # Is this used at all?
+            msg = "muliple ids; functionality not yet implemented";
+            return json_response_message('error', msg)
+
+    lexicon_id = request.REQUEST.get('lexiconID')
+
+    # Cloud by lexiconID
+    if lexicon_id:
+        query, response = get_query(lexicon_id)
+
+        if not query:
+            return response
+
+        dates, dist, art_types, coll = get_search_parameters(request.REQUEST)
+
+        # for some reason, the collection to be searched is stored in parameter
+        # 'collections' (with s added) instead of 'collection' as expected by 
+        # get_search_parameters.
+        coll = request.REQUEST.get('collections', 'kb_sample')
+
+        result = multiple_document_word_cloud(coll, 'doc', query, dates, dist,
+                                              art_types)
+
+        if settings.DEBUG:
+            print >> stderr, result
+
         ctype = 'application/json; charset=UTF-8'
-        return HttpResponse(json.dumps(t_vector), content_type = ctype)
-    else:
-        # Word cloud for multiple ids
-        # Is this used at all?
-        msg = "muliple ids; functionality not yet implemented";
-        resp_dict =  { "status" : "error", "msg" : msg }
-        json_list = json.dumps( resp_dict )
-        ctype = 'application/json; charset=UTF-8'
-        return HttpResponse( json_list, content_type = ctype )
- 
+        return HttpResponse(json.dumps(result), content_type = ctype)
+
+    return json_response_message('error', 'reached end of new code')
+
     ##########################################################################
     # Old code starts here
     ##########################################################################
 
     # cloud by tags or docids
-    if settings.DEBUG == True:
-        print >> stderr, "cloud()"
 
     extra = request2extra4log( request )
 
