@@ -473,17 +473,10 @@ function nextResults( amount )
 	{
 		console.log( "retrieveRecord: " + datastore + ", " + collection + ", " + record_id + ", " + zipfile );
 
-		if( collection === "stabi" )
-		{
-			var ocr_pane = "record2";
-			var cloud_pane = "cloudPane2";
-		}
-		else
-		{
-			var ocr_pane = "record";
-			var cloud_pane = "cloudPane";
-		}
-		dojo.place( new dijit.ProgressBar( { indeterminate: true } ).domNode, dojo.byId( ocr_pane ), "only" );
+		var ocr_pane = "record";
+		var cloud_pane = "cloudPane";
+		
+        dojo.place( new dijit.ProgressBar( { indeterminate: true } ).domNode, dojo.byId( ocr_pane ), "only" );
 		dojo.place( new dijit.ProgressBar( { indeterminate: true } ).domNode, dojo.byId( cloud_pane ), "only" );
 
 		var url = "{{ SUB_SITE }}services/retrieve/doc/?id=" + record_id;
@@ -504,33 +497,16 @@ function nextResults( amount )
 
 				if( resp.status === "ok" )
 				{
-					if( datastore === "DSTORE_MONGODB" )
-					{ var ocr_text = resp.result.document.content; }
-					else if( datastore === "DSTORE_ELASTICSEARCH" )
-					{
-						var ocr_text = resp.text;
-					//	var ocr_text = "ich bin ein Berliner";
-						if( MOSES_TRANSLATE == true && collection == ES_INDEX_STABI ) { translate( ocr_text ); }
-					}
+					var ocr_text = resp.text;
 					processRecord( record_id, ocr_text, zipfile );
 				}
 				else
 				{
-					if( datastore === "DSTORE_MONGODB" && resp.code == "404" )
-					{
-						console.log( "Document not in xTAS: " + record_id );
-						var store_mongodb = true;	// save document in MongoDB
-						retrieveRecordKB ( record_id, store_mongodb );
-						return;
-					}
-					else
-					{
-						console.error( resp.msg );
-						var title = "Request failed";
-						var buttons = { "OK": true };
-						genDialog( title, resp.msg, buttons );
-						return;
-					}
+					console.error( resp.msg );
+					var title = "Request failed";
+					var buttons = { "OK": true };
+					genDialog( title, resp.msg, buttons );
+					return;
 				}
 			},
 			error: function( err ) { console.error( err ); }
