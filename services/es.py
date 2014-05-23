@@ -81,8 +81,7 @@ def create_query(query_str, date_range, dist, art_types):
     Returns a dict that represents the query in the elasticsearch query DSL.
 
     At the moment, the literal query string is inserted in the elasticsearch
-    query. Functionality to handle more complex queries needs to be added, as
-    well as updating the date filter with the appropriate date range.
+    query. Functionality to handle more complex queries needs to be added.
 
     Returns dict with an ES DSL query
     """
