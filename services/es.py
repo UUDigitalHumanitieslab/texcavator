@@ -29,6 +29,7 @@ _KB_ARTICLE_TYPE_VALUES = {'st_article': 'artikel',
 _DOCUMENT_TEXT_FIELD = 'text'
 _AGG_FIELD = 'text'
 
+
 def _es():
     return Elasticsearch(ELASTICSEARCH_HOST + ":" + str(ELASTICSEARCH_PORT))
 
@@ -133,18 +134,18 @@ def create_query(query_str, date_range, dist, art_types):
     return query
 
 
-def create_word_cloud_query(query, date_range, dist, art_types, agg_name, 
+def create_word_cloud_query(query, date_range, dist, art_types, agg_name,
                             num_words=100):
     """Create elasticsearch aggregation query from input string.
 
     Returns a dict that represents the query in the elasticsearch query DSL.
     """
-    
+
     q = create_query(query, date_range, dist, art_types)
 
     agg = {
         agg_name: {
-            'terms': { 
+            'terms': {
                 'field': _AGG_FIELD,
                 'size': num_words
             }
@@ -223,7 +224,7 @@ def multiple_document_word_cloud(idx, typ, query, date_range, dist, art_types):
     """
     agg_name = 'words'
     q = create_word_cloud_query(query, date_range, dist, art_types, agg_name)
-    
+
     aggr = _es().search(index=idx, doc_type=typ, body=q, size=0)
 
     aggr_result_list = aggr.get('aggregations').get(agg_name).get('buckets')
@@ -236,7 +237,6 @@ def multiple_document_word_cloud(idx, typ, query, date_range, dist, art_types):
             'count': term.get('doc_count')
         })
 
-
     return {
         'max_count': max_count,
         'result': result,
@@ -247,49 +247,49 @@ def multiple_document_word_cloud(idx, typ, query, date_range, dist, art_types):
 def get_search_parameters(req_dict):
     """Return a tuple of search parameters extracted from a dictionary"""
     query_str = req_dict.get('query', None)
-    
+
     start = int(req_dict.get('startRecord', 1))
-    
+
     result_size = int(req_dict.get('maximumRecords', 20))
-    
+
     date_range_str = req_dict.get('dateRange', TEXCAVATOR_DATE_RANGE)
     dates = daterange2dates(date_range_str)
 
     distributions = []
     for ds in _KB_DISTRIBUTION_VALUES.keys():
-        use_ds = json.loads(req_dict.get(ds,"true"))
+        use_ds = json.loads(req_dict.get(ds, "true"))
         if not use_ds:
             distributions.append(ds)
-    
+
     article_types = []
     for typ in _KB_ARTICLE_TYPE_VALUES:
-        use_type = json.loads(req_dict.get(typ,"true"))
+        use_type = json.loads(req_dict.get(typ, "true"))
         if not use_type:
             article_types.append(typ)
-    
+
     collection = req_dict.get('collection', 'kb_sample')
-    
+
     return {
         'query': query_str,
         'start': start,
         'result_size': result_size,
         'dates': dates,
         'distributions': distributions,
-        'article_types': article_types, 
+        'article_types': article_types,
         'collection': collection
-   }
+        }
 
 
-def daterange2dates( date_range_str ):
-    """Return a dictionary containing the date boundaries specified. 
-    
-    If the input string does not specify two dates, the maximum date range is 
+def daterange2dates(date_range_str):
+    """Return a dictionary containing the date boundaries specified.
+
+    If the input string does not specify two dates, the maximum date range is
     retrieved from the settings.
     """
     dates_str = date_range_str.split(',')
     if not len(dates_str) == 2:
-        return daterange2dates(settings.TEXCAVATOR_DATE_RANGE)
-        
-    dates = [str(datetime.strptime(date, '%Y%m%d').date()) \
+        return daterange2dates(TEXCAVATOR_DATE_RANGE)
+
+    dates = [str(datetime.strptime(date, '%Y%m%d').date())
              for date in dates_str]
-    return {'lower': min(dates), 'upper': max(dates)}   
+    return {'lower': min(dates), 'upper': max(dates)}
