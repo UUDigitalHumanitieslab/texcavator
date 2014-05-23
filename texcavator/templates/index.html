@@ -616,8 +616,6 @@ function nextResults( amount )
 		{ retrieveRecordCloudData( record_id, ocr_text ); }
 	}
 
-
-
 	var retrieveRecordCloudData = function( record_id, ocr_text )
 	{
 		console.log( "retrieveRecordCloudData: " + record_id );
@@ -626,23 +624,14 @@ function nextResults( amount )
 		var params = { ids: record_id };
 		params = getCloudParameters( params );				// add user-changeable parameters from config
 
-		if( record_id.startsWith( "ddd:" ) )
-		{
-			params[ "collections" ] = ES_INDEX_KONBIB;		// 	can be more than 1
-			var cloud_pane = "cloudPane";
-		}
-		else
-		{
-			params[ "collections" ] = ES_INDEX_STABI;		// 	can be more than 1
-			var cloud_pane = "cloudPane2";
-		}
+		params[ "collections" ] = ES_INDEX_KONBIB;		// 	can be more than 1
+		var cloud_pane = "cloudPane";
 
-		xtas.postWaiting(
-			"cloud/", {
-				content: params,
-				handleAs: "json"	// but we get string?
-			},
-			function( response )
+        dojo.xhrGet({
+            url: "{{ SUB_SITE }}services/xtas/cloud",
+            content: params,
+            handleAs: 'json',
+            load: function(response)
 			{
 			//	console.log( response );
 				if( typeof( response ) == "string" )
@@ -666,10 +655,15 @@ function nextResults( amount )
 					createCloud( "article", json_data, "borderContainer", cloud_pane );
 					return response;
 				}
-			}
-		);
-	}
+		
+            },
+            error: function(error){
+                console.error(err);
+                return err;
+            }
+        });
 
+	}
 
 
 	var createCloud = function( cloud_src, json_data, container, target )
