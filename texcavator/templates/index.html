@@ -1,41 +1,5 @@
 {% extends "base.html" %}
 
-{% comment %}
-DO-%%-%%%-2011: Created
-FL-12-Nov-2013: Changed
-
-block middle  : html
-block outside : javascript
-	function showDojoVersion()
-	function showjQueryVersion()
-	function showD3Version()
-	function showDojoLocale()
-
-	dojo.ready() calls...
-	function searchSubmit()
-	function nextResults(amount)
-	dojo.require() calls...
-
-	var retrieveRecord = function( datastore, collection, record_id )
-	var retrieveRecordKB = function( record_id, store_mongodb )
-	var storeRecordKB = function( record_id, ocr_text, zipfile )
-	var processRecord = function( record_id, ocr_text, zipfile )
-	var retrieveRecordCloudData = function( record_id, ocr_text )
-	var createCloud = function( cloud_src, json_data, container, target )
-
-	lexiconStore = new dojo.store.JsonRest( { target: "{{ SUB_SITE }}lexicon/" } );
-	//lexiconStore = new dojo.store.JsonRest( { target: SUB_SITE + "lexicon/" } );
-	glob_lexiconData = {};		// returned data from lexiconStore
-
-
-	function onClickLoadData( lexiconID, datastore )	// button Create basis lexicon
-	function clearGui()									// called after logout: glob_username = ""
-	function onClickExecute( lexiconID, query )			// button Apply: metadata graphics + query word cloud
-	function onClickExecuteCloud( lexiconID )			// called by onClickExecute() -> cloud_view.js ?
-	function queryToLexicon()							// button Save query
-	function updateItemInLexicon( pk )					// button Modify
-{% endcomment %}
-
 {% block head %}
 	<style type="text/css">
 		@import url({{ STATIC_URL }}js/Dojo/dojox/form/resources/RangeSlider.css);
