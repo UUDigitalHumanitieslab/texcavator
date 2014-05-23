@@ -628,7 +628,7 @@ function nextResults( amount )
 		var cloud_pane = "cloudPane";
 
         dojo.xhrGet({
-            url: "{{ SUB_SITE }}services/xtas/cloud",
+            url: "{{ SUB_SITE }}services/cloud",
             content: params,
             handleAs: 'json',
             load: function(response)

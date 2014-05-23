@@ -26,7 +26,7 @@ urlpatterns = patterns( 'services.views',
 	url( r'xtas/manage/$',     'proxy' ),
 	url( r'xtas/process/$',    'proxy' ),
 
-	url( r'xtas/cloud/$',          'cloud' ),
+	url( r'cloud/$',          'cloud' ),
 	url( r'xtas/cloud_bytaskid/$', 'cloud_bytaskid' ),
 
 	url( r'kb/',               'proxy' ),
