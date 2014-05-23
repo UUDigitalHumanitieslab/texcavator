@@ -67,34 +67,21 @@ from services.request import request2article_types, is_literal
 from services.moses import moses
 
 def search( request ):
-    query_str = request.REQUEST['query']
-    start = int(request.REQUEST.get('startRecord', 1))
-    # elasticsearch uses zero-based numbering
-    start_es = start - 1
-    result_size = int(request.REQUEST.get('maximumRecords', 20))
+    params = get_search_parameters(request.REQUEST)
     
-    date_range_str = request.REQUEST.get('dateRange', TEXCAVATOR_DATE_RANGE)
-    dates = daterange2dates(date_range_str)
+    result = do_search(settings.ES_INDEX_KONBIB,
+                       "doc",
+                       params['query'],
+                       params['start']-1, # Zero based counting
+                       params['result_size'],
+                       params['dates'],
+                       params['distributions'],
+                       params['article_types'])
 
-    distributions = []
-    for ds in _KB_DISTRIBUTION_VALUES.keys():
-        use_ds = json.loads(request.REQUEST.get(ds,"true"))
-        if not use_ds:
-            distributions.append(ds)
-    
-    article_types = []
-    for typ in _KB_ARTICLE_TYPE_VALUES:
-        use_type = json.loads(request.REQUEST.get(typ,"true"))
-        if not use_type:
-            article_types.append(typ)
-
-    # voer query uit op elasticsearch instance
-    res = do_search("kb_sample", "doc", query_str, start_es, result_size, 
-                    dates, distributions, article_types)
-
-    html_str = elasticsearch_htmlresp(settings.ES_INDEX_KONBIB, start, 
-                                      result_size, res)
-    # geef resultaten terug
+    html_str = elasticsearch_htmlresp(settings.ES_INDEX_KONBIB, 
+                                      params['start'], 
+                                      params['result_size'],
+                                      result)
     return HttpResponse(html_str)
 
 def request2extra4log( request ):
@@ -112,20 +99,6 @@ def request2extra4log( request ):
     return extra
 
 
-
-def daterange2dates( date_range_str ):
-    """Return a dictionary containing the date boundaries specified. 
-    
-    If the input string does not specify two dates, the maximum date range is 
-    retrieved from the settings.
-    """
-    dates_str = date_range_str.split(',')
-    if not len(dates_str) == 2:
-        return daterange2dates(settings.TEXCAVATOR_DATE_RANGE)
-        
-    dates = [str(datetime.strptime(date, '%Y%m%d').date()) \
-             for date in dates_str]
-    return {'lower': min(dates), 'upper': max(dates)}   
 
 @csrf_exempt
 def doc_count( request ):
@@ -155,25 +128,14 @@ def doc_count( request ):
     if not query:
         return json_response_message('error', 'No query found.')
     
-    date_range_str = request.REQUEST.get('dateRange', TEXCAVATOR_DATE_RANGE)
-    dates = daterange2dates(date_range_str)
-
-    distributions = []
-    for ds in _KB_DISTRIBUTION_VALUES.keys():
-        use_ds = json.loads(request.REQUEST.get(ds,"true"))
-        if not use_ds:
-            distributions.append(ds)
+    params = get_search_parameters(request.REQUEST)
     
-    article_types = []
-    for typ in _KB_ARTICLE_TYPE_VALUES:
-        use_type = json.loads(request.REQUEST.get(typ,"true"))
-        if not use_type:
-            article_types.append(typ)
-    
-    collection = request.REQUEST.get('collection', 'kb_sample')
-
-    result = count_search_results(collection, 'doc', query, dates, 
-                                  distributions, article_types)
+    result = count_search_results(params['collection'],
+                                  'doc',
+                                  query,
+                                  params['dates'],
+                                  params['distributions'],
+                                  params['article_types'])
 
     doc_count = result.get('count', 'error')
 
