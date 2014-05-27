@@ -975,17 +975,10 @@ function onClickExecuteCloud( lexiconID )
 	var collection = collection_fromradio();
 	console.log( "onClickExecuteCloud() lexiconID: " + lexiconID + ", collection: " + collection );
 
-	if( collection == ES_INDEX_STABI )
-	{
-		var cloud_pane = "cloudPane2";
-		var art_container = "articleContainer2"
-	}
-	else
-	{
-		var cloud_pane = "cloudPane";
-		var art_container =  "articleContainer"
-	}
-	var tc = dijit.byId( art_container );
+	var cloud_pane = "cloudPane";
+	var art_container =  "articleContainer"
+	
+    var tc = dijit.byId( art_container );
 	tc.selectChild( dijit.byId( cloud_pane ) );		// select cloud tab
 
 	// Notice: the xslt below is a docid of a stored file inside the document table of xtas
