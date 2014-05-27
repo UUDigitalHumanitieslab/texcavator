@@ -166,7 +166,7 @@ function createQueryLine( item )
 
 			dojo.place(( new dijit.form.Button({
 				id: "btn-sq-fetch-" + item.pk,
-				disabled: fetch_disabled,
+				disabled: false,
 				label: "Basis lexicon",
 				showLabel: false,
 				title: "Re-search: " + lexiconTitle,
@@ -207,14 +207,9 @@ function createQueryLine( item )
 			btn.destroy();
 		}
 
-		if( glob_key_validated == false )
-		{ var cloud_disabled = true; }
-		else
-		{ var cloud_disabled = false; }
-
 		dojo.place(( new dijit.form.Button({
 			id: "btn-sq-cloud-" + item.pk,
-			disabled: cloud_disabled,
+			disabled: false,
 			label: "Apply",
 			showLabel: false,
 			title: "Apply query: " + item[ "fields" ][ "query" ],
@@ -233,16 +228,11 @@ function createQueryLine( item )
 			btn.destroy();
 		}
 
-		if( glob_key_validated == false )
-		{ var timeline_disabled = true; }
-		else
-		{ var timeline_disabled = false; }
-
 		// timeline for lexicon item
 
 		dojo.place(( new dijit.form.Button({
 			id: "btn-sq-timeline-" + item.pk,
-			disabled: timeline_disabled,
+			disabled: false,
 			label: "Timeline",
 			showLabel: false,
 			title: "Timeline",
