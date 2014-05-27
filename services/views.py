@@ -11,7 +11,6 @@ Goal:       services/views
 def request2extra4log( request )
 def daterange2dates( dateRange_str )
 def doc_count( request )
-def cloud_bytaskid( request )
 def cloud( request )
 def proxy( request )
 def download_scan_image( request )
@@ -145,72 +144,6 @@ def doc_count( request ):
     
     return json_response_message('error', 'Unable to retrieve document count' \
                               ' for query "{query}"' % query )
-
-
-@csrf_exempt
-def cloud_bytaskid( request ):
-    # cloud_bytaskid() is a followup request when cloud() gives a timeout, and provides us with the taskid
-    if settings.DEBUG == True:
-        print >> stderr, "cloud_bytaskid()"
-
-    extra = request2extra4log( request )
-
-    req_dict = request.REQUEST
-    if settings.DEBUG == True:
-        print >> stderr, "req_dict:", req_dict
-
-    xtas_baseurl = "http://" + settings.XTAS_HOST + ':' + str( settings.XTAS_PORT )
-
-    if len( settings.XTAS_PREFIX ) > 0:
-        xtas_url = xtas_baseurl + '/' + settings.XTAS_PREFIX
-    else:
-        xtas_url = xtas_baseurl
-    xtas_url = xtas_url + "/get_cloud"
-
-    try:
-        taskid = req_dict[ "taskid" ]
-    except:
-        msg = "get_cloud failed: no taskid supplied"
-        if settings.DEBUG == True:
-            print >> stderr, msg
-        logger.debug( "%s [%s]", title, msg, extra = extra )
-        resp_dict = { 'status' : 'error', 'msg' : msg }
-        json_list = json.dumps( resp_dict )
-        ctype = 'application/json; charset=UTF-8'
-        return HttpResponse( json_list, content_type = ctype )
-
-
-    cloud_params = {}
-    cloud_params[ "taskid" ] = taskid
-    if settings.DEBUG == True:
-        print >> stderr, "repeated cloud request, taskid =", taskid
-
-    cloud_params[ "key" ] = settings.XTAS_API_KEY   # add key
-    if settings.DEBUG == True:
-        print >> stderr, "xtas_url:", xtas_url
-        print >> stderr, "params:", cloud_params
-
-
-    try:
-        response = requests.get( xtas_url, params = cloud_params )
-    except:
-        type, value, tb = exc_info()
-        msg = "Cloud failed: %s" % value.message
-        if settings.DEBUG == True:
-            print >> stderr, msg
-        logger.debug( "%s [%s]", title, msg, extra = extra )
-        resp_dict = { 'status' : 'error', 'msg' : msg }
-        json_list = json.dumps( resp_dict )
-        ctype = 'application/json; charset=UTF-8'
-        return HttpResponse( json_list, content_type = ctype )
-
-    content = response.content
-
-#   if settings.DEBUG == True:
-#       print >> stderr, content
-    ctype = 'application/json; charset=UTF-8'
-    return HttpResponse( content, content_type = ctype )
-
 
 
 @csrf_exempt

@@ -23,7 +23,6 @@ urlpatterns = patterns( 'services.views',
 	url( r'export/$',          'proxy' ),
 
 	url( r'cloud/$',          'cloud' ),
-	url( r'xtas/cloud_bytaskid/$', 'cloud_bytaskid' ),
 
 	url( r'kb/',               'proxy' ),
 	url( r'logger/$',          'proxy' ),
