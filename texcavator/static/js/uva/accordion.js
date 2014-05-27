@@ -158,46 +158,21 @@ function createQueryLine( item )
 			btn.destroy();
 		}
 
-		config = getConfig();
-		var datastore = config[ "datastore" ];
-		if( datastore === "DSTORE_ELASTICSEARCH" )		// re-search; no download of KB articles
-		{
-			console.log( "Re-search" );
+		console.log( "Re-search" );
 
-			dojo.place(( new dijit.form.Button({
-				id: "btn-sq-fetch-" + item.pk,
-				disabled: false,
-				label: "Basis lexicon",
-				showLabel: false,
-				title: "Re-search: " + lexiconTitle,
-				pk: item.pk,
-				iconClass: "dijitIconNewTask",
-				onClick: function() {
-					console.log( "Re-search" );
-					researchSubmit( item );
-				}
-			})).domNode, buttonsNode );
-		}
-		else				// download of KB articles
-		{
-			console.log( "Download" );
-
-			if( glob_key_validated == false )
-			{ var fetch_disabled = true; }
-			else
-			{ var fetch_disabled = false; }
-
-			dojo.place(( new dijit.form.Button({
-				id: "btn-sq-fetch-" + item.pk,
-				disabled: fetch_disabled,
-				label: "Basis lexicon",
-				showLabel: false,
-				title: "Create basis lexicon: " + lexiconTitle,
-				pk: item.pk,
-				iconClass: "dijitIconNewTask",
-				onClick: function() { fetchDataDialog( item ); }	// lexicon.js: calls onClickLoadData()
-			})).domNode, buttonsNode );
-		}
+		dojo.place(( new dijit.form.Button({
+			id: "btn-sq-fetch-" + item.pk,
+			disabled: false,
+			label: "Basis lexicon",
+			showLabel: false,
+			title: "Re-search: " + lexiconTitle,
+			pk: item.pk,
+			iconClass: "dijitIconNewTask",
+			onClick: function() {
+				console.log( "Re-search" );
+				researchSubmit( item );
+			}
+		})).domNode, buttonsNode );
 
 	//	console.log( "Button cloud for lexicon item" );
 		btn = dijit.byId( "btn-sq-cloud-" + item.pk );
