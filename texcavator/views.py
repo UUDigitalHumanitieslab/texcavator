@@ -113,7 +113,6 @@ def texcavator( request ):
 		"XTAS_PREFIX"         : settings.XTAS_PREFIX,
 		"XTAS_DATASTORE"      : settings.XTAS_DATASTORE,
 		"XTAS_COLLECTION"     : settings.XTAS_COLLECTION,
-		"XTAS_FLUSH_CACHE"    : settings.XTAS_FLUSH_CACHE,
 		"XTAS_DOCS_SELECT"    : settings.XTAS_DOCS_SELECT,
 
 		"XTAS_MAX_CLOUD_DOCS_WARN"  : settings.XTAS_MAX_CLOUD_DOCS_WARN,
@@ -166,7 +165,6 @@ def index( request ):
 		"XTAS_PREFIX"         : settings.XTAS_PREFIX,
 		"XTAS_DATASTORE"      : settings.XTAS_DATASTORE,
 		"XTAS_COLLECTION"     : settings.XTAS_COLLECTION,
-		"XTAS_FLUSH_CACHE"    : settings.XTAS_FLUSH_CACHE,
 		"XTAS_DOCS_SELECT"    : settings.XTAS_DOCS_SELECT,
 
 		"XTAS_MAX_CLOUD_DOCS_WARN"  : settings.XTAS_MAX_CLOUD_DOCS_WARN,

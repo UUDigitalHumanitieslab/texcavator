@@ -84,8 +84,6 @@ XTAS_COLLECTION = ES_INDEX_KONBIB
 #	BiLand/services/static/xslt/sru.kb.xsl 
 #	BiLand/BILAND/templates/index.html (radio buttons)
 
-XTAS_FLUSH_CACHE = False						# default False for ES, True is for testing
-
 if XTAS_DATASTORE == "DSTORE_ELASTICSEARCH":
 	XTAS_HOST        = 'localhost'	
 	XTAS_PREFIX      = 'api'

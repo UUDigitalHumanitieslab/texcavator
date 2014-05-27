@@ -15,7 +15,6 @@ var showLogout = function()
 var hideLogout = function()
 var createResponse = function( msg, retry )
 var showResponse = function()
-function flushXtasCache(...)
 */
 
 var default_username = "";
@@ -424,34 +423,5 @@ var createResponse = function( msg, retry )
 }
 
 var showResponse = function() { dijit.byId( "message" ).show(); }
-
-
-
-function flushXtasCache( datastore, flush )
-{
-//	console.log( "clearXtasCache(): datastore = " + datastore + " ,flush: " + flush );
-	if( flush == false )
-	{ console.log( "skipping xTAS cache flushing " ); }
-	else
-	{
-		xtas.post( 
-			"manage/", 
-			{
-				content: { "job": "clearcache" },
-				handleAs: "json",									// data returned from the server
-				load: function( resp )
-				{
-					if( resp == null )
-					{ console.error( "clearCache(): null response" ); }
-					else if( resp.status === "ok" )
-					{ console.log( "xTAS cache flushed" ); }
-					else
-					{ console.error( "failed to clear xTAS cache: " + resp ); }
-				},
-				error: function( err ) { console.error( err ); }	// display the error
-			}
-		);
-	}
-}
 
 // [eof]

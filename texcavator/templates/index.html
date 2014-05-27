@@ -277,7 +277,6 @@ SUB_SITE = "{{ SUB_SITE }}";
 XTAS_PREFIX         = "{{ XTAS_PREFIX }}";
 XTAS_COLLECTION     = "{{ XTAS_COLLECTION }}";
 XTAS_DOCS_SELECT    = "{{ XTAS_DOCS_SELECT }}";
-XTAS_FLUSH_CACHE    = "{{ XTAS_FLUSH_CACHE }}";
 
 XTAS_MAX_CLOUD_DOCS_WARN  = "{{ XTAS_MAX_CLOUD_DOCS_WARN }}";
 XTAS_MAX_CLOUD_DOCS_ERROR = "{{ XTAS_MAX_CLOUD_DOCS_ERROR }}";
@@ -299,11 +298,6 @@ dojo.ready( function() { createLogin( "{{ SUB_SITE }}", "{{ PROJECT_NAME }}" ) }
 dojo.ready( showLogin );													// login.js
 
 dojo.ready( function() { 
-	if( "{{ XTAS_FLUSH_CACHE }}" == "True" )
-	{ flushXtasCache( "{{ XTAS_DATASTORE }}", true ); }						// login.js
-	else
-	{ flushXtasCache( "{{ XTAS_DATASTORE }}", false ); }
-
 	if( "{{ QUERY_DATA_DOWNLOAD_ALLOW }}" == "True" )
 	{ QUERY_DATA_DOWNLOAD = true; }
 	else
