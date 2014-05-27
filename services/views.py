@@ -435,30 +435,6 @@ def proxy( request ):
             print >> stderr, "Export CSV request\n"
         return export_csv( request )
 
-
-    elif len(request_path) > 2 and request_path[2] == u'xtas':
-        scheme_authority, sub_site = get_server_info( request )
-        host = settings.XTAS_HOST
-        port = settings.XTAS_PORT
-        if len( settings.XTAS_PREFIX ) > 0:
-            path = settings.XTAS_PREFIX + '/' + ''.join( request_path[ 3: ] )
-        else:
-            path = ''.join( request_path[ 3: ] )
-
-        logger.debug( 'xTas %s request to service %s: %s', request.method, path, request.META["QUERY_STRING"], extra = extra )
-
-        data = {}
-        data[ 'key' ] = settings.XTAS_API_KEY       # Add the key for xTas to this query
-        # update the data to send with the data from the original request
-        data.update( request.REQUEST )
-
-        if settings.DEBUG == True:
-            print >> stderr, "xTas request\n", data
-
-        # Return a Django HttpResponse based on a proxied httplib HTTPResponse
-        return buildResponse(proxyResponse(request.method, host, port, path, data))
-
-
     elif len(request_path) > 2 and request_path[2] == u'store':
         if settings.DEBUG == True:
             print >> stderr, "Store request", request.REQUEST
