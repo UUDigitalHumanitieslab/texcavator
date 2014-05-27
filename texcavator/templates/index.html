@@ -918,6 +918,8 @@ function onClickExecute( lexiconID, query )
 			}
 			else
 			{
+				onClickExecuteCloud( lexiconID );
+                /*
 				// limit the number of documents for a burst cloud [same as in timeline.js:burstClicked()]
 				var doc_count   = parseInt( data.doc_count );
 				var warn_count  = parseInt( XTAS_MAX_CLOUD_DOCS_WARN );
@@ -962,8 +964,8 @@ function onClickExecute( lexiconID, query )
 					var buttons = { "OK": true };
 					genDialog( title, msg, buttons );
 					return;
-				}
-			}
+				} */
+			} 
 		}
 	});
 } // onClickExecute
