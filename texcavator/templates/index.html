@@ -977,7 +977,6 @@ function onClickExecuteCloud( lexiconID )
     var tc = dijit.byId( art_container );
 	tc.selectChild( dijit.byId( cloud_pane ) );		// select cloud tab
 
-	// Notice: the xslt below is a docid of a stored file inside the document table of xtas
 	dojo.place( new dijit.ProgressBar({ indeterminate: true }).domNode, dojo.byId( cloud_pane ), "only" );
 
 	canvas = dojo.byId( "cloudCanvas" );
