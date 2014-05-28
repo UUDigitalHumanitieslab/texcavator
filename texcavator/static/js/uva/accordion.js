@@ -332,27 +332,11 @@ function refreshQueriesDocCounts()
 	console.log( "refreshQueriesDocCounts() " + collection );
 	items = glob_lexiconData;
 
-	if( glob_key_validated == true )
-	{
-		console.log( "key validated" ); 
-		dojo.forEach( items, function( item )
-		{ updateQueryDocCounts( item, collection ); });
-	}
-	else
-	{ console.log( "key not validated" ); }
+	dojo.forEach( items, function( item )
+	{ 
+	    updateQueryDocCountsElasticSearch( item, collection );
+    });
 } // refreshQueriesDocCounts()
-
-
-
-function updateQueryDocCounts( item, collection )
-{
-	config = getConfig();
-	if( config[ "datastore" ] === "DSTORE_ELASTICSEARCH" )
-	{ updateQueryDocCountsElasticSearch( item, collection ); }
-	else
-	{ updateQueryDocCountsMongoDB( item ); }
-} // updateQueryDocCounts()
-
 
 function updateQueryDocCountsElasticSearch( item, collection )
 {
@@ -432,101 +416,5 @@ function updateQueryDocCountsElasticSearch( item, collection )
 		});
 	}
 } // updateQueryDocCountsElasticSearch()
-
-
-function updateQueryDocCountsMongoDB( item )
-{
-	// ocr counts from MongoDB, metadata counts from DjangoDB
-	var lexiconTitle = item[ "fields" ][ "title" ];
-//	console.log( "updateQueryDocCountsMongoDB() " + lexiconTitle );
-
-	if( ! lexiconTitle.endsWith( "_daterange" ) )	// do not show lexicons with *_daterange names
-	{
-		var pk =  item[ "pk" ];
-		var url = SUB_SITE + "list/" + pk + "/docs/";
-
-		dojo.xhrGet({
-			url: url,
-			handleAs: "json",
-			sync: false,				// sync no longer needed; get correct div by id
-			load: function( resp )
-			{
-				if( resp == null )
-				{ console.error( "updateQueryDocCountsMongoDB(): " + url + " null response" ); }
-				else if( resp.status === "SUCCESS" )
-				{
-					var metadata_count = resp.metadata;
-					var ocrdata_count  = resp.ocrdata;
-					item[ "fields" ][ "metadata_count" ] = metadata_count;
-					item[ "fields" ][ "ocrdata_count" ]  = ocrdata_count;
-
-					config = getConfig();
-					if( config[ "datastore" ] === "DSTORE_ELASTICSEARCH" )	// no metadata in Django DB
-					{ var counts_str = " [" + ocrdata_count + "] "; }
-					else
-					{
-						if( metadata_count === ocrdata_count )
-						{
-							if( metadata_count === 0 )
-							{ var counts_str = " [" + metadata_count + "] "; }
-							else
-							{ var counts_str = " [<font color=green>" + metadata_count + "</font>] "; }
-						}
-						else
-						{ var counts_str = " [<font color=red>" + metadata_count + "</font>,<font color=red>" + ocrdata_count + "</font>] "; }
-					}
-
-				//	console.log( "id: " + item.pk );
-				//	var itemNode = dojo.byId( "query-" + item.pk );
-					var cspan = dojo.byId( "query-string-" + pk );
-					if( cspan != null )
-					{
-					//	var string = lexiconTitle + counts_str + "<em>" + item[ "fields" ][ "created" ] + '</em>';
-						var string = "<span id=query-string-" + item.pk + " />" + lexiconTitle + counts_str + "<em> " + item[ "fields" ][ "created" ] + " </em> </span>";
-					//	var params = { style: 'clear: both;' };
-					//	dojo.html.set( cspan, string, params );
-						cspan.innerHTML = string;
-
-						var btn_sq_cloud = dijit.byId( "btn-sq-cloud-" + pk );
-						if( config[ "datastore" ] === "DSTORE_ELASTICSEARCH" )	// no metadata in Django DB
-						{
-							if( ocrdata_count == 0 )
-							{ btn_sq_cloud.set( "disabled", true ); }		// disable cloud button
-							else
-							{ btn_sq_cloud.set( "disabled", false ); }		// enable cloud button
-						}
-						else
-						{
-							if( metadata_count == 0 || ocrdata_count == 0 )
-							{ btn_sq_cloud.set( "disabled", true ); }		// disable cloud button
-							else
-							{ btn_sq_cloud.set( "disabled", false ); }		// enable cloud button
-						}
-
-						var btn_sq_timeline = dijit.byId( "btn-sq-timeline-" + pk );
-						if( config[ "datastore" ] === "DSTORE_ELASTICSEARCH" )	// no metadata in Django DB
-						{
-							if( ocrdata_count == 0 )
-							{ btn_sq_timeline.set( "disabled", true ); }	// disable timeline button
-							else
-							{ btn_sq_timeline.set( "disabled", false ); }	// enable timeline button
-						}
-						else
-						{
-							if( metadata_count == 0 )
-							{ btn_sq_timeline.set( "disabled", true ); }	// disable timeline button
-							else
-							{ btn_sq_timeline.set( "disabled", false ); }	// enable timeline button
-						}
-					}
-					else { console.log( "null id: " + pk + pk ); }
-				}
-				else
-				{ console.error( "updateQueryDocCountsMongoDB(): " + url + " response status: " + resp.status ); }
-			},
-			error: function( err ) { console.error( err ); return err; }
-		});
-	}
-} // updateQueryDocCountsMongoDB()
 
 // [eof]
