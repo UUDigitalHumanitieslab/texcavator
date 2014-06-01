@@ -292,3 +292,33 @@ def daterange2dates(date_range_str):
     dates = [str(datetime.strptime(date, '%Y%m%d').date())
              for date in dates_str]
     return {'lower': min(dates), 'upper': max(dates)}
+
+
+def get_document_ids(idx, typ, query, date_range, dist=[], art_types=[]):
+    doc_ids = []
+
+    q = create_query(query, date_range, dist, art_types)
+
+    date_field = 'paper_dc_date'
+    fields = [date_field]
+    get_more_docs = True
+    start = 0
+    num = 2500
+
+    while get_more_docs:
+        results = _es().search(index=idx, doc_type=typ, body=q, fields=fields,
+                               from_=start, size=num)
+        for result in results['hits']['hits']:
+            doc_ids.append(
+                {
+                    'identifier': result['_id'],
+                    'date': datetime.strptime(result['fields'][date_field][0],
+                                              '%Y-%m-%d').date()
+                })
+
+        start = start + num
+
+        if len(results['hits']['hits']) < num:
+            get_more_docs = False
+
+    return doc_ids
