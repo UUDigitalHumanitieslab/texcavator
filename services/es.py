@@ -156,6 +156,49 @@ def create_word_cloud_query(query, date_range, dist, art_types, agg_name,
     return q
 
 
+def create_day_statistics_query(date_range, agg_name):
+    """Create elasticsearch aggregation query to gather day statistics for the
+    given date range.
+    """
+    date_lower = datetime.strptime(date_range['lower'], '%Y-%m-%d').date()
+    date_upper = datetime.strptime(date_range['upper'], '%Y-%m-%d').date()
+    diff = date_upper-date_lower
+    num_days = diff.days
+
+    return {
+        'query': {
+            'filtered': {
+                'filter': {
+                    'bool': {
+                        'must': [
+                            {
+                                'range': {
+                                    'paper_dc_date': {
+                                        'gte': date_range['lower'],
+                                        'lte': date_range['upper']
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                },
+                'query': {
+                    'match_all': {}
+                }
+            }
+        },
+        'aggs': {
+            agg_name: {
+                'terms': {
+                    'field': 'paper_dc_date',
+                    'size': num_days
+                }
+            }
+        },
+        'size': 0
+    }
+
+
 def single_document_word_cloud(idx, typ, doc_id):
     """Return data required to draw a word cloud for a single document.
 
@@ -322,3 +365,13 @@ def get_document_ids(idx, typ, query, date_range, dist=[], art_types=[]):
             get_more_docs = False
 
     return doc_ids
+
+
+def day_statistics(idx, typ, date_range, agg_name):
+    q = create_day_statistics_query(date_range, agg_name)
+
+    results = _es().search(index=idx, doc_type=typ, body=q, size=0)
+
+    if 'took' in results:
+        return results
+    return None
