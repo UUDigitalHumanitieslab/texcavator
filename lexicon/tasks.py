@@ -32,7 +32,6 @@ tasks:
 		extract document metadata -> Django MySQL
 	addResolverDocumentToXtas( docID, lexiconID )
 		obtain document OCR XML fom KB resolver, and store in xTAS
-	storeSRUResultsCount( date )
 """
 
 import os
@@ -576,67 +575,6 @@ def addResolverDocumentToXtas( datastore, docID, lexiconID ):
 # 		</srw:recordData>
 # 		<srw:recordPosition>0</srw:recordPosition>
 # 	</srw:record>
-
-
-
-#@task( rate_limit = "10/s" )
-@task
-def storeSRUResultsCount( date ):
-	"""\
-	Store the article count for this date, i.e. any article. 
-	"""
-	global logger
-	if celery_version_maj < 3:
-		logger = storeSRUResultsCount.get_logger()
-#	print >> stderr, "tasks.py/storeSRUResultsCount()"
-
-#	query = 'dc.date=%d%02d%02d' % ( date.year, date.month, date.day )	# error in response XML ?!
-	date_str = "%d%02d%02d" % ( date.year, date.month, date.day )
-	query = "(dc.date <= %s AND dc.date >= %s)" % ( date_str, date_str )
-
-	msg = "Getting SRU results count for query: %s" % query
-	logger.info( msg )
-	if settings.DEBUG == True:
-		print >> stderr, msg
-
-	from lxml import etree
-	from services.views import proxyResponse
-	from socket import error, herror, gaierror
-
-	# Set defaults for SRU search options
-	data = {'operation': 'searchRetrieve', 'version': '1.2', 'recordSchema':'ddd',
-			'x-collection': 'DDD_artikel', 'x-fields': 'abstract'}
-	data['query'] = query
-	data['startRecord'] = 1
-	data['maximumRecords'] = 1
-
-	msg = "KB SRU request: %s" % data[ 'query' ]
-	logger.info( msg )
-	if settings.DEBUG == True:
-		print >> stderr, msg
-
-	# Get the proxied httplib HTTPResponse
-	try:
-		result = proxyResponse('GET', 'jsru.kb.nl', 80, 'sru/sru.pl', data)
-	except (error, herror, gaierror), exc:
-		return getSRUResultsCount.retry( exc = exc )
-	
-	doc = etree.fromstring( result.read() )		# parse xml string to etree object
-	numberOfRecords = int( doc.find( ".//{%s}numberOfRecords" % SRW_NS ).text )
-	
-	from django.db import DatabaseError
-	from lexicon.models import DayStatistic
-	try:
-		dayStatistic = DayStatistic.objects.create(date=date, count=numberOfRecords)
-	except DatabaseError, exc:
-		msg = "Database Error: %s, retrying." % exc
-		logger.error( msg )
-		if settings.DEBUG == True:
-			print >> stderr, msg
-		return storeSRUResultsCount.retry( exc = exc )
-	
-	return numberOfRecords
-
 
 """
 @task
