@@ -409,27 +409,6 @@ def proxy( request ):
             ctype = 'application/json; charset=UTF-8'
             return HttpResponse( json_list, content_type = ctype )
 
-
-    elif len( request_path ) > 3 and request_path[ 2 ] == u'kb':
-        if request_path[ 3 ] == u'resolver':
-            return retrieve_kb_resolver( request )
-            """
-            return retrieve_kb_resolver( request, data )
-            host = 'resolver.kb.nl'
-            port = 80
-            path = 'resolve'
-            logger.debug( 'KB Resolver request: %s', request.META[ "QUERY_STRING" ], extra = extra )
-
-            # update the data to send with the data from the original request
-            data.update( request.REQUEST )
-
-            if settings.DEBUG == True:
-                print >> stderr, "KB resolver request:\ndata:", data
-
-            # Return a Django HttpResponse based on a proxied httplib HTTPResponse
-            return buildResponse( proxyResponse( request.method, host, port, path, data ) )
-            """
-
     elif len( request_path ) > 3 and request_path[ 2 ] == u'scan':
         return download_scan_image( request )
 

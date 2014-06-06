@@ -24,7 +24,7 @@ urlpatterns = patterns( 'services.views',
 
 	url( r'cloud/$',          'cloud' ),
 
-	url( r'kb/',               'proxy' ),
+	url( r'kb/resolver/$', 'retrieve_kb_resolver'),
 	url( r'logger/$',          'proxy' ),
 	url( r'retrieve/',         'proxy' ),
 	url( r'search/$',          'search' ),
