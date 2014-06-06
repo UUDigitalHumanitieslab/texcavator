@@ -193,7 +193,7 @@ def cloud( request ):
         # get_search_parameters.
         coll = request.REQUEST.get('collections', settings.ES_INDEX)
 
-        result = multiple_document_word_cloud(params.get('collection'), 
+        result = multiple_document_word_cloud(coll, 
                                               settings.ES_DOCTYPE, 
                                               query, 
                                               params.get('dates'),
