@@ -150,7 +150,11 @@ def doc_count( request ):
 def cloud( request ):
     if settings.DEBUG:
         print >> stderr, "cloud()"
+    
+    result = None
 
+    params = get_search_parameters(request.REQUEST)
+    
     ids = request.REQUEST.get('ids')
     
     # Cloud by ids
@@ -165,20 +169,22 @@ def cloud( request ):
             return HttpResponse(json.dumps(t_vector), content_type = ctype)
         else:
             # Word cloud for multiple ids
-            # Is this used at all?
-            msg = "muliple ids; functionality not yet implemented";
-            return json_response_message('error', msg)
-
-    lexicon_id = request.REQUEST.get('lexiconID')
+            result = multiple_document_word_cloud(params.get('collection'), 
+                                                  'doc', 
+                                                  params.get('query'), 
+                                                  params.get('dates'),
+                                                  params.get('distributions'),
+                                                  params.get('article_types'),
+                                                  ids)
 
     # Cloud by lexiconID
+    lexicon_id = request.REQUEST.get('lexiconID')
+
     if lexicon_id:
         query, response = get_query(lexicon_id)
 
         if not query:
             return response
-
-        params = get_search_parameters(request.REQUEST)
 
         # for some reason, the collection to be searched is stored in parameter
         # 'collections' (with s added) instead of 'collection' as expected by 
@@ -192,13 +198,11 @@ def cloud( request ):
                                               params.get('distributions'),
                                               params.get('article_types'))
 
-        if settings.DEBUG:
-            print >> stderr, result
-
-        ctype = 'application/json; charset=UTF-8'
-        return HttpResponse(json.dumps(result), content_type = ctype)
-
-    return json_response_message('error', 'reached end of new code')
+    if not result:
+        return json_response_message('error', 'No word cloud result generated.')
+    
+    ctype = 'application/json; charset=UTF-8'
+    return HttpResponse(json.dumps(result), content_type = ctype)
 
     ##########################################################################
     # Old code starts here
