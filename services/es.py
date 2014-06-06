@@ -152,29 +152,6 @@ def create_ids_query(ids):
     return query
 
 
-def create_word_cloud_query(query, date_range, dist, art_types, agg_name,
-                            num_words=100):
-    """Create elasticsearch aggregation query from input string.
-
-    Returns a dict that represents the query in the elasticsearch query DSL.
-    """
-
-    q = create_query(query, date_range, dist, art_types)
-
-    agg = {
-        agg_name: {
-            'terms': {
-                'field': _AGG_FIELD,
-                'size': num_words
-            }
-        }
-    }
-
-    q['aggs'] = agg
-
-    return q
-
-
 def create_day_statistics_query(date_range, agg_name):
     """Create elasticsearch aggregation query to gather day statistics for the
     given date range.
@@ -306,8 +283,8 @@ def multiple_document_word_cloud(idx, typ, query, date_range, dist, art_types,
 
     # word cloud based on query
     if query:
-        q = create_word_cloud_query(query, date_range, dist, art_types,
-                                    agg_name)
+        q = create_query(query, date_range, dist, art_types)
+        q['aggs'] = word_cloud_aggregation(agg_name)
     # word cloud based on document ids
     elif not query and len(ids) > 0:
         q = create_ids_query(ids)
