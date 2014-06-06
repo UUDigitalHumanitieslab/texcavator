@@ -69,7 +69,7 @@ def search( request ):
     params = get_search_parameters(request.REQUEST)
     
     result = do_search(settings.ES_INDEX_KONBIB,
-                       "doc",
+                       settings.ES_INDEX_DOCTYPE_KONBIB,
                        params['query'],
                        params['start']-1, # Zero based counting
                        params['result_size'],
@@ -130,7 +130,7 @@ def doc_count( request ):
     params = get_search_parameters(request.REQUEST)
     
     result = count_search_results(params['collection'],
-                                  'doc',
+                                  settings.ES_DOCTYPE,
                                   query,
                                   params['dates'],
                                   params['distributions'],
@@ -163,14 +163,16 @@ def cloud( request ):
 
         if len(ids) == 1:
             # Word cloud for single document
-            t_vector = single_document_word_cloud('kb_sample', 'doc', ids[0])
+            t_vector = single_document_word_cloud(settings.ES_INDEX, 
+                                                  settings.ES_DOCTYPE,
+                                                  ids[0])
 
             ctype = 'application/json; charset=UTF-8'
             return HttpResponse(json.dumps(t_vector), content_type = ctype)
         else:
             # Word cloud for multiple ids
             result = multiple_document_word_cloud(params.get('collection'), 
-                                                  'doc', 
+                                                  settings.ES_DOCTYPE, 
                                                   params.get('query'), 
                                                   params.get('dates'),
                                                   params.get('distributions'),
@@ -189,10 +191,10 @@ def cloud( request ):
         # for some reason, the collection to be searched is stored in parameter
         # 'collections' (with s added) instead of 'collection' as expected by 
         # get_search_parameters.
-        coll = request.REQUEST.get('collections', 'kb_sample')
+        coll = request.REQUEST.get('collections', settings.ES_INDEX)
 
         result = multiple_document_word_cloud(params.get('collection'), 
-                                              'doc', 
+                                              settings.ES_DOCTYPE, 
                                               query, 
                                               params.get('dates'),
                                               params.get('distributions'),

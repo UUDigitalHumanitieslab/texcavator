@@ -2,12 +2,11 @@
 """Elasticsearch functionality"""
 
 
+from django.conf import settings
+
 import json
 from datetime import datetime
 from elasticsearch import Elasticsearch
-
-from texcavator.settings import ELASTICSEARCH_HOST, ELASTICSEARCH_PORT, \
-    TEXCAVATOR_DATE_RANGE
 
 _ES_RETURN_FIELDS = ('article_dc_title',
                      'paper_dcterms_temporal',
@@ -31,7 +30,8 @@ _AGG_FIELD = 'text'
 
 
 def _es():
-    return Elasticsearch(ELASTICSEARCH_HOST + ":" + str(ELASTICSEARCH_PORT))
+    return Elasticsearch(settings.ELASTICSEARCH_HOST + ":" + \
+                         str(settings.ELASTICSEARCH_PORT))
 
 
 def do_search(idx, typ, query, start, num, date_range, dist, art_types):
@@ -141,7 +141,7 @@ def create_ids_query(ids):
             'filtered': {
                 'filter': {
                     'ids': {
-                        'type': 'doc',
+                        'type': settings.ES_DOCTYPE,
                         'values': ids
                     }
                 }
@@ -322,7 +322,7 @@ def get_search_parameters(req_dict):
 
     result_size = int(req_dict.get('maximumRecords', 20))
 
-    date_range_str = req_dict.get('dateRange', TEXCAVATOR_DATE_RANGE)
+    date_range_str = req_dict.get('dateRange', settings.TEXCAVATOR_DATE_RANGE)
     dates = daterange2dates(date_range_str)
 
     distributions = []
@@ -337,7 +337,7 @@ def get_search_parameters(req_dict):
         if not use_type:
             article_types.append(typ)
 
-    collection = req_dict.get('collection', 'kb_sample')
+    collection = req_dict.get('collection', settings.ES_INDEX)
 
     return {
         'query': query_str,
@@ -358,7 +358,7 @@ def daterange2dates(date_range_str):
     """
     dates_str = date_range_str.split(',')
     if not len(dates_str) == 2:
-        return daterange2dates(TEXCAVATOR_DATE_RANGE)
+        return daterange2dates(settings.TEXCAVATOR_DATE_RANGE)
 
     dates = [str(datetime.strptime(date, '%Y%m%d').date())
              for date in dates_str]

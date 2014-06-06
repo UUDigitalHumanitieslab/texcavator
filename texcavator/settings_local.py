@@ -75,6 +75,9 @@ ES_INDEX_KONBIB    = "kb_sample"
 ES_INDEX_STABI     = "stabi"
 ES_INDEX_DOCTYPE_KONBIB = "doc"
 ES_INDEX_DOCTYPE_STABI  = "doc"
+ES_INDEX = 'kb_sample'
+ES_DOCTYPE = 'doc'
+
 
 # Notice: for retrieving (not storing!) documents, 
 # sometimes DSTORE_KBRESOLVER is used inside the code

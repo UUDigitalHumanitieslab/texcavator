@@ -46,7 +46,10 @@ class Command(BaseCommand):
 
             print year
 
-            results = day_statistics('kb_sample', 'doc', date_range, agg_name)
+            results = day_statistics(settings.ES_INDEX_KONBIB,
+                                     settings.ES_INDEX_DOCTYPE_KONBIB,
+                                     date_range,
+                                     agg_name)
 
             if results:
                 # save results to database
