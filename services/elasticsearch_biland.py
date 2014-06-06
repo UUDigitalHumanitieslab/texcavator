@@ -41,6 +41,9 @@ from services.cql2es import cql2es_error, callperl
 from services.request import request2article_types, request2article_distrib, request2parms, is_literal
 from services.xtas import xtas_add_tags
 
+from es import get_document_ids, daterange2dates
+from lexicon.utils import get_query
+
 ES_CHUNK_SIZE = 2000
 
 
@@ -199,118 +202,17 @@ def query2docidsdate( lexicon_id, collection, date_begin, date_end ):
 	if settings.DEBUG == True:
 		print >> stderr, "query2docidsdate()", collection
 
-	doc_ids_list = []
+	query, response = get_query(lexicon_id)
 
-	es_path = "/_search/"
-	es_url, cql_query = es_queryid2esurl( lexicon_id, collection, es_path )
+	date_range = {
+        'lower': date_begin,
+        'upper': date_end
+	}
 
-	cql_query += " AND (paper_dc_date >= " + date_begin + " AND paper_dc_date <= " + date_end + ")"
+	doc_ids_list = get_document_ids(collection, 'doc', query, date_range)
 
-	# translate translate CQL -> ES
-	literal = is_literal( cql_query )
-	try:
-		es_query_str = callperl( cql_query, literal )	# call Perl: CQL -> ES JSON
-	except:
-		type, value, tb = exc_info()
-		return cql2es_error( value, cql_query )
-
-	start_rec =    0			# ES start record: default =  0 (KB default = 1)
-	count_rec = ES_CHUNK_SIZE	# ES default chunk count = 10, BiLand KB retrieve was 20
-	doc_ids_list = []
-	nchunk = 0					# loop in chunks
-
-	fields = [ "_id", "paper_dc_date" ]		# only need the doc ids + their dates
-	while True:
-		params = \
-		{
-			'from'   : start_rec,
-			'size'   : count_rec,
-			"fields" : ",".join( fields ),
-			'source' : es_query_str
-		}
-
-		try:
-			response = requests.get( es_url, params = params )
-		except:
-			if settings.DEBUG == True:
-				print >> stderr, "url: %s" % es_url
-				print >> stderr, "params: %s" % params
-
-			type, value, tb = exc_info()
-			msg = "ElasticSearch request failed: %s" % value
-			if settings.DEBUG == True:
-				print >> stderr, msg
-
-			resp_dict =  { "status" : "FAILURE", "msg" : msg }
-			json_list = json.dumps( resp_dict )
-			ctype = 'application/json; charset=UTF-8'
-			return HttpResponse( json_list, content_type = ctype )
-
-		if settings.DEBUG == True:
-			print >> stderr, "chunk: %d" % nchunk
-		#	print >> stderr, response.content
-			print >> stderr, "url: %s" % es_url
-			print >> stderr, "params: %s" % params
-
-		es_dict = json.loads( response.content )
-
-	#	if settings.DEBUG == True:
-	#		print >> stderr, "es_dict:", es_dict
-	#	for key in es_dict:
-	#		print >> stderr, key
-
-		took      = es_dict[ "took" ]
-		timed_out = es_dict[ "timed_out" ]
-		_shards   = es_dict[ "_shards" ]
-		hits      = es_dict[ "hits" ]
-
-		_shards_total      = _shards[ "total" ]
-		_shards_successful = _shards[ "successful" ]
-		_shards_failed     = _shards[ "failed" ]
-
-		hits_total     = hits[ "total" ]
-	#	hits_max_score = hits[ "max_score" ]
-		hits_list      = hits[ "hits" ]
-
-		if settings.DEBUG == True:
-			print >> stderr, "took: %d" % took
-			print >> stderr, "timed_out: %s" % timed_out
-
-			print >> stderr, "_shards_total: %d" % _shards_total
-			print >> stderr, "_shards_successful: %d" % _shards_successful
-			print >> stderr, "_shards_failed: %d" % _shards_failed
-
-			print >> stderr, "hits_total: %d" % hits_total
-			print >> stderr, "hits_list: %d" % len( hits_list )
-
-		for h in range( len( hits_list ) ):
-			hit = hits_list[ h ]
-		#	print >> stderr, hit
-
-		#	_index  = hit[ "_index" ]
-		#	_type   = hit[ "_type" ]
-			_id     = hit[ "_id" ]
-		#	if settings.DEBUG == True:
-		#		print >> stderr, "_id: %s" % _id
-
-		#	_score  = hit[ "_score" ]
-		#	_source = hit[ "_source" ]
-
-			date_str = hit[ "fields" ][ "paper_dc_date" ]
-		#	if settings.DEBUG == True:
-		#		print >> stderr, "paper_dc_date: %s" % date_str
-
-			date_parts = date_str.split( '-' )
-			_date = date( year = int( date_parts[ 0 ] ), month = int( date_parts[ 1 ] ), day = int( date_parts[ 2 ] ) )
-
-			id_date = { "identifier" : _id, "date" : _date }
-			doc_ids_list.append( id_date )
-
-		if len( hits_list ) < count_rec:			# got less than we asked
-			break
-		else:
-			start_rec += count_rec
-			nchunk += 1
+	if settings.DEBUG:
+	    print 'doc_ids_list:', doc_ids_list
 
 	return doc_ids_list
 

@@ -1,99 +1,64 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
+"""Gather statistics of the total number of documents per day and put them in
+the database.
 """
---------------------------------------------------------------------------------
-Author:		Daan Odijk, Fons Laan, ILPS-ISLA, University of Amsterdam
-Project:	BiLand
-Name:		lexicon/management/commands/gatherstatistics.py
-Version:	0.22
-Goal:		Gathers statistics for the total amount of documents from begindate till enddate for every day.
-			The document count are taken from the KB SRU
-			 -> change this into our own ES
-			Empty the db table before starting
-Backup:		$ mysqldump --verbose --user=<usr> --password=<pwd> biland lexicon_daystatistic > lexicon_daystatistic-<date>.sql
-Restore:	$ mysql biland --user=<usr> --password=<pwd> < lexicon_daystatistic-<date>.sql
+from datetime import datetime
 
-			old select count(*) from lexicon_daystatistic; -> 138043
-			new select count(*) from lexicon_daystatistic; -> 138061		6.1 MiB 2013.09.11
-
-DO-%%-%%%-2012: Created
-FL-11-Sep-2013: Changed
-"""
-
-import sys
-from datetime import datetime, timedelta
-from time import sleep
-
-from celery.task.sets import TaskSet
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
+from django.db import DatabaseError
 from django.conf import settings
 
 from lexicon.models import DayStatistic
-from lexicon.tasks import storeSRUResultsCount
+from services.es import daterange2dates, day_statistics
 
 
 class Command(BaseCommand):
-    args = '<begindate enddate>'
-    help = 'Gathers statistics for the total amount of documents from begindate till enddate for every day.'
+    args = '<year2 year2>'
+    help = 'Gathers statistics for the total amount of documents from ' \
+           'year1 until year2 for every day.'
 
     def handle(self, *args, **options):
-		begin_num = settings.SRU_DATE_LIMITS_KBALL[ 0 ]
-		end_num   = settings.SRU_DATE_LIMITS_KBALL[ 1 ]
-		begin = datetime.strptime( str( begin_num ), '%Y%m%d' ).date()
-		end   = datetime.strptime( str( end_num ),   '%Y%m%d' ).date()
+        print 'Emptying table...'
+        DayStatistic.objects.all().delete()
 
-		if len( args ) > 0:
-			begin = datetime.strptime( args[ 0 ], '%Y%m%d').date()
-		if len( args ) > 1:
-			end   = datetime.strptime( args[ 1 ], '%Y%m%d').date()
+        date_range_str = settings.TEXCAVATOR_DATE_RANGE
+        dates = daterange2dates(date_range_str)
 
-		self.stdout.write( 'Gathering statistics from %s till %s.\n' % ( begin, end ) )
-	#	sys.exit( 0 )
+        year_lower = datetime.strptime(dates['lower'], '%Y-%m-%d').date().year
+        year_upper = datetime.strptime(dates['upper'], '%Y-%m-%d').date().year
 
-# 		tasks = [storeSRUResultsCount.subtask([begin])]
-# 		job = TaskSet(tasks=tasks)
-# 		result = job.apply_async()
-		tasks = []
-		date = begin
-		day = timedelta( days = 1 )
-		while date <= end:
-			tasks.append( storeSRUResultsCount.subtask( [ date ] ) )
-			date += day
-			if( len( tasks ) >= 25 ):
-				print "Scheduling %d tasks. " % len( tasks )
-				result = TaskSet( tasks = tasks ).apply_async()
-				tasks = []
-				while not result.ready():
-					sleep( 10 )
+        if len(args) > 0:
+            year_lower = int(args[0])
+        if len(args) > 1:
+            year_upper = int(args[1])
 
-		print "Scheduling %d tasks." % len( tasks )
-		job = TaskSet( tasks = tasks )
-		result = job.apply_async()
-		
-		print result.ready()  # have all subtasks completed?
-		print result.successful() # were all subtasks successful?
-		#print result.join()
-		
-		for task in result:
-			print task
+        print 'Gathering statistics from %s until %s.' \
+            % (year_lower, year_upper)
 
-		"""
-		Scheduling 13 tasks.
-		False
-		False
-		0
-		0
-		403
-		237
-		3
-		367
-		262
-		201
-		359
-		393
-		3
-		334
-		201
-		"""
-# [eof]
+        agg_name = 'daystatistic'
+
+        for year in range(year_lower, year_upper+1):
+            date_range = {
+                'lower': '{y}-01-01'.format(y=year),
+                'upper': '{y}-12-31'.format(y=year)
+            }
+
+            print year
+
+            results = day_statistics('kb_sample', 'doc', date_range, agg_name)
+
+            if results:
+                # save results to database
+                agg_data = results['aggregations'][agg_name]['buckets']
+
+                for date in agg_data:
+                    try:
+                        d = datetime.strptime(date['key_as_string'],
+                                              '%Y-%m-%dT00:00:00.000Z').date()
+                        DayStatistic.objects.create(date=str(d),
+                                                    count=date['doc_count'])
+                    except DatabaseError, exc:
+                        msg = "Database Error: %s" % exc
+                        if settings.DEBUG:
+                            print msg

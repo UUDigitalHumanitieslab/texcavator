@@ -133,6 +133,25 @@ def create_query(query_str, date_range, dist, art_types):
     return query
 
 
+def create_ids_query(ids):
+    """Create Elasticsearch query that returns documents based on a list of
+    ids."""
+    query = {
+        'query': {
+            'filtered': {
+                'filter': {
+                    'ids': {
+                        'type': 'doc',
+                        'values': ids
+                    }
+                }
+            }
+        }
+    }
+
+    return query
+
+
 def create_word_cloud_query(query, date_range, dist, art_types, agg_name,
                             num_words=100):
     """Create elasticsearch aggregation query from input string.
@@ -154,6 +173,64 @@ def create_word_cloud_query(query, date_range, dist, art_types, agg_name,
     q['aggs'] = agg
 
     return q
+
+
+def create_day_statistics_query(date_range, agg_name):
+    """Create elasticsearch aggregation query to gather day statistics for the
+    given date range.
+    """
+    date_lower = datetime.strptime(date_range['lower'], '%Y-%m-%d').date()
+    date_upper = datetime.strptime(date_range['upper'], '%Y-%m-%d').date()
+    diff = date_upper-date_lower
+    num_days = diff.days
+
+    return {
+        'query': {
+            'filtered': {
+                'filter': {
+                    'bool': {
+                        'must': [
+                            {
+                                'range': {
+                                    'paper_dc_date': {
+                                        'gte': date_range['lower'],
+                                        'lte': date_range['upper']
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                },
+                'query': {
+                    'match_all': {}
+                }
+            }
+        },
+        'aggs': {
+            agg_name: {
+                'terms': {
+                    'field': 'paper_dc_date',
+                    'size': num_days
+                }
+            }
+        },
+        'size': 0
+    }
+
+
+def word_cloud_aggregation(agg_name, num_words=100):
+    """Return aggragation part of terms (=word cloud) aggregation that can be
+    added to any Elasticsearch query."""
+    agg = {
+        agg_name: {
+            'terms': {
+                'field': _AGG_FIELD,
+                'size': num_words
+            }
+        }
+    }
+
+    return agg
 
 
 def single_document_word_cloud(idx, typ, doc_id):
@@ -215,14 +292,31 @@ def single_document_word_cloud(idx, typ, doc_id):
     }
 
 
-def multiple_document_word_cloud(idx, typ, query, date_range, dist, art_types):
+def multiple_document_word_cloud(idx, typ, query, date_range, dist, art_types,
+                                 ids=None):
     """Return data required to draw a word cloud for multiple documents (i.e.,
     the results of a search query.
 
     See single_document_word_cloud().
     """
+    if not ids:
+        ids = []
+
     agg_name = 'words'
-    q = create_word_cloud_query(query, date_range, dist, art_types, agg_name)
+
+    # word cloud based on query
+    if query:
+        q = create_word_cloud_query(query, date_range, dist, art_types,
+                                    agg_name)
+    # word cloud based on document ids
+    elif not query and len(ids) > 0:
+        q = create_ids_query(ids)
+        q['aggs'] = word_cloud_aggregation(agg_name)
+    else:
+        return {
+            'status': 'error',
+            'error': 'No valid query provided for word cloud generation.'
+        }
 
     aggr = _es().search(index=idx, doc_type=typ, body=q, size=0)
 
@@ -292,3 +386,43 @@ def daterange2dates(date_range_str):
     dates = [str(datetime.strptime(date, '%Y%m%d').date())
              for date in dates_str]
     return {'lower': min(dates), 'upper': max(dates)}
+
+
+def get_document_ids(idx, typ, query, date_range, dist=[], art_types=[]):
+    doc_ids = []
+
+    q = create_query(query, date_range, dist, art_types)
+
+    date_field = 'paper_dc_date'
+    fields = [date_field]
+    get_more_docs = True
+    start = 0
+    num = 2500
+
+    while get_more_docs:
+        results = _es().search(index=idx, doc_type=typ, body=q, fields=fields,
+                               from_=start, size=num)
+        for result in results['hits']['hits']:
+            doc_ids.append(
+                {
+                    'identifier': result['_id'],
+                    'date': datetime.strptime(result['fields'][date_field][0],
+                                              '%Y-%m-%d').date()
+                })
+
+        start = start + num
+
+        if len(results['hits']['hits']) < num:
+            get_more_docs = False
+
+    return doc_ids
+
+
+def day_statistics(idx, typ, date_range, agg_name):
+    q = create_day_statistics_query(date_range, agg_name)
+
+    results = _es().search(index=idx, doc_type=typ, body=q, size=0)
+
+    if 'took' in results:
+        return results
+    return None

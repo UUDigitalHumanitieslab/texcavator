@@ -817,13 +817,12 @@ function burstCloud( params )
 	params = getCloudParameters( params );		// add user-changeable parameters from config
 //	console.log( params );
 
-	xtas.postWaiting(
-		"cloud/", {
-			content: params,
-			handleAs: "text"
-		},
-		function( resp_text )
-		{
+    dojo.xhrGet({
+        url: "services/cloud",
+        content: params,
+        handleAs: 'text',
+        load: function(resp_text){
+
 			resp_json = dojo.fromJson( resp_text )
 		//	console.log( resp_json );
 			status = resp_json.status;
@@ -844,9 +843,13 @@ function burstCloud( params )
 					placeCloudInTarget( "burst", resp_json, 'cloud' );
 				}
 			}
-			return resp_text;
-		}
-	);
+		
+        },
+        error: function(error){
+            console.error(err);
+            return err;
+        }
+    });
 } // burstCloud()
 
 
