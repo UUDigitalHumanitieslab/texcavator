@@ -410,40 +410,6 @@ def proxy( request ):
             return HttpResponse( json_list, content_type = ctype )
 
 
-    elif len(request_path) > 2 and request_path[2] == u'search':
-        if settings.DEBUG == True:
-            print >> stderr, "Search request", request.REQUEST
-
-        try:
-            datastore = request.REQUEST[ "datastore" ]
-        except:
-            return HttpResponseNotFound()
-
-        if settings.DEBUG == True:
-            print >> stderr, "datastore:", datastore
-
-        try:
-            collection = request.REQUEST[ "collection" ]
-            if collection == settings.ES_INDEX_KONBIB:  # Add the KB document type[s] selection to the query
-                type_query = request2article_types( request )
-            else:
-                type_query = None
-        except:
-            collection = None
-            type_query = None
-
-        if datastore == "DSTORE_MONGODB":
-        #   data = {}
-        #   data[ 'key' ] = settings.XTAS_API_KEY           # Add the key for xTas to this query
-            result = search_kb_sru( request, type_query )   # WHY KB SRU instead of our own MONGODB ??
-        elif datastore == "DSTORE_ELASTICSEARCH":
-            result = search_xtas_elasticsearch( request, type_query )
-        else:
-            result = HttpResponseNotFound()
-
-        return result
-
-
     elif len( request_path ) > 3 and request_path[ 2 ] == u'kb':
         if request_path[ 3 ] == u'resolver':
             return retrieve_kb_resolver( request )
