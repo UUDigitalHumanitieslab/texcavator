@@ -670,4 +670,39 @@ def test_cql2es( request ):
     ctype = 'application/json; charset=UTF-8'
     return HttpResponse( json_list, content_type = ctype )
 
+
+def retrieve_kb_resolver( request ):
+	extra = request2extra4log( request )
+
+	host = 'resolver.kb.nl'
+	port = 80
+	path = 'resolve'
+	logger.debug( 'retrieve_kb_resolver: %s', request.META[ "QUERY_STRING" ], extra = extra )
+
+	kb_resolver_url = "http://" + host + ':' + str( port ) + '/' + path + '?urn=' + request.REQUEST[ "id" ]
+	try:
+		response = requests.get( kb_resolver_url )
+	except:
+		if settings.DEBUG == True:
+			print >> stderr, "url: %s" % kb_resolver_url
+		type, value, tb = exc_info()
+		msg = "KB Resolver request failed: %s" % value.message
+		if settings.DEBUG == True:
+			print >> stderr, msg
+		resp_dict = { "status" : "FAILURE", "msg" : msg }
+		json_list = json.dumps( resp_dict )
+		ctype = 'application/json; charset=UTF-8'
+		return HttpResponse( json_list, content_type = ctype )
+
+	resp_dict = \
+	{
+		"status" : "SUCCESS",
+		"text"   : response.content
+	}
+
+	json_list = json.dumps( resp_dict )
+	ctype = 'application/json; charset=UTF-8'
+	return HttpResponse( json_list, content_type = ctype )
+
+
 # [eof]
