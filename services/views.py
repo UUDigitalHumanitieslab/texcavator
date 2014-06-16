@@ -68,20 +68,23 @@ from services.moses import moses
 def search( request ):
     params = get_search_parameters(request.REQUEST)
     
-    result = do_search(settings.ES_INDEX_KONBIB,
-                       settings.ES_INDEX_DOCTYPE_KONBIB,
-                       params['query'],
-                       params['start']-1, # Zero based counting
-                       params['result_size'],
-                       params['dates'],
-                       params['distributions'],
-                       params['article_types'])
+    valid_q, result = do_search(settings.ES_INDEX_KONBIB,
+                                settings.ES_INDEX_DOCTYPE_KONBIB,
+                                params['query'],
+                                params['start']-1, # Zero based counting
+                                params['result_size'],
+                                params['dates'],
+                                params['distributions'],
+                                params['article_types'])
+    if valid_q:
+        html_str = elasticsearch_htmlresp(settings.ES_INDEX_KONBIB, 
+                                          params['start'], 
+                                          params['result_size'],
+                                          result)
+        return HttpResponse(html_str)
+    else:
+        return json_response_message('error', result)
 
-    html_str = elasticsearch_htmlresp(settings.ES_INDEX_KONBIB, 
-                                      params['start'], 
-                                      params['result_size'],
-                                      result)
-    return HttpResponse(html_str)
 
 def request2extra4log( request ):
     # pop conflicting keys

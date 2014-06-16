@@ -7,6 +7,7 @@ from django.conf import settings
 import json
 from datetime import datetime
 from elasticsearch import Elasticsearch
+from elasticsearch.client import indices
 
 _ES_RETURN_FIELDS = ('article_dc_title',
                      'paper_dcterms_temporal',
@@ -58,13 +59,24 @@ def do_search(idx, typ, query, start, num, date_range, dist, art_types):
 
     Returns
     -------
+    validity : boolean
+        A boolean indicating whether the input query string is valid. 
     results : list
-        A list of elasticsearch results.
+        A list of elasticsearch results or a message explaining why the input
+        query string is invalid.
     """
     q = create_query(query, date_range, dist, art_types)
 
-    return _es().search(index=idx, doc_type=typ, body=q,
-                        fields=_ES_RETURN_FIELDS, from_=start, size=num)
+    valid_q = indices.IndicesClient(_es()).validate_query(index=idx, 
+                                                          doc_type=typ, 
+                                                          body=q,
+                                                          explain=True)
+
+    if valid_q.get('valid'):
+        return True, _es().search(index=idx, doc_type=typ, body=q,
+                                  fields=_ES_RETURN_FIELDS, from_=start,
+                                  size=num)
+    return False, valid_q.get('explanations')[0].get('error')
 
 
 def count_search_results(idx, typ, query, date_range, dist, art_types):
