@@ -80,8 +80,8 @@ def create_query(query_str, date_range, dist, art_types):
 
     Returns a dict that represents the query in the elasticsearch query DSL.
 
-    At the moment, the literal query string is inserted in the elasticsearch
-    query. Functionality to handle more complex queries needs to be added.
+    This method accepts boolean queries in the Elasticsearch query string
+    syntax (see Elasticsearch reference).
 
     Returns dict with an ES DSL query
     """
@@ -99,16 +99,8 @@ def create_query(query_str, date_range, dist, art_types):
         'query': {
             'filtered': {
                 'query': {
-                    'bool': {
-                        'must': [
-                            {
-                                'match': {
-                                    '_all': {
-                                        'query': query_str
-                                    }
-                                }
-                            }
-                        ]
+                    'query_string': {
+                        'query': query_str
                     }
                 },
                 'filter': {
