@@ -30,7 +30,7 @@ _AGG_FIELD = 'text'
 
 
 def _es():
-    return Elasticsearch(settings.ELASTICSEARCH_HOST + ":" + \
+    return Elasticsearch(settings.ELASTICSEARCH_HOST + ":" +
                          str(settings.ELASTICSEARCH_PORT))
 
 
@@ -310,7 +310,8 @@ def multiple_document_word_cloud(idx, typ, query, date_range, dist, art_types,
     return {
         'max_count': max_count,
         'result': result,
-        'status': 'ok'
+        'status': 'ok',
+        'took': aggr.get('took', 0)
     }
 
 
