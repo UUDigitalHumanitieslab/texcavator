@@ -25,8 +25,8 @@ _KB_ARTICLE_TYPE_VALUES = {'st_article': 'artikel',
                            'st_illust': 'illustratie met onderschrift',
                            'st_family': 'familiebericht'}
 
-_DOCUMENT_TEXT_FIELD = 'text'
-_AGG_FIELD = 'text'
+_DOCUMENT_TEXT_FIELD = 'text_content'
+_AGG_FIELD = _DOCUMENT_TEXT_FIELD
 
 
 def _es():
