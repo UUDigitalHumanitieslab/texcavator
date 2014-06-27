@@ -43,6 +43,7 @@ from datetime import datetime
 from django.conf import settings
 from django.http import HttpResponse, HttpResponseNotFound
 from django.utils.http import urlencode
+from django.utils.html import escape
 from django.views.decorators.csrf import csrf_exempt
 
 from es import get_search_parameters, do_search, count_search_results, \
@@ -68,20 +69,32 @@ from services.moses import moses
 def search( request ):
     params = get_search_parameters(request.REQUEST)
     
-    result = do_search(settings.ES_INDEX_KONBIB,
-                       settings.ES_INDEX_DOCTYPE_KONBIB,
-                       params['query'],
-                       params['start']-1, # Zero based counting
-                       params['result_size'],
-                       params['dates'],
-                       params['distributions'],
-                       params['article_types'])
+    valid_q, result = do_search(settings.ES_INDEX_KONBIB,
+                                settings.ES_INDEX_DOCTYPE_KONBIB,
+                                params['query'],
+                                params['start']-1, # Zero based counting
+                                params['result_size'],
+                                params['dates'],
+                                params['distributions'],
+                                params['article_types'])
+    if valid_q:
+        html_str = elasticsearch_htmlresp(settings.ES_INDEX_KONBIB, 
+                                          params['start'], 
+                                          params['result_size'],
+                                          result)
+        resp = {
+                'status': 'ok',
+                'html': html_str
+               }
+        return HttpResponse(json.dumps(resp), 
+                            'application/json; charset=UTF-8')
+    else:
+        result = escape(result).replace('\n', '<br />')
+        msg = 'Unable to parse query "{q}"<br /><br />'. \
+            format(q=params['query'])
+        msg = msg + result.replace('\n', '<br />')
+        return json_response_message('error', msg)
 
-    html_str = elasticsearch_htmlresp(settings.ES_INDEX_KONBIB, 
-                                      params['start'], 
-                                      params['result_size'],
-                                      result)
-    return HttpResponse(html_str)
 
 def request2extra4log( request ):
     # pop conflicting keys

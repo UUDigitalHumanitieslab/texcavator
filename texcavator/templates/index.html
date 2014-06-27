@@ -375,9 +375,20 @@ function searchSubmit()
 	dojo.xhrGet({
 		form: dojo.byId( "search" ),					// query string
 		content: params,								// key:value pairs
-		handleAs: "text",								// data returned from the server
+		handleAs: "json",								// data returned from the server
 		load: function( data ) {
-			dojo.byId( "search-result" ).innerHTML = data;		// put html text in panel
+
+            if( data.status === "error" ){
+			    dojo.byId( "search-result" ).innerHTML = "";
+                console.error( data.msg );
+                var title = "Query invalid";
+                var buttons = { "OK": true };
+                genDialog( title, data.msg, buttons );
+                return;
+            } else {
+			    dojo.byId( "search-result" ).innerHTML = data.html;		// put html text in panel
+            }
+
 		},
 		error: function( err ) {
 			console.error( err );	// display the error
@@ -394,27 +405,13 @@ function researchSubmit( item )
 
 	accordionSelectChild( "searchPane" );
 
-	var params = getSearchParameters();		// get user-changeable parameters from config
-//	params[ "maximumRecords" ] = 20;		// the KBdefault is 20
 	var query = item[ "fields" ][ "query" ];
 	console.log( "query: " + query );
 	params[ "query" ] = query;
 	dojo.byId( "query" ).value = query;		// display query in Search textBox
 
-//	console.log( params );
+    searchSubmit();
 
-	// url from form: "{{ SUB_SITE }}services/search/"
-	dojo.xhrGet({
-		form: dojo.byId( "search" ),					// query string
-		content: params,								// key:value pairs
-		handleAs: "text",								// data returned from the server
-		load: function( data ) {
-			dojo.byId( "search-result" ).innerHTML = data;		// put html text in panel
-		},
-		error: function( err ) {
-			console.error( err );	// display the error
-		}
-	});
 } // researchSubmit()
 
 
