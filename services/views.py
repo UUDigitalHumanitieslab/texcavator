@@ -43,6 +43,7 @@ from datetime import datetime
 from django.conf import settings
 from django.http import HttpResponse, HttpResponseNotFound
 from django.utils.http import urlencode
+from django.utils.html import escape
 from django.views.decorators.csrf import csrf_exempt
 
 from es import get_search_parameters, do_search, count_search_results, \
@@ -81,9 +82,18 @@ def search( request ):
                                           params['start'], 
                                           params['result_size'],
                                           result)
-        return HttpResponse(html_str)
+        resp = {
+                'status': 'ok',
+                'html': html_str
+               }
+        return HttpResponse(json.dumps(resp), 
+                            'application/json; charset=UTF-8')
     else:
-        return json_response_message('error', result)
+        result = escape(result).replace('\n', '<br />')
+        msg = 'Unable to parse query "{q}"<br /><br />'. \
+            format(q=params['query'])
+        msg = msg + result.replace('\n', '<br />')
+        return json_response_message('error', msg)
 
 
 def request2extra4log( request ):
