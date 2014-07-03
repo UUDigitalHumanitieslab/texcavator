@@ -381,17 +381,6 @@ def proxy( request ):
             print >> stderr, "Export CSV request\n"
         return export_csv( request )
 
-    elif len(request_path) > 2 and request_path[2] == u'store':
-        if settings.DEBUG == True:
-            print >> stderr, "Store request", request.REQUEST
-
-        datastore = request.REQUEST[ "datastore" ]
-        if settings.DEBUG == True:
-            print >> stderr, "datastore:", datastore
-
-        if datastore == "DSTORE_MONGODB":
-            return store_xtas_mongodb( request)             # xTAS MongoDB
-
 
     elif len(request_path) > 2 and request_path[2] == u'retrieve':
         if settings.DEBUG == True:

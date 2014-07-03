@@ -28,7 +28,6 @@ urlpatterns = patterns( 'services.views',
 	url( r'retrieve/',         'proxy' ),
 	url( r'search/$',          'search' ),
 	url( r'scan/$',            'proxy' ),
-	url( r'store/',            'proxy' ),
 	url( r'cql2es/$',          'test_cql2es' ),
 	url( r'translate/$',       'moses' ),
 )
