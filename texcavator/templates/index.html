@@ -523,9 +523,7 @@ function nextResults( amount )
 			{
 				if( resp.status === "SUCCESS" )
 				{
-					if( store_mongodb == true )
-					{ storeRecordKB( record_id, resp.text, zipfile ); }			// and processRecord
-					else { processRecord ( record_id, resp.text, zipfile ); }
+					processRecord ( record_id, resp.text, zipfile ); 
 				}
 				else
 				{
@@ -539,45 +537,6 @@ function nextResults( amount )
 			error: function( err ) { console.error( err ); }
 		});
 	}
-
-
-
-	var storeRecordKB = function( record_id, ocr_text, zipfile )
-	{
-		console.log( "storeRecordKB: " + record_id );
-
-		var url = "{{ SUB_SITE }}services/store/doc/";
-
-		dojo.xhrPost({
-			url: url,
-			content: { 
-				"datastore"  : "DSTORE_MONGODB",
-				"collection" : XTAS_COLLECTION,		// default collection
-				"id"         : record_id,
-				"document"   : ocr_text
-			},
-			failOk: false,			// true: No dojo console error message
-			handleAs: "json",
-			load: function( resp )
-			{
-				if( resp.status !== "ok" )
-				{
-					console.error( resp );
-
-					var title = "Request failed";
-					var buttons = { "OK": true };
-					genDialog( title, resp.msg, buttons );
-					return;
-				}
-				else
-				{
-					processRecord ( record_id, resp.text, zipfile );
-				}
-			},
-			error: function( err ) { console.error( err ); }
-		});
-	}
-
 
 
 	var processRecord = function( record_id, ocr_text, zipfile )
