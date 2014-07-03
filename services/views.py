@@ -53,7 +53,6 @@ from es import get_search_parameters, do_search, count_search_results, \
 from texcavator.settings import TEXCAVATOR_DATE_RANGE
 from texcavator.views import get_server_info
 from texcavator.utils import json_response_message
-from services.analytics import analytics
 from services.celery import celery_check
 from lexicon.models import LexiconItem
 from lexicon.utils import get_query
@@ -364,13 +363,8 @@ def proxy( request ):
     request_path = request.path_info.split('/')
 
     # Handle requests for specific services
-    if len(request_path) > 2 and request_path[2] == u'analytics':
-        if settings.DEBUG == True:
-            print >> stderr, "Analytics request\n"
-            return analytics( request)
 
-
-    elif len(request_path) > 2 and request_path[2] == u'logger' and request.GET.has_key('message'):
+    if len(request_path) > 2 and request_path[2] == u'logger' and request.GET.has_key('message'):
         logger.debug( request.REQUEST['message'], extra = extra )
         return HttpResponse('OK')
 

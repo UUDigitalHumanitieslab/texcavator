@@ -18,7 +18,6 @@ from django.conf.urls import patterns, include, url
 urlpatterns = patterns( 'services.views',
 	url( r'doc_count/$',       'doc_count' ),
 
-	url( r'analytics/$',       'proxy' ),
 	url( r'celery/$',          'proxy' ),
 	url( r'export/$',          'proxy' ),
 
