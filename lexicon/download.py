@@ -59,7 +59,7 @@ from django.views.decorators.csrf import csrf_exempt
 from services.cql2es import cql2es_error, callperl
 from services.request import request2article_types, request2article_distrib, request2parms
 from texcavator.views import get_ext_server_info
-
+from services.es import do_search, daterange2dates
 
 def request2extra4log( request ):
 	# pop conflicting keys
@@ -163,11 +163,7 @@ def download_prepare( request ):
 #	except:
 #		literal = False
 
-	try:
-		es_query_str = callperl( query_str, literal )	# call Perl: CQL -> ES JSON
-	except:
-		type, value, tb = exc_info()
-		return cql2es_error( value )
+	es_query_str = query_str 
 
 	print >> stderr, "es_query_str:", es_query_str
 
@@ -227,42 +223,38 @@ def download_collect( req_dict, zip_basename, to_email, email_message ):
 	if settings.DEBUG == True: print >> stderr, "format", format
 
 	# Add the date range
-	query_str += " AND (paper_dc_date >= " + date_begin + " AND paper_dc_date <= " + date_end + ")"
+	#query_str += " AND (paper_dc_date >= " + date_begin + " AND paper_dc_date <= " + date_end + ")"
 
 	# Add the KB document type[s] selection to the query
-	doc_types = request2article_types( req_dict )
-	if settings.DEBUG == True: print >> stderr, "type_query", doc_types
-	if collection == settings.ES_INDEX_KONBIB and doc_types is not None:
-		query_str += doc_types
+	#doc_types = request2article_types( req_dict )
+	#if settings.DEBUG == True: print >> stderr, "type_query", doc_types
+	#if collection == settings.ES_INDEX_KONBIB and doc_types is not None:
+	#	query_str += doc_types
 
 	# Add the KB document distribution[s] selection to the query
-	distrib_types = request2article_distrib( req_dict )
-	if settings.DEBUG == True:
-		if not distrib_types:
-			print >> stderr, "distrib_query:", "None", collection
-		else:
-			print >> stderr, "distrib_query:", distrib_types.encode( "utf-8" ), collection
-	if collection == settings.ES_INDEX_KONBIB and distrib_types is not None:
-		query_str += distrib_types
+	#distrib_types = request2article_distrib( req_dict )
+	#if settings.DEBUG == True:
+	#	if not distrib_types:
+	#		print >> stderr, "distrib_query:", "None", collection
+	#	else:
+	#		print >> stderr, "distrib_query:", distrib_types.encode( "utf-8" ), collection
+	#if collection == settings.ES_INDEX_KONBIB and distrib_types is not None:
+	#	query_str += distrib_types
 
-	print >> stderr, query_str.encode( "utf-8" )
+	#print >> stderr, query_str.encode( "utf-8" )
 
-	try:
-		es_query_str = callperl( query_str, literal )	# call Perl: CQL -> ES JSON
-	except:
-		type, value, tb = exc_info()
-		return cql2es_error( value )
+	es_query_str = query_str 
 
 	msg = "es_query: %s" % es_query_str
 	logger.debug( msg, extra = extra )
-	if settings.DEBUG == True: print >> stderr, msg
+	#if settings.DEBUG == True: print >> stderr, msg
 
 	# just get the hit count
 	start_record = 0
 	chunk_1_size = 1
 	hits, resp_object = get_es_chunk( es_query_str, start_record, chunk_1_size )
 
-	if resp_object is not None:
+	if resp_object is not None: # overbodig, want er wordt altijd None gereturned
 		return resp_object
 
 	zip_basedir  = settings.QUERY_DATA_DOWNLOAD_PATH
@@ -480,49 +472,12 @@ def get_es_chunk( es_query_str, start_record, chunk_size ):
 	logger.debug( msg, extra = extra )
 	if settings.DEBUG == True: print >> stderr, msg
 
-	hits_list = None
-
-	# limit the response fields to what we need; prefix "_source." is superfluous
-	fields = \
-	[
-		"article_dc_title",
-		"paper_dcterms_temporal",
-		"paper_dcterms_spatial",
-		"paper_dc_title",
-		"paper_dc_date"
-	]
-
-	params = \
-	{
-		"from"   : start_record,		# ES start record: default =  0 (KB default = 1)
-		"size"   : chunk_size,			# ES default chunk count = 10, Biland assumes 20
-	#	"fields" : ",".join( fields ),	# supply as a string	# SKIPPING fields filter
-		"source" : es_query_str
-	}
-
-	es_baseurl = "http://" + settings.ELASTICSEARCH_HOST + ':' + str( settings.ELASTICSEARCH_PORT ) + '/'
-	es_url = es_baseurl + settings.ES_INDEX_KONBIB
-	es_url += "/_search/"
-
-	try:
-		response = requests.get( es_url, params = params )
-	except:
-		if settings.DEBUG == True:
-			print >> stderr, "url: %s" % es_url
-			print >> stderr, "params: %s" % params
-
-		type, value, tb = exc_info()
-		msg = "ElasticSearch request failed: %s" % value
-		if settings.DEBUG == True:
-			print >> stderr, msg
-		resp_dict = { "status" : "error", "msg" : msg }
-		json_list = json.dumps( resp_dict )
-		ctype = 'application/json; charset=UTF-8'
-		return hits_list, HttpResponse( json_list, content_type = ctype )
-
-	es_dict = json.loads( response.content )
+	validity, es_dict = do_search(settings.ES_INDEX, settings.ES_DOCTYPE, es_query_str,
+                                  start_record, chunk_size, daterange2dates(''), [], [], True)
 
 #	if settings.DEBUG == True: print >> stderr, es_dict
+	#if settings.DEBUG == True:
+	#	print >> stderr, "es response:", es_dict
 
 	took      = es_dict[ "took" ]
 	timed_out = es_dict[ "timed_out" ]
@@ -535,7 +490,7 @@ def get_es_chunk( es_query_str, start_record, chunk_size ):
 
 	hits_total     = hits[ "total" ]
 #	hits_max_score = hits[ "max_score" ]
-	hits_list      = hits[ "hits" ]
+	hits_list     = hits[ "hits" ]
 
 	if settings.DEBUG == True:
 		print >> stderr, "took: %d" % took

@@ -35,7 +35,8 @@ def _es():
                          str(settings.ELASTICSEARCH_PORT))
 
 
-def do_search(idx, typ, query, start, num, date_range, dist, art_types):
+def do_search(idx, typ, query, start, num, date_range, dist, art_types,
+              return_source=False):
     """Fetch all documents matching the query and return a list of
     elasticsearch results.
 
@@ -56,26 +57,36 @@ def do_search(idx, typ, query, start, num, date_range, dist, art_types):
         the _KB_DISTRIBUTION_VALUES dict).
     art_types : list of article types (entry values are specified by the keys
         of the _KB_ARTICLE_TYPE_VALUES dict.
+    return_source : boolean indicating whether the _source of ES documents
+        should be returned or a smaller selection of document fields. The
+        smaller set of document fields (stored in _ES_RETURN_FIELDS) is default
 
     Returns
     -------
     validity : boolean
-        A boolean indicating whether the input query string is valid. 
+        A boolean indicating whether the input query string is valid.
     results : list
         A list of elasticsearch results or a message explaining why the input
         query string is invalid.
     """
     q = create_query(query, date_range, dist, art_types)
 
-    valid_q = indices.IndicesClient(_es()).validate_query(index=idx, 
-                                                          doc_type=typ, 
+    valid_q = indices.IndicesClient(_es()).validate_query(index=idx,
+                                                          doc_type=typ,
                                                           body=q,
                                                           explain=True)
 
     if valid_q.get('valid'):
-        return True, _es().search(index=idx, doc_type=typ, body=q,
-                                  fields=_ES_RETURN_FIELDS, from_=start,
-                                  size=num)
+        if return_source:
+            # for each document return the _source field that contains all
+            # document fields (no fields parameter in the ES call)
+            return True, _es().search(index=idx, doc_type=typ, body=q,
+                                      from_=start, size=num)
+        else:
+            # for each document return the fields listed in_ES_RETURN_FIELDS
+            return True, _es().search(index=idx, doc_type=typ, body=q,
+                                      fields=_ES_RETURN_FIELDS, from_=start,
+                                      size=num)
     return False, valid_q.get('explanations')[0].get('error')
 
 
