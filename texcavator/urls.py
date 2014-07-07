@@ -27,7 +27,7 @@ urlpatterns += patterns( '',
 		'show_indexes': True
 	}),
 	
-	url( r'^$', 'texcavator.views.texcavator', name="index" ),
+	url( r'^$', 'texcavator.views.index', name="index" ),
 
 	url( r'^login/ajax/$', 'texcavator.views.loginajax' ),
 	
