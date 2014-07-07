@@ -112,9 +112,6 @@ QUERY_DATA_CHUNK_SIZE      = 100		# no. of documents from ES with 1 query
 QUERY_DATA_DELETE_DATA     = True		# delete query download data
 QUERY_DATA_EXPIRE_DAYS     = 1			# delete after one day
 
-# translation
-GOOGLE_TRANSLATE = True
-
 # user action logging
 ILPS_LOGGING = False				# if True, also uncomment code in base.html
 
@@ -140,8 +137,6 @@ if DEBUG == True:
 	print >> sys.stderr, "QUERY_DATA_CHUNK_SIZE:      %s" % QUERY_DATA_CHUNK_SIZE
 	print >> sys.stderr, "QUERY_DATA_DELETE_DATA:     %s" % QUERY_DATA_DELETE_DATA
 	print >> sys.stderr, "QUERY_DATA_EXPIRE_DAYS:     %s" % QUERY_DATA_EXPIRE_DAYS
-
-	print >> sys.stderr, "GOOGLE_TRANSLATE: %s" % GOOGLE_TRANSLATE
 
 	print >> sys.stderr, "ILPS_LOGGING:     %s" % ILPS_LOGGING
 

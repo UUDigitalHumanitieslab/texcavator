@@ -121,7 +121,6 @@ def texcavator( request ):
 		"QUERY_DATA_DOWNLOAD_ALLOW" : settings.QUERY_DATA_DOWNLOAD_ALLOW,
 
 		"ES_INDEX_KONBIB"  : settings.ES_INDEX_KONBIB,
-		"GOOGLE_TRANSLATE" : settings.GOOGLE_TRANSLATE,
 
 		"ILPS_LOGGING" : settings.ILPS_LOGGING
 	}
@@ -173,7 +172,6 @@ def index( request ):
 
 		"ES_INDEX_KONBIB"  : settings.ES_INDEX_KONBIB,
 		"ES_INDEX_STABI"   : settings.ES_INDEX_STABI,
-		"GOOGLE_TRANSLATE" : settings.GOOGLE_TRANSLATE,
 
 		"ILPS_LOGGING" : settings.ILPS_LOGGING
 	}
