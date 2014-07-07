@@ -17,7 +17,6 @@ function okCombine( comb_operator, query1Name, query2Name, querySaveName )
 function okEdit( querySaveName, querySaveQuery )
 function okCreate( querySaveName )
 function okDownload( query_title )
-function test_cql2es( query )
 */
 
 dojo.require( "dijit.form.Button" );
@@ -782,41 +781,6 @@ function okDownload( query_title )
 			var message = result[ "msg" ];
 			var buttons = { "OK": true, "Cancel": false };
 			answer = genDialog( title, message, buttons );
-		},
-		error: function( err ) { console.error( err ); return err; }
-	});
-}
-
-
-
-function test_cql2es( title, query  )
-{
-	console.log( "test_cql2es() |" + query + "|" );
-
-	var _title = title;
-	var _query = query;
-
-	dojo.xhrGet({
-		url: SUB_SITE + "services/cql2es",
-		content: { "query" : _query },
-		handleAs: "json",
-		load: function( result )
-		{
-			var status = result[ "status" ];
-			if( status === "ok" )
-			{
-				console.log( "saving: " + _title );
-				saveQuery( _title, _query );
-				return true;
-			}
-			else
-			{
-				var title = "CQL -> ElasticSearch";
-				var message = result[ "msg" ];
-				var buttons = { "OK": true, "Cancel": false };
-				answer = genDialog( title, message, buttons );
-				return false;
-			}
 		},
 		error: function( err ) { console.error( err ); return err; }
 	});
