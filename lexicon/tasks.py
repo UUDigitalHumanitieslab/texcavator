@@ -45,7 +45,6 @@ from celery.decorators import task
 from celery import __version__ as celery__version__
 
 #from BiLand.lexicon.download import get_es_chunk		# circular import problem?
-#from BiLand.services.cql2es import cql2es_error, callperl
 #from BiLand.services.request import request2article_types, request2parms
 #from BiLand.services.xtas import addtags_elasticsearch
 

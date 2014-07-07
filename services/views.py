@@ -17,7 +17,6 @@ def download_scan_image( request )
 def proxyResponse(method, host, port, path, data = {}, headers = {})
 def buildResponse(response, content = '')
 def applyXSLT( request, data, stylesheet )
-def cql2es( request )
 
 DO-%%-%%%-2011: Created
 FL-07-Feb-2013: No more default daterange
@@ -56,7 +55,6 @@ from texcavator.utils import json_response_message
 from services.celery import celery_check
 from lexicon.models import LexiconItem
 from lexicon.utils import get_query
-from services.cql2es import callperl, cql2es_error
 from services.elasticsearch_biland import es_doc_count, query2docids
 from services.elasticsearch_biland import search_xtas_elasticsearch, retrieve_xtas_elasticsearch
 from services.elasticsearch_biland import elasticsearch_htmlresp

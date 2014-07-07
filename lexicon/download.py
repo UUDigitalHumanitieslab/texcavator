@@ -56,7 +56,6 @@ from django.core.validators import email_re
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 
-from services.cql2es import cql2es_error, callperl
 from services.request import request2article_types, request2article_distrib, request2parms
 from texcavator.views import get_ext_server_info
 
