@@ -19,14 +19,6 @@
 			<form action="{{ SUB_SITE }}services/search/" id="search" onsubmit="searchSubmit(); return false;">
 				<input type="hidden" name="startRecord" id="startRecord" value="1" />
 
-				{% if DUAL_MODE %}
-				<label >Collection: </label>
-				<input type="radio" data-dojo-type="dijit/form/RadioButton" name="collection" id="radioCollOne" checked value="kb_2013"/>
-				<label for="radioCollOne">KB newspapers&nbsp;</label> 
-				<input type="radio" data-dojo-type="dijit/form/RadioButton" name="collection" id="radioCollTwo" value="stabi"/>
-				<label for="radioCollTwo">StaBi Berlin</label> <br />
-				{% endif %}
-
 				<input id="query" type="text" onchange="dojo.byId('startRecord').value = 1;" 
 						data-dojo-type="dijit.form.TextBox" 
 						data-dojo-props="name:'query', style:'width: 290px; font-size: 155%;'" 
@@ -145,11 +137,7 @@
 		<div id="borderContainer" data-dojo-type="dijit.layout.BorderContainer" data-dojo-props="gutters:false, liveSplitters:true">
 
 			<!-- nl data -->
-			{% if DUAL_MODE %}
-			<div id="articleContainer" data-dojo-type="dijit.layout.TabContainer" data-dojo-props="splitter:true, region:'center', tabPosition: 'top', style:'height: 50%;'">
-			{% else %}
 			<div id="articleContainer" data-dojo-type="dijit.layout.TabContainer" data-dojo-props="splitter:true, region:'center', tabPosition: 'top', style:'height: 100%;'">
-			{% endif %}
 				<div id="cloudPane" title="Cloud" dojoType="dijit.layout.ContentPane" selected="true">	<!-- Cloud -->
 					<div style="color:grey; text-align: center;">Cloud.</div>
 				</div>
@@ -173,53 +161,6 @@
 
 			</div>
 
-			{% if DUAL_MODE %}
-			<!-- de data -->
-			<div id="articleContainer2" data-dojo-type="dijit.layout.TabContainer" data-dojo-props="splitter:true, region:'bottom', tabPosition: 'top', style:'height: 50%;'">
-
-				<div id="cloudPane2" title="Cloud" dojoType="dijit.layout.ContentPane" selected="true">	<!-- Cloud -->
-					<div style="color:grey; text-align: center;">Cloud.</div>
-				</div>
-
-				<div id="record2" title="OCR" dojoType="dijit.layout.ContentPane" selected="false">	<!-- OCR -->
-					<div style="color:grey; text-align: center;"></div>
-				</div>
-
-				{% if GOOGLE_TRANSLATE %}
-				<div id="translation" title="Translation" dojoType="dijit.layout.ContentPane" selected="false">	<!-- Translation -->
-					<div style="color:grey; text-align: center;">Translation.</div>
-						<!-- Google translate -->
-						
-						<div id="google_translate_element"></div>
-						<script>
-							function googleTranslateElementInit() {
-								new google.translate.TranslateElement({
-									// here is where you change the language
-									pageLanguage: 'de'
-								}, 'google_translate_element');
-							}
-						</script>
-						<script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-						
-				</div>
-				{% endif %}
-
-				<!-- stat graphs -->
-				<!-- 
-				<div id="statistics2" title="Statistics" dojoType="dijit.layout.ContentPane" selected="false">
-					<div style="color:grey; text-align: center;">Statistics.</div>
-				</div>
-				-->
-
-				<div id="timeline2" title="Timeline" dojoType="dijit.layout.ContentPane" selected="false">	<!-- Timeline -->
-				<!-- <div id="chart2"></div><br /> -->
-					<div style="color:grey; text-align: center;">
-						Hover over a bar for doc count, click for burst cloud.
-					</div>
-				</div>
-
-			</div>
-			{% endif %}
 		</div>
 	</div>
 
@@ -321,7 +262,6 @@ dojo.ready( function() {
 } );
 
 dojo.ready( function() { celeryCheckFailure( "{{ CELERY_OWNER }}"  ); } );	// celery.js
-dojo.ready( function() { storeDualMode(      "{{ DUAL_MODE }}" ); } );		// config.js
 dojo.ready( function() { storeDateLimits(     {{ SRU_DATE_LIMITS }} ); } );	// toolbar.js
 dojo.ready( function() { storeDatastore(     "{{ XTAS_DATASTORE }}" ); } );	// config.js
 dojo.ready( function() { createYearSlider(    {{ SRU_DATE_LIMITS }}); } );	// accordion.js, uses the stored SRU_DATE_LIMITS

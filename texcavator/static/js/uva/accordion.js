@@ -18,22 +18,7 @@ dojo.require( "dojox.form.RangeSlider" );
 
 function collection_fromradio()
 {
-	if( getDualMode() == false )
-	{ var collection = XTAS_COLLECTION; }		// default collection name
-	else
-	{
-		var radio1 = dijit.byId( "radioCollOne" );
-		if( radio1 == undefined )
-		{ var collection = XTAS_COLLECTION; }		// default collection name
-		else
-		{
-			if( radio1.checked == true )
-			{ var collection = ES_INDEX_KONBIB; }
-			else
-			{ var collection = ES_INDEX_STABI; }
-		}
-	}
-	return collection
+	return XTAS_COLLECTION
 }
 
 

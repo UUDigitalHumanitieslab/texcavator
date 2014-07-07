@@ -9,8 +9,6 @@ dojo.require( "dijit.Tooltip" );
 var config
 var getConfig = function()
 function storeCeleryOwner( celery_owner )
-function storeDualMode( DUAL_MODE )
-function getDualMode()
 function storeDatastore( datastore )
 function getSearchParameters()
 var toolbarConfig = function()
@@ -101,19 +99,6 @@ function storeCeleryOwner( celery_owner )
 	config[ "celery_owner" ] = celery_owner;
 	console.log( "celery_owner: " + celery_owner );
 }
-
-function storeDualMode( DUAL_MODE )
-{
-	if( DUAL_MODE === "True" ) { config[ "dualmode" ] = true; }
-	else { config[ "dualmode" ] = false; }
-	console.log( "dualmode: " + config[ "dualmode" ] );
-}
-
-function getDualMode()
-{
-	return config[ "dualmode" ];
-}
-
 
 function storeDatastore( datastore )
 {
