@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# -* coding: utf-8 -*-
 
 """
 --------------------------------------------------------------------------------
@@ -412,7 +412,7 @@ def proxy( request ):
 
 
 @csrf_exempt
-def export(request):
+def export_cloud(request):
     if settings.DEBUG == True:
         print >> stderr, "Export CSV request"
     return export_csv( request )

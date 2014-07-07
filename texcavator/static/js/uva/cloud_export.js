@@ -365,7 +365,7 @@ function exportCloudData( filename )
 
 	dijit.byId( "grid-cloud" ).exportGrid( "csv", function( str )
 	{
-		var url = SUB_SITE + "services/export/";
+		var url = SUB_SITE + "services/export_cloud/";
 		var cdata = {
 			"clouddata": str,				// the cloud data
 			"filename": filename,

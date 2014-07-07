@@ -19,7 +19,7 @@ urlpatterns = patterns( 'services.views',
 	url( r'doc_count/$',       'doc_count' ),
 
 	url( r'celery/$',          'proxy' ),
-	url( r'export/$',          'export' ),
+	url( r'export_cloud/$',          'export_cloud' ),
 
 	url( r'cloud/$',          'cloud' ),
 
