@@ -5,7 +5,6 @@
 function clearTextview()
 function updateTextview( record_id, data )
 function writeTextview( record_id, data )
-function translate( record_id, ocr_text )
 */
 
 function clearTextview()
@@ -107,52 +106,6 @@ function writeTextview( record_id, data )
 	{ dojo.byId( "record" ).innerHTML = data; }		// KB
 	else
 	{ dojo.byId( "record2" ).innerHTML = data; }	// StaBi
-}
-
-
-function translate( ocr_in )
-{
-	console.log( "translate" );
-	console.log( ocr_in );
-
-	if( MOSES_TRANSLATE == false )
-	{
-		dojo.byId( "translation" ).innerHTML = "Translation is currently unavailable";
-		return;
-	}
-
-	var url = SUB_SITE + "services/translate/";
-
-	dojo.xhrPost({
-		url: url,
-		content :
-		{
-			"language_in"  : "DE",
-			"language_out" : "EN",
-			"text"         : ocr_in
-		},
-		handleAs : "json",
-		load : function( resp )
-		{
-			dojo.empty( dojo.byId( "translation" ) );			// remove ProgressBar
-
-			if( resp.status === "ok" )
-			{
-				console.log( "translation:" );
-				console.log( resp.translation );
-				dojo.byId( "translation" ).innerHTML = resp.translation;
-			}
-			else
-			{
-				console.error( resp.msg );
-				var title = "Request failed";
-				var buttons = { "OK": true };
-				genDialog( title, resp.msg, buttons );
-			}
-		},
-		error : function( err ) { console.error( err ); }
-	});
-
 }
 
 // [eof]
