@@ -63,7 +63,6 @@ from services.elasticsearch_biland import elasticsearch_htmlresp
 
 from services.export import export_csv
 from services.request import request2article_types, is_literal
-from services.moses import moses
 
 def search( request ):
     params = get_search_parameters(request.REQUEST)
@@ -407,9 +406,6 @@ def proxy( request ):
 
     elif len( request_path ) > 3 and request_path[ 2 ] == u'scan':
         return download_scan_image( request )
-
-    elif len( request_path ) > 3 and request_path[ 2 ] == u'moses':
-        return moses( request )
 
     # If all fails, do a 404
     if settings.DEBUG == True:

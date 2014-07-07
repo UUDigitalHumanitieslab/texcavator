@@ -114,9 +114,6 @@ QUERY_DATA_EXPIRE_DAYS     = 1			# delete after one day
 
 # translation
 GOOGLE_TRANSLATE = True
-MOSES_TRANSLATE  = False
-MOSES_HOME       = ""				# "/datastore/aclaan/moses-smt/moses"
-MOSES_DECODER    = ""				# os.path.join( PROJECT_GRANNY, "mosesdecoder" )
 
 # user action logging
 ILPS_LOGGING = False				# if True, also uncomment code in base.html
@@ -145,9 +142,6 @@ if DEBUG == True:
 	print >> sys.stderr, "QUERY_DATA_EXPIRE_DAYS:     %s" % QUERY_DATA_EXPIRE_DAYS
 
 	print >> sys.stderr, "GOOGLE_TRANSLATE: %s" % GOOGLE_TRANSLATE
-	print >> sys.stderr, "MOSES_TRANSLATE:  %s" % MOSES_TRANSLATE
-	print >> sys.stderr, "MOSES_HOME:       %s" % MOSES_HOME
-	print >> sys.stderr, "MOSES_DECODER:    %s" % MOSES_DECODER
 
 	print >> sys.stderr, "ILPS_LOGGING:     %s" % ILPS_LOGGING
 

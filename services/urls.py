@@ -29,7 +29,6 @@ urlpatterns = patterns( 'services.views',
 	url( r'search/$',          'search' ),
 	url( r'scan/$',            'proxy' ),
 	url( r'cql2es/$',          'test_cql2es' ),
-	url( r'translate/$',       'moses' ),
 )
 
 # [eof]
