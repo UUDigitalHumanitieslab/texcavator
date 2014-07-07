@@ -586,28 +586,6 @@ def applyXSLT( request, data, stylesheet ):
         return res
 
 
-
-def test_cql2es( request ):
-    """ Test whether cql2es returns a valid query.
-
-    Now always returns {'status': 'ok'} (Function will be removed.)
-    """
-    if settings.DEBUG == True:
-        print >> stderr, "cql2es()"
-
-    query = request.REQUEST.get('query', None)
-    
-    if not query:
-        resp_dict = { "status" : "error", "msg" : "Missing query" }
-        json_list = json.dumps( resp_dict )
-        ctype = 'application/json; charset=UTF-8'
-        return HttpResponse( json_list, content_type = ctype )
-
-    json_list = json.dumps({'status':'ok'})
-    ctype = 'application/json; charset=UTF-8'
-    return HttpResponse( json_list, content_type = ctype )
-
-
 def retrieve_kb_resolver( request ):
 	extra = request2extra4log( request )
 
