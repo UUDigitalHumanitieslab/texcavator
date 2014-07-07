@@ -72,9 +72,7 @@ if DEBUG == True:
 ELASTICSEARCH_HOST = "localhost" 
 ELASTICSEARCH_PORT = 9200
 ES_INDEX_KONBIB    = "kb"
-ES_INDEX_STABI     = "stabi"
 ES_INDEX_DOCTYPE_KONBIB = "doc"
-ES_INDEX_DOCTYPE_STABI  = "doc"
 ES_INDEX = 'kb'
 ES_DOCTYPE = 'doc'
 
@@ -102,8 +100,6 @@ else:
 XTAS_MAX_CLOUD_DOCS_WARN  =  2500				# servers
 XTAS_MAX_CLOUD_DOCS_ERROR = 10000				# servers
 
-STABI_IMG_DOWNLOAD = "BILAND_scans/_Preussische_Amtspresse_35pct"
-
 QUERY_DATA_DOWNLOAD_ALLOW  = True
 QUERY_DATA_DOWNLOAD_DETACH = True		# when True QUERY_DATA_VPYTHON_PATH is needed
 QUERY_DATA_DOWNLOAD_PATH   = os.path.join( PROJECT_GRANNY, "BILAND_download/query_data" )
@@ -127,8 +123,6 @@ if DEBUG == True:
 	print >> sys.stderr, "ELASTICSEARCH_HOST:  %s" % ELASTICSEARCH_HOST
 	print >> sys.stderr, "ELASTICSEARCH_PORT:  %s" % ELASTICSEARCH_PORT
 	print >> sys.stderr, "ES_INDEX_KONBIB:     %s" % ES_INDEX_KONBIB
-	print >> sys.stderr, "ES_INDEX_STABI:      %s" % ES_INDEX_STABI
-	print >> sys.stderr, "STABI_IMG_DOWNLOAD:  %s" % STABI_IMG_DOWNLOAD
 
 	print >> sys.stderr, "QUERY_DATA_DOWNLOAD_ALLOW:  %s" % QUERY_DATA_DOWNLOAD_ALLOW
 	print >> sys.stderr, "QUERY_DATA_DOWNLOAD_DETACH: %s" % QUERY_DATA_DOWNLOAD_DETACH

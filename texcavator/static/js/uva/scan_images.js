@@ -15,42 +15,35 @@ Functions:
 		// this KB specific
 		console.log( "scanImages: collection: " + collection + ", record_id: " + record_id + ", zipfile: " + zipfile );
 
-		if( collection == ES_INDEX_STABI )
-		{ scanImageStaBi( collection, record_id, zipfile ); }
-		else if( collection == ES_INDEX_KONBIB )
-		{
-			var urn = record_id.split( ':' ).slice( 0, 3 ).join( ':' );
-			// e.g record_id -> urn: ddd:010434315:mpeg21:a0003:ocr -> ddd:010434315:mpeg21
+		var urn = record_id.split( ':' ).slice( 0, 3 ).join( ':' );
+		// e.g record_id -> urn: ddd:010434315:mpeg21:a0003:ocr -> ddd:010434315:mpeg21
 
-			// retrieve the metadata XML from KB
-			dojo.xhrGet({
-				url: SUB_SITE + "services/kb/resolver/?id=" + urn,		// SUB_SITE from index.html
-				handleAs: "json",
-				load: function( json_data )
-				{	
-					if( json_data.status != "SUCCESS" )
-					{
-						console.warn( "scanImagesKB: " + json_data.msg );
-						var title = "Retrieving KB metadata  failed";
-						var buttons = { "OK": true };
-						genDialog( title, json_data.msg, buttons );
-						return json_data;
-					}
-					else
-					{
-						var record_noocr = record_id.split( ':' ).slice( 0, 4 ).join( ':' );
-						// e.g record_id -> urn: ddd:010434315:mpeg21:a0003:ocr -> ddd:010434315:mpeg21:a0003
-						var metadata_xml = json_data.text;
-					//	dojo.publish( "/kb/record/metadata/loaded", [ record_noocr, metadata_xml ] );
-						scanImagesKB( record_noocr, metadata_xml );
-						return metadata_xml;
-					}
-				},
-				error: function( err ) { console.error( err ); return err; }
-			});
-		}
-		else
-		{ console.warn( "scanImages: unsupported collection: " + collection ); }
+		// retrieve the metadata XML from KB
+		dojo.xhrGet({
+			url: SUB_SITE + "services/kb/resolver/?id=" + urn,		// SUB_SITE from index.html
+			handleAs: "json",
+			load: function( json_data )
+			{	
+				if( json_data.status != "SUCCESS" )
+				{
+					console.warn( "scanImagesKB: " + json_data.msg );
+					var title = "Retrieving KB metadata  failed";
+					var buttons = { "OK": true };
+					genDialog( title, json_data.msg, buttons );
+					return json_data;
+				}
+				else
+				{
+					var record_noocr = record_id.split( ':' ).slice( 0, 4 ).join( ':' );
+					// e.g record_id -> urn: ddd:010434315:mpeg21:a0003:ocr -> ddd:010434315:mpeg21:a0003
+					var metadata_xml = json_data.text;
+				//	dojo.publish( "/kb/record/metadata/loaded", [ record_noocr, metadata_xml ] );
+					scanImagesKB( record_noocr, metadata_xml );
+					return metadata_xml;
+				}
+			},
+			error: function( err ) { console.error( err ); return err; }
+		});
 	} // scanImages()
 
 

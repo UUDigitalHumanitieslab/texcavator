@@ -590,16 +590,10 @@ def retrieve_xtas_elasticsearch( request ):
 		collection = settings.ES_INDEX_KONBIB
 
 	es_baseurl = "http://" + settings.ELASTICSEARCH_HOST + ':' + str( settings.ELASTICSEARCH_PORT ) + '/'
-	if collection == settings.ES_INDEX_STABI:
-		es_url = es_baseurl + settings.ES_INDEX_STABI
-		es_url += '/'
-		es_url += settings.ES_INDEX_DOCTYPE_STABI
-		es_url += '/'
-	else:
-		es_url = es_baseurl + settings.ES_INDEX_KONBIB
-		es_url += '/'
-		es_url += settings.ES_INDEX_DOCTYPE_KONBIB
-		es_url += '/'
+	es_url = es_baseurl + settings.ES_INDEX_KONBIB
+	es_url += '/'
+	es_url += settings.ES_INDEX_DOCTYPE_KONBIB
+	es_url += '/'
 
 	es_url += _id
 

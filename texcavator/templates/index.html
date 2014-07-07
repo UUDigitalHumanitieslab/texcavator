@@ -223,7 +223,6 @@ XTAS_MAX_CLOUD_DOCS_WARN  = "{{ XTAS_MAX_CLOUD_DOCS_WARN }}";
 XTAS_MAX_CLOUD_DOCS_ERROR = "{{ XTAS_MAX_CLOUD_DOCS_ERROR }}";
 
 ES_INDEX_KONBIB = "{{ ES_INDEX_KONBIB }}";
-ES_INDEX_STABI  = "{{ ES_INDEX_STABI }}";
 
 /*
 dojo.ready( function()
@@ -484,10 +483,7 @@ function nextResults( amount )
 		console.log( "processRecord: " + record_id );
 	//	console.log( "processRecord: OCR: " + ocr_text );
 
-		if( record_id.startsWith( "ddd:" ) )
-		{ var collection = ES_INDEX_KONBIB; }
-		else
-		{ var collection = ES_INDEX_STABI; }
+		var collection = ES_INDEX_KONBIB;
 
 		updateTextview( collection, record_id, ocr_text );			// update article in Text tab
 
@@ -706,13 +702,6 @@ function clearGui()
 	if( dojo.byId( "statistics" ) != undefined ) { dojo.empty( dojo.byId( "statistics" ) ); }	// clear Statistics
 	if( dojo.byId( "timeline" )   != undefined ) { dojo.empty( dojo.byId( "timeline" ) ); }		// clear Timeline
 
-	// StaBi
-	if( dojo.byId( "record2" )        != undefined ) { dojo.empty( dojo.byId( "record2" ) ); }			// clear ocr
-	if( dojo.byId( "translation" )    != undefined ) { dojo.empty( dojo.byId( "translation" ) ); }		// clear translation
-	if( dojo.byId( "statistics2" )    != undefined ) { dojo.empty( dojo.byId( "statistics2" ) ); }		// clear Statistics
-	if( dojo.byId( "timeline2" )      != undefined ) { dojo.empty( dojo.byId( "timeline2" ) ); }		// clear Timeline
-	if( dojo.byId( "stabi-original" ) != undefined ) { dojo.empty( dojo.byId( "stabi-original" ) ); }	// clear 
-
 	// close panes of scans & kb
 	var tabs = dijit.byId( "articleContainer" ).getChildren();
 	for( var tab = 0; tab < tabs.length; tab++ )
@@ -722,28 +711,12 @@ function clearGui()
 		if( cp_id === "kb-pane" || 
 			cp_id === "kb-original" || 
 			cp_id === "kb-original1" || 
-			cp_id === "kb-original2" || 
-			cp_id === "stabi-original" )
+			cp_id === "kb-original2")
 		{
 		//	console.log( "Closing tab id: " + cp_id );
 			dijit.byId( "articleContainer" ).closeChild( cp );
 		}
 	}
-
-	/*
-	var tabs = dijit.byId( "articleContainer2" ).getChildren();
-	for( var tab = 0; tab < tabs.length; tab++ )
-	{
-		var cp = tabs[ tab ];
-		var cp_id = cp.get( "id" );
-		if( 
-			cp_id === "stabi-original" )
-		{
-		//	console.log( "Closing tab id: " + cp_id );
-			dijit.byId( "articleContainer" ).closeChild( cp );
-		}
-	}
-	*/
 }
 
 

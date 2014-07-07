@@ -253,12 +253,7 @@ def cloud( request ):
     try:
         collection = req_dict[ "collections" ]
 
-        if collection == settings.ES_INDEX_KONBIB:
-            cloud_params[ "collections" ] = [ settings.ES_INDEX_KONBIB ]    # Ork expects collections, with s
-        elif collection == settings.ES_INDEX_STABI:
-            cloud_params[ "collections" ] = [ settings.ES_INDEX_STABI ]     # Ork expects collections, with s
-        else:
-            cloud_params[ "collections" ] = [ settings.ES_INDEX_KONBIB ]    # Ork expects collections, with s
+        cloud_params[ "collections" ] = [ settings.ES_INDEX_KONBIB ]    # Ork expects collections, with s
     except:
         msg = "missing collection parameter";
         resp_dict =  { "status" : "error", "msg" : msg }

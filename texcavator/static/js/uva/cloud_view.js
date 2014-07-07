@@ -371,10 +371,7 @@ var clearCloud = function ()
 	console.log( "clearCloud()" );
 
 	var collection = collection_fromradio();		// accordion.js
-	if( collection == ES_INDEX_STABI )
-	{ var cloud_pane = "cloudPane2" }
-	else
-	{ var cloud_pane = "cloudPane" }
+	var cloud_pane = "cloudPane"
 
 	if( dojo.byId( cloud_pane ) == undefined )
 	{ return; }
