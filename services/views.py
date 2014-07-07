@@ -376,12 +376,6 @@ def proxy( request ):
         return HttpResponse( celery_check(), content_type = ctype )
 
 
-    elif len(request_path) > 2 and request_path[2] == u'export':
-        if settings.DEBUG == True:
-            print >> stderr, "Export CSV request\n"
-        return export_csv( request )
-
-
     elif len(request_path) > 2 and request_path[2] == u'retrieve':
         if settings.DEBUG == True:
             print >> stderr, "Retrieve request", request.REQUEST
@@ -415,6 +409,13 @@ def proxy( request ):
     if settings.DEBUG == True:
         print >> stderr, "proxy: HttpResponseNotFound()"
     return HttpResponseNotFound()
+
+
+@csrf_exempt
+def export(request):
+    if settings.DEBUG == True:
+        print >> stderr, "Export CSV request"
+    return export_csv( request )
 
 
 def download_scan_image( request ):
