@@ -12,7 +12,6 @@ def get_server_info( request )
 def get_ext_server_info( request )
 def getdaterange( projectname )
 def horizon( request )
-def index( request )
 def loginajax( request )
 
 FL-10-Oct-2011: Created
@@ -129,58 +128,6 @@ def texcavator( request ):
 	context = RequestContext( request )
 
 	return render_to_response( template, dictionary, context )
-
-
-
-def index( request ):
-	"""\
-	Presents initial page (dual language mode)
-	"""
-
-	scheme_authority, sub_site = get_server_info( request )
-#	printf( "scheme_authority: %s" % scheme_authority )
-#	printf( "SUB_SITE: %s" % sub_site )
-
-	"""
-	meta = request.META
-	referrer = meta[ "HTTP_REFERER" ]
-	if referrer != "":
-		static_prefix = scheme_authority
-	else:
-		static_prefix = ''
-	"""
-
-	template = "index.html"
-	dictionary = \
-	{
-		"SUB_SITE"         : sub_site,
-		"DUAL_MODE"        : True,
-		"PROJECT_NAME"     : "BiLand",
-
-		"CELERY_OWNER"     : settings.CELERY_OWNER,
-		"SRU_DATE_LIMITS"  : settings.SRU_DATE_LIMITS_BILAND,
-
-		"XTAS_PREFIX"         : settings.XTAS_PREFIX,
-		"XTAS_DATASTORE"      : settings.XTAS_DATASTORE,
-		"XTAS_COLLECTION"     : settings.XTAS_COLLECTION,
-		"XTAS_DOCS_SELECT"    : settings.XTAS_DOCS_SELECT,
-
-		"XTAS_MAX_CLOUD_DOCS_WARN"  : settings.XTAS_MAX_CLOUD_DOCS_WARN,
-		"XTAS_MAX_CLOUD_DOCS_ERROR" : settings.XTAS_MAX_CLOUD_DOCS_ERROR,
-
-		"QUERY_DATA_DOWNLOAD_ALLOW" : settings.QUERY_DATA_DOWNLOAD_ALLOW,
-
-		"ES_INDEX_KONBIB"  : settings.ES_INDEX_KONBIB,
-		"ES_INDEX_STABI"   : settings.ES_INDEX_STABI,
-
-		"ILPS_LOGGING" : settings.ILPS_LOGGING
-	}
-
-	# context contains csrf_token (and STATIC_URL for django >= 1.3)
-	context = RequestContext( request )
-
-	return render_to_response( template, dictionary, context )
-
 
 
 @csrf_exempt
