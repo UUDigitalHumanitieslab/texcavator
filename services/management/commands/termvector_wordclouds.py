@@ -20,8 +20,13 @@ def chunks(l, n):
 
 
 class Command(BaseCommand):
-    args = '<#-documents, #-repetitions>'
-    help = 'Perform ElasticSearch term aggregations. #-documents is the ' 
+    args = '<#-documents, size-of-ES-chunks, #-repetitions>'
+    help = 'Generate word clouds using term vectors. #-documents is the ' \
+           'number of documents the word cloud must be generated for. ' \
+           'size-of-ES-chunk is the number of documents that is retrieved ' \
+           'in each ElasticSearch request. #-repetitions is the number of ' \
+           'word cloud generation is repeated (with a new random set of ' \
+           'documents).' 
 
     def handle(self, *args, **options):
         query_size = 1000
