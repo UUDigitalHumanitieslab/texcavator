@@ -28,13 +28,16 @@ class Command(BaseCommand):
            'documents).'
 
     def handle(self, *args, **options):
-        query_size = 1000
+        query_size = 2500
         n_repetitions = 10
+        es_retrieve = 2500
 
         if len(args) > 0:
             query_size = int(args[0])
         if len(args) > 1:
             n_repetitions = int(args[1])
+        if len(args) > 2:
+            es_retrieve = int(args[2])
 
         response_times = []
 
@@ -43,8 +46,6 @@ class Command(BaseCommand):
             es_time = []
 
             wordcloud = Counter()
-
-            es_retrieve = 2500
 
             # select random documents
             document_set = DocID.objects.order_by('?')[0:query_size]
