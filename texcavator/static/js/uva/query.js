@@ -768,7 +768,7 @@ function okDownload( query_title )
 	params[ "format" ] = config[ "querydataexport" ][ "format" ]	// "json" or "xml"
 
 	dojo.xhrGet({
-		url: SUB_SITE + "lexicon/download/prepare/",
+		url: "lexicon/download/prepare/",
 		content: params,
 		handleAs: "json",
 		load: function( result ) {

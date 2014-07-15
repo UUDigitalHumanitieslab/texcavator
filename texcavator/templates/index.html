@@ -15,8 +15,8 @@
 	<div data-dojo-type="dijit.layout.AccordionContainer" data-dojo-props="splitter:true, region:'leading'" style="width: 438px;" id="leftAccordion">
 		<div id="searchPane" data-dojo-type="dijit.layout.ContentPane" data-dojo-props="title:'Search'">
 
-		<!--<form action="{{ SUB_SITE }}services/kb/sru/" id="search" onsubmit="searchSubmit(); return false;"> -->
-			<form action="{{ SUB_SITE }}services/search/" id="search" onsubmit="searchSubmit(); return false;">
+		<!--<form action="services/kb/sru/" id="search" onsubmit="searchSubmit(); return false;"> -->
+			<form action="services/search/" id="search" onsubmit="searchSubmit(); return false;">
 				<input type="hidden" name="startRecord" id="startRecord" value="1" />
 
 				<input id="query" type="text" onchange="dojo.byId('startRecord').value = 1;" 
@@ -213,8 +213,6 @@ function showDojoLocale()
 dojo.ready( showDojoLocale );
 
 // global javascript variables from django template variables
-SUB_SITE = "{{ SUB_SITE }}";
-
 XTAS_PREFIX         = "{{ XTAS_PREFIX }}";
 XTAS_COLLECTION     = "{{ XTAS_COLLECTION }}";
 XTAS_DOCS_SELECT    = "{{ XTAS_DOCS_SELECT }}";
@@ -234,7 +232,7 @@ dojo.ready( function()
 }
 */
 
-dojo.ready( function() { createLogin( "{{ SUB_SITE }}", "{{ PROJECT_NAME }}" ) } );	// login.js
+dojo.ready( function() { createLogin( "{{ PROJECT_NAME }}" ) } );	// login.js
 dojo.ready( showLogin );													// login.js
 
 dojo.ready( function() { 
@@ -310,7 +308,7 @@ function searchSubmit()
 
 //	console.log( params );
 
-	// url from form: "{{ SUB_SITE }}services/search/"
+	// url from form: "services/search/"
 	dojo.xhrGet({
 		form: dojo.byId( "search" ),					// query string
 		content: params,								// key:value pairs
@@ -409,7 +407,7 @@ function nextResults( amount )
         dojo.place( new dijit.ProgressBar( { indeterminate: true } ).domNode, dojo.byId( ocr_pane ), "only" );
 		dojo.place( new dijit.ProgressBar( { indeterminate: true } ).domNode, dojo.byId( cloud_pane ), "only" );
 
-		var url = "{{ SUB_SITE }}services/retrieve/doc/?id=" + record_id;
+		var url = "services/retrieve/doc/?id=" + record_id;
 
 		dojo.xhrGet({
 			url: url,
@@ -448,7 +446,7 @@ function nextResults( amount )
 	var retrieveRecordKB = function( record_id, store_mongodb )
 	{
 		console.log( "retrieveRecordKB: " + record_id );
-		var url = "{{ SUB_SITE }}services/retrieve/doc/?id=" + record_id;
+		var url = "services/retrieve/doc/?id=" + record_id;
 
 		dojo.xhrGet({
 			url: url,
@@ -514,7 +512,7 @@ function nextResults( amount )
 		var cloud_pane = "cloudPane";
 
         dojo.xhrGet({
-            url: "{{ SUB_SITE }}services/cloud",
+            url: "services/cloud",
             content: params,
             handleAs: 'json',
             load: function(response)
@@ -576,8 +574,7 @@ function nextResults( amount )
 
 
 <script type="text/javascript">
-	lexiconStore = new dojo.store.JsonRest( { target: "{{ SUB_SITE }}lexicon/" } );
-	//lexiconStore = new dojo.store.JsonRest( { target: SUB_SITE + "lexicon/" } );
+	lexiconStore = new dojo.store.JsonRest( { target: "lexicon/" } );
 	glob_lexiconData = {};		// returned data from lexiconStore
 </script>
 
@@ -608,7 +605,7 @@ function onClickLoadData( lexiconID, datastore )
 	var updateProgress = function( progressBar, taskID )
 	{
 		dojo.xhrGet({
-			url: "{{ SUB_SITE }}lexicon/tasks/" + taskID + "/status/",
+			url: "lexicon/tasks/" + taskID + "/status/",
 			handleAs: "json",
 			load: function( data )
 			{
@@ -670,7 +667,7 @@ function onClickLoadData( lexiconID, datastore )
 	};
 
 	dojo.xhrGet({
-		url: "{{ SUB_SITE }}lexicon/" + lexiconID + "/addToXtas",
+		url: "lexicon/" + lexiconID + "/addToXtas",
 		content: params,
 		handleAs: "json",
 		load: function( data ) {
@@ -767,7 +764,7 @@ function onClickExecute( lexiconID, query )
 
 //	console.log( params );
 	dojo.xhrGet({
-		url: "{{ SUB_SITE }}services/doc_count/",
+		url: "services/doc_count/",
 		handleAs: "json",
 		content: params,
 		load: function( data )
@@ -875,7 +872,7 @@ function onClickExecuteCloud( lexiconID )
 
 
 	dojo.xhrGet({
-        url: "{{ SUB_SITE }}services/cloud",
+        url: "services/cloud",
 		content: params, 
 		failOk: false,			// true: No dojo console error message
 		handleAs: "json",

@@ -101,7 +101,7 @@ var celeryCheck = function( celery_owner )
 	}
 
 	dojo.xhrGet({
-		url: SUB_SITE + "services/celery/",
+		url: "services/celery/",
 		sync: true,
 		handleAs: "json",
 		load: function( resp )

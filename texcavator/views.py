@@ -42,7 +42,7 @@ def get_server_info( request ):
 		sub_site = "/"
 	else:
 		scheme_authority = "http://" + settings.HOSTNAME + ":" + str( port )
-		sub_site = settings.SUB_SITE
+		sub_site = '/' 
 
 	return scheme_authority, sub_site
 
@@ -58,7 +58,7 @@ def get_ext_server_info( request ):
 		sub_site = "/"
 	else:
 		scheme_authority = "http://" + settings.HOSTNAME + ":" + str( port )
-		sub_site = settings.SUB_SITE
+		sub_site = '/' 
 
 	return scheme_authority, sub_site
 
@@ -89,7 +89,6 @@ def index( request ):
 	scheme_authority, sub_site = get_server_info( request )
 
 	data = {
-		"SUB_SITE": sub_site,
 		"PROJECT_NAME": "Horizon",
 
 		"CELERY_OWNER": settings.CELERY_OWNER,

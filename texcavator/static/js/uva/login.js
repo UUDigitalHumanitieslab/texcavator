@@ -7,7 +7,7 @@ dojo.require( "dijit.form.TextBox" );
 dojo.require( "dijit.layout.ContentPane" );
 
 /*
-var createLogin = function( sub_site, projectname )
+var createLogin = function( projectname )
 var showLogin = function()
 var hideLogin = function()
 var createLogout = function()
@@ -36,10 +36,9 @@ glob_enddate   = "";		// global: project related
 glob_sessionId = "";		// global
 
 
-var createLogin = function( sub_site, projectname )
+var createLogin = function( projectname )
 {
 //	console.log( "createLogin()" );
-//	console.log( "sub_site: " + sub_site );
 //	console.log( "projectname: " + projectname );
 
 	default_projectn = projectname;
@@ -175,7 +174,7 @@ var createLogin = function( sub_site, projectname )
 		dijit.byId( "cb-projectn" ).set( "value", default_projectn );
 
 		dojo.xhrPost({
-			url: sub_site + "login/ajax/",
+			url: "login/ajax/",
 			handleAs: "text",
 			content: {
 				username : glob_username,

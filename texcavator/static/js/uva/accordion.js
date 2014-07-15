@@ -334,7 +334,7 @@ function updateQueryDocCountsElasticSearch( item, collection )
 		var pk =  item[ "pk" ];
 	//	console.log( "updateQueryDocCountsElasticSearch() " + pk );
 
-		var url = SUB_SITE + "services/doc_count/";
+		var url = "services/doc_count/";
 
 		var params = getSearchParameters();			// from config
 

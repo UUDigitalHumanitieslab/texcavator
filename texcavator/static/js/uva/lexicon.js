@@ -122,7 +122,7 @@ var hideDialog = function() { dijit.byId( "fetch-data" ).hide(); }
 var timestampRefresh = function( lexiconID )
 {
 	dojo.xhrGet({
-		url: SUB_SITE + "lexicon/timestamp",
+		url: "lexicon/timestamp",
 		handleAs: "text",
 		content: {
 			username:  glob_username,

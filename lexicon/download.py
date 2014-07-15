@@ -190,7 +190,7 @@ def download_prepare( request ):
 
 	zip_basename = create_zipname( username, query_title )			# proper basename, with username and timestamp
 	scheme_authority, sub_site = get_ext_server_info( request )
-	url = os.path.join( scheme_authority + sub_site + "lexicon/download/data/" + quote_plus( zip_basename ) )
+	url = os.path.join( scheme_authority + "lexicon/download/data/" + quote_plus( zip_basename ) )
 	email_message = "BiLand Query: " + query_title + "\n" + zip_basename + \
 		"\nURL: " + url
 

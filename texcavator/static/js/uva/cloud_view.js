@@ -102,7 +102,7 @@ var stopwordsGetString = function( lexiconID, call_func, boundFunction )
 	// lexiconID can be null for single article cloud
 
 	dojo.xhrPost({
-		url: SUB_SITE + "lexicon/stopwords/retrieve/string/",	// POST url must end with `/'
+		url: "lexicon/stopwords/retrieve/string/",	// POST url must end with `/'
 		handleAs: "text",
 		content: {
 			username:  glob_username,
@@ -141,7 +141,7 @@ var stopwordsGetTable = function( target )
 	// retrieve stopwords table data, place at target div
 
 	dojo.xhrPost({
-		url: SUB_SITE + "lexicon/stopwords/retrieve/table/",	// POST url must end with `/'
+		url: "lexicon/stopwords/retrieve/table/",	// POST url must end with `/'
 		handleAs: "text",
 		content: {
 			username:  glob_username,
@@ -224,7 +224,7 @@ function stopwordsFillTable( stopwordsList, editglob, target )
 				console.log( "id " + pk + " (" + word + ") to be deleted" );
 
 				dojo.xhrPost({
-					url: SUB_SITE + "lexicon/stopwords/delete/",	// POST url must end with `/'
+					url: "lexicon/stopwords/delete/",	// POST url must end with `/'
 					handleAs: "text",
 					content: {
 						username:  glob_username,
@@ -337,7 +337,7 @@ var stopwordsSave = function( word, stopwords_cat )
 	}
 
 	dojo.xhrPost({
-		url: SUB_SITE + "lexicon/stopwords/save/",
+		url: "lexicon/stopwords/save/",
 		handleAs: "text",
 		content: content,
 		load: function( data ) {

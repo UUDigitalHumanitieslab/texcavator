@@ -49,7 +49,7 @@ def get_server_info( request ):
 		sub_site = "/"
 	else:
 		scheme_authority = "http://" + settings.HOSTNAME + ":" + str( port )
-		sub_site = settings.SUB_SITE
+		sub_site = '/' 
 
 	return scheme_authority, sub_site
 
@@ -62,7 +62,6 @@ def index( request ):
 
 	scheme_authority, sub_site = get_server_info( request )
 #	print >> stderr, "scheme_authority: %s" % scheme_authority
-#	print >> stderr, "SUB_SITE: %s" % sub_sit 
 
 	"""
 	meta = request.META
@@ -74,7 +73,7 @@ def index( request ):
 	"""
 
 	template = "list/index.html"
-	dictionary = { 'SUB_SITE' : sub_site }
+	dictionary = {}
 
 	# context contains csrf_token (and STATIC_URL for django >= 1.3)
 	context = RequestContext( request )
@@ -319,7 +318,6 @@ def list_lexicons( request ):
 	scheme_authority, sub_site = get_server_info( request )
 	dictionary = \
 	{
-		'SUB_SITE'      : sub_site,
 		'STATIC_PREFIX' : scheme_authority,
 		'STATIC_URL'    : settings.STATIC_URL,
 		'message'       : message,
@@ -519,7 +517,6 @@ def list_lexicon( request, lex_id ):
 	scheme_authority, sub_site = get_server_info( request )
 	dictionary = \
 	{
-		'SUB_SITE'       : sub_site,
 		'STATIC_PREFIX'  : scheme_authority,
 		'STATIC_URL'     : settings.STATIC_URL,
 		'lexicon_tag'    : lexicon_tag,
@@ -677,7 +674,6 @@ def list_lexicon_words( request, lex_id ):
 	scheme_authority, sub_site = get_server_info( request )
 	dictionary = \
 	{
-		'SUB_SITE'       : sub_site,
 		'STATIC_PREFIX'  : scheme_authority,
 		'STATIC_URL'     : settings.STATIC_URL,
 		'lexicon_tag'    : lexicon_tag,
@@ -804,7 +800,6 @@ def compare_lexicons( request, lex_id1, lex_id2 ):
 	scheme_authority, sub_site = get_server_info( request )
 	dictionary = \
 	{
-		'SUB_SITE'       : sub_site,
 		'STATIC_PREFIX'  : scheme_authority,
 		'STATIC_URL'     : settings.STATIC_URL,
 		'lexicon1_tag'   : lexicon1_tag,

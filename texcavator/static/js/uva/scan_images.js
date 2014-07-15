@@ -20,7 +20,7 @@ Functions:
 
 		// retrieve the metadata XML from KB
 		dojo.xhrGet({
-			url: SUB_SITE + "services/kb/resolver/?id=" + urn,		// SUB_SITE from index.html
+			url: "services/kb/resolver/?id=" + urn,
 			handleAs: "json",
 			load: function( json_data )
 			{	
@@ -198,7 +198,7 @@ Functions:
 	{
 		console.log( "scanImageStaBi(): record_id: " +  record_id + ", zipfile: " + zipfile );
 
-		var url = SUB_SITE + "services/scan/?id=" + record_id + "&zipfile=" + zipfile;
+		var url = "services/scan/?id=" + record_id + "&zipfile=" + zipfile;
 		console.log( "url: " + url );
 
 		var tabs = dijit.byId( "articleContainer2" ).getChildren();

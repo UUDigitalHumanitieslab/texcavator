@@ -62,12 +62,9 @@ if DEBUG == True:
 
 DEV_SERVER_PORT = 8001		# $ python manage.py runserver 0.0.0.0:8001
 WEB_SERVER_PORT = 8008
-SUB_SITE = "/biland/"		# used for WEB_SERVER_PORT
 if DEBUG == True:
 	print >> sys.stderr, "DEV_SERVER_PORT: %s" % DEV_SERVER_PORT
 	print >> sys.stderr, "WEB_SERVER_PORT: %s" % WEB_SERVER_PORT
-	print >> sys.stderr, "SUB_SITE: %s" % SUB_SITE
-
 
 ELASTICSEARCH_HOST = "localhost" 
 ELASTICSEARCH_PORT = 9200

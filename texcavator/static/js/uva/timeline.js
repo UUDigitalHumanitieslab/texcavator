@@ -166,7 +166,7 @@ function getData( lexiconId, field, interval, callback )
 
 //	var timeline_url = "http://zookst14.science.uva.nl:9200/semantictwittertest/tweet/_search?pretty=true"
 //	var timeline_url = "http://node428.das3.science.uva.nl:9200/semantictwittertest/tweet/_search?pretty=true"
-	var timeline_url = SUB_SITE + "lexicon/timeline/" + lexiconId + "/" + interval;
+	var timeline_url = "lexicon/timeline/" + lexiconId + "/" + interval;
 //	console.log( "url: " + timeline_url );
 
 	var config = getConfig();
@@ -664,7 +664,7 @@ function burstSearch( lexicon_query, date_range, max_records )
 
 //	console.log( params );
 
-	var url = SUB_SITE + "services/search/";
+	var url = "services/search/";
 	dojo.xhrGet({
 		url : url,
 		content : params,									// key:value pairs

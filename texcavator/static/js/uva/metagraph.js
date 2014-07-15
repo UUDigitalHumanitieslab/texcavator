@@ -34,8 +34,7 @@ function metadataGraphics( lexiconID )
 	var aggregateField = function( id, field )
 	{
 		dojo.xhrGet({
-		//	url: "{{ SUB_SITE }}lexicon/" + id + "/aggregation?field=" + field,
-			url: SUB_SITE + "lexicon/" + id + "/aggregation?field=" + field,
+			url: "lexicon/" + id + "/aggregation?field=" + field,
 			handleAs: "text",
 			load: function( data )
 			{
