@@ -4,6 +4,7 @@
 """
 from random import randint
 import time
+import sys
 
 from django.core.management.base import BaseCommand
 from django.conf import settings
@@ -19,6 +20,11 @@ class Command(BaseCommand):
            'number of random weigthed queries that is send to Elasticsearch.'
 
     def handle(self, *args, **options):
+        if QueryTerm.objects.all().count() == 0:
+            print 'No query terms stored in the database. Please run ' \
+                  'python manage.py gatherqueryterms\' first.'
+            sys.exit(1)
+
         query_size = 10
         n_repetitions = 10
 
