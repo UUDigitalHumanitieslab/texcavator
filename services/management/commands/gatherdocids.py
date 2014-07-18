@@ -4,11 +4,16 @@
 database. The collection of document ids is used for testing ElasticSearch
 performance on term aggregations (command: esperformance).
 """
+import logging
+
 from django.core.management.base import BaseCommand
 from django.conf import settings
 
 from services.es import _es
 from services.models import DocID
+
+
+logger = logging.getLogger(__name__)
 
 
 class Command(BaseCommand):

@@ -2,12 +2,16 @@
 # -*- coding: utf-8 -*-
 """Perform ElasticSearch term aggregations over random sets of documents.
 """
+import logging
+
 from django.core.management.base import BaseCommand
 from django.conf import settings
 
 from services.es import multiple_document_word_cloud, daterange2dates
 from services.models import DocID
 
+
+logger = logging.getLogger(__name__)
 
 class Command(BaseCommand):
     args = '<#-documents, #-repetitions>'

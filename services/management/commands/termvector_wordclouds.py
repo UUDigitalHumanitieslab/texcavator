@@ -2,6 +2,8 @@
 # -*- coding: utf-8 -*-
 """Generate word clouds based on termvectors for random sets of documents.
 """
+import logging
+
 from django.core.management.base import BaseCommand
 
 from collections import Counter
@@ -10,6 +12,9 @@ import time
 from services.es import _es
 from services.models import DocID
 from texcavator import utils
+
+
+logger = logging.getLogger(__name__)
 
 class Command(BaseCommand):
     args = '<#-documents, size-of-ES-chunks, #-repetitions>'

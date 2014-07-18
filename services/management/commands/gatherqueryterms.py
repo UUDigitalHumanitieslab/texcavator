@@ -4,6 +4,8 @@
 is used for testing ElasticSearch performance on weighted queries (command: 
 weighted_queries).
 """
+import logging
+
 from django.core.management.base import BaseCommand
 from django.conf import settings
 
@@ -11,6 +13,8 @@ from services.es import _es
 from services.models import DocID, QueryTerm 
 from texcavator import utils
 
+
+logger = logging.getLogger(__name__)
 
 class Command(BaseCommand):
     args = '<#-documents>'

@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 """Perform searches with random weighted queries in ElasticSearch.
 """
+import logging
 from random import randint
 import time
 import sys
@@ -12,6 +13,8 @@ from django.conf import settings
 from services.es import do_search, daterange2dates
 from services.models import QueryTerm
 
+
+logger = logging.getLogger(__name__)
 
 class Command(BaseCommand):
     args = '<#-query-terms, #-repetitions>'
