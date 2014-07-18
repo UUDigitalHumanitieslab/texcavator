@@ -234,62 +234,48 @@ CACHES = {
 }
 """
 
-# See http://docs.djangoproject.com/en/dev/topics/logging for
-# more details on how to customize your logging configuration.
-# Used: http://stackoverflow.com/questions/1598823/elegant-setup-of-python-logging-in-django/5806903#5806903
+# Logging setup taken from http://ianalexandr.com/blog/getting-started-with-
+# django-logging-in-5-minutes.html
 LOGGING = {
-	'version': 1,
-	'disable_existing_loggers': False,
-#	'disable_existing_loggers': True,
-	'formatters': {
-		'verbose': {
-			'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
-		},
-		'webformat': {
-			'format': '[%(asctime)s][%(REMOTE_ADDR)s][%(module)s][%(levelname)s] %(message)s',
-			# REMOTE_ADDR requires extra=request.META as logger parameter
-		}
-	},
-	'handlers': {
-		'null': {
-			'level':'DEBUG',
-			'class':'django.utils.log.NullHandler',
-		},
-		'console':{
-			'level': 'DEBUG',
-			'class': 'logging.StreamHandler',
-			'formatter': 'verbose'
-		},
-		'log_file':{
-			'level': 'DEBUG',
-			'class': 'logging.handlers.RotatingFileHandler',
-			'filename': os.path.join( PROJECT_ROOT, "Texcavator_Django.log" ),		# and ensure write access for apache!
-			'maxBytes': 1024*1024*16,		# 16 Megabytes
-			'formatter': 'webformat'
-		},
-		'mail_admins': {
-			'level': 'ERROR',
-			'filters': ['require_debug_false'],
-			'class': 'django.utils.log.AdminEmailHandler'
-		},
-	},
-	'loggers': {
-		'django.request': {
-			'handlers': ['mail_admins'],
-			'level': 'ERROR',
-			'propagate': True,
-		},
-		'BILAND': {
-			'handlers': ['log_file'],
-			'level': 'DEBUG',
-			'propagate': True,
-		},
-	},
-	'filters': {
-		'require_debug_false': {
-			'()': 'django.utils.log.RequireDebugFalse'
-		}
-	}
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format' : "[%(asctime)s] %(levelname)s [%(name)s:%(lineno)s] %(message)s",
+            'datefmt' : "%d/%b/%Y %H:%M:%S"
+        },
+        'simple': {
+            'format': '%(levelname)s %(message)s'
+        },
+    },
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': '/home/jvdzwaan/Texcavator/texcavator/' \
+                        'Texcavator_Django.log',
+            'formatter': 'verbose'
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers':['file'],
+            'propagate': True,
+            'level':'DEBUG',
+        },
+        'texcavator': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+        },
+        'services': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+        },
+        'elasticsearch': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+        },
+    }
 }
 
 # django-registration
