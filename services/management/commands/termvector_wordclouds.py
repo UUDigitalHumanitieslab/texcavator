@@ -9,14 +9,7 @@ import time
 
 from services.es import _es
 from services.models import DocID
-
-
-def chunks(l, n):
-    """ Yield successive n-sized chunks from l.
-    """
-    for i in xrange(0, len(l), n):
-        yield l[i:i+n]
-
+from texcavator import utils
 
 class Command(BaseCommand):
     args = '<#-documents, size-of-ES-chunks, #-repetitions>'
@@ -51,7 +44,7 @@ class Command(BaseCommand):
             document_set = DocID.objects.order_by('?')[0:query_size]
             doc_ids = [doc.doc_id for doc in document_set]
 
-            for ids in chunks(doc_ids, es_retrieve):
+            for ids in utils.chunks(doc_ids, es_retrieve):
 
                 bdy = {
                     'ids': ids,
