@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """Gather query terms and store them in the database. The collection of terms 
-is used for testing ElasticSearch performance on weighted queries (command: ?).
+is used for testing ElasticSearch performance on weighted queries (command: 
+weighted_queries).
 """
 from django.core.management.base import BaseCommand
 from django.conf import settings
