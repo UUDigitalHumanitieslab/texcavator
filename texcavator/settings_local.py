@@ -39,12 +39,6 @@ if DEBUG == True:
 	print >> sys.stderr, "Python version:", sys.version
 	print >> sys.stderr, "PYTHONPATH:",     sys.path
 
-DEV_SERVER_PORT = 8001		# $ python manage.py runserver 0.0.0.0:8001
-WEB_SERVER_PORT = 8008
-if DEBUG == True:
-	print >> sys.stderr, "DEV_SERVER_PORT: %s" % DEV_SERVER_PORT
-	print >> sys.stderr, "WEB_SERVER_PORT: %s" % WEB_SERVER_PORT
-
 ELASTICSEARCH_HOST = "localhost" 
 ELASTICSEARCH_PORT = 9200
 ES_INDEX_KONBIB    = "kb"
