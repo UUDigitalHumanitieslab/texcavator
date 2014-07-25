@@ -57,7 +57,6 @@ from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 
 from services.request import request2article_types, request2article_distrib, request2parms
-from texcavator.views import get_ext_server_info
 from services.es import do_search, daterange2dates
 
 def request2extra4log( request ):
@@ -185,8 +184,7 @@ def download_prepare( request ):
 		return HttpResponse( json_list, content_type = ctype )
 
 	zip_basename = create_zipname( username, query_title )			# proper basename, with username and timestamp
-	scheme_authority, sub_site = get_ext_server_info( request )
-	url = os.path.join( scheme_authority + "lexicon/download/data/" + quote_plus( zip_basename ) )
+	url = os.path.join( 'http://{}'.format(request.get_host()), "lexicon/download/data/" + quote_plus( zip_basename ) )
 	email_message = "BiLand Query: " + query_title + "\n" + zip_basename + \
 		"\nURL: " + url
 

@@ -8,8 +8,6 @@ Name:		views.py
 Version:	0.23
 Goal:		main views definitions
 
-def get_server_info( request )
-def get_ext_server_info( request )
 def getdaterange( projectname )
 def horizon( request )
 def loginajax( request )
@@ -30,17 +28,6 @@ from django.template import RequestContext
 from django.views.decorators.csrf import csrf_exempt
 
 from texcavator.timestamp import TIMESTAMP
-
-
-def get_server_info( request ):
-    """Returns scheme_authority (host+port) and sub_site.
-    Must be removed later (
-    """
-	return request.get_host(), '/'
-
-
-def get_ext_server_info( request ):
-    return get_server_info(request)
 
 
 def getdaterange( projectname ): 
@@ -64,8 +51,6 @@ def index( request ):
 	"""Returns settings used in JavaScript and displays the application web
     page.
 	"""
-
-	scheme_authority, sub_site = get_server_info( request )
 
 	data = {
 		"PROJECT_NAME": "Horizon",

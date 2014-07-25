@@ -50,7 +50,6 @@ from es import get_search_parameters, do_search, count_search_results, \
         _KB_DISTRIBUTION_VALUES, _KB_ARTICLE_TYPE_VALUES
 
 from texcavator.settings import TEXCAVATOR_DATE_RANGE
-from texcavator.views import get_server_info
 from texcavator.utils import json_response_message
 from services.celery import celery_check
 from lexicon.models import LexiconItem
