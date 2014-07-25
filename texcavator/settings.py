@@ -289,15 +289,4 @@ except ImportError:
 	print >> sys.stderr, "No settings_local"
 	pass
 
-# Project Date range
-# WAHSP			1900-1945
-# BiLand		1850-1945
-# Horizon		1850-1990
-# everything	1618-1995	# use this to re-generate statistics table!
-
-SRU_DATE_LIMITS_WAHSP   = [19000101, 19451231]				# yyyymmdd	WAHSP
-SRU_DATE_LIMITS_BILAND  = [18500101, 19451231]				# yyyymmdd	BiLand
-SRU_DATE_LIMITS_HORIZON = [18500101, 19901231]				# yyyymmdd	Horizon
-SRU_DATE_LIMITS_KBALL   = [16180101, 19951231]				# yyyymmdd	everything
-
 # [eof]

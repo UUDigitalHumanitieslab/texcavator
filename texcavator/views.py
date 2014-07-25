@@ -8,7 +8,6 @@ Name:		views.py
 Version:	0.23
 Goal:		main views definitions
 
-def getdaterange( projectname )
 def horizon( request )
 def loginajax( request )
 
@@ -27,36 +26,24 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.views.decorators.csrf import csrf_exempt
 
+from services.es import daterange2dates
+
 from texcavator.timestamp import TIMESTAMP
-
-
-def getdaterange( projectname ): 
-	project_name = projectname.lower()
-	daterange = settings.SRU_DATE_LIMITS_KBALL
-
-	if project_name == "wahsp":
-		daterange = settings.SRU_DATE_LIMITS_WAHSP
-	elif project_name == "biland":
-		daterange = settings.SRU_DATE_LIMITS_BILAND
-	elif project_name == "horizon":		# texcavator
-		daterange = settings.SRU_DATE_LIMITS_HORIZON
-	else:
-		daterange = settings.SRU_DATE_LIMITS_KBALL
-
-	return daterange
-
 
 
 def index( request ):
 	"""Returns settings used in JavaScript and displays the application web
     page.
 	"""
+	date_limits = daterange2dates('')
+	dates = [date_limits['lower'], date_limits['upper']]
+	daterange = [int(d.replace('-', '')) for d in dates]
 
 	data = {
 		"PROJECT_NAME": "Horizon",
 
 		"CELERY_OWNER": settings.CELERY_OWNER,
-		"SRU_DATE_LIMITS": settings.SRU_DATE_LIMITS_HORIZON,
+		"SRU_DATE_LIMITS": daterange,
 
 		"QUERY_DATA_DOWNLOAD_ALLOW": settings.QUERY_DATA_DOWNLOAD_ALLOW,
 
@@ -107,7 +94,9 @@ def loginajax( request ):
 		user = None
 
 	if user is not None:
-		daterange = getdaterange( projectname )
+		date_limits = daterange2dates('')
+		dates = [date_limits['lower'], date_limits['upper']]
+		daterange = [int(d.replace('-', '')) for d in dates]
 
 		msg = "Welcome %s" % username
 		if settings.DEBUG == True:
