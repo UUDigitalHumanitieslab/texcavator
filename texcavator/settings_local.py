@@ -79,7 +79,7 @@ XTAS_MAX_CLOUD_DOCS_ERROR = 10000				# servers
 QUERY_DATA_DOWNLOAD_ALLOW  = True
 QUERY_DATA_DOWNLOAD_DETACH = True		# when True QUERY_DATA_VPYTHON_PATH is needed
 QUERY_DATA_DOWNLOAD_PATH   = os.path.join( PROJECT_GRANNY, "BILAND_download/query_data" )
-QUERY_DATA_VPYTHON_PATH    = os.path.join( PROJECT_GRANNY, "python266" )	# virtual python
+QUERY_DATA_VPYTHON_PATH    = os.path.join( PROJECT_GRANNY, ".virtualenvs/texc" )	# virtual python
 QUERY_DATA_CHUNK_SIZE      = 100		# no. of documents from ES with 1 query
 QUERY_DATA_DELETE_DATA     = True		# delete query download data
 QUERY_DATA_EXPIRE_DAYS     = 1			# delete after one day
@@ -136,4 +136,8 @@ else:
 	CELERY_OWNER = None
 
 TEXCAVATOR_DATE_RANGE = "18500101,19901231"
+
+EMAIL_HOST = 'localhost'
+EMAIL_PORT = 1025
+
 # [eof]
