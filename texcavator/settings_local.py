@@ -39,15 +39,6 @@ if DEBUG == True:
 	print >> sys.stderr, "Python version:", sys.version
 	print >> sys.stderr, "PYTHONPATH:",     sys.path
 
-PATH = os.environ[ "PATH" ]
-try:
-	PATH.index( "perlbrew" )
-except:		# add perlbrew to PATH; take PERLBREW_PATH from .perlbrew/init
-	PERLBREW_PATH="/datastore/alaan2/perl5/perlbrew/bin:/datastore/alaan2/perl5/perlbrew/perls/perl-5.18.1/bin"
-	os.environ[ "PATH" ] = PERLBREW_PATH + ':' + os.environ[ "PATH" ]
-if DEBUG == True:
-	print >> sys.stderr, "PATH:", os.environ[ "PATH" ]
-
 # Which hardware?
 ( hostname, aliaslist, ipaddrlist ) = gethostbyaddr( gethostname() )
 HOSTNAME = hostname
