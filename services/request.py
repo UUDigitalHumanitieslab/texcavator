@@ -340,7 +340,7 @@ def request2parms( req_dict ):
 	try:
 		collection = req_dict[ "collection" ]
 	except:
-		collection = settings.ES_INDEX_KONBIB
+		collection = settings.ES_INDEX
 
 	return query_str, literal, date_begin, date_end, start_record, chunk_size, collection
 

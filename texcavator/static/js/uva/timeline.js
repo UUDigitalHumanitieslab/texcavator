@@ -47,16 +47,8 @@ var showTimeline = function( lexiconId, lexiconTitle, query_string, collection )
 	if( sparksDD != undefined ) { sparksDD.closeDropDown(); }
 
 	// select the tab containing the timeline
-	if( collection === ES_INDEX_KONBIB )
-	{
-		var tc = dijit.byId( "articleContainer" );
-		tc.selectChild( dijit.byId( "timeline" ) );
-	}
-	else
-	{
-		var tc = dijit.byId( "articleContainer2" );
-		tc.selectChild( dijit.byId( "timeline2" ) );
-	}
+	var tc = dijit.byId( "articleContainer" );
+	tc.selectChild( dijit.byId( "timeline" ) );
 
 	loadGraphData( lexiconId );
 }
@@ -276,37 +268,16 @@ function createGraph()
 
 	// Create a place for the chart
 	var collection = retrieveCollectionUsed();
-	if( collection === ES_INDEX_KONBIB )
-	{
-		var dest = dojo.byId( "chartDiv" );
-		if( dest == null ) 
-		{ $( '#timeline' ).append( '<div id="chartDiv" style="width: 100%; height: 320px; float: center;"></div>' ); }
-		else
-		{ dest.innerHTML = ""; }			// Clear existing destination
-	}
+	var dest = dojo.byId( "chartDiv" );
+	if( dest == null ) 
+	{ $( '#timeline' ).append( '<div id="chartDiv" style="width: 100%; height: 320px; float: center;"></div>' ); }
 	else
-	{
-		var dest = dojo.byId( "chartDiv2" );
-		if( dest == null ) 
-		{ $( '#timeline2' ).append( '<div id="chartDiv2" style="width: 100%; height: 320px; float: center;"></div>' ); }
-		else
-		{ dest.innerHTML = ""; }			// Clear existing destination
-	}
+	{ dest.innerHTML = ""; }			// Clear existing destination
 
-	if( collection === ES_INDEX_KONBIB )
-	{
-		var w = $( "#chartDiv" ).width() - 30, 
-			h = $( "#chartDiv" ).height(),
-			x = d3.time.scale().range( [ 0, w ] ),
-			y = d3.scale.linear().range( [ h-20, h-20 ] );	// start with zero height at X-axis (20px reserved for ticks & years)
-	}
-	else
-	{
-		var w = $( "#chartDiv2" ).width() - 30, 
-			h = $( "#chartDiv2" ).height(),
-			x = d3.time.scale().range( [ 0, w ] ),
-			y = d3.scale.linear().range( [ h-20, h-20 ] );	// start with zero height at X-axis (20px reserved for ticks & years)
-	}
+    var w = $( "#chartDiv" ).width() - 30, 
+	    h = $( "#chartDiv" ).height(),
+	    x = d3.time.scale().range( [ 0, w ] ),
+	    y = d3.scale.linear().range( [ h-20, h-20 ] );	// start with zero height at X-axis (20px reserved for ticks & years)
 	console.log( "createGraph() w=" + w + ", h=" + h );	// debug: sometimes the graph is compressed to a small width
 
 	// Update the scale domains.
@@ -314,24 +285,12 @@ function createGraph()
 	y.domain( burstData[ burstIntervalIndex ].range );
 
 	// An SVG element
-	if( collection === ES_INDEX_KONBIB )
-	{
-		var svg = d3.select( "#chartDiv" ).append( "svg:svg" )
-			.attr( "width", w )
-			.attr( "height", h )
-			.attr( "pointer-events", "all" )
-			.append( "svg:g" )
-			.call( d3.behavior.zoom().on( "zoom", redraw ) );
-	}
-	else
-	{
-		var svg = d3.select( "#chartDiv2" ).append( "svg:svg" )
-			.attr( "width", w )
-			.attr( "height", h )
-			.attr( "pointer-events", "all" )
-			.append( "svg:g" )
-			.call( d3.behavior.zoom().on( "zoom", redraw ) );
-	}
+	var svg = d3.select( "#chartDiv" ).append( "svg:svg" )
+		.attr( "width", w )
+		.attr( "height", h )
+		.attr( "pointer-events", "all" )
+		.append( "svg:g" )
+		.call( d3.behavior.zoom().on( "zoom", redraw ) );
 
 	svg.append( "svg:rect" )
 		.attr( "width", w )
@@ -593,29 +552,15 @@ function createGraph()
 	// Raise the bars
 	y.range( [ h-20, 0 ] );
 	var collection = retrieveCollectionUsed();
-	if( collection === ES_INDEX_KONBIB )
-	{
-		d3.select( "#chartDiv" ).selectAll( "path" )
-			.transition()
-				.duration( 2500 )
-				.delay( 300 )
-				.attr( "d", area );
-	}
-	else
-	{
-		d3.select( "#chartDiv2" ).selectAll( "path" )
-			.transition()
-				.duration( 2500 )
-				.delay( 300 )
-				.attr( "d", area );
-	}
+	d3.select( "#chartDiv" ).selectAll( "path" )
+		.transition()
+			.duration( 2500 )
+			.delay( 300 )
+			.attr( "d", area );
 
 	if( dijit.byId( 'sparksDialog' ) == undefined ) 
 	{
-		if( collection === ES_INDEX_KONBIB )
-		{ var chart_div = "chartDiv"; }
-		else
-		{ var chart_div = "chartDiv2"; }
+		var chart_div = "chartDiv";
 
 		var dialog = new dijit.TooltipDialog({
 			id: 'sparksDialog',
@@ -635,10 +580,7 @@ function createGraph()
 		});
 	}
 
-	if( collection === ES_INDEX_KONBIB )
-	{ dojo.place( button.domNode, 'chartDiv' ); }
-	else
-	{ dojo.place( button.domNode, 'chartDiv2' ); }
+    dojo.place( button.domNode, 'chartDiv' );
 
 } // createGraph() 
 
@@ -792,16 +734,8 @@ function burstClicked( data, index, element )
 
 //	dojo.query( '#sparksDialog .dijitTooltipConnector' )[ 0 ].style.position = "relative";
 	var oldPosition = dojo.position( dijit.byId( 'sparksDialog' )._popupWrapper );
-	if( collection === ES_INDEX_KONBIB )
-	{
-		var newLeft  = dojo.position( "chartDiv" ).x;
-		var newWidth = dojo.position( "chartDiv" ).w;
-	}
-	else
-	{
-		var newLeft  = dojo.position( "chartDiv2" ).x;
-		var newWidth = dojo.position( "chartDiv2" ).w;
-	}
+	var newLeft  = dojo.position( "chartDiv" ).x;
+	var newWidth = dojo.position( "chartDiv" ).w;
 
 	dijit.byId( 'sparksDialog' )._popupWrapper.style.left  = newLeft  + "px";
 	dijit.byId( 'sparksDialog' )._popupWrapper.style.width = newWidth + "px";

@@ -96,10 +96,7 @@ def addtags_elasticsearch( lexiconID, collection, begindate, enddate ):
 
 	# query ES to obtain the doc_ids
 	es_baseurl = "http://" + settings.ELASTICSEARCH_HOST + ':' + str( settings.ELASTICSEARCH_PORT ) + '/'
-	if collection == settings.ES_INDEX_STABI:
-		es_url = es_baseurl + settings.ES_INDEX_STABI
-	else:
-		es_url = es_baseurl + settings.ES_INDEX_KONBIB
+	es_url = es_baseurl + settings.ES_INDEX
 	es_url += "/_search/"
 
 	date_begin = "%s-%s-%s" % ( begindate[0:4], begindate[4:6], begindate[6:8] )	# YYYYMMDD -> YYYY-MM-DD

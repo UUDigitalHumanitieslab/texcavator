@@ -67,10 +67,7 @@ def es_queryid2esurl( lexiconID, collection, es_path ):
 		return
 
 	es_baseurl = "http://" + settings.ELASTICSEARCH_HOST + ':' + str( settings.ELASTICSEARCH_PORT ) + '/'
-	if collection == settings.ES_INDEX_STABI:
-		es_url = es_baseurl + settings.ES_INDEX_STABI
-	else:
-		es_url = es_baseurl + settings.ES_INDEX_KONBIB
+	es_url = es_baseurl + settings.ES_INDEX
 
 	es_url += es_path
 
@@ -238,7 +235,7 @@ def es_doc_count( req_dict ):
 	doc_types = request2article_types( req_dict )
 	if settings.DEBUG == True:
 		print >> stderr, "type_query:", doc_types, collection
-	if collection == settings.ES_INDEX_KONBIB and doc_types is not None:
+	if collection == settings.ES_INDEX and doc_types is not None:
 		cql_query += doc_types
 
 	# Add the KB document distribution[s] selection to the query
@@ -248,7 +245,7 @@ def es_doc_count( req_dict ):
 			print >> stderr, "distrib_query:", "None", collection
 		else:
 			print >> stderr, "distrib_query:", distrib_types.encode( "utf-8" ), collection
-	if collection == settings.ES_INDEX_KONBIB and distrib_types is not None:
+	if collection == settings.ES_INDEX and distrib_types is not None:
 		cql_query += distrib_types
 
 	if settings.DEBUG == True: print >> stderr, cql_query.encode( "utf-8" )
@@ -406,7 +403,7 @@ def elasticsearch_htmlresp( collection, start_record, chunk_size, es_dict ):
 
 		print >> stderr, hit
 
-		if collection == settings.ES_INDEX_KONBIB:
+		if collection == settings.ES_INDEX:
 			article_dc_title       = hit[ "fields" ][ "article_dc_title" ][0]
 			paper_dcterms_temporal = hit[ "fields" ][ "paper_dcterms_temporal" ][0]
 			paper_dcterms_spatial  = hit[ "fields" ][ "paper_dcterms_spatial" ][0]
@@ -473,14 +470,14 @@ def search_xtas_elasticsearch( request, type_query ):
 	doc_types = request2article_types( request.REQUEST )
 	if settings.DEBUG == True:
 		print >> stderr, "type_query", doc_types
-	if collection == settings.ES_INDEX_KONBIB and doc_types is not None:
+	if collection == settings.ES_INDEX and doc_types is not None:
 		query_str += doc_types
 
 	# Add the KB document distribution[s] selection to the query
 	distrib_types = request2article_distrib( request.REQUEST )
 	if settings.DEBUG == True and distrib_types is not None:
 		print >> stderr, "distrib_query", distrib_types.encode( "utf-8" )
-	if collection == settings.ES_INDEX_KONBIB and distrib_types is not None:
+	if collection == settings.ES_INDEX and distrib_types is not None:
 		query_str += distrib_types
 
 
@@ -510,7 +507,7 @@ def search_xtas_elasticsearch( request, type_query ):
 
 
 	# limit the response fields to what we need; prefix "_source." is superfluous
-	if collection == settings.ES_INDEX_KONBIB:
+	if collection == settings.ES_INDEX:
 		fields = \
 		[
 			"article_dc_title",
@@ -539,10 +536,7 @@ def search_xtas_elasticsearch( request, type_query ):
 	}
 
 	es_baseurl = "http://" + settings.ELASTICSEARCH_HOST + ':' + str( settings.ELASTICSEARCH_PORT ) + '/'
-	if collection == settings.ES_INDEX_STABI:
-		es_url = es_baseurl + settings.ES_INDEX_STABI
-	else:
-		es_url = es_baseurl + settings.ES_INDEX_KONBIB
+	es_url = es_baseurl + settings.ES_INDEX
 	es_url += "/_search/"
 
 	try:
@@ -587,12 +581,12 @@ def retrieve_xtas_elasticsearch( request ):
 	try:
 		collection = req_dict[ "collection" ]
 	except:
-		collection = settings.ES_INDEX_KONBIB
+		collection = settings.ES_INDEX
 
 	es_baseurl = "http://" + settings.ELASTICSEARCH_HOST + ':' + str( settings.ELASTICSEARCH_PORT ) + '/'
-	es_url = es_baseurl + settings.ES_INDEX_KONBIB
+	es_url = es_baseurl + settings.ES_INDEX
 	es_url += '/'
-	es_url += settings.ES_INDEX_DOCTYPE_KONBIB
+	es_url += settings.ES_DOCTYPE
 	es_url += '/'
 
 	es_url += _id

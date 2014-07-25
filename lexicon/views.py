@@ -16,7 +16,7 @@ def delete_xtas_tags( tags )
 def aggregation(request, lexiconID)
 def item(request, id)
 def dayStatistics(request)
-def bursts( request, lexiconID, collection = settings.ES_INDEX_KONBIB, resolution = "year" )
+def bursts( request, lexiconID, collection = settings.ES_INDEX, resolution = "year" )
 def bursts_zoom( request, lexiconID, datetuple )
 def timestamp_refresh( request )
 def stopwords_get_editglob( username ):
@@ -639,7 +639,7 @@ def dayStatistics(request):
 
 #@cache_page(60 * 15)	# name 'cache_page' is not defined
 @csrf_exempt
-def bursts( request, lexiconID, collection = settings.ES_INDEX_KONBIB, resolution = "year" ):
+def bursts( request, lexiconID, collection = settings.ES_INDEX, resolution = "year" ):
 	if settings.DEBUG == True:
 		print >> stderr, "lexicon/bursts() lexiconID:", lexiconID, "resolution:", resolution
 
@@ -648,7 +648,7 @@ def bursts( request, lexiconID, collection = settings.ES_INDEX_KONBIB, resolutio
 	try:
 		collection = req_dict[ "collection" ]
 	except:
-		collection = settings.ES_INDEX_KONBIB
+		collection = settings.ES_INDEX
 
 	try:
 		normalize_str = req_dict[ "normalize" ]

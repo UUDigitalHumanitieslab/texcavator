@@ -64,8 +64,8 @@ from services.request import request2article_types, is_literal
 def search( request ):
     params = get_search_parameters(request.REQUEST)
     
-    valid_q, result = do_search(settings.ES_INDEX_KONBIB,
-                                settings.ES_INDEX_DOCTYPE_KONBIB,
+    valid_q, result = do_search(settings.ES_INDEX,
+                                settings.ES_DOCTYPE,
                                 params['query'],
                                 params['start']-1, # Zero based counting
                                 params['result_size'],
@@ -73,7 +73,7 @@ def search( request ):
                                 params['distributions'],
                                 params['article_types'])
     if valid_q:
-        html_str = elasticsearch_htmlresp(settings.ES_INDEX_KONBIB, 
+        html_str = elasticsearch_htmlresp(settings.ES_INDEX, 
                                           params['start'], 
                                           params['result_size'],
                                           result)
@@ -252,7 +252,7 @@ def cloud( request ):
     try:
         collection = req_dict[ "collections" ]
 
-        cloud_params[ "collections" ] = [ settings.ES_INDEX_KONBIB ]    # Ork expects collections, with s
+        cloud_params[ "collections" ] = [ settings.ES_INDEX ]    # Ork expects collections, with s
     except:
         msg = "missing collection parameter";
         resp_dict =  { "status" : "error", "msg" : msg }

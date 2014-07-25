@@ -760,7 +760,7 @@ function okDownload( query_title )
 	var params = getSearchParameters();			// from config
 	params[ "username" ]    = glob_username;
 	params[ "password" ]    = glob_password;
-	params[ "collection" ]  = ES_INDEX_KONBIB;
+	params[ "collection" ]  = ES_INDEX;
 	params[ "query_title" ] = query_title;
 	params[ "query" ]       = query_content;
 

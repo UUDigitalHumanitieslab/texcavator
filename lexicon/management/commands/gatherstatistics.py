@@ -46,8 +46,8 @@ class Command(BaseCommand):
 
             print year
 
-            results = day_statistics(settings.ES_INDEX_KONBIB,
-                                     settings.ES_INDEX_DOCTYPE_KONBIB,
+            results = day_statistics(settings.ES_INDEX,
+                                     settings.ES_DOCTYPE,
                                      date_range,
                                      agg_name)
 

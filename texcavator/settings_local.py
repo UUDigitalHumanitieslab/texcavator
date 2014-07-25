@@ -41,8 +41,6 @@ if DEBUG == True:
 
 ELASTICSEARCH_HOST = "localhost" 
 ELASTICSEARCH_PORT = 9200
-ES_INDEX_KONBIB    = "kb"
-ES_INDEX_DOCTYPE_KONBIB = "doc"
 ES_INDEX = 'kb'
 ES_DOCTYPE = 'doc'
 
@@ -50,7 +48,7 @@ ES_DOCTYPE = 'doc'
 # Notice: for retrieving (not storing!) documents, 
 # sometimes DSTORE_KBRESOLVER is used inside the code
 XTAS_DATASTORE  = "DSTORE_ELASTICSEARCH"
-XTAS_COLLECTION = ES_INDEX_KONBIB
+XTAS_COLLECTION = ES_INDEX
 # default collection; notice: hardcoded in:
 #	BiLand/services/static/xslt/sru.kb.xsl 
 #	BiLand/BILAND/templates/index.html (radio buttons)
@@ -92,7 +90,7 @@ if DEBUG == True:
 
 	print >> sys.stderr, "ELASTICSEARCH_HOST:  %s" % ELASTICSEARCH_HOST
 	print >> sys.stderr, "ELASTICSEARCH_PORT:  %s" % ELASTICSEARCH_PORT
-	print >> sys.stderr, "ES_INDEX_KONBIB:     %s" % ES_INDEX_KONBIB
+	print >> sys.stderr, "ES_INDEX:     %s" % ES_INDEX
 
 	print >> sys.stderr, "QUERY_DATA_DOWNLOAD_ALLOW:  %s" % QUERY_DATA_DOWNLOAD_ALLOW
 	print >> sys.stderr, "QUERY_DATA_DOWNLOAD_DETACH: %s" % QUERY_DATA_DOWNLOAD_DETACH

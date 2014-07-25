@@ -140,7 +140,7 @@ def download_prepare( request ):
 	doc_types = request2article_types( request.REQUEST )
 	if settings.DEBUG == True:
 		print >> stderr, "type_query:", doc_types, collection
-	if collection == settings.ES_INDEX_KONBIB and doc_types is not None:
+	if collection == settings.ES_INDEX and doc_types is not None:
 		query_str += doc_types
 
 	# Add the KB document distribution[s] selection to the query
@@ -150,7 +150,7 @@ def download_prepare( request ):
 			print >> stderr, "distrib_query:", "None", collection
 		else:
 			print >> stderr, "distrib_query:", distrib_types.encode( "utf-8" ), collection
-	if collection == settings.ES_INDEX_KONBIB and distrib_types is not None:
+	if collection == settings.ES_INDEX and distrib_types is not None:
 		query_str += distrib_types
 
 	print >> stderr, query_str.encode( "utf-8" )
@@ -225,7 +225,7 @@ def download_collect( req_dict, zip_basename, to_email, email_message ):
 	# Add the KB document type[s] selection to the query
 	#doc_types = request2article_types( req_dict )
 	#if settings.DEBUG == True: print >> stderr, "type_query", doc_types
-	#if collection == settings.ES_INDEX_KONBIB and doc_types is not None:
+	#if collection == settings.ES_INDEX and doc_types is not None:
 	#	query_str += doc_types
 
 	# Add the KB document distribution[s] selection to the query
@@ -235,7 +235,7 @@ def download_collect( req_dict, zip_basename, to_email, email_message ):
 	#		print >> stderr, "distrib_query:", "None", collection
 	#	else:
 	#		print >> stderr, "distrib_query:", distrib_types.encode( "utf-8" ), collection
-	#if collection == settings.ES_INDEX_KONBIB and distrib_types is not None:
+	#if collection == settings.ES_INDEX and distrib_types is not None:
 	#	query_str += distrib_types
 
 	#print >> stderr, query_str.encode( "utf-8" )

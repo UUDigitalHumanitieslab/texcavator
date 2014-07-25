@@ -597,7 +597,7 @@ def task_download_collect( req_dict, zip_basename ):
 	doc_types = request2article_types( req_dict )
 	if settings.DEBUG == True:
 		print >> stderr, "type_query", doc_types
-	if collection == settings.ES_INDEX_KONBIB and doc_types is not None:
+	if collection == settings.ES_INDEX and doc_types is not None:
 		query_str += doc_types
 
 	# Add the date range

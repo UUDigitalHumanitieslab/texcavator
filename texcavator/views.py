@@ -68,7 +68,7 @@ def index( request ):
 
 		"QUERY_DATA_DOWNLOAD_ALLOW": settings.QUERY_DATA_DOWNLOAD_ALLOW,
 
-		"ES_INDEX_KONBIB": settings.ES_INDEX_KONBIB,
+		"ES_INDEX": settings.ES_INDEX,
 
 		"ILPS_LOGGING": settings.ILPS_LOGGING
 	}

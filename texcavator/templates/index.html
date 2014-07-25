@@ -220,7 +220,7 @@ XTAS_DOCS_SELECT    = "{{ XTAS_DOCS_SELECT }}";
 XTAS_MAX_CLOUD_DOCS_WARN  = "{{ XTAS_MAX_CLOUD_DOCS_WARN }}";
 XTAS_MAX_CLOUD_DOCS_ERROR = "{{ XTAS_MAX_CLOUD_DOCS_ERROR }}";
 
-ES_INDEX_KONBIB = "{{ ES_INDEX_KONBIB }}";
+ES_INDEX = "{{ ES_INDEX }}";
 
 /*
 dojo.ready( function()
@@ -481,7 +481,7 @@ function nextResults( amount )
 		console.log( "processRecord: " + record_id );
 	//	console.log( "processRecord: OCR: " + ocr_text );
 
-		var collection = ES_INDEX_KONBIB;
+		var collection = ES_INDEX;
 
 		updateTextview( collection, record_id, ocr_text );			// update article in Text tab
 
@@ -508,7 +508,7 @@ function nextResults( amount )
 		var params = { ids: record_id };
 		params = getCloudParameters( params );				// add user-changeable parameters from config
 
-		params[ "collections" ] = ES_INDEX_KONBIB;		// 	can be more than 1
+		params[ "collections" ] = ES_INDEX;		// 	can be more than 1
 		var cloud_pane = "cloudPane";
 
         dojo.xhrGet({
