@@ -39,18 +39,6 @@ if DEBUG == True:
 	print >> sys.stderr, "Python version:", sys.version
 	print >> sys.stderr, "PYTHONPATH:",     sys.path
 
-# Which hardware?
-( hostname, aliaslist, ipaddrlist ) = gethostbyaddr( gethostname() )
-HOSTNAME = hostname
-if DEBUG == True:
-	print >> sys.stderr, "running on: %s" % HOSTNAME
-
-# my network starts slow, and when the celeryd daemon starts the hostname is not yet known
-#if hostname != "u017343.science.uva.nl":		# Fons local PC O&O network
-#if hostname != "u017343.1x.uva.nl":				# Fons local PC
-#	raise Exception( "Your host '%s' was not found!" % hostname )
-#	sys.exit( 1 )
-
 DEV_SERVER_PORT = 8001		# $ python manage.py runserver 0.0.0.0:8001
 WEB_SERVER_PORT = 8008
 if DEBUG == True:
