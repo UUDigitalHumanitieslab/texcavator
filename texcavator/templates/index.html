@@ -213,13 +213,6 @@ function showDojoLocale()
 dojo.ready( showDojoLocale );
 
 // global javascript variables from django template variables
-XTAS_PREFIX         = "{{ XTAS_PREFIX }}";
-XTAS_COLLECTION     = "{{ XTAS_COLLECTION }}";
-XTAS_DOCS_SELECT    = "{{ XTAS_DOCS_SELECT }}";
-
-XTAS_MAX_CLOUD_DOCS_WARN  = "{{ XTAS_MAX_CLOUD_DOCS_WARN }}";
-XTAS_MAX_CLOUD_DOCS_ERROR = "{{ XTAS_MAX_CLOUD_DOCS_ERROR }}";
-
 ES_INDEX = "{{ ES_INDEX }}";
 
 /*
@@ -260,7 +253,6 @@ dojo.ready( function() {
 
 dojo.ready( function() { celeryCheckFailure( "{{ CELERY_OWNER }}"  ); } );	// celery.js
 dojo.ready( function() { storeDateLimits(     {{ SRU_DATE_LIMITS }} ); } );	// toolbar.js
-dojo.ready( function() { storeDatastore(     "{{ XTAS_DATASTORE }}" ); } );	// config.js
 dojo.ready( function() { createYearSlider(    {{ SRU_DATE_LIMITS }}); } );	// accordion.js, uses the stored SRU_DATE_LIMITS
 
 
@@ -452,7 +444,7 @@ function nextResults( amount )
 			url: url,
 			content: { 
 				"datastore"  : "DSTORE_KBRESOLVER",	// try to fetch from KB instead
-				"collection" : XTAS_COLLECTION		// default collection
+				"collection" : ES_INDEX		// default collection
 			},
 			failOk: false,			// true: No dojo console error message
 			handleAs: "json",
@@ -661,7 +653,7 @@ function onClickLoadData( lexiconID, datastore )
 
 	var params = {
 		datastore  : datastore,
-		collection : XTAS_COLLECTION,		// default collection
+		collection : ES_INDEX,		// default collection
 		begindate  : glob_begindate,
 		enddate    : glob_enddate
 	};

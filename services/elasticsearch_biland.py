@@ -388,7 +388,7 @@ def elasticsearch_htmlresp( collection, start_record, chunk_size, es_dict ):
 
 	html_str += '<ol start="' + '%s' % start_record + '">'
 
-	datastore = settings.XTAS_DATASTORE
+	datastore = "DSTORE_ELASTICSEARCH" 
 
 	for h in range( hits_retrieved ):
 		hit = hits_list[ h ]

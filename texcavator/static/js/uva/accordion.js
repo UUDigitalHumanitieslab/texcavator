@@ -18,7 +18,7 @@ dojo.require( "dojox.form.RangeSlider" );
 
 function collection_fromradio()
 {
-	return XTAS_COLLECTION
+	return ES_INDEX
 }
 
 

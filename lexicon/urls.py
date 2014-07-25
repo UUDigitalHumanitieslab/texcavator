@@ -5,13 +5,10 @@
 from django.conf.urls import patterns, include, url
 
 import djcelery.views
-from lexicon.tasks import addLexiconItemToXtas
 
 urlpatterns = patterns( '',
 	url( r'^$', 'lexicon.views.index' ),
 
-	url( r'^(?P<lexiconID>\d+)/addToXtas?$', djcelery.views.task_view(addLexiconItemToXtas) ),
-	url( r'^(?P<lexiconID>\d+)/(?P<beginDate>\d{8})/(?P<endDate>\d{8})/addDRToXtas/$', 'lexicon.views.daterange_lexicon' ),
 	url( r'^(?P<lexiconID>\d+)/aggregation?$', 'lexicon.views.aggregation' ),
 
 	url( r'^(?P<id>\d+)/?$', 'lexicon.views.item' ),

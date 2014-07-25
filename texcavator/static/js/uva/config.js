@@ -22,7 +22,6 @@ var createConfig = function()
 // changeable by toolbar Config
 var config = {
 	celery_owner : "",				// used for checking Celery processes
-//	datastore: XTAS_DATASTORE,		// "DSTORE_MONGODB" or "DSTORE_ELASTICSEARCH"
 
 	search: {
 		// putting some types false is used by Search, but not by fetching the KB articles

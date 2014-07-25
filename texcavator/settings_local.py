@@ -44,27 +44,6 @@ ELASTICSEARCH_PORT = 9200
 ES_INDEX = 'kb'
 ES_DOCTYPE = 'doc'
 
-
-# Notice: for retrieving (not storing!) documents, 
-# sometimes DSTORE_KBRESOLVER is used inside the code
-XTAS_DATASTORE  = "DSTORE_ELASTICSEARCH"
-XTAS_COLLECTION = ES_INDEX
-# default collection; notice: hardcoded in:
-#	BiLand/services/static/xslt/sru.kb.xsl 
-#	BiLand/BILAND/templates/index.html (radio buttons)
-
-if XTAS_DATASTORE == "DSTORE_ELASTICSEARCH":
-	XTAS_HOST        = 'localhost'	
-	XTAS_PREFIX      = 'api'
-	XTAS_PORT        = 8088 
-	XTAS_API_KEY     = 'xtasapikey'
-	XTAS_DOC_ID      = "METADATAKEY"				# new: used by Ridho
-	XTAS_DOCS_SELECT = "LIST"						# only by docid list
-
-else:
-	print >> sys.stderr, "No xTAS datastore ?"
-	sys.exit( 1 )
-
 XTAS_MAX_CLOUD_DOCS_WARN  =  2500				# servers
 XTAS_MAX_CLOUD_DOCS_ERROR = 10000				# servers
 
@@ -80,11 +59,6 @@ QUERY_DATA_EXPIRE_DAYS     = 1			# delete after one day
 ILPS_LOGGING = False				# if True, also uncomment code in base.html
 
 if DEBUG == True:
-	print >> sys.stderr, "XTAS_HOST:           %s" % XTAS_HOST
-	print >> sys.stderr, "XTAS_PORT:           %s" % XTAS_PORT
-	print >> sys.stderr, "XTAS_PREFIX:         %s" % XTAS_PREFIX
-	print >> sys.stderr, "XTAS_API_KEY:        %s" % XTAS_API_KEY
-
 	print >> sys.stderr, "XTAS_MAX_CLOUD_DOCS_WARN:  %s" % XTAS_MAX_CLOUD_DOCS_WARN
 	print >> sys.stderr, "XTAS_MAX_CLOUD_DOCS_ERROR: %s" % XTAS_MAX_CLOUD_DOCS_ERROR
 
