@@ -33,35 +33,14 @@ from texcavator.timestamp import TIMESTAMP
 
 
 def get_server_info( request ):
-	meta = request.META
-	port = int( meta[ "SERVER_PORT" ] )
-#	print "server port: %s" % request.META[ "SERVER_PORT" ]
-
-	if port == settings.DEV_SERVER_PORT:
-		scheme_authority = "http://localhost:" + str( port )
-		sub_site = "/"
-	else:
-		scheme_authority = "http://" + settings.HOSTNAME + ":" + str( port )
-		sub_site = '/' 
-
-	return scheme_authority, sub_site
-
+    """Returns scheme_authority (host+port) and sub_site.
+    Must be removed later (
+    """
+	return request.get_host(), '/'
 
 
 def get_ext_server_info( request ):
-	meta = request.META
-	port = int( meta[ "SERVER_PORT" ] )
-#	print "server port: %s" % request.META[ "SERVER_PORT" ]
-
-	if port == settings.DEV_SERVER_PORT:
-		scheme_authority = "http://" + settings.HOSTNAME + ":" + str( port )
-		sub_site = "/"
-	else:
-		scheme_authority = "http://" + settings.HOSTNAME + ":" + str( port )
-		sub_site = '/' 
-
-	return scheme_authority, sub_site
-
+    return get_server_info(request)
 
 
 def getdaterange( projectname ): 
