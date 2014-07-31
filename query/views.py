@@ -13,8 +13,7 @@ def query(request, query_id):
     query = get_object_or_404(Query, pk=query_id)
 
     params = {
-        'query_id': query.id,
-        'query': query.query
+        'query': query.get_query_dict()
     }
 
     return json_response_message('OK', '', params)

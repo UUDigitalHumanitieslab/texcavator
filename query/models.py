@@ -1,3 +1,5 @@
+import json
+
 from django.db import models
 
 from django.contrib.auth.models import User
@@ -28,6 +30,26 @@ class Query(models.Model):
     user = models.ForeignKey(User)
 
     date_created = models.DateTimeField(auto_now=True)
+
+    
+    def get_query_dict(self):
+        """Return a JSON serializable representation of the query object, that 
+        contains all relevant data and metadata.
+        """
+        excl_art_types = [a.art_type for a in self.exclude_article_types.all()]
+        excl_distr = [d.distribution for d in self.exclude_distributions.all()]
+
+        return {
+            'query_id': self.id,
+            'query': self.query,
+            'date_lower': str(self.date_lower),
+            'date_upper': str(self.date_upper),
+            'exclude_article_types': excl_art_types, 
+            'exclude_distributions': excl_distr, 
+            'comment': self.comment,
+            'date_created': str(self.date_created)
+        }
+
 
     def __unicode__(self):
         return self.query
