@@ -1,0 +1,65 @@
+[
+    {
+        "model": "query.articletype",
+        "pk": "1",
+        "fields": {
+            "art_type": "artikel"
+        }
+    },
+    {
+        "model": "query.articletype",
+        "pk": "2",
+        "fields": {
+            "art_type": "advertentie"
+        }
+    },
+    {
+        "model": "query.articletype",
+        "pk": "3",
+        "fields": {
+            "art_type": "illustratie met onderschrift"
+        }
+    },
+    {
+        "model": "query.articletype",
+        "pk": "4",
+        "fields": {
+            "art_type": "familiebericht"
+        }
+    },
+    {
+        "model": "query.distribution",
+        "pk": "1",
+        "fields": {
+            "distribution": "Landelijk"
+        }
+    },
+    {
+        "model": "query.distribution",
+        "pk": "2",
+        "fields": {
+            "distribution": "Regionaal/lokaal"
+        }
+    },
+    {
+        "model": "query.distribution",
+        "pk": "3",
+        "fields": {
+            "distribution": "Nederlandse Antillen"
+        }
+    },
+    {
+        "model": "query.distribution",
+        "pk": "4",
+        "fields": {
+            "distribution": "Suriname"
+        }
+    },
+    {
+        "model": "query.distribution",
+        "pk": "5",
+        "fields": {
+            "distribution": "Nederlands-Indië / Indonesië"
+        }
+    }
+]
