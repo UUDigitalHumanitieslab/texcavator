@@ -20,10 +20,10 @@ class Query(models.Model):
     query = models.TextField()
     date_lower = models.DateField()
     date_upper = models.DateField()
-    exclude_article_types = models.ManyToManyField(ArticleType)
-    exclude_distributions = models.ManyToManyField(Distribution)
+    exclude_article_types = models.ManyToManyField(ArticleType, blank=True)
+    exclude_distributions = models.ManyToManyField(Distribution, blank=True)
 
-    comment = models.TextField()
+    comment = models.TextField(blank=True)
 
     user = models.ForeignKey(User)
 
