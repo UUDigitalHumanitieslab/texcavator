@@ -34,6 +34,7 @@ urlpatterns += patterns( '',
 	url( r'^services/', include( 'services.urls' ) ),
 	url( r'^lexicon/', include( 'lexicon.urls' ) ),
 	url( r'^list/', include( 'list.urls' ) ),
+	url( r'^query/', include( 'query.urls' ) ),
 
 	# Not used?
 	url( r'^login/$', 'django.contrib.auth.views.login' ),
