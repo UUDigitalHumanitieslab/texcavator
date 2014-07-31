@@ -6,14 +6,14 @@ class ArticleType(models.Model):
     art_type = models.CharField(max_length=30)
 
     def __unicode__(self):
-        return art_type
+        return self.art_type
 
 
 class Distribution(models.Model):
     distribution = models.CharField(max_length=35)
 
     def __unicode__(self):
-        return distribution
+        return self.distribution
 
 
 class Query(models.Model):
@@ -30,4 +30,4 @@ class Query(models.Model):
     date_created = models.DateTimeField(auto_now=True)
 
     def __unicode__(self):
-        return query
+        return self.query
