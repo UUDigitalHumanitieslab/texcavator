@@ -336,7 +336,6 @@ function researchSubmit( item )
 
 	var query = item[ "fields" ][ "query" ];
 	console.log( "query: " + query );
-	params[ "query" ] = query;
 	dojo.byId( "query" ).value = query;		// display query in Search textBox
 
     searchSubmit();

@@ -133,7 +133,7 @@ function createQueryLine( item )
 	var btn = null;
 	var debug_destroy = false;
 
-	//	console.log( "Button retrieve lexicon metadata+ocrdata" );
+	//	console.log( "Button re-search" );
 	btn = dijit.byId( "btn-sq-fetch-" + item.pk );
 	if( btn != null )
 	{
@@ -141,18 +141,16 @@ function createQueryLine( item )
 		btn.destroy();
 	}
 
-	console.log( "Re-search" );
-
 	dojo.place(( new dijit.form.Button({
 		id: "btn-sq-fetch-" + item.pk,
 		disabled: false,
-		label: "Basis lexicon",
+		label: "Re-search",
 		showLabel: false,
 		title: "Re-search: " + title,
 		pk: item.pk,
 		iconClass: "dijitIconNewTask",
 		onClick: function() {
-			console.log( "Re-search" );
+            console.log( "Re-search " + title );
 			researchSubmit( item );
 		}
 	})).domNode, buttonsNode );
