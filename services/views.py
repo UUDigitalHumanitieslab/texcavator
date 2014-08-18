@@ -116,27 +116,15 @@ def doc_count( request ):
     
     queryID = request.REQUEST.get('queryID')
 
-    query = None
     if queryID:
 	    # get the query string from the Django db
-        try:
-            qu = Query.objects.get(pk=queryID)
-            query = qu.query
-        except Query.DoesNotExist:
-            msg = "Query with id %s cannot be found." % queryID
-            logger.error( msg )
-            if settings.DEBUG:
-                print >> stderr, msg
-            return json_response_message('error', msg)
-        except DatabaseError:
-            return json_response_message('error', 
-                'Database error while retrieving query.')
+        query, response = get_query(queryID)
+
+        if not query:
+            return response
     else:
         return json_response_message('error', 'Missing query id.')
 
-    if not query:
-        return json_response_message('error', 'No query found.')
-    
     params = get_search_parameters(request.REQUEST)
     
     result = count_search_results(params['collection'],
