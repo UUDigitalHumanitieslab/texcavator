@@ -114,7 +114,7 @@ def doc_count( request ):
     if settings.DEBUG:
         print >> stderr, "doc_count()"
     
-    queryID = request.REQUEST.get('queryID', None)
+    queryID = request.REQUEST.get('queryID')
 
     query = None
     if queryID:
