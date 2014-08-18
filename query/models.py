@@ -53,3 +53,17 @@ class Query(models.Model):
 
     def __unicode__(self):
         return self.query
+
+
+class DayStatistic( models.Model ):
+    """DayStatistic is used to generate timeline graphs. Data for the
+    DayStatistic table is gathered with the 'gatherstatistics' management
+    command.
+    """
+    date    = models.DateField( unique = True )
+    count   = models.IntegerField()
+    checked = models.DateTimeField( auto_now = True )
+
+
+    def __unicode__( self ):
+        return '{}: {}'.format(str(self.date), self.count) 
