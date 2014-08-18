@@ -724,21 +724,16 @@ function onClickExecuteCloudStopwords( lexiconID )
 
 
 // button Uitvoeren: metadata graphics + query word cloud
-function onClickExecute( lexiconID, query )
+function onClickExecute( queryID, query )
 {
-	console.log( "onClickExecute() lexiconID: " + lexiconID + ", : " + query );
+	console.log( "onClickExecute() queryID: " + queryID + " : " + query );
 
-	storeLexiconID( lexiconID );			// query.js
+	storeLexiconID( queryID );			// query.js
 
 	dojo.byId( 'query' ).value = query;
 	dojo.empty( dojo.byId( "cql" ) );
 	searchSubmit();							// HTML search result in Search panel of accordion
 	dijit.byId( 'leftAccordion' ).back();
-
-	// close all tabs but the first 2
-//	var tabs = dijit.byId( "articleContainer" ).getChildren();
-//	for( var tab = 2; tab < tabs.length; tab++ )
-//	{ dijit.byId( "articleContainer" ).closeChild( tabs[ tab ] ); }
 
 	console.log( "metadataGraphics temporarily not available" );
 //	metadataGraphics( lexiconID );		// create the metadata graphics (and select that tab)
@@ -746,7 +741,7 @@ function onClickExecute( lexiconID, query )
 	// Cloud
 	var config = getConfig();
 	var params = {
-		lexiconID  : lexiconID,
+		queryID  : queryID,
 		datastore  : config[ "datastore" ],
 		collection : collection_fromradio(),
 		dateRange  : getDateRangeString()
@@ -769,7 +764,7 @@ function onClickExecute( lexiconID, query )
 			}
 			else
 			{
-				onClickExecuteCloud( lexiconID );
+				onClickExecuteCloud( queryID );
                 /*
 				// limit the number of documents for a burst cloud [same as in timeline.js:burstClicked()]
 				var doc_count   = parseInt( data.doc_count );
@@ -823,10 +818,10 @@ function onClickExecute( lexiconID, query )
 
 
 
-function onClickExecuteCloud( lexiconID )
+function onClickExecuteCloud( queryID )
 {
 	var collection = collection_fromradio();
-	console.log( "onClickExecuteCloud() lexiconID: " + lexiconID + ", collection: " + collection );
+	console.log( "onClickExecuteCloud() queryID: " + queryID + ", collection: " + collection );
 
 	var cloud_pane = "cloudPane";
 	var art_container =  "articleContainer"
@@ -854,7 +849,7 @@ function onClickExecuteCloud( lexiconID )
     params = {
 		datastore   : datastore,
 		collections : collection,				// 	can be more than 1
-		lexiconID   : lexiconID,
+		queryID   : queryID,
 		dateRange   : getDateRangeString()
 	}
 
