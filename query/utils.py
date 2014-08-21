@@ -1,9 +1,13 @@
 """Utility functions for saved queries."""
 
 
+from sys import stderr
+
+from django.conf import settings
 from django.db import DatabaseError
 
 from models import Query
+from services.es import get_document_ids
 
 
 def get_query(query_id):
@@ -27,3 +31,22 @@ def get_query(query_id):
         response = json_response_message('error', 'No query found.')
 
     return query, response
+
+
+def query2docidsdate(query_id, collection, date_begin, date_end):
+	"""Get the document ids plus their date for the query and date range.
+	"""
+	# this is called multiple times by the timeline
+	if settings.DEBUG == True:
+		print >> stderr, "query2docidsdate()", collection
+
+	query, response = get_query(query_id)
+
+	date_range = {
+        'lower': date_begin,
+        'upper': date_end
+	}
+
+	doc_ids_list = get_document_ids(collection, 'doc', query, date_range)
+
+	return doc_ids_list

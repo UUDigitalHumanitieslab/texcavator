@@ -158,7 +158,7 @@ function getData( lexiconId, field, interval, callback )
 
 //	var timeline_url = "http://zookst14.science.uva.nl:9200/semantictwittertest/tweet/_search?pretty=true"
 //	var timeline_url = "http://node428.das3.science.uva.nl:9200/semantictwittertest/tweet/_search?pretty=true"
-	var timeline_url = "lexicon/timeline/" + lexiconId + "/" + interval;
+	var timeline_url = "query/timeline/" + lexiconId + "/" + interval;
 //	console.log( "url: " + timeline_url );
 
 	var config = getConfig();
