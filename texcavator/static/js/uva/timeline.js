@@ -625,31 +625,6 @@ function burstClicked( data, index, element )
 {
 	console.log( "burstClicked(): " + data.docs.length + " records" );
 
-	// limit the number of documents for a burst cloud [same as in index.html:onClickExecute()]
-	if( data.docs.length > XTAS_MAX_CLOUD_DOCS_WARN && data.docs.length < XTAS_MAX_CLOUD_DOCS_ERROR )
-	{
-		var title = "Cloud request ignored";
-		var msg = "Burst cloud with " + data.docs.length + " documents.</br>";
-		msg += "A lot documents for cloud.</br>";
-		msg += "This will likely give you timeout[s] and may hamper others.</br>";
-		msg += "Do you want to proceed anyway?";
-		console.warn( msg );
-		var buttons = { "OK": true, "Cancel": true };
-		var resp = genDialog( title, msg, buttons );
-		if( resp == "Cancel" ) { return; }
-	}
-	else if( data.docs.length > XTAS_MAX_CLOUD_DOCS_ERROR )
-	{
-		var title = "Cloud request ignored";
-		var msg = "Burst cloud with " + data.docs.length + " documents.</br>";
-		msg += "Too many documents for cloud.</br>";
-		msg += "The maximum number of cloud documents is currently set to " + XTAS_MAX_CLOUD_DOCS_ERROR + ".";
-		console.warn( msg );
-		var buttons = { "OK": true };
-		genDialog( title, msg, buttons );
-		return;
-	}
-
 	var i = index;
 	var e = element;
 	var d = data;
