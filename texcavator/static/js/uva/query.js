@@ -791,7 +791,9 @@ function saveQuery( title, query )
 {
 	console.log( "saveQuery() title: "  + title + ", query: " + query );
 	
-    //var params = getSearchParameters();		// get user-changeable parameters from config
+    // get user-changeable parameters from config
+    var params = getSearchParameters();	
+    console.log(params);
 
     dojo.xhrPost({
         url: "/query/create",
@@ -800,7 +802,9 @@ function saveQuery( title, query )
             query: query,
             title: title,
             username: glob_username,
-            password: glob_password
+            password: glob_password,
+            // query metadata
+            dateRange: params["dateRange"]
         },
         load: function(result){
     		if( result["status"] !== "SUCCESS" )
