@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
-from sys import stderr
-from datetime import datetime
+from sys import stderr, exc_info
+from datetime import datetime, date
 import json
 
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.core import serializers
+from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.models import User
+from django.contrib.auth import authenticate
 
 from django.conf import settings
 
@@ -44,6 +47,26 @@ def query(request, query_id):
     }
 
     return json_response_message('OK', '', params)
+
+
+@csrf_exempt
+def create_query(request):
+    query = request.POST.get('query')
+    comment = request.POST.get('title')
+    uname = request.POST.get('username')
+    passw = request.POST.get('password')
+
+    try:
+        # TODO: use Django authentication system instead of this ugly hack
+        u = authenticate(username=uname, password=passw)
+        q = Query(query=query, comment=comment, user=u,
+                  date_lower=date(1850, 01, 01), 
+                  date_upper=date(1990, 12, 31))
+        q.save()
+    except Exception as e:
+        return json_response_message('ERROR', str(e))
+
+    return json_response_message('SUCCESS', '')
 
 
 def timeline(request, query_id, resolution):

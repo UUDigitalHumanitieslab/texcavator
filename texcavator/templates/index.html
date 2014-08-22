@@ -899,19 +899,6 @@ function queryToLexicon()
 		style: "width: 300px",
 	});
 
-	if( !title.length )
-	{
-		dialog.set( "content", "You have not provided a title for the query." );
-		dialog.show();
-		return false;
-	}
-	else if( title.endsWith( "_daterange" ) )
-	{
-		dialog.set( "content", "The query title is not valid." );
-		dialog.show();
-		return false;
-	}
-
 	var query = dojo.byId( "query" ).value;
 
 	if( isWhitespaceOrEmpty( query ) == true )		// utils.js
@@ -923,7 +910,7 @@ function queryToLexicon()
 	}
 
 	// validate CQL -> ES; when valid, stores query
-	test_cql2es( title, query );		// query.js
+	saveQuery( title, query );		// query.js
 } // queryToLexicon
 
 
