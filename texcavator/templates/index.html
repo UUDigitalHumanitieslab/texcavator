@@ -335,6 +335,17 @@ function researchSubmit( item )
 	accordionSelectChild( "searchPane" );
 
 	var query = item[ "fields" ][ "query" ];
+
+    // set query meta data
+    // Daterange
+    var beginDate = stringToDate(item["fields"]["date_lower"]);
+    var endDate = stringToDate(item["fields"]["date_upper"]);
+    console.log("Date range: "+beginDate+" - "+endDate);
+
+    dijit.byId( "begindate" ).set( "value", beginDate );
+    dijit.byId( "enddate"   ).set( "value", endDate );
+    updateYearSlider(beginDate, endDate);
+
 	console.log( "query: " + query );
 	dojo.byId( "query" ).value = query;		// display query in Search textBox
 
