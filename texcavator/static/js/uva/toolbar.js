@@ -102,6 +102,14 @@ var storeDateLimits = function( SRU_DATE_LIMITS )
 //	console.log( "from: " + min_date + ", to: " + max_date );
 } // storeDateLimits()
 
+function stringToDate(strDate){
+    /* 
+     * Return a JavaScript Date object representing the date in date_string.
+     * date_string format: yyyy-mm-dd
+     */
+    var dateParts = strDate.split("-");
+    return new Date(dateParts[0], (dateParts[1]-1), dateParts[2]);
+}
 
 var toDateString = function( date )
 {
