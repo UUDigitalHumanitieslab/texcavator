@@ -169,12 +169,7 @@ var createConfig = function()
 	});
 	tabCont.addChild( cpSearch );
 
-	// for the time being; must be treated as daterange cloud!
-	if( config[ "datastore" ] == "DSTORE_ELASTICSEARCH" )
-	{ var disabled = false; }		// make false when properly debugged
-	else
-	{ var disabled = true; }
-
+	var disabled = false;
 
 	var divArticleType = dojo.create( "div", {
 		id: "div-articletype"
