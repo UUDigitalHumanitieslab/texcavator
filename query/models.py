@@ -5,17 +5,19 @@ from django.db import models
 from django.contrib.auth.models import User
 
 class ArticleType(models.Model):
-    art_type = models.CharField(max_length=30)
+    id = models.CharField(max_length=15, primary_key=True)
+    name = models.CharField(max_length=35)
 
     def __unicode__(self):
-        return self.art_type
+        return '{} ({})'.format(self.name, self.id)
 
 
 class Distribution(models.Model):
-    distribution = models.CharField(max_length=35)
+    id = models.CharField(max_length=15, primary_key=True)
+    name = models.CharField(max_length=35)
 
     def __unicode__(self):
-        return self.distribution
+        return '{} ({})'.format(self.name, self.id)
 
 
 class Query(models.Model):
