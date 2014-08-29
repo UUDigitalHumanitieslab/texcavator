@@ -68,8 +68,18 @@ def create_query(request):
                   user=u,
                   date_lower=date_lower, 
                   date_upper=date_upper)
-
         q.save()
+
+        print >> stderr, '!!!!!:', params['distributions']
+
+        for distr in Distribution.objects.all():
+            print >> stderr, 'Distr:', distr.id,
+            if distr.id in params['distributions']:
+                q.exclude_distributions.add(distr)
+                print >> stderr, 'excluding'
+            else:
+                print >> stderr, 'including'   
+
     except Exception as e:
         return json_response_message('ERROR', str(e))
 
