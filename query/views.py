@@ -80,6 +80,14 @@ def create_query(request):
             else:
                 print >> stderr, 'including'   
 
+        for art_type in ArticleType.objects.all():
+            print >> stderr, 'art_type:', art_type.id,
+            if art_type.id in params['article_types']:
+                q.exclude_article_types.add(art_type)
+                print >> stderr, 'excluding'
+            else:
+                print >> stderr, 'including'   
+
     except Exception as e:
         return json_response_message('ERROR', str(e))
 
