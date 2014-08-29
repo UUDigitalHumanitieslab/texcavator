@@ -330,7 +330,6 @@ function searchSubmit()
 function researchSubmit( item )
 {
 	console.log( "researchSubmit()" );
-	console.log(item);
 	dojo.place( new dijit.ProgressBar( { indeterminate: true } ).domNode, dojo.byId( "search-result" ), "only" );
 
 	accordionSelectChild( "searchPane" );
@@ -347,8 +346,8 @@ function researchSubmit( item )
     dijit.byId( "enddate"   ).set( "value", endDate );
     updateYearSlider(beginDate, endDate);
     
-    // Distributions
     require(["dojo/_base/array"], function(arrayUtil) {
+        // Distributions
         var excl_dist = item["fields"]["exclude_distributions"];
         console.log("Exclude distributions: "+excl_dist);
 
@@ -380,7 +379,34 @@ function researchSubmit( item )
             config["search"]["distrib"]["indonesia"] = false;
         } else {
             config["search"]["distrib"]["indonesia"] = true;
-        } 
+        }
+
+        // article types
+        var excl_art_types = item["fields"]["exclude_article_types"];
+        console.log("Exclude article types: "+excl_art_types);
+
+        if(arrayUtil.indexOf(excl_art_types, "st_article") != -1){
+            config["search"]["type"]["article"] = false;
+        } else {
+            config["search"]["type"]["article"] = true;
+        }
+
+        if(arrayUtil.indexOf(excl_art_types, "st_advert") != -1){
+            config["search"]["type"]["advert"] = false;
+        } else {
+            config["search"]["type"]["advert"] = true;
+        }
+
+        if(arrayUtil.indexOf(excl_art_types, "st_illust") != -1){
+            config["search"]["type"]["illust"] = false;
+        } else {
+            config["search"]["type"]["illust"] = true;
+        }
+        if(arrayUtil.indexOf(excl_art_types, "st_family") != -1){
+            config["search"]["type"]["family"] = false;
+        } else {
+            config["search"]["type"]["family"] = true;
+        }
     });
 
     console.log(getSearchParameters());
