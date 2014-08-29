@@ -804,7 +804,12 @@ function saveQuery( title, query )
             username: glob_username,
             password: glob_password,
             // query metadata
-            dateRange: params["dateRange"]
+            dateRange: params["dateRange"],
+            sd_antilles: params["sd_antilles"],
+            sd_indonesia: params["sd_indonesia"],
+            sd_national:  params["sd_national"],
+            sd_regional: params["sd_regional"],
+            sd_surinam: params["sd_surinam"]
         },
         load: function(result){
     		if( result["status"] !== "SUCCESS" )
