@@ -1,65 +1,65 @@
 [
     {
         "model": "query.articletype",
-        "pk": "1",
+        "pk": "st_article",
         "fields": {
-            "art_type": "artikel"
+            "name": "artikel"
         }
     },
     {
         "model": "query.articletype",
-        "pk": "2",
+        "pk": "st_advert",
         "fields": {
-            "art_type": "advertentie"
+            "name": "advertentie"
         }
     },
     {
         "model": "query.articletype",
-        "pk": "3",
+        "pk": "st_illust",
         "fields": {
-            "art_type": "illustratie met onderschrift"
+            "name": "illustratie met onderschrift"
         }
     },
     {
         "model": "query.articletype",
-        "pk": "4",
+        "pk": "st_family",
         "fields": {
-            "art_type": "familiebericht"
+            "name": "familiebericht"
         }
     },
     {
         "model": "query.distribution",
-        "pk": "1",
+        "pk": "sd_national",
         "fields": {
-            "distribution": "Landelijk"
+            "name": "Landelijk"
         }
     },
     {
         "model": "query.distribution",
-        "pk": "2",
+        "pk": "sd_regional",
         "fields": {
-            "distribution": "Regionaal/lokaal"
+            "name": "Regionaal/lokaal"
         }
     },
     {
         "model": "query.distribution",
-        "pk": "3",
+        "pk": "sd_antilles",
         "fields": {
-            "distribution": "Nederlandse Antillen"
+            "name": "Nederlandse Antillen"
         }
     },
     {
         "model": "query.distribution",
-        "pk": "4",
+        "pk": "sd_surinam",
         "fields": {
-            "distribution": "Suriname"
+            "name": "Suriname"
         }
     },
     {
         "model": "query.distribution",
-        "pk": "5",
+        "pk": "sd_indonesia",
         "fields": {
-            "distribution": "Nederlands-Indië / Indonesië"
+            "name": "Nederlands-Indië / Indonesië"
         }
     }
 ]
