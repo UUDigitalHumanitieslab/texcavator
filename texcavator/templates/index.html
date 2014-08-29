@@ -330,6 +330,7 @@ function searchSubmit()
 function researchSubmit( item )
 {
 	console.log( "researchSubmit()" );
+	console.log(item);
 	dojo.place( new dijit.ProgressBar( { indeterminate: true } ).domNode, dojo.byId( "search-result" ), "only" );
 
 	accordionSelectChild( "searchPane" );
@@ -345,6 +346,44 @@ function researchSubmit( item )
     dijit.byId( "begindate" ).set( "value", beginDate );
     dijit.byId( "enddate"   ).set( "value", endDate );
     updateYearSlider(beginDate, endDate);
+    
+    // Distributions
+    require(["dojo/_base/array"], function(arrayUtil) {
+        var excl_dist = item["fields"]["exclude_distributions"];
+        console.log("Exclude distributions: "+excl_dist);
+
+        if(arrayUtil.indexOf(excl_dist, "sd_national") != -1){
+            config["search"]["distrib"]["national"] = false;
+        } else {
+            config["search"]["distrib"]["national"] = true;
+        }
+
+        if(arrayUtil.indexOf(excl_dist, "sd_regional") != -1){
+            config["search"]["distrib"]["regional"] = false;
+        } else {
+            config["search"]["distrib"]["regional"] = true;
+        }
+
+        if(arrayUtil.indexOf(excl_dist, "sd_antilles") != -1){
+            config["search"]["distrib"]["antilles"] = false;
+        } else {
+            config["search"]["distrib"]["antilles"] = true;
+        }
+
+        if(arrayUtil.indexOf(excl_dist, "sd_surinam") != -1){
+            config["search"]["distrib"]["surinam"] = false;
+        } else {
+            config["search"]["distrib"]["surinam"] = true;
+        }
+
+        if(arrayUtil.indexOf(excl_dist, "sd_indonesia") != -1){
+            config["search"]["distrib"]["indonesia"] = false;
+        } else {
+            config["search"]["distrib"]["indonesia"] = true;
+        } 
+    });
+
+    console.log(getSearchParameters());
 
 	console.log( "query: " + query );
 	dojo.byId( "query" ).value = query;		// display query in Search textBox
