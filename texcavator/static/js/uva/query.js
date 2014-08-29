@@ -809,7 +809,11 @@ function saveQuery( title, query )
             sd_indonesia: params["sd_indonesia"],
             sd_national:  params["sd_national"],
             sd_regional: params["sd_regional"],
-            sd_surinam: params["sd_surinam"]
+            sd_surinam: params["sd_surinam"],
+            st_advert: params["st_advert"],
+            st_article: params["st_article"],
+            st_family: params["st_family"],
+            st_illust: params["st_illust"] 
         },
         load: function(result){
     		if( result["status"] !== "SUCCESS" )
