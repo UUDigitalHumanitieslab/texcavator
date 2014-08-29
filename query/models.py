@@ -9,7 +9,7 @@ class ArticleType(models.Model):
     name = models.CharField(max_length=35)
 
     def __unicode__(self):
-        return '{} ({})'.format(self.name, self.id)
+        return self.id
 
 
 class Distribution(models.Model):
@@ -17,7 +17,7 @@ class Distribution(models.Model):
     name = models.CharField(max_length=35)
 
     def __unicode__(self):
-        return '{} ({})'.format(self.name, self.id)
+        return self.id
 
 
 class Query(models.Model):
