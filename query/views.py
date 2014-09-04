@@ -84,6 +84,16 @@ def create_query(request):
     return json_response_message('SUCCESS', '')
 
 
+@csrf_exempt
+def delete(request, query_id):
+    # TODO: check whether query belongs to the user
+
+    query = get_object_or_404(Query, pk=query_id)
+    query.delete()
+
+    return json_response_message('SUCCESS', '')
+
+
 def timeline(request, query_id, resolution):
     if settings.DEBUG:
         print >> stderr, "query/bursts() query_id:", query_id, \
