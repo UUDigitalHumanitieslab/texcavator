@@ -386,26 +386,26 @@ function researchSubmit( item )
         console.log("Exclude article types: "+excl_art_types);
 
         if(arrayUtil.indexOf(excl_art_types, "st_article") != -1){
-            config["search"]["type"]["article"] = false;
+            dijit.byId("cb-type-article").set("checked", false);
         } else {
-            config["search"]["type"]["article"] = true;
+            dijit.byId("cb-type-article").set("checked", true);
         }
 
         if(arrayUtil.indexOf(excl_art_types, "st_advert") != -1){
-            config["search"]["type"]["advert"] = false;
+            dijit.byId("cb-type-advert").set("checked", false);
         } else {
-            config["search"]["type"]["advert"] = true;
+            dijit.byId("cb-type-advert").set("checked", true);
         }
 
         if(arrayUtil.indexOf(excl_art_types, "st_illust") != -1){
-            config["search"]["type"]["illust"] = false;
+            dijit.byId("cb-type-illust").set("checked", false);
         } else {
-            config["search"]["type"]["illust"] = true;
+            dijit.byId("cb-type-illust").set("checked", true);
         }
         if(arrayUtil.indexOf(excl_art_types, "st_family") != -1){
-            config["search"]["type"]["family"] = false;
+            dijit.byId("cb-type-family").set("checked", false);
         } else {
-            config["search"]["type"]["family"] = true;
+            dijit.byId("cb-type-family").set("checked", true);
         }
     });
 
