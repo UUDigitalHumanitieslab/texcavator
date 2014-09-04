@@ -233,7 +233,13 @@ function createQueryLine( item )
 		title: "Delete",
 		iconClass: "dijitIconDelete",
 		pk: item.pk,
-		onClick: function() { lexiconStore.remove( this.pk ).then( createQueryList ); }
+		onClick: function() { 
+            require(["dojo/request/xhr"], function(xhr){
+                xhr.post("query/"+item.pk+"/delete", {
+                    handleAs: "json"
+                }).then(createQueryList);
+            });
+        }
 	})).domNode, buttonsNode );
 } // createQueryLine()
 
