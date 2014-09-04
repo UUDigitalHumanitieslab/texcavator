@@ -352,33 +352,33 @@ function researchSubmit( item )
         console.log("Exclude distributions: "+excl_dist);
 
         if(arrayUtil.indexOf(excl_dist, "sd_national") != -1){
-            config["search"]["distrib"]["national"] = false;
+            dijit.byId("cb-distrib-national-nl").set("checked", false);
         } else {
-            config["search"]["distrib"]["national"] = true;
+            dijit.byId("cb-distrib-national-nl").set("checked", true);
         }
 
         if(arrayUtil.indexOf(excl_dist, "sd_regional") != -1){
-            config["search"]["distrib"]["regional"] = false;
+            dijit.byId("cb-distrib-regional").set("checked", false);
         } else {
-            config["search"]["distrib"]["regional"] = true;
+            dijit.byId("cb-distrib-regional").set("checked", true);
         }
 
         if(arrayUtil.indexOf(excl_dist, "sd_antilles") != -1){
-            config["search"]["distrib"]["antilles"] = false;
+            dijit.byId("cb-distrib-antilles").set("checked", false);
         } else {
-            config["search"]["distrib"]["antilles"] = true;
+            dijit.byId("cb-distrib-antilles").set("checked", true);
         }
 
         if(arrayUtil.indexOf(excl_dist, "sd_surinam") != -1){
-            config["search"]["distrib"]["surinam"] = false;
+            dijit.byId("cb-distrib-surinam").set("checked", false);
         } else {
-            config["search"]["distrib"]["surinam"] = true;
+            dijit.byId("cb-distrib-surinam").set("checked", true);
         }
 
         if(arrayUtil.indexOf(excl_dist, "sd_indonesia") != -1){
-            config["search"]["distrib"]["indonesia"] = false;
+            dijit.byId("cb-distrib-indonesia").set("checked", false);
         } else {
-            config["search"]["distrib"]["indonesia"] = true;
+            dijit.byId("cb-distrib-indonesia").set("checked", true);
         }
 
         // article types
