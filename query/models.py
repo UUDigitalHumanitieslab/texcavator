@@ -27,6 +27,7 @@ class Query(models.Model):
     exclude_article_types = models.ManyToManyField(ArticleType, blank=True)
     exclude_distributions = models.ManyToManyField(Distribution, blank=True)
 
+    title = models.TextField()
     comment = models.TextField(blank=True)
 
     user = models.ForeignKey(User)
