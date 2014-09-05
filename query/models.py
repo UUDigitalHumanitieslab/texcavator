@@ -70,3 +70,12 @@ class DayStatistic( models.Model ):
 
     def __unicode__( self ):
         return '{}: {}'.format(str(self.date), self.count) 
+
+
+class StopWord(models.Model):
+	user = models.ForeignKey(User)
+	query = models.ForeignKey(Query, null=True, blank=True)
+	word = models.CharField(max_length=100)
+
+	def __unicode__( self ):
+		return self.word
