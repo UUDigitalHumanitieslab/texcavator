@@ -237,7 +237,12 @@ function createQueryLine( item )
             require(["dojo/request/xhr"], function(xhr){
                 xhr.post("query/"+item.pk+"/delete", {
                     handleAs: "json"
-                }).then(createQueryList);
+                }).then(function(result){
+                    var buttons = { "OK": true };
+                    genDialog("Delete query", result.msg, buttons);
+
+                    createQueryList();
+                });
             });
         }
 	})).domNode, buttonsNode );
