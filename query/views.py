@@ -88,7 +88,10 @@ def create_query(request):
 def delete(request, query_id):
     # TODO: check whether query belongs to the user
 
-    query = get_object_or_404(Query, pk=query_id)
+    query = Query.objects.get(pk=query_id)
+    if not query:
+        return json_response_message('ERROR', 'Query not found.')
+
     query.delete()
 
     return json_response_message('SUCCESS', '')
