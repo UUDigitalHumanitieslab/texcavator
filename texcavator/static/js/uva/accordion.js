@@ -242,6 +242,9 @@ function createQueryLine( item )
                     genDialog("Delete query", result.msg, buttons);
 
                     createQueryList();
+                }, function(error){
+                    var buttons = { "OK": true };
+                    genDialog("Delete query", error.response.text, buttons);
                 });
             });
         }
