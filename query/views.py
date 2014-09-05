@@ -52,7 +52,8 @@ def query(request, query_id):
 @csrf_exempt
 def create_query(request):
     params = get_search_parameters(request.POST)
-    comment = request.POST.get('title')
+    title = request.POST.get('title')
+    comment = request.POST.get('comment')
     
     uname = request.POST.get('username')
     passw = request.POST.get('password')
@@ -64,6 +65,7 @@ def create_query(request):
         # TODO: use Django authentication system instead of this ugly hack
         u = authenticate(username=uname, password=passw)
         q = Query(query=params['query'],
+                  title=title,
                   comment=comment,
                   user=u,
                   date_lower=date_lower, 
