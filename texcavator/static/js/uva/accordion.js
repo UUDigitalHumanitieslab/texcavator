@@ -215,7 +215,11 @@ function createQueryLine( item )
 		iconClass: "dijitIconSave",
 		pk: item.pk,
 		onClick: function() {
-            saveQuery(item.fields.comment, item.fields.query, "query/"+item.pk+"/update");
+            var title = dojo.byId("lexiconItemTitle").value;
+            var comment = dojo.byId("queryComment").value;
+            var query = dojo.byId("query").value;
+
+            saveQuery(title, comment, query, "query/"+item.pk+"/update");
 
             createQueryList();
         }
