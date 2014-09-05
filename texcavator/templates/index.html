@@ -337,6 +337,10 @@ function researchSubmit( item )
 
 	var query = item[ "fields" ][ "query" ];
 
+    // set query title and comment
+    dojo.byId("lexiconItemTitle").value = item["fields"]["title"];
+    dojo.byId("queryComment").value = item["fields"]["comment"];
+
     // set query meta data
     // Daterange
     var beginDate = stringToDate(item["fields"]["date_lower"]);
