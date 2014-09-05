@@ -787,7 +787,7 @@ function okDownload( query_title )
 }
 
 
-function saveQuery(title, query, url)
+function saveQuery(title, comment, query, url)
 {
 	console.log( "saveQuery() title: "  + title + ", query: " + query );
     console.log("url: "+url);
@@ -802,6 +802,7 @@ function saveQuery(title, query, url)
         content: {
             query: query,
             title: title,
+            comment: comment,
             username: glob_username,
             password: glob_password,
             // query metadata
