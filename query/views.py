@@ -110,13 +110,15 @@ def update(request, query_id):
         return json_response_message('ERROR', 'Query not found.')
     
     params = get_search_parameters(request.POST)
-    comment = request.POST.get('title')
+    title = request.POST.get('title')
+    comment = request.POST.get('comment')
     
     date_lower = datetime.strptime(params['dates']['lower'], '%Y-%m-%d')
     date_upper = datetime.strptime(params['dates']['upper'], '%Y-%m-%d')
 
     try:
         Query.objects.filter(pk=query_id).update(query=params['query'],
+                                                 title=title,
                                                  comment=comment,
                                                  date_lower=date_lower, 
                                                  date_upper=date_upper)
