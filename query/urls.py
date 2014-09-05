@@ -8,4 +8,5 @@ urlpatterns = patterns( 'query.views',
 	url( r'^timeline/(?P<query_id>\d+)?/(?P<resolution>\w+)$', 'timeline' ),
     url(r'^create$', 'create_query'),
 	url( r'^(?P<query_id>\d+)/delete$', 'delete' ),
+	url( r'^(?P<query_id>\d+)/update$', 'update' ),
 )

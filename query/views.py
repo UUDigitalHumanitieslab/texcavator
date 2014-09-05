@@ -98,6 +98,43 @@ def delete(request, query_id):
     return json_response_message('SUCCESS', 'Query "{}" deleted.'.format(q))
 
 
+@csrf_exempt
+def update(request, query_id):
+    # TODO: check whether query belongs to the user
+
+    query = Query.objects.get(pk=query_id)
+    
+    if not query:
+        return json_response_message('ERROR', 'Query not found.')
+    
+    params = get_search_parameters(request.POST)
+    comment = request.POST.get('title')
+    
+    date_lower = datetime.strptime(params['dates']['lower'], '%Y-%m-%d')
+    date_upper = datetime.strptime(params['dates']['upper'], '%Y-%m-%d')
+
+    try:
+        Query.objects.filter(pk=query_id).update(query=params['query'],
+                                                 comment=comment,
+                                                 date_lower=date_lower, 
+                                                 date_upper=date_upper)
+
+        query.exclude_distributions.clear()
+        for distr in Distribution.objects.all():
+            if distr.id in params['distributions']:
+                query.exclude_distributions.add(distr)
+
+        query.exclude_article_types.clear()
+        for art_type in ArticleType.objects.all():
+            if art_type.id in params['article_types']:
+                query.exclude_article_types.add(art_type)
+
+    except Exception as e:
+        return json_response_message('ERROR', str(e))
+
+    return json_response_message('SUCCESS', 'Query saved.')
+
+
 def timeline(request, query_id, resolution):
     if settings.DEBUG:
         print >> stderr, "query/bursts() query_id:", query_id, \
