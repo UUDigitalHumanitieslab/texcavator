@@ -92,9 +92,10 @@ def delete(request, query_id):
     if not query:
         return json_response_message('ERROR', 'Query not found.')
 
+    q = query.query
     query.delete()
 
-    return json_response_message('SUCCESS', '')
+    return json_response_message('SUCCESS', 'Query "{}" deleted.'.format(q))
 
 
 def timeline(request, query_id, resolution):
