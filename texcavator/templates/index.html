@@ -351,62 +351,101 @@ function researchSubmit( item )
         var excl_dist = item["fields"]["exclude_distributions"];
         console.log("Exclude distributions: "+excl_dist);
 
+        var val_sd_national = true;
+        var val_sd_regional = true;
+        var val_sd_antilles = true;
+        var val_sd_surinam = true;
+        var val_sd_indonesia = true;
+
         if(arrayUtil.indexOf(excl_dist, "sd_national") != -1){
-            dijit.byId("cb-distrib-national-nl").set("checked", false);
-        } else {
-            dijit.byId("cb-distrib-national-nl").set("checked", true);
+            val_sd_national = false;
         }
+
+        if(dijit.byId("cb-distrib-national-nl")){
+            dijit.byId("cb-distrib-national-nl").set("checked", val_sd_national);
+        }
+        config["search"]["distrib"]["national"] = val_sd_national;
 
         if(arrayUtil.indexOf(excl_dist, "sd_regional") != -1){
-            dijit.byId("cb-distrib-regional").set("checked", false);
-        } else {
-            dijit.byId("cb-distrib-regional").set("checked", true);
+            val_sd_regional = false;
         }
+
+        if(dijit.byId("cb-distrib-regional")){
+            dijit.byId("cb-distrib-regional").set("checked", val_sd_regional);
+        }
+        config["search"]["distrib"]["regional"] = val_sd_regional;
 
         if(arrayUtil.indexOf(excl_dist, "sd_antilles") != -1){
-            dijit.byId("cb-distrib-antilles").set("checked", false);
-        } else {
-            dijit.byId("cb-distrib-antilles").set("checked", true);
+            val_sd_antilles = false;
         }
+
+        if(dijit.byId("cb-distrib-antilles")){
+            dijit.byId("cb-distrib-antilles").set("checked", val_sd_antilles);
+        }
+        config["search"]["distrib"]["antilles"] = val_sd_antilles;
 
         if(arrayUtil.indexOf(excl_dist, "sd_surinam") != -1){
-            dijit.byId("cb-distrib-surinam").set("checked", false);
-        } else {
-            dijit.byId("cb-distrib-surinam").set("checked", true);
+            val_sd_surinam = false;
         }
 
-        if(arrayUtil.indexOf(excl_dist, "sd_indonesia") != -1){
-            dijit.byId("cb-distrib-indonesia").set("checked", false);
-        } else {
-            dijit.byId("cb-distrib-indonesia").set("checked", true);
+        if(dijit.byId("cb-distrib-surinam")){
+            dijit.byId("cb-distrib-surinam").set("checked", val_sd_surinam);
         }
+        config["search"]["distrib"]["surinam"] = val_sd_surinam;
+
+        if(arrayUtil.indexOf(excl_dist, "sd_indonesia") != -1){
+            val_sd_indonesia = false;
+        }
+
+        if(dijit.byId("cb-distrib-indonesia")){
+            dijit.byId("cb-distrib-indonesia").set("checked", val_sd_indonesia);
+        }
+        config["search"]["distrib"]["indonesia"] = val_sd_indonesia;
 
         // article types
         var excl_art_types = item["fields"]["exclude_article_types"];
         console.log("Exclude article types: "+excl_art_types);
 
+        var val_st_article = true;
+        var val_st_advert = true;
+        var val_st_illust = true;
+        var val_st_family = true;
+
         if(arrayUtil.indexOf(excl_art_types, "st_article") != -1){
-            dijit.byId("cb-type-article").set("checked", false);
-        } else {
-            dijit.byId("cb-type-article").set("checked", true);
+            val_st_article = false;
         }
+
+        if(dijit.byId("cb-type-article")){
+            dijit.byId("cb-type-article").set("checked", val_st_article);
+        }
+        config["search"]["type"]["article"] = val_st_article;
 
         if(arrayUtil.indexOf(excl_art_types, "st_advert") != -1){
-            dijit.byId("cb-type-advert").set("checked", false);
-        } else {
-            dijit.byId("cb-type-advert").set("checked", true);
+            val_st_advert = false;
         }
 
+        if(dijit.byId("cb-type-advert")){
+            dijit.byId("cb-type-advert").set("checked", val_st_advert);
+        }
+        config["search"]["type"]["advert"] = val_st_advert;
+
         if(arrayUtil.indexOf(excl_art_types, "st_illust") != -1){
-            dijit.byId("cb-type-illust").set("checked", false);
-        } else {
-            dijit.byId("cb-type-illust").set("checked", true);
+            val_st_illust = false;
         }
+
+        if(dijit.byId("cb-type-illust")){
+            dijit.byId("cb-type-illust").set("checked", val_st_illust);
+        }
+        config["search"]["type"]["illust"] = val_st_illust;
+
         if(arrayUtil.indexOf(excl_art_types, "st_family") != -1){
-            dijit.byId("cb-type-family").set("checked", false);
-        } else {
-            dijit.byId("cb-type-family").set("checked", true);
+            val_st_family = false;
         }
+
+        if(dijit.byId("cb-type-family")){
+            dijit.byId("cb-type-family").set("checked", val_st_family);
+        }
+        config["search"]["type"]["family"] = val_st_family;
     });
 
     console.log(getSearchParameters());
