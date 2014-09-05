@@ -214,7 +214,11 @@ function createQueryLine( item )
 		title: "Modify",
 		iconClass: "dijitIconSave",
 		pk: item.pk,
-		onClick: function() { updateItemInLexicon( this.pk ).then( createQueryList ); }
+		onClick: function() {
+            saveQuery(item.fields.comment, item.fields.query, "query/"+item.pk+"/update");
+
+            createQueryList();
+        }
 	})).domNode, buttonsNode );
 
 	//	console.log( "Button delete for lexicon item" );
