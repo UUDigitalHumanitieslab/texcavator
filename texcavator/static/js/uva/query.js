@@ -787,16 +787,17 @@ function okDownload( query_title )
 }
 
 
-function saveQuery( title, query )
+function saveQuery(title, query, url)
 {
 	console.log( "saveQuery() title: "  + title + ", query: " + query );
+    console.log("url: "+url);
 	
     // get user-changeable parameters from config
     var params = getSearchParameters();	
     console.log(params);
 
     dojo.xhrPost({
-        url: "/query/create",
+        url: url,
         handleAs: "json",
         content: {
             query: query,
