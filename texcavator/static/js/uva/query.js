@@ -787,36 +787,54 @@ function okDownload( query_title )
 }
 
 
-function saveQuery( title, query )
+function saveQuery(title, comment, query, url)
 {
-	console.log( "saveQuery() title: "  + title + ", query: " + query )
-	var data = { 
-		"model": "lexicon.lexiconitem", 
-		"fields": { 
-			"overwrite": false,
-			"user":  glob_username, 
-			"title": title, 
-			"query": query
-		} 
-	};
+	console.log( "saveQuery() title: "  + title + ", query: " + query );
+    console.log("url: "+url);
+	
+    // get user-changeable parameters from config
+    var params = getSearchParameters();	
+    console.log(params);
 
-	lexiconStore.put( data ).then( function( result )		// HTTP POST
-	{
-		var status = result[ "status" ];
-		if( status !== "SUCCESS" )
-		{
-			var msg = "The query could not be saved:<br/>" + result[ "msg" ];
-			var dialog = new dijit.Dialog({
-				title: "Save query",
-				style: "width: 300px",
-				content: msg
-			});
-			dialog.show();
-		}
+    dojo.xhrPost({
+        url: url,
+        handleAs: "json",
+        content: {
+            query: query,
+            title: title,
+            comment: comment,
+            username: glob_username,
+            password: glob_password,
+            // query metadata
+            dateRange: params["dateRange"],
+            sd_antilles: params["sd_antilles"],
+            sd_indonesia: params["sd_indonesia"],
+            sd_national:  params["sd_national"],
+            sd_regional: params["sd_regional"],
+            sd_surinam: params["sd_surinam"],
+            st_advert: params["st_advert"],
+            st_article: params["st_article"],
+            st_family: params["st_family"],
+            st_illust: params["st_illust"] 
+        },
+        load: function(result){
+    		if( result["status"] !== "SUCCESS" )
+	    	{
+		    	var msg = "The query could not be saved:<br/>" + result[ "msg" ];
+			    var dialog = new dijit.Dialog({
+				    title: "Save query",
+				    style: "width: 300px",
+				    content: msg
+			    });
+			    dialog.show();
+		    }
 
-		createQueryList();
-		return true;
-	});
+	        createQueryList();
+        }, 
+        error: function(error){
+		    console.error( err );
+        }
+    });
 }
 
 // [eof]

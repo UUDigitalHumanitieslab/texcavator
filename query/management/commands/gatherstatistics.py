@@ -9,7 +9,7 @@ from django.core.management.base import BaseCommand
 from django.db import DatabaseError
 from django.conf import settings
 
-from lexicon.models import DayStatistic
+from query.models import DayStatistic
 from services.es import daterange2dates, day_statistics
 
 

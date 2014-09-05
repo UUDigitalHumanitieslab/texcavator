@@ -53,10 +53,12 @@ from texcavator.settings import TEXCAVATOR_DATE_RANGE
 from texcavator.utils import json_response_message
 from services.celery import celery_check
 from lexicon.models import LexiconItem
-from lexicon.utils import get_query
 from services.elasticsearch_biland import es_doc_count, query2docids
 from services.elasticsearch_biland import search_xtas_elasticsearch, retrieve_xtas_elasticsearch
 from services.elasticsearch_biland import elasticsearch_htmlresp
+
+from query.models import Query
+from query.utils import get_query
 
 from services.export import export_csv
 from services.request import request2article_types, is_literal
@@ -112,29 +114,17 @@ def doc_count( request ):
     if settings.DEBUG:
         print >> stderr, "doc_count()"
     
-    lexiconID = request.REQUEST.get('lexiconID', None)
+    queryID = request.REQUEST.get('queryID')
 
-    query = None
-    if lexiconID:
+    if queryID:
 	    # get the query string from the Django db
-        try:
-            li = LexiconItem.objects.get(pk=lexiconID)
-            query = li.query
-        except LexiconItem.DoesNotExist:
-            msg = "Lexicon with id %s cannot be found." % lexiconID
-            logger.error( msg )
-            if settings.DEBUG:
-                print >> stderr, msg
-            return json_response_message('error', msg)
-        except DatabaseError:
-            return json_response_message('error', 
-                'Database error while retrieving lexicon')
-    else:
-        return json_response_message('error', 'Missing lexicon id.')
+        query, response = get_query(queryID)
 
-    if not query:
-        return json_response_message('error', 'No query found.')
-    
+        if not query:
+            return response
+    else:
+        return json_response_message('error', 'Missing query id.')
+
     params = get_search_parameters(request.REQUEST)
     
     result = count_search_results(params['collection'],
@@ -187,11 +177,11 @@ def cloud( request ):
                                                   params.get('article_types'),
                                                   ids)
 
-    # Cloud by lexiconID
-    lexicon_id = request.REQUEST.get('lexiconID')
+    # Cloud by queryID
+    query_id = request.REQUEST.get('queryID')
 
-    if lexicon_id:
-        query, response = get_query(lexicon_id)
+    if query_id:
+        query, response = get_query(query_id)
 
         if not query:
             return response

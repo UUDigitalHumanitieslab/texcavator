@@ -118,193 +118,198 @@ function updateYearSlider( min_date, max_date )
 // strangely, the other queryline buttons do work with Dojo-1.9.0
 function createQueryLine( item )
 {
-//	console.log( "createQueryLine() " + lexiconTitle );
-	var lexiconTitle = item[ "fields" ][ "title" ];
+	var title = item[ "fields" ][ "query" ];
 	var query_string = item[ "fields" ][ "query" ];
-//	console.log( query_string );
+	
+    //console.log( "createQueryLine() " + title );
 
-	if( ! lexiconTitle.endsWith( "_daterange" ) )	// do not show lexicons with *_daterange names
+	var pk = item[ "pk" ];
+	var itemNode = dojo.byId( "query-" + item.pk );
+	var string = "<span id=query-string-" + item.pk + " />" + title + " <em> " + item[ "fields" ][ "date_created" ] + " </em> </span>";
+	var params = { style: 'clear: both;' };
+	dojo.html.set( itemNode, string, params );
+	var buttonsNode = dojo.create( 'span', { style: 'float:right;' }, itemNode );
+
+	var btn = null;
+	var debug_destroy = false;
+
+	//	console.log( "Button re-search" );
+	btn = dijit.byId( "btn-sq-fetch-" + item.pk );
+	if( btn != null )
 	{
-		var pk = item[ "pk" ];
-		var itemNode = dojo.byId( "query-" + item.pk );
-		var string = "<span id=query-string-" + item.pk + " />" + lexiconTitle + " <em> " + item[ "fields" ][ "created" ] + " </em> </span>";
-		var params = { style: 'clear: both;' };
-		dojo.html.set( itemNode, string, params );
-		var buttonsNode = dojo.create( 'span', { style: 'float:right;' }, itemNode );
+		if( debug_destroy ) { console.error( "btn-sq-fetch button already exists" ); }
+		btn.destroy();
+	}
 
-		var btn = null;
-		var debug_destroy = false;
-
-	//	console.log( "Button retrieve lexicon metadata+ocrdata" );
-		btn = dijit.byId( "btn-sq-fetch-" + item.pk );
-		if( btn != null )
-		{
-			if( debug_destroy ) { console.error( "btn-sq-fetch button already exists" ); }
-			btn.destroy();
+	dojo.place(( new dijit.form.Button({
+		id: "btn-sq-fetch-" + item.pk,
+		disabled: false,
+		label: "Re-search",
+		showLabel: false,
+		title: "Re-search: " + title,
+		pk: item.pk,
+		iconClass: "dijitIconNewTask",
+		onClick: function() {
+            console.log( "Re-search " + title );
+			researchSubmit( item );
 		}
-
-		console.log( "Re-search" );
-
-		dojo.place(( new dijit.form.Button({
-			id: "btn-sq-fetch-" + item.pk,
-			disabled: false,
-			label: "Basis lexicon",
-			showLabel: false,
-			title: "Re-search: " + lexiconTitle,
-			pk: item.pk,
-			iconClass: "dijitIconNewTask",
-			onClick: function() {
-				console.log( "Re-search" );
-				researchSubmit( item );
-			}
-		})).domNode, buttonsNode );
+	})).domNode, buttonsNode );
 
 	//	console.log( "Button cloud for lexicon item" );
-		btn = dijit.byId( "btn-sq-cloud-" + item.pk );
-		if( btn != null )
-		{
-			if( debug_destroy ) { console.error( "btn-sq-cloud button already exists" ); }
-			btn.destroy();
-		}
+	btn = dijit.byId( "btn-sq-cloud-" + item.pk );
+	if( btn != null )
+	{
+		if( debug_destroy ) { console.error( "btn-sq-cloud button already exists" ); }
+		btn.destroy();
+	}
 
-		dojo.place(( new dijit.form.Button({
-			id: "btn-sq-cloud-" + item.pk,
-			disabled: false,
-			label: "Apply",
-			showLabel: false,
-			title: "Apply query: " + item[ "fields" ][ "query" ],
-			query: item[ "fields" ][ "query" ],
-			pk: item.pk,
-			iconClass: "dijitIconSearch",
-			onClick: function() { onClickExecute( item.pk, this.query ); }
-		})).domNode, buttonsNode );
+	dojo.place(( new dijit.form.Button({
+		id: "btn-sq-cloud-" + item.pk,
+		disabled: false,
+		label: "Apply",
+		showLabel: false,
+		title: "Apply query: " + item[ "fields" ][ "query" ],
+		query: item[ "fields" ][ "query" ],
+		pk: item.pk,
+		iconClass: "dijitIconSearch",
+		onClick: function() { onClickExecute( item.pk, this.query ); }
+	})).domNode, buttonsNode );
 
 
 	//	console.log( "Button timeline for lexicon item" );
-		btn = dijit.byId( "btn-sq-timeline-" + item.pk );
-		if( btn != null )
-		{
-			if( debug_destroy ) { console.error( "btn-sq-timeline button already exists" ); }
-			btn.destroy();
+	btn = dijit.byId( "btn-sq-timeline-" + item.pk );
+	if( btn != null )
+	{
+		if( debug_destroy ) { console.error( "btn-sq-timeline button already exists" ); }
+		btn.destroy();
+	}
+
+	// timeline for lexicon item
+	dojo.place(( new dijit.form.Button({
+		id: "btn-sq-timeline-" + item.pk,
+		disabled: false,
+		label: "Timeline",
+		showLabel: false,
+		title: "Timeline",
+		iconClass: "dijitIconChart",
+		pk: item.pk,
+		onClick: function() {
+			var collection = collection_fromradio();
+			showTimeline( this.pk, title, query_string, collection );	// timeline.js
 		}
-
-		// timeline for lexicon item
-
-		dojo.place(( new dijit.form.Button({
-			id: "btn-sq-timeline-" + item.pk,
-			disabled: false,
-			label: "Timeline",
-			showLabel: false,
-			title: "Timeline",
-			iconClass: "dijitIconChart",
-			pk: item.pk,
-			onClick: function() {
-				var collection = collection_fromradio();
-				showTimeline( this.pk, lexiconTitle, query_string, collection );	// timeline.js
-			}
-		})).domNode, buttonsNode );
-
+	})).domNode, buttonsNode );
 
 	//	console.log( "Button update for lexicon item" );
-		btn = dijit.byId( "btn-sq-modify-" + item.pk );
-		if( btn != null )
-		{
-			if( debug_destroy ) { console.error( "btn-sq-modify button already exists" ); }
-			btn.destroy();
-		}
+	btn = dijit.byId( "btn-sq-modify-" + item.pk );
+	if( btn != null )
+	{
+		if( debug_destroy ) { console.error( "btn-sq-modify button already exists" ); }
+		btn.destroy();
+	}
 
-		dojo.place(( new dijit.form.Button({
-			id: "btn-sq-modify-" + item.pk,
-			label: "Modify",
-			showLabel: false,
-			title: "Modify",
-			iconClass: "dijitIconSave",
-			pk: item.pk,
-			onClick: function() { updateItemInLexicon( this.pk ).then( createQueryList ); }
-		})).domNode, buttonsNode );
+	dojo.place(( new dijit.form.Button({
+		id: "btn-sq-modify-" + item.pk,
+		label: "Modify",
+		showLabel: false,
+		title: "Modify",
+		iconClass: "dijitIconSave",
+		pk: item.pk,
+		onClick: function() {
+            var title = dojo.byId("lexiconItemTitle").value;
+            var comment = dojo.byId("queryComment").value;
+            var query = dojo.byId("query").value;
 
+            saveQuery(title, comment, query, "query/"+item.pk+"/update");
+
+            createQueryList();
+        }
+	})).domNode, buttonsNode );
 
 	//	console.log( "Button delete for lexicon item" );
-		btn = dijit.byId( "btn-sq-delete-" + item.pk );
-		if( btn != null )
-		{
-			if( debug_destroy ) { console.error( "btn-sq-delete button already exists" ); }
-			btn.destroy();
-		}
-
-		// lexiconStore.remove() -> // HTTP DELETE
-		dojo.place(( new dijit.form.Button({
-			id: "btn-sq-delete-" + item.pk,
-			label: "Delete",
-			showLabel: false,
-			title: "Delete",
-			iconClass: "dijitIconDelete",
-			pk: item.pk,
-			onClick: function() { lexiconStore.remove( this.pk ).then( createQueryList ); }
-		})).domNode, buttonsNode );
+	btn = dijit.byId( "btn-sq-delete-" + item.pk );
+	if( btn != null )
+	{
+		if( debug_destroy ) { console.error( "btn-sq-delete button already exists" ); }
+		btn.destroy();
 	}
-} // createQueryLine()
 
+	// lexiconStore.remove() -> // HTTP DELETE
+	dojo.place(( new dijit.form.Button({
+		id: "btn-sq-delete-" + item.pk,
+		label: "Delete",
+		showLabel: false,
+		title: "Delete",
+		iconClass: "dijitIconDelete",
+		pk: item.pk,
+		onClick: function() { 
+            require(["dojo/request/xhr"], function(xhr){
+                xhr.post("query/"+item.pk+"/delete", {
+                    handleAs: "json"
+                }).then(function(result){
+                    var buttons = { "OK": true };
+                    genDialog("Delete query", result.msg, buttons);
+
+                    createQueryList();
+                }, function(error){
+                    var buttons = { "OK": true };
+                    genDialog("Delete query", error.response.text, buttons);
+                });
+            });
+        }
+	})).domNode, buttonsNode );
+} // createQueryLine()
 
 
 function createQueryList()
 {
 	console.log( "createQueryList()" );
-//	console.log( "username: " + glob_username );
-
-	// show busy indicator over Accordion, because reading the article counts takes a while
-//	var standby = new dojox.widget.Standby({
-//		target: dijit.byId( "leftAccordion" ).domNode,
-//		centerIndicator: "image",		// "text" or "image"
-//		text: "Reading Lexicons..."
-//	});
-//	document.body.appendChild( standby.domNode );
-//	standby.startup();
-//	standby.show();
-
 
 	dojo.place( new dijit.ProgressBar( { indeterminate: true }).domNode, dojo.byId( "lexiconItems" ), "only" );
-	var query_params = "?username=" + glob_username;
+	var params = { username: glob_username };
 
-	lexiconStore.query( query_params ).then( function( response )			// HTTP GET
-	{
-		var status = response[ "status" ];
-		if( status !== "SUCCESS" )
-		{
-			var msg = "We could not read the lexicons:<br/>" + response[ "msg" ];
-			var dialog = new dijit.Dialog({
-				title: "Lexicons",
-				style: "width: 300px",
-				content: msg
-			});
-			dialog.show();
-		}
+    dojo.xhrGet({
+        url: "query/",
+        content : params,
+        handleAs: "json",
+        load: function( response ) {
+            if( response.status != "OK" ) {
+                var msg = "We could not read the lexicons:<br/>" + response.msg;
+                var buttons = { "OK": true };
+                genDialog( title, msg, buttons );
+            } else {
+        		dojo.empty( dojo.byId( "lexiconItems" ) );	// this does not delete the buttons!, memory leak: 
+		        // see: http://higginsforpresident.net/2010/01/widgets-within-widgets/
 
-		dojo.empty( dojo.byId( "lexiconItems" ) );	// this does not delete the buttons!, memory leak: 
-		// see: http://higginsforpresident.net/2010/01/widgets-within-widgets/
+		        var items = JSON.parse( response[ "lexicon_items" ] );
+		        glob_lexiconData = items;
 
-		var items = JSON.parse( response[ "lexicon_items" ] );
-		glob_lexiconData = items;
+		        dojo.forEach( items, function( item )
+		        {
+			        // create the divs for the saved queries
+			        var itemNode = dojo.create( 'div',
+			        {
+				        id: "query-" + item.pk,
+				        innerHTML: "",				// title, counts & date are added later
+				        style: 'clear: both;'
+			        }, dojo.byId( "lexiconItems" ) );
+		        });
 
-		dojo.forEach( items, function( item )
-		{
-			// create the divs for the saved queries
-			var itemNode = dojo.create( 'div',
-			{
-				id: "query-" + item.pk,
-				innerHTML: "",				// title, counts & date are added later
-				style: 'clear: both;'
-			}, dojo.byId( "lexiconItems" ) );
-		});
+		        dojo.forEach( items, function( item ) { 
+                   createQueryLine( item ); // add title, date, buttons
+                });
 
-		dojo.forEach( items, function( item )
-		{ createQueryLine( item ); });		// title, date, buttons
+		        //refreshQueriesDocCounts();			// refresh doc counts, enable/disable buttons
+            }
+        },
+        error: function( err ) {
+            console.error( err );
+            var title = "createQueryList failed";
+            var buttons = { "OK": true };
+            genDialog( title, err, buttons );
+            return err;
+        }
+    });
 
-		refreshQueriesDocCounts();			// refresh doc counts, enable/disable buttons
-
-	//	standby.hide();						// hide the busy indicator
-		return response;
-	});
 } // createQueryList()
 
 

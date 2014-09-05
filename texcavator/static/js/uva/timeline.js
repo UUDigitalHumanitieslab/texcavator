@@ -158,7 +158,7 @@ function getData( lexiconId, field, interval, callback )
 
 //	var timeline_url = "http://zookst14.science.uva.nl:9200/semantictwittertest/tweet/_search?pretty=true"
 //	var timeline_url = "http://node428.das3.science.uva.nl:9200/semantictwittertest/tweet/_search?pretty=true"
-	var timeline_url = "lexicon/timeline/" + lexiconId + "/" + interval;
+	var timeline_url = "query/timeline/" + lexiconId + "/" + interval;
 //	console.log( "url: " + timeline_url );
 
 	var config = getConfig();
@@ -624,31 +624,6 @@ function burstSearch( lexicon_query, date_range, max_records )
 function burstClicked( data, index, element ) 
 {
 	console.log( "burstClicked(): " + data.docs.length + " records" );
-
-	// limit the number of documents for a burst cloud [same as in index.html:onClickExecute()]
-	if( data.docs.length > XTAS_MAX_CLOUD_DOCS_WARN && data.docs.length < XTAS_MAX_CLOUD_DOCS_ERROR )
-	{
-		var title = "Cloud request ignored";
-		var msg = "Burst cloud with " + data.docs.length + " documents.</br>";
-		msg += "A lot documents for cloud.</br>";
-		msg += "This will likely give you timeout[s] and may hamper others.</br>";
-		msg += "Do you want to proceed anyway?";
-		console.warn( msg );
-		var buttons = { "OK": true, "Cancel": true };
-		var resp = genDialog( title, msg, buttons );
-		if( resp == "Cancel" ) { return; }
-	}
-	else if( data.docs.length > XTAS_MAX_CLOUD_DOCS_ERROR )
-	{
-		var title = "Cloud request ignored";
-		var msg = "Burst cloud with " + data.docs.length + " documents.</br>";
-		msg += "Too many documents for cloud.</br>";
-		msg += "The maximum number of cloud documents is currently set to " + XTAS_MAX_CLOUD_DOCS_ERROR + ".";
-		console.warn( msg );
-		var buttons = { "OK": true };
-		genDialog( title, msg, buttons );
-		return;
-	}
 
 	var i = index;
 	var e = element;

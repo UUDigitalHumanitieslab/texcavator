@@ -158,6 +158,7 @@ INSTALLED_APPS = (
 	'services',			# biland
 	'lexicon',			# biland
 	'list',				# biland
+    'query'
 )
 
 if PROJECT_CELERY:					# Celery

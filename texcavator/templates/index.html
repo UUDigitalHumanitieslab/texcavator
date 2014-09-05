@@ -117,6 +117,7 @@
 		<div id="lexicon" data-dojo-type="dijit.layout.ContentPane" 
 						  data-dojo-props="title:'Saved queries'">
 			The creation of a lexicon starts with composing its query in the Search accordion. Give it a name and save the query. Then fetch the articles by clicking the 1st of the 4 small icons.<br /><br />
+            <textarea id="queryComment" name="queryComment" data-dojo-type="dijit/form/Textarea"></textarea></br>
 			<input id="lexiconItemTitle" type="text" 
 					data-dojo-type="dijit.form.TextBox"
 			 		data-dojo-props="placeHolder:'Type query title here.', name:'lexiconItemTitle', style:'width: 170px; font-size: 130%;'" />
@@ -335,8 +336,126 @@ function researchSubmit( item )
 	accordionSelectChild( "searchPane" );
 
 	var query = item[ "fields" ][ "query" ];
+
+    // set query title and comment
+    dojo.byId("lexiconItemTitle").value = item["fields"]["title"];
+    dojo.byId("queryComment").value = item["fields"]["comment"];
+
+    // set query meta data
+    // Daterange
+    var beginDate = stringToDate(item["fields"]["date_lower"]);
+    var endDate = stringToDate(item["fields"]["date_upper"]);
+    console.log("Date range: "+beginDate+" - "+endDate);
+
+    dijit.byId( "begindate" ).set( "value", beginDate );
+    dijit.byId( "enddate"   ).set( "value", endDate );
+    updateYearSlider(beginDate, endDate);
+    
+    require(["dojo/_base/array"], function(arrayUtil) {
+        // Distributions
+        var excl_dist = item["fields"]["exclude_distributions"];
+        console.log("Exclude distributions: "+excl_dist);
+
+        var val_sd_national = true;
+        var val_sd_regional = true;
+        var val_sd_antilles = true;
+        var val_sd_surinam = true;
+        var val_sd_indonesia = true;
+
+        if(arrayUtil.indexOf(excl_dist, "sd_national") != -1){
+            val_sd_national = false;
+        }
+
+        if(dijit.byId("cb-distrib-national-nl")){
+            dijit.byId("cb-distrib-national-nl").set("checked", val_sd_national);
+        }
+        config["search"]["distrib"]["national"] = val_sd_national;
+
+        if(arrayUtil.indexOf(excl_dist, "sd_regional") != -1){
+            val_sd_regional = false;
+        }
+
+        if(dijit.byId("cb-distrib-regional")){
+            dijit.byId("cb-distrib-regional").set("checked", val_sd_regional);
+        }
+        config["search"]["distrib"]["regional"] = val_sd_regional;
+
+        if(arrayUtil.indexOf(excl_dist, "sd_antilles") != -1){
+            val_sd_antilles = false;
+        }
+
+        if(dijit.byId("cb-distrib-antilles")){
+            dijit.byId("cb-distrib-antilles").set("checked", val_sd_antilles);
+        }
+        config["search"]["distrib"]["antilles"] = val_sd_antilles;
+
+        if(arrayUtil.indexOf(excl_dist, "sd_surinam") != -1){
+            val_sd_surinam = false;
+        }
+
+        if(dijit.byId("cb-distrib-surinam")){
+            dijit.byId("cb-distrib-surinam").set("checked", val_sd_surinam);
+        }
+        config["search"]["distrib"]["surinam"] = val_sd_surinam;
+
+        if(arrayUtil.indexOf(excl_dist, "sd_indonesia") != -1){
+            val_sd_indonesia = false;
+        }
+
+        if(dijit.byId("cb-distrib-indonesia")){
+            dijit.byId("cb-distrib-indonesia").set("checked", val_sd_indonesia);
+        }
+        config["search"]["distrib"]["indonesia"] = val_sd_indonesia;
+
+        // article types
+        var excl_art_types = item["fields"]["exclude_article_types"];
+        console.log("Exclude article types: "+excl_art_types);
+
+        var val_st_article = true;
+        var val_st_advert = true;
+        var val_st_illust = true;
+        var val_st_family = true;
+
+        if(arrayUtil.indexOf(excl_art_types, "st_article") != -1){
+            val_st_article = false;
+        }
+
+        if(dijit.byId("cb-type-article")){
+            dijit.byId("cb-type-article").set("checked", val_st_article);
+        }
+        config["search"]["type"]["article"] = val_st_article;
+
+        if(arrayUtil.indexOf(excl_art_types, "st_advert") != -1){
+            val_st_advert = false;
+        }
+
+        if(dijit.byId("cb-type-advert")){
+            dijit.byId("cb-type-advert").set("checked", val_st_advert);
+        }
+        config["search"]["type"]["advert"] = val_st_advert;
+
+        if(arrayUtil.indexOf(excl_art_types, "st_illust") != -1){
+            val_st_illust = false;
+        }
+
+        if(dijit.byId("cb-type-illust")){
+            dijit.byId("cb-type-illust").set("checked", val_st_illust);
+        }
+        config["search"]["type"]["illust"] = val_st_illust;
+
+        if(arrayUtil.indexOf(excl_art_types, "st_family") != -1){
+            val_st_family = false;
+        }
+
+        if(dijit.byId("cb-type-family")){
+            dijit.byId("cb-type-family").set("checked", val_st_family);
+        }
+        config["search"]["type"]["family"] = val_st_family;
+    });
+
+    console.log(getSearchParameters());
+
 	console.log( "query: " + query );
-	params[ "query" ] = query;
 	dojo.byId( "query" ).value = query;		// display query in Search textBox
 
     searchSubmit();
@@ -725,21 +844,16 @@ function onClickExecuteCloudStopwords( lexiconID )
 
 
 // button Uitvoeren: metadata graphics + query word cloud
-function onClickExecute( lexiconID, query )
+function onClickExecute( queryID, query )
 {
-	console.log( "onClickExecute() lexiconID: " + lexiconID + ", : " + query );
+	console.log( "onClickExecute() queryID: " + queryID + " : " + query );
 
-	storeLexiconID( lexiconID );			// query.js
+	storeLexiconID( queryID );			// query.js
 
 	dojo.byId( 'query' ).value = query;
 	dojo.empty( dojo.byId( "cql" ) );
 	searchSubmit();							// HTML search result in Search panel of accordion
 	dijit.byId( 'leftAccordion' ).back();
-
-	// close all tabs but the first 2
-//	var tabs = dijit.byId( "articleContainer" ).getChildren();
-//	for( var tab = 2; tab < tabs.length; tab++ )
-//	{ dijit.byId( "articleContainer" ).closeChild( tabs[ tab ] ); }
 
 	console.log( "metadataGraphics temporarily not available" );
 //	metadataGraphics( lexiconID );		// create the metadata graphics (and select that tab)
@@ -747,7 +861,7 @@ function onClickExecute( lexiconID, query )
 	// Cloud
 	var config = getConfig();
 	var params = {
-		lexiconID  : lexiconID,
+		queryID  : queryID,
 		datastore  : config[ "datastore" ],
 		collection : collection_fromradio(),
 		dateRange  : getDateRangeString()
@@ -770,7 +884,7 @@ function onClickExecute( lexiconID, query )
 			}
 			else
 			{
-				onClickExecuteCloud( lexiconID );
+				onClickExecuteCloud( queryID );
                 /*
 				// limit the number of documents for a burst cloud [same as in timeline.js:burstClicked()]
 				var doc_count   = parseInt( data.doc_count );
@@ -824,10 +938,10 @@ function onClickExecute( lexiconID, query )
 
 
 
-function onClickExecuteCloud( lexiconID )
+function onClickExecuteCloud( queryID )
 {
 	var collection = collection_fromradio();
-	console.log( "onClickExecuteCloud() lexiconID: " + lexiconID + ", collection: " + collection );
+	console.log( "onClickExecuteCloud() queryID: " + queryID + ", collection: " + collection );
 
 	var cloud_pane = "cloudPane";
 	var art_container =  "articleContainer"
@@ -855,7 +969,7 @@ function onClickExecuteCloud( lexiconID )
     params = {
 		datastore   : datastore,
 		collections : collection,				// 	can be more than 1
-		lexiconID   : lexiconID,
+		queryID   : queryID,
 		dateRange   : getDateRangeString()
 	}
 
@@ -905,20 +1019,8 @@ function queryToLexicon()
 		style: "width: 300px",
 	});
 
-	if( !title.length )
-	{
-		dialog.set( "content", "You have not provided a title for the query." );
-		dialog.show();
-		return false;
-	}
-	else if( title.endsWith( "_daterange" ) )
-	{
-		dialog.set( "content", "The query title is not valid." );
-		dialog.show();
-		return false;
-	}
-
 	var query = dojo.byId( "query" ).value;
+    var comment = dojo.byId("queryComment").value;
 
 	if( isWhitespaceOrEmpty( query ) == true )		// utils.js
 	{
@@ -929,7 +1031,7 @@ function queryToLexicon()
 	}
 
 	// validate CQL -> ES; when valid, stores query
-	test_cql2es( title, query );		// query.js
+	saveQuery(title, comment, query, "query/create");		// query.js
 } // queryToLexicon
 
 
