@@ -98,7 +98,7 @@ class LexiconWord( models.Model ):
 		return self.word
 
 
-class StopWord( models.Model ):
+class StopWordOld( models.Model ):
 	user    = models.ForeignKey( User, null = True )
 	query   = models.ForeignKey( LexiconItem, null = True )
 	word    = models.CharField( max_length = 100, db_index = True )

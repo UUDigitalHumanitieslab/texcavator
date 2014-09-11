@@ -12,7 +12,8 @@ from django.contrib.auth import authenticate
 
 from django.conf import settings
 
-from query.models import Distribution, ArticleType, Query, DayStatistic
+from query.models import Distribution, ArticleType, Query, DayStatistic, \
+                         StopWord
 from texcavator.utils import json_response_message
 from query.utils import query2docidsdate
 from query.burstsdetector import bursts
@@ -217,3 +218,79 @@ def timeline(request, query_id, resolution):
                                      doc_ids)
 
     return HttpResponse(json.dumps(date2count))
+
+
+@csrf_exempt
+def add_stopword(request):
+    # User
+    uname = request.POST.get('username')
+    passw = request.POST.get('password')
+
+    query_id = request.POST.get('query_id')
+    
+    word = request.POST.get('stopword')
+
+    u = None
+    q = None
+
+    try:
+        # TODO: use Django authentication system instead of this ugly hack
+        u = authenticate(username=uname, password=passw)
+
+        q = Query.objects.get(pk=query_id)
+    except Query.DoesNotExist:
+        pass
+    except Exception as e:
+        return json_response_message('ERROR', str(e))
+
+    StopWord.objects.get_or_create(user=u, query=q, word=word)
+
+    return json_response_message('SUCCESS', 'Stopword added.')
+
+
+@csrf_exempt
+def delete_stopword(request, stopword_id):
+    
+    uname = request.POST.get('username')
+    passw = request.POST.get('password')
+
+    try:
+        # TODO: use Django authentication system instead of this ugly hack
+        u = authenticate(username=uname, password=passw)
+    except Exception as e:
+        return json_response_message('ERROR', str(e))
+    
+    stopword = StopWord.objects.get(pk=stopword_id)
+    if not stopword:
+        return json_response_message('ERROR', 'Stopword not found.')
+    stopword.delete()
+    
+    return json_response_message('SUCCESS', 'Stopword deleted.')
+
+
+# TODO: turn into get method (get user via currently logged in user)
+@csrf_exempt
+def stopwords(request):
+    
+    uname = request.POST.get('username')
+    passw = request.POST.get('password')
+
+    try:
+        # TODO: use Django authentication system instead of this ugly hack
+        u = authenticate(username=uname, password=passw)
+
+        stopwords = StopWord.objects.select_related().filter(user=u) \
+                            .order_by('word').order_by('query')
+    except Exception as e:
+        return json_response_message('ERROR', str(e))
+
+    stopwordlist = []
+    for word in stopwords:
+        stopwordlist.append(word.get_stopword_dict())
+
+    params = {
+        'stopwords': stopwordlist,
+        'editglob': False
+    }
+
+    return json_response_message('SUCCESS', '', params)

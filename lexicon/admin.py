@@ -15,7 +15,7 @@ FL-26-Aug-2013: Changed
 """
 
 
-from lexicon.models import LexiconItem, LexiconArticle, DigitaleDagbladenArticle, LexiconWord, StopWord, DayStatistic
+from lexicon.models import LexiconItem, LexiconArticle, DigitaleDagbladenArticle, LexiconWord, StopWordOld, DayStatistic
 from django.contrib import admin
 
 class LexiconItemAdmin( admin.ModelAdmin ):
@@ -41,7 +41,7 @@ admin.site.register( LexiconItem, LexiconItemAdmin )
 admin.site.register( LexiconArticle, LexiconArticleAdmin )
 admin.site.register( DigitaleDagbladenArticle, DigitaleDagbladenArticleAdmin )
 admin.site.register( LexiconWord, LexiconWordAdmin )
-admin.site.register( StopWord, StopWordAdmin )
+admin.site.register( StopWordOld, StopWordAdmin )
 admin.site.register( DayStatistic, DayStatisticAdmin )
 
 # [eof]

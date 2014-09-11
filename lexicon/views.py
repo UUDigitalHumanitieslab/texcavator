@@ -91,7 +91,7 @@ from django.shortcuts import get_object_or_404
 from django.core import serializers
 from django.views.decorators.csrf import csrf_exempt
 
-from lexicon.models import LexiconItem, LexiconArticle, StopWord, DayStatistic
+from lexicon.models import LexiconItem, LexiconArticle, StopWordOld, DayStatistic
 
 from services.elasticsearch_biland import query2docidsdate
 

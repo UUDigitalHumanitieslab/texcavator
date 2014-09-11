@@ -141,26 +141,25 @@ var stopwordsGetTable = function( target )
 	// retrieve stopwords table data, place at target div
 
 	dojo.xhrPost({
-		url: "lexicon/stopwords/retrieve/table/",	// POST url must end with `/'
-		handleAs: "text",
+		url: "query/stopwords",	// POST url must end with `/'
+		handleAs: "json",
 		content: {
 			username:  glob_username,
 			password:  glob_password
 		},
-		load: function( data )
+		load: function(response)
 		{
-			var resp = JSON.parse( data );
-			var status = resp[ "status" ];
+			var status = response[ "status" ];
 
 			if( status === "SUCCESS" )
 			{
 			//	console.log( resp[ "stopwords" ] );
-				stopwordsFillTable( resp[ "stopwords" ], resp[ "editglob" ], target );
+				stopwordsFillTable( response[ "stopwords" ], response[ "editglob" ], target );
 			}
 			else
 			{
 				console.error( status );
-				var msg = resp[ "msg" ];
+				var msg = response[ "msg" ];
 				console.error( msg );
 			}
 		},
@@ -224,23 +223,22 @@ function stopwordsFillTable( stopwordsList, editglob, target )
 				console.log( "id " + pk + " (" + word + ") to be deleted" );
 
 				dojo.xhrPost({
-					url: "lexicon/stopwords/delete/",	// POST url must end with `/'
-					handleAs: "text",
+					url: "query/stopword/"+pk+"/delete",
+					handleAs: "json",
 					content: {
 						username:  glob_username,
 						password:  glob_password,
 						pk: pk
 					},
-					load: function( data )
+					load: function(response)
 					{
-						var resp = JSON.parse( data );
-						var status = resp[ "status" ];
+						var status = response[ "status" ];
 
 						if( status !== "SUCCESS" )
 						{
 							console.log( status + ": " + resp[ "msg" ] );
 							var buttons = { "OK": true, "Cancel": false };
-							answer = genDialog( "Stopword save", resp[ "msg" ], buttons );
+							answer = genDialog( "Delete stopword", resp[ "msg" ], buttons );
 						}
 						dijit.byId( "dlg-cloudword" ).destroyRecursive();
 					},
@@ -326,31 +324,24 @@ var stopwordsSave = function( word, stopwords_cat )
 	var content = {
 		username: glob_username,
 		password: glob_password,
-		stopword: word,
-		category: stopwords_cat,
-		clean   : stopwords_clean01
+		stopword: word
 	};
 
 	if( stopwords_cat === "singleq" )
 	{
-		content[ "lexiconID" ] = lexiconID;
+		content[ "query_id" ] = lexiconID;
 	}
 
+    console.log(content)
+
 	dojo.xhrPost({
-		url: "lexicon/stopwords/save/",
-		handleAs: "text",
+		url: "query/stopword/add",
+		handleAs: "json",
 		content: content,
-		load: function( data ) {
-			var resp = JSON.parse( data );
-			var status = resp[ "status" ];
-			var msg = resp[ "msg" ];
-			if( status === "SUCCESS" )
-			{
-				var lexiconID = retrieveLexiconID();
-				var call_func = false;								// do not update the cloud
-				stopwordsGetString( lexiconID, call_func );			// update user_stopwords in the config
-			}
-			else
+		load: function(response) {
+			var status = response[ "status" ];
+			var msg = response[ "msg" ];
+			if( status !== "SUCCESS" )
 			{
 				console.log( status + ": " + msg );
 				var buttons = { "OK": true, "Cancel": false };
