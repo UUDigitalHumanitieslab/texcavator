@@ -223,23 +223,22 @@ function stopwordsFillTable( stopwordsList, editglob, target )
 				console.log( "id " + pk + " (" + word + ") to be deleted" );
 
 				dojo.xhrPost({
-					url: "lexicon/stopwords/delete/",	// POST url must end with `/'
-					handleAs: "text",
+					url: "query/stopword/"+pk+"/delete",
+					handleAs: "json",
 					content: {
 						username:  glob_username,
 						password:  glob_password,
 						pk: pk
 					},
-					load: function( data )
+					load: function(response)
 					{
-						var resp = JSON.parse( data );
-						var status = resp[ "status" ];
+						var status = response[ "status" ];
 
 						if( status !== "SUCCESS" )
 						{
 							console.log( status + ": " + resp[ "msg" ] );
 							var buttons = { "OK": true, "Cancel": false };
-							answer = genDialog( "Stopword save", resp[ "msg" ], buttons );
+							answer = genDialog( "Delete stopword", resp[ "msg" ], buttons );
 						}
 						dijit.byId( "dlg-cloudword" ).destroyRecursive();
 					},
