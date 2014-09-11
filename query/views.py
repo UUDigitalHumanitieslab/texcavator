@@ -243,6 +243,26 @@ def add_stopword(request):
     return json_response_message('SUCCESS', 'Stopword added.')
 
 
+@csrf_exempt
+def delete_stopword(request, stopword_id):
+    
+    uname = request.POST.get('username')
+    passw = request.POST.get('password')
+
+    try:
+        # TODO: use Django authentication system instead of this ugly hack
+        u = authenticate(username=uname, password=passw)
+    except Exception as e:
+        return json_response_message('ERROR', str(e))
+    
+    stopword = StopWord.objects.get(pk=stopword_id)
+    if not stopword:
+        return json_response_message('ERROR', 'Stopword not found.')
+    stopword.delete()
+    
+    return json_response_message('SUCCESS', 'Stopword deleted.')
+
+
 # TODO: turn into get method (get user via currently logged in user)
 @csrf_exempt
 def stopwords(request):
