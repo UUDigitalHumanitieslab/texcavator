@@ -280,7 +280,7 @@ def stopwords(request):
         u = authenticate(username=uname, password=passw)
 
         stopwords = StopWord.objects.select_related().filter(user=u) \
-                            .order_by('word')
+                            .order_by('word').order_by('query')
     except Exception as e:
         return json_response_message('ERROR', str(e))
 
