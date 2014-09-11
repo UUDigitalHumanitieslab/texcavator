@@ -341,13 +341,7 @@ var stopwordsSave = function( word, stopwords_cat )
 		load: function(response) {
 			var status = response[ "status" ];
 			var msg = response[ "msg" ];
-			if( status === "SUCCESS" )
-			{
-				var lexiconID = retrieveLexiconID();
-				var call_func = false;								// do not update the cloud
-				stopwordsGetString( lexiconID, call_func );			// update user_stopwords in the config
-			}
-			else
+			if( status !== "SUCCESS" )
 			{
 				console.log( status + ": " + msg );
 				var buttons = { "OK": true, "Cancel": false };
