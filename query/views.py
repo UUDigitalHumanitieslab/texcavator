@@ -230,16 +230,21 @@ def add_stopword(request):
     
     word = request.POST.get('stopword')
 
+    u = None
+    q = None
+
     try:
         # TODO: use Django authentication system instead of this ugly hack
         u = authenticate(username=uname, password=passw)
 
         q = Query.objects.get(pk=query_id)
-    
-        sw, new = StopWord.objects.get_or_create(user=u, query=q, word=word)
+    except Query.DoesNotExist:
+        pass
     except Exception as e:
         return json_response_message('ERROR', str(e))
-    
+
+    StopWord.objects.get_or_create(user=u, query=q, word=word)
+
     return json_response_message('SUCCESS', 'Stopword added.')
 
 
