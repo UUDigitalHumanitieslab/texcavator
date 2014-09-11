@@ -9,4 +9,5 @@ urlpatterns = patterns( 'query.views',
     url(r'^create$', 'create_query'),
 	url( r'^(?P<query_id>\d+)/delete$', 'delete' ),
 	url( r'^(?P<query_id>\d+)/update$', 'update' ),
+	url( r'^stopword/add$', 'add_stopword' ),
 )

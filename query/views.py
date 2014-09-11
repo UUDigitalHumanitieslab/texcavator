@@ -12,7 +12,8 @@ from django.contrib.auth import authenticate
 
 from django.conf import settings
 
-from query.models import Distribution, ArticleType, Query, DayStatistic
+from query.models import Distribution, ArticleType, Query, DayStatistic, \
+                         StopWord
 from texcavator.utils import json_response_message
 from query.utils import query2docidsdate
 from query.burstsdetector import bursts
@@ -217,3 +218,26 @@ def timeline(request, query_id, resolution):
                                      doc_ids)
 
     return HttpResponse(json.dumps(date2count))
+
+
+@csrf_exempt
+def add_stopword(request):
+    # User
+    uname = request.POST.get('username')
+    passw = request.POST.get('password')
+
+    query_id = request.POST.get('query_id')
+    
+    word = request.POST.get('stopword')
+
+    try:
+        # TODO: use Django authentication system instead of this ugly hack
+        u = authenticate(username=uname, password=passw)
+
+        q = Query.objects.get(pk=query_id)
+    
+        sw, new = StopWord.objects.get_or_create(user=u, query=q, word=word)
+    except Exception as e:
+        return json_response_message('ERROR', str(e))
+    
+    return json_response_message('SUCCESS', 'Stopword added.')
