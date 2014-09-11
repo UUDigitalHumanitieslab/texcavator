@@ -324,9 +324,7 @@ var stopwordsSave = function( word, stopwords_cat )
 	var content = {
 		username: glob_username,
 		password: glob_password,
-		stopword: word,
-		category: stopwords_cat,
-		clean   : stopwords_clean01
+		stopword: word
 	};
 
 	if( stopwords_cat === "singleq" )
