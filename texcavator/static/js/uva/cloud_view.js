@@ -333,17 +333,18 @@ var stopwordsSave = function( word, stopwords_cat )
 
 	if( stopwords_cat === "singleq" )
 	{
-		content[ "lexiconID" ] = lexiconID;
+		content[ "query_id" ] = lexiconID;
 	}
 
+    console.log(content)
+
 	dojo.xhrPost({
-		url: "lexicon/stopwords/save/",
-		handleAs: "text",
+		url: "query/stopword/add",
+		handleAs: "json",
 		content: content,
-		load: function( data ) {
-			var resp = JSON.parse( data );
-			var status = resp[ "status" ];
-			var msg = resp[ "msg" ];
+		load: function(response) {
+			var status = response[ "status" ];
+			var msg = response[ "msg" ];
 			if( status === "SUCCESS" )
 			{
 				var lexiconID = retrieveLexiconID();
