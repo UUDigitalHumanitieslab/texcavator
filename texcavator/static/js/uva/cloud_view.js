@@ -141,26 +141,25 @@ var stopwordsGetTable = function( target )
 	// retrieve stopwords table data, place at target div
 
 	dojo.xhrPost({
-		url: "lexicon/stopwords/retrieve/table/",	// POST url must end with `/'
-		handleAs: "text",
+		url: "query/stopwords",	// POST url must end with `/'
+		handleAs: "json",
 		content: {
 			username:  glob_username,
 			password:  glob_password
 		},
-		load: function( data )
+		load: function(response)
 		{
-			var resp = JSON.parse( data );
-			var status = resp[ "status" ];
+			var status = response[ "status" ];
 
 			if( status === "SUCCESS" )
 			{
 			//	console.log( resp[ "stopwords" ] );
-				stopwordsFillTable( resp[ "stopwords" ], resp[ "editglob" ], target );
+				stopwordsFillTable( response[ "stopwords" ], response[ "editglob" ], target );
 			}
 			else
 			{
 				console.error( status );
-				var msg = resp[ "msg" ];
+				var msg = response[ "msg" ];
 				console.error( msg );
 			}
 		},
