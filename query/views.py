@@ -241,3 +241,31 @@ def add_stopword(request):
         return json_response_message('ERROR', str(e))
     
     return json_response_message('SUCCESS', 'Stopword added.')
+
+
+# TODO: turn into get method (get user via currently logged in user)
+@csrf_exempt
+def stopwords(request):
+    
+    uname = request.POST.get('username')
+    passw = request.POST.get('password')
+
+    try:
+        # TODO: use Django authentication system instead of this ugly hack
+        u = authenticate(username=uname, password=passw)
+
+        stopwords = StopWord.objects.select_related().filter(user=u) \
+                            .order_by('word')
+    except Exception as e:
+        return json_response_message('ERROR', str(e))
+
+    stopwordlist = []
+    for word in stopwords:
+        stopwordlist.append(word.get_stopword_dict())
+
+    params = {
+        'stopwords': stopwordlist,
+        'editglob': False
+    }
+
+    return json_response_message('SUCCESS', '', params)

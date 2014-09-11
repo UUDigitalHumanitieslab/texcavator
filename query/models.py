@@ -73,9 +73,27 @@ class DayStatistic( models.Model ):
 
 
 class StopWord(models.Model):
-	user = models.ForeignKey(User)
-	query = models.ForeignKey(Query, null=True, blank=True)
-	word = models.CharField(max_length=100)
+    user = models.ForeignKey(User)
+    query = models.ForeignKey(Query, null=True, blank=True)
+    word = models.CharField(max_length=100)
 
-	def __unicode__( self ):
-		return self.word
+    def __unicode__( self ):
+        return self.word
+
+    def get_stopword_dict(self):
+        if self.user:
+            user_name = self.user.username
+        else:
+            user_name = ''
+
+        if self.query:
+            query = self.query.title
+        else:
+            query = ''
+
+        return {
+            'id': self.id,
+            'user': user_name,
+            'query': query,
+            'word': self.word
+        }
