@@ -48,7 +48,8 @@ from django.views.decorators.csrf import csrf_exempt
 
 from es import get_search_parameters, do_search, count_search_results, \
         single_document_word_cloud, multiple_document_word_cloud, \
-        _KB_DISTRIBUTION_VALUES, _KB_ARTICLE_TYPE_VALUES
+        get_document_ids, termvector_word_cloud, _KB_DISTRIBUTION_VALUES, \
+        _KB_ARTICLE_TYPE_VALUES
 
 from texcavator.settings import TEXCAVATOR_DATE_RANGE
 from texcavator.utils import json_response_message
@@ -201,6 +202,78 @@ def cloud( request ):
                                               params.get('dates'),
                                               params.get('distributions'),
                                               params.get('article_types'))
+
+    if not result:
+        return json_response_message('error', 'No word cloud result generated.')
+    
+    ctype = 'application/json; charset=UTF-8'
+    return HttpResponse(json.dumps(result), content_type = ctype)
+
+
+@csrf_exempt
+@login_required
+def tv_cloud(request):
+    """Generate termvector word cloud."""
+    if settings.DEBUG:
+        print >> stderr, "termvector cloud()"
+    
+    result = None
+
+    params = get_search_parameters(request.REQUEST)
+    
+    ids = request.REQUEST.get('ids')
+    
+    # Cloud by ids
+    if ids:
+        ids = ids.split(',')
+
+        if len(ids) == 1:
+            # Word cloud for single document
+            t_vector = single_document_word_cloud(settings.ES_INDEX, 
+                                                  settings.ES_DOCTYPE,
+                                                  ids[0])
+
+            ctype = 'application/json; charset=UTF-8'
+            return HttpResponse(json.dumps(t_vector), content_type = ctype)
+        else:
+            # Word cloud for multiple ids
+            result = multiple_document_word_cloud(params.get('collection'), 
+                                                  settings.ES_DOCTYPE, 
+                                                  params.get('query'), 
+                                                  params.get('dates'),
+                                                  params.get('distributions'),
+                                                  params.get('article_types'),
+                                                  ids)
+
+    # Cloud by queryID
+    query_id = request.REQUEST.get('queryID')
+
+    if query_id:
+        query, response = get_query(query_id)
+
+        if not query:
+            return response
+
+        # for some reason, the collection to be searched is stored in parameter
+        # 'collections' (with s added) instead of 'collection' as expected by 
+        # get_search_parameters.
+        coll = request.REQUEST.get('collections', settings.ES_INDEX)
+
+        # get ids
+        doc_ids = get_document_ids(settings.ES_INDEX,
+                                   settings.ES_DOCTYPE,
+                                   query, 
+                                   params.get('dates'),
+                                   params.get('distributions'),
+                                   params.get('article_types'))
+
+        ids = [doc['identifier'] for doc in doc_ids]
+
+        print >> stderr, ids
+        
+        result = termvector_word_cloud(settings.ES_INDEX,
+                                       settings.ES_DOCTYPE,
+                                       ids)
 
     if not result:
         return json_response_message('error', 'No word cloud result generated.')
