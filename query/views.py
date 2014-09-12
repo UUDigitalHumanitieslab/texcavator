@@ -8,6 +8,7 @@ from django.shortcuts import get_object_or_404
 from django.core import serializers
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate
 
 from django.conf import settings
@@ -19,17 +20,11 @@ from query.utils import query2docidsdate
 from query.burstsdetector import bursts
 from services.es import get_search_parameters
 
+@login_required
 def index(request):
     """Return a list of queries for a given user."""
-    # TODO: use Django's authentication system to set the user
-
-    username = request.REQUEST.get('username')
-
-    if username:
-        lexicon_items = Query.objects.filter(user__username=username) \
-                                     .order_by('-date_created')
-    else:
-        lexicon_items = Query.objects.none()
+    lexicon_items = Query.objects.filter(user=request.user) \
+                                 .order_by('-date_created')
 
     params = {
         'lexicon_items': serializers.serialize('json', lexicon_items)
@@ -37,11 +32,11 @@ def index(request):
 
     return json_response_message('OK', '', params)
 
-
+@login_required
 def query(request, query_id):
-    # TODO: check whether query belongs to the user
-
     query = get_object_or_404(Query, pk=query_id)
+    if not request.user == query.user:
+        return json_response_message('ERROR', 'Query does not belong to user.')
 
     params = {
         'query': query.get_query_dict()
@@ -51,24 +46,20 @@ def query(request, query_id):
 
 
 @csrf_exempt
+@login_required
 def create_query(request):
     params = get_search_parameters(request.POST)
     title = request.POST.get('title')
     comment = request.POST.get('comment')
     
-    uname = request.POST.get('username')
-    passw = request.POST.get('password')
-    
     date_lower = datetime.strptime(params['dates']['lower'], '%Y-%m-%d')
     date_upper = datetime.strptime(params['dates']['upper'], '%Y-%m-%d')
 
     try:
-        # TODO: use Django authentication system instead of this ugly hack
-        u = authenticate(username=uname, password=passw)
         q = Query(query=params['query'],
                   title=title,
                   comment=comment,
-                  user=u,
+                  user=request.user,
                   date_lower=date_lower, 
                   date_upper=date_upper)
         q.save()
@@ -88,12 +79,14 @@ def create_query(request):
 
 
 @csrf_exempt
+@login_required
 def delete(request, query_id):
-    # TODO: check whether query belongs to the user
-
     query = Query.objects.get(pk=query_id)
     if not query:
         return json_response_message('ERROR', 'Query not found.')
+
+    if not request.user == query.user:
+        return json_response_message('ERROR', 'Query does not belong to user.')
 
     q = query.query
     query.delete()
@@ -102,13 +95,15 @@ def delete(request, query_id):
 
 
 @csrf_exempt
+@login_required
 def update(request, query_id):
-    # TODO: check whether query belongs to the user
-
     query = Query.objects.get(pk=query_id)
     
     if not query:
         return json_response_message('ERROR', 'Query not found.')
+    
+    if not request.user == query.user:
+        return json_response_message('ERROR', 'Query does not belong to user.')
     
     params = get_search_parameters(request.POST)
     title = request.POST.get('title')
@@ -140,6 +135,7 @@ def update(request, query_id):
     return json_response_message('SUCCESS', 'Query saved.')
 
 
+@login_required
 def timeline(request, query_id, resolution):
     if settings.DEBUG:
         print >> stderr, "query/bursts() query_id:", query_id, \
@@ -221,48 +217,35 @@ def timeline(request, query_id, resolution):
 
 
 @csrf_exempt
+@login_required
 def add_stopword(request):
-    # User
-    uname = request.POST.get('username')
-    passw = request.POST.get('password')
-
     query_id = request.POST.get('query_id')
-    
     word = request.POST.get('stopword')
 
-    u = None
     q = None
 
     try:
-        # TODO: use Django authentication system instead of this ugly hack
-        u = authenticate(username=uname, password=passw)
-
         q = Query.objects.get(pk=query_id)
     except Query.DoesNotExist:
         pass
     except Exception as e:
         return json_response_message('ERROR', str(e))
 
-    StopWord.objects.get_or_create(user=u, query=q, word=word)
+    StopWord.objects.get_or_create(user=request.user, query=q, word=word)
 
     return json_response_message('SUCCESS', 'Stopword added.')
 
 
 @csrf_exempt
+@login_required
 def delete_stopword(request, stopword_id):
-    
-    uname = request.POST.get('username')
-    passw = request.POST.get('password')
-
-    try:
-        # TODO: use Django authentication system instead of this ugly hack
-        u = authenticate(username=uname, password=passw)
-    except Exception as e:
-        return json_response_message('ERROR', str(e))
-    
     stopword = StopWord.objects.get(pk=stopword_id)
     if not stopword:
         return json_response_message('ERROR', 'Stopword not found.')
+
+    if not request.user == stopword.user:
+        return json_response_message('ERROR', 'Stopword does not belong to ' \
+                                              'user.')
     stopword.delete()
     
     return json_response_message('SUCCESS', 'Stopword deleted.')
@@ -270,19 +253,11 @@ def delete_stopword(request, stopword_id):
 
 # TODO: turn into get method (get user via currently logged in user)
 @csrf_exempt
+@login_required
 def stopwords(request):
-    
-    uname = request.POST.get('username')
-    passw = request.POST.get('password')
 
-    try:
-        # TODO: use Django authentication system instead of this ugly hack
-        u = authenticate(username=uname, password=passw)
-
-        stopwords = StopWord.objects.select_related().filter(user=u) \
-                            .order_by('word').order_by('query')
-    except Exception as e:
-        return json_response_message('ERROR', str(e))
+    stopwords = StopWord.objects.select_related().filter(user=request.user) \
+                                .order_by('word').order_by('query')
 
     stopwordlist = []
     for word in stopwords:
