@@ -21,7 +21,7 @@ urlpatterns = patterns( 'services.views',
 	url( r'celery/$',          'proxy' ),
 	url( r'export_cloud/$',          'export_cloud' ),
 
-	url( r'cloud/$',          'cloud' ),
+	url( r'cloud/$',          'tv_cloud' ),
 
 	url( r'kb/resolver/$', 'retrieve_kb_resolver'),
 	url( r'logger/$',          'proxy' ),
