@@ -43,6 +43,7 @@ from django.conf import settings
 from django.http import HttpResponse, HttpResponseNotFound
 from django.utils.http import urlencode
 from django.utils.html import escape
+from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 
 from es import get_search_parameters, do_search, count_search_results, \
@@ -63,6 +64,7 @@ from query.utils import get_query
 from services.export import export_csv
 from services.request import request2article_types, is_literal
 
+@login_required
 def search( request ):
     params = get_search_parameters(request.REQUEST)
     
@@ -110,6 +112,7 @@ def request2extra4log( request ):
 
 
 @csrf_exempt
+@login_required
 def doc_count( request ):
     if settings.DEBUG:
         print >> stderr, "doc_count()"
@@ -145,6 +148,7 @@ def doc_count( request ):
 
 
 @csrf_exempt
+@login_required
 def cloud( request ):
     if settings.DEBUG:
         print >> stderr, "cloud()"
@@ -270,6 +274,7 @@ def proxy( request ):
 
 
 @csrf_exempt
+@login_required
 def export_cloud(request):
     if settings.DEBUG == True:
         print >> stderr, "Export CSV request"
@@ -451,6 +456,7 @@ def applyXSLT( request, data, stylesheet ):
         return res
 
 
+@login_required
 def retrieve_kb_resolver( request ):
 	extra = request2extra4log( request )
 
