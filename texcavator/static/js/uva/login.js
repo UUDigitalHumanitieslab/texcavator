@@ -174,23 +174,22 @@ var createLogin = function( projectname )
 		dijit.byId( "cb-projectn" ).set( "value", default_projectn );
 
 		dojo.xhrPost({
-			url: "login/ajax/",
-			handleAs: "text",
+			url: "login",
+			handleAs: "json",
 			content: {
-				username : glob_username,
-				password : glob_password,
-				projectname : glob_projectn
+				"username" : glob_username,
+				"password" : glob_password,
+				"projectname" : glob_projectn
 			},
-			load: function( data )
+			load: function(response)
 			{
 			//	console.log( data );
-				var resp = JSON.parse( data );
-				var status = resp[ "status" ];
-				var msg = resp[ "msg" ];
+				var status = response["status"];
+				var msg = response["msg"];
 
-				if( status === "ok" )
+				if( status === "SUCCESS" )
 				{
-					glob_server_timestamp = resp[ "timestamp" ];
+					glob_server_timestamp = response[ "timestamp" ];
 					setServerTimestamp( glob_server_timestamp );		// timestamp.js
 					var client_timestamp = getClientTimestamp();		// timestamp.js
 					if( glob_server_timestamp == client_timestamp )
@@ -198,11 +197,11 @@ var createLogin = function( projectname )
 					else
 					{ console.warn( "server: " + glob_server_timestamp + ", client: " + client_timestamp ); }
 
-					var daterange = resp[ "daterange" ];
+					var daterange = response[ "daterange" ];
 					glob_begindate = daterange[ 0 ].toString();		// store as string (could contain '-')
 					glob_enddate   = daterange[ 1 ].toString();		// store as string (could contain '-')
 					storeDateLimits( daterange );					// set date widgets on toolbar
-					sessionId = resp[ "session_id" ];
+					sessionId = response[ "session_id" ];
 					var btnUser = dijit.byId( "toolbar-user" );
 					var label = "<img src = '/static/image/icon/Tango/22/apps/preferences-users.png')/>" + glob_username;
 					btnUser.set( "label", label );
@@ -210,8 +209,8 @@ var createLogin = function( projectname )
 
 					if( ILPS_LOGGING )
 					{
-						glob_userid = resp[ "user_id" ];
-						var user_info = { username: resp[ "user_name" ] };
+						glob_userid = response[ "user_id" ];
+						var user_info = { username: response[ "user_name" ] };
 						var login_event = false;					// avoid generating multiple login events 
 						// when login_event = false, only the user_id is logged, but not the user_info
 						console.log( "ILPSLogging.userLogin()" );
