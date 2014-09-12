@@ -30,6 +30,7 @@ urlpatterns += patterns( '',
 	url( r'^$', 'texcavator.views.index', name="index" ),
 
 	url( r'^login/ajax/$', 'texcavator.views.loginajax' ),
+	url( r'^login$', 'texcavator.views.user_login' ),
 	
 	url( r'^services/', include( 'services.urls' ) ),
 	url( r'^lexicon/', include( 'lexicon.urls' ) ),
