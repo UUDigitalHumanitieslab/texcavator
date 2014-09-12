@@ -20,7 +20,7 @@ from sys import stderr
 import json
 
 from django.conf import settings
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse
 from django.shortcuts import render_to_response
 from django.template import RequestContext
@@ -87,3 +87,10 @@ def user_login(request):
                                          'administrator.')
 
     return json_response_message('ERROR', 'Oops, that is not correct!' )
+
+
+@csrf_exempt
+def user_logout(request):
+    logout(request)
+
+    return json_response_message('SUCCESS', '')
