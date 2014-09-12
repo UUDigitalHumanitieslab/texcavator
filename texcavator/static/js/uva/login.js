@@ -337,20 +337,38 @@ var createLogout = function()
 		role: "presentation",
 		onClick: function() {
 			console.log( "bLogout: " + glob_userid + " (" + glob_username + ")" );
-			if( ILPS_LOGGING )
-			{
-			  console.log( "ILPSLogging.userLogout()" );
-			  ILPSLogging.userLogout();
-			}
 
-			dijit.byId( "dlg-logout" ).hide();
-			glob_username = "";
-			var btnUser = dijit.byId( "toolbar-user" );
-			var label = "<img src = '/static/image/icon/Tango/22/apps/preferences-users.png')/>";
-			btnUser.set( "label", label );
-			clearGui();		// cloud, article, lexicons...
-			showLogin();
-		}
+		    dojo.xhrPost({
+			    url: "logout",
+			    handleAs: "json",
+			    content: {
+				    "username" : glob_username,
+				    "password" : glob_password,
+				    "projectname" : glob_projectn
+			    },
+			    load: function(response)
+			    {
+			        if( ILPS_LOGGING )
+			        {
+			            console.log( "ILPSLogging.userLogout()" );
+			            ILPSLogging.userLogout();
+			        }
+
+			        dijit.byId( "dlg-logout" ).hide();
+			        glob_username = "";
+			        var btnUser = dijit.byId( "toolbar-user" );
+			        var label = "<img src = '/static/image/icon/Tango/22/apps/preferences-users.png')/>";
+			        btnUser.set( "label", label );
+			        clearGui();		// cloud, article, lexicons...
+			        showLogin();
+			    },
+			    error: function( err ) {
+				    console.error( err );
+				    dijit.byId( "dlg-login" ).destroyRecursive();
+				    return err;
+                }
+			});
+        }
 	});
 	actionBar.appendChild( bLogout.domNode );
 }
