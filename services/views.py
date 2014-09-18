@@ -60,10 +60,11 @@ from services.elasticsearch_biland import search_xtas_elasticsearch, retrieve_xt
 from services.elasticsearch_biland import elasticsearch_htmlresp
 
 from query.models import Query
-from query.utils import get_query
+from query.utils import get_query, get_query_object
 
 from services.export import export_csv
 from services.request import request2article_types, is_literal
+from tasks import generate_tv_cloud
 
 @login_required
 def search( request ):
@@ -249,38 +250,17 @@ def tv_cloud(request):
     query_id = request.REQUEST.get('queryID')
 
     if query_id:
-        query, response = get_query(query_id)
+        query, response = get_query_object(query_id)
 
         if not query:
             return response
 
-        # for some reason, the collection to be searched is stored in parameter
-        # 'collections' (with s added) instead of 'collection' as expected by 
-        # get_search_parameters.
-        coll = request.REQUEST.get('collections', settings.ES_INDEX)
+        task = generate_tv_cloud.delay(query.get_query_dict())
 
-        # get ids
-        doc_ids = get_document_ids(settings.ES_INDEX,
-                                   settings.ES_DOCTYPE,
-                                   query, 
-                                   params.get('dates'),
-                                   params.get('distributions'),
-                                   params.get('article_types'))
+        params = {'task': task.id}
 
-        ids = [doc['identifier'] for doc in doc_ids]
-
-        print >> stderr, ids
-        
-        result = termvector_word_cloud(settings.ES_INDEX,
-                                       settings.ES_DOCTYPE,
-                                       ids)
-
-    if not result:
-        return json_response_message('error', 'No word cloud result generated.')
-    
-    ctype = 'application/json; charset=UTF-8'
-    return HttpResponse(json.dumps(result), content_type = ctype)
-
+        return json_response_message('ok', '', params)
+    return json_response_message('ERROR', 'No query id provided.')
 
 @csrf_exempt
 def proxy( request ):
