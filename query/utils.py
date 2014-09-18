@@ -8,6 +8,7 @@ from django.db import DatabaseError
 
 from models import Query
 from services.es import get_document_ids
+from texcavator.utils import json_response_message
 
 
 def get_query(query_id):
@@ -28,6 +29,29 @@ def get_query(query_id):
                 'Database error while retrieving query.')
 
     if not query and not response: 
+        response = json_response_message('error', 'No query found.')
+
+    return query, response
+
+
+def get_query_object(query_id):
+    """Returns the query object stored for a query id and an appropriate error
+    message if the query cannot be retrieved.
+    """
+    query = None
+    response = None
+
+    try:
+        query = Query.objects.get(pk=query_id)
+    except Query.DoesNotExist:
+        msg = "Query with id %s cannot be found." % query_id
+        response = json_response_message('error', msg)
+    except DatabaseError:
+        response = json_response_message('error',
+                                         'Database error while retrieving '
+                                         'query.')
+
+    if not query and not response:
         response = json_response_message('error', 'No query found.')
 
     return query, response
