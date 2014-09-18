@@ -3,3 +3,4 @@
 *.old
 *~
 texcavator/static/js/Dojo-*
+celeryev.pid
