@@ -72,6 +72,12 @@ var getCloudParameters = function( params )
 		params[ "exclude" ] = stopwords_str;
 	}
 
+    if(cloudcfg["stoplimit"]){
+        params["min_length"] = cloudcfg["stoplimit"];
+    } else {
+        params["min_length"] = 2;
+    }
+
 //	else { params[ "stopwords" ] = 0; }		// valid, but superfluous
 
 	// stopshort + stoplimit is done by JavaScript
