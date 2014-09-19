@@ -71,6 +71,7 @@ var getCloudParameters = function( params )
 		{ console.log( "stopwords: " + stopwords_str ); }
 		params[ "exclude" ] = stopwords_str;
 	}
+
 //	else { params[ "stopwords" ] = 0; }		// valid, but superfluous
 
 	// stopshort + stoplimit is done by JavaScript
@@ -542,12 +543,6 @@ var placeCloudInTarget = function( cloud_src, json_data, target )
 		countAllWords += 1;
 		if( wordsDisplayed < wordsDisplayedMax )
 		{
-			if( stopshort && val.term.length <= stoplimit )
-			{
-			//	console.log( "stop: " + val.term );
-			}
-			else
-			{
 				if( fontreduce )
 				{
 					// using Math.sqrt() compresses the font size differences
@@ -569,7 +564,6 @@ var placeCloudInTarget = function( cloud_src, json_data, target )
 				text_color_hash[ val.term ] = nerType2Color( val.type );
 			//	text_color_list.push( [ val.term, nerType2Color( val.type ) ] );
 				wordsDisplayed += 1;
-			}
 		}
 	});
 //	console.log( text_size_list );
