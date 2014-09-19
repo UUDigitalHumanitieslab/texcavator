@@ -282,8 +282,7 @@ def check_status_by_task_id(request, task_id):
     try:
         if result.ready():
             if result.successful():
-                return json_response_message('ok', '',
-                                             json.loads(result.get()))
+                return json_response_message('ok', '', result.get())
             else:
                 return json_response_message('ERROR', 'Generating word cloud '
                                              'failed.')
