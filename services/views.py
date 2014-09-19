@@ -248,6 +248,7 @@ def tv_cloud(request):
 
     # Cloud by queryID
     query_id = request.REQUEST.get('queryID')
+    min_length = int(request.GET.get('min_length', 2))
 
     if query_id:
         query, response = get_query_object(query_id)
@@ -255,7 +256,7 @@ def tv_cloud(request):
         if not query:
             return response
 
-        task = generate_tv_cloud.delay(query.get_query_dict())
+        task = generate_tv_cloud.delay(query.get_query_dict(), min_length)
 
         params = {'task': task.id}
 
