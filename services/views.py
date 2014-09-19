@@ -262,6 +262,37 @@ def tv_cloud(request):
         return json_response_message('ok', '', params)
     return json_response_message('ERROR', 'No query id provided.')
 
+
+@login_required
+def check_status_by_task_id(request, task_id):
+    """Returns the status of the generate_tv_cloud task. If the task is
+    finished, the results of the task are returned.
+    """
+    if not request.is_ajax():
+        return json_response_message('ERROR', 'No access.')
+
+    # TODO: use generic AsyncResult (from celery.result import AsyncResult)
+    # so this function can be used tu check the status of all asynchronous
+    # tasks. However, when this import statement is put in this module, an
+    # error is produced (celery module has no attribute result).
+    # When typing this import statement in the Python
+    # console or in the Django interactive shell, there is no error message.
+    result = generate_tv_cloud.AsyncResult(task_id)
+
+    try:
+        if result.ready():
+            if result.successful():
+                return json_response_message('ok', '',
+                                             json.loads(result.get()))
+            else:
+                return json_response_message('ERROR', 'Generating word cloud '
+                                             'failed.')
+        else:
+            return json_response_message('WAITING', result.status)
+    except AttributeError as e:
+        return json_response_message('ERROR', 'Other error: {}'.format(str(e)))
+
+
 @csrf_exempt
 def proxy( request ):
     '''Proxy a request and return the result'''
