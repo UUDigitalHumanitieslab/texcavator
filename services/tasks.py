@@ -25,9 +25,4 @@ def generate_tv_cloud(query):
     result = termvector_word_cloud(settings.ES_INDEX,
                                    settings.ES_DOCTYPE,
                                    ids)
-
-    if not result:
-        return json_response_message('error',
-                                     'No word cloud result generated.')
-
-    return json.dumps(result)
+    return result
