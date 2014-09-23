@@ -9,7 +9,7 @@ from services.es import get_document_ids, termvector_word_cloud
 
 
 @shared_task
-def generate_tv_cloud(query, min_length):
+def generate_tv_cloud(query, min_length, stopwords):
     dates = {'lower': query['date_lower'], 'upper': query['date_upper']}
 
     # get ids
@@ -25,5 +25,6 @@ def generate_tv_cloud(query, min_length):
     result = termvector_word_cloud(settings.ES_INDEX,
                                    settings.ES_DOCTYPE,
                                    ids,
-                                   min_length)
+                                   min_length,
+                                   stopwords)
     return result

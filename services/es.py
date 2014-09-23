@@ -334,7 +334,8 @@ def multiple_document_word_cloud(idx, typ, query, date_range, dist, art_types,
     }
 
 
-def termvector_word_cloud(idx, typ, doc_ids, min_length=0, chunk_size=1000):
+def termvector_word_cloud(idx, typ, doc_ids, min_length=0, stopwords=None,
+                          chunk_size=1000):
     """Return data required to draw a word cloud for multiple documents by
     merging termvectors.
     """
@@ -364,6 +365,11 @@ def termvector_word_cloud(idx, typ, doc_ids, min_length=0, chunk_size=1000):
                     if len(term) >= min_length:
                         temp[term] = int(details['term_freq'])
                 wordcloud.update(temp)
+
+    if not stopwords:
+        stopwords = []
+    for stopw in stopwords:
+        del wordcloud[stopw]
 
     result = []
     for term, count in wordcloud.most_common(100):

@@ -31,6 +31,7 @@ from sys import exit, stderr, exc_info
 import httplib
 import logging
 import requests
+from itertools import chain
 
 import logging
 logger = logging.getLogger( __name__ )
@@ -59,7 +60,7 @@ from services.elasticsearch_biland import es_doc_count, query2docids
 from services.elasticsearch_biland import search_xtas_elasticsearch, retrieve_xtas_elasticsearch
 from services.elasticsearch_biland import elasticsearch_htmlresp
 
-from query.models import Query
+from query.models import Query, StopWord
 from query.utils import get_query, get_query_object
 
 from services.export import export_csv
@@ -250,13 +251,25 @@ def tv_cloud(request):
     query_id = request.REQUEST.get('queryID')
     min_length = int(request.GET.get('min_length', 2))
 
+    stopwords = []
+    if request.GET.get('stopwords') == "1":
+        stopwords_user = StopWord.objects.filter(user=request.user) \
+                                         .filter(query=None)
+        stopwords_query = StopWord.objects.filter(user=request.user) \
+                                          .filter(query__id=query_id)
+
+        stopwords = [stopw.word for stopw in list(chain(stopwords_user,
+                                                        stopwords_query))]
+
     if query_id:
         query, response = get_query_object(query_id)
 
         if not query:
             return response
 
-        task = generate_tv_cloud.delay(query.get_query_dict(), min_length)
+        task = generate_tv_cloud.delay(query.get_query_dict(),
+                                       min_length,
+                                       stopwords)
 
         params = {'task': task.id}
 
