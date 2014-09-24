@@ -298,7 +298,7 @@ function createQueryList()
                    createQueryLine( item ); // add title, date, buttons
                 });
 
-		        //refreshQueriesDocCounts();			// refresh doc counts, enable/disable buttons
+		        refreshQueriesDocCounts();			// refresh doc counts, enable/disable buttons
             }
         },
         error: function( err ) {
@@ -343,7 +343,7 @@ function updateQueryDocCountsElasticSearch( item, collection )
 
 		var params = getSearchParameters();			// from config
 
-		params [ "lexiconID" ]  = pk;
+		params [ "queryID" ]  = pk;
 		params [ "collection" ] = collection;
 		params [ "datastore" ]  = "DSTORE_ELASTICSEARCH";
 
@@ -359,16 +359,13 @@ function updateQueryDocCountsElasticSearch( item, collection )
 				{
 					doc_count = resp.doc_count;
 					config = getConfig();
-					if( config[ "datastore" ] === "DSTORE_ELASTICSEARCH" )	// no metadata in Django DB
-					{ var counts_str = " [" + doc_count + "] "; }
-					else
-					{ var counts_str = ""; }
-				//	console.log( counts_str );
+					var counts_str = " [" + doc_count + "] ";
+					console.log( counts_str );
 
 					var cspan = dojo.byId( "query-string-" + pk );
 					if( cspan != null )
 					{
-						var html = "<span id=query-string-" + item.pk + " />" + lexiconTitle + counts_str + "<em> " + item[ "fields" ][ "created" ] + " </em> </span>";
+						var html = "<span id=query-string-" + item.pk + " />" + lexiconTitle + counts_str + "<em> " + item[ "fields" ][ "date_created" ] + " </em> </span>";
 						cspan.innerHTML = html;
 
 						var btn_sq_cloud = dijit.byId( "btn-sq-cloud-" + pk );
