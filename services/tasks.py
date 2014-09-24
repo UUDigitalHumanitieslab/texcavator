@@ -1,10 +1,8 @@
 from __future__ import absolute_import
 
-import json
 from celery import shared_task
 
 from django.conf import settings
-from texcavator.utils import json_response_message
 from services.es import get_document_ids, termvector_word_cloud
 
 

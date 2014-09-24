@@ -218,30 +218,30 @@ def tv_cloud(request):
     """Generate termvector word cloud."""
     if settings.DEBUG:
         print >> stderr, "termvector cloud()"
-    
+
     result = None
 
     params = get_search_parameters(request.REQUEST)
-    
+
     ids = request.REQUEST.get('ids')
-    
+
     # Cloud by ids
     if ids:
         ids = ids.split(',')
 
         if len(ids) == 1:
             # Word cloud for single document
-            t_vector = single_document_word_cloud(settings.ES_INDEX, 
+            t_vector = single_document_word_cloud(settings.ES_INDEX,
                                                   settings.ES_DOCTYPE,
                                                   ids[0])
 
             ctype = 'application/json; charset=UTF-8'
-            return HttpResponse(json.dumps(t_vector), content_type = ctype)
+            return HttpResponse(json.dumps(t_vector), content_type=ctype)
         else:
             # Word cloud for multiple ids
-            result = multiple_document_word_cloud(params.get('collection'), 
-                                                  settings.ES_DOCTYPE, 
-                                                  params.get('query'), 
+            result = multiple_document_word_cloud(params.get('collection'),
+                                                  settings.ES_DOCTYPE,
+                                                  params.get('query'),
                                                   params.get('dates'),
                                                   params.get('distributions'),
                                                   params.get('article_types'),
