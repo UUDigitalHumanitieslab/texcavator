@@ -248,7 +248,7 @@ def tv_cloud(request):
                                                   ids)
 
     # Cloud by queryID
-    query_id = request.REQUEST.get('queryID')
+    query_id = request.GET.get('queryID')
     min_length = int(request.GET.get('min_length', 2))
 
     stopwords = []
@@ -261,20 +261,11 @@ def tv_cloud(request):
         stopwords = [stopw.word for stopw in list(chain(stopwords_user,
                                                         stopwords_query))]
 
-    if query_id:
-        query, response = get_query_object(query_id)
+    task = generate_tv_cloud.delay(params, min_length, stopwords)
 
-        if not query:
-            return response
+    params = {'task': task.id}
 
-        task = generate_tv_cloud.delay(query.get_query_dict(),
-                                       min_length,
-                                       stopwords)
-
-        params = {'task': task.id}
-
-        return json_response_message('ok', '', params)
-    return json_response_message('ERROR', 'No query id provided.')
+    return json_response_message('ok', '', params)
 
 
 @login_required
