@@ -2,19 +2,19 @@
 
 """
 --------------------------------------------------------------------------------
-Copyright:	Daan Odijk, Fons Laan, ILPS-ISLA, University of Amsterdam
-Project:	BiLand
-Name:		settings.py
-Version:	0.33
-Goal:		Django settings for BiLand project.
-Python:		With multiple python versions, care should be taken not to mix their 
-			libraries. Switching between versions with a script is convenient, 
-			but not sufficient; with
-				$ ./manage.py runserver 0.0.0.0:8001
-			the shell might start an obsolete system python, while
-				$ python manage.py runserver 0.0.0.0:8001
-			should be ok.
-			Start with $ Python -V to check the version. 
+Copyright:    Daan Odijk, Fons Laan, ILPS-ISLA, University of Amsterdam
+Project:    BiLand
+Name:        settings.py
+Version:    0.33
+Goal:        Django settings for BiLand project.
+Python:        With multiple python versions, care should be taken not to mix their 
+            libraries. Switching between versions with a script is convenient, 
+            but not sufficient; with
+                $ ./manage.py runserver 0.0.0.0:8001
+            the shell might start an obsolete system python, while
+                $ python manage.py runserver 0.0.0.0:8001
+            should be ok.
+            Start with $ Python -V to check the version. 
 
 DO-%%-%%%-2011: Created for WAHSP
 FL-17-Oct-2011: hostname settings in settings_local.py
@@ -26,12 +26,13 @@ FL-12-Nov-2013: Changed
 
 import os
 import sys
+import djcelery
 
 from settings_local import PROJECT_GRANNY, PROJECT_PARENT, PROJECT_ROOT, PROJECT_CELERY
 
-PROJECT_GRANNY = os.path.normpath( PROJECT_GRANNY )		# zap trailing `/'
-PROJECT_PARENT = os.path.normpath( PROJECT_PARENT )		# zap trailing `/'
-PROJECT_ROOT   = os.path.normpath( PROJECT_ROOT )		# zap trailing `/'
+PROJECT_GRANNY = os.path.normpath( PROJECT_GRANNY )        # zap trailing `/'
+PROJECT_PARENT = os.path.normpath( PROJECT_PARENT )        # zap trailing `/'
+PROJECT_ROOT   = os.path.normpath( PROJECT_ROOT )        # zap trailing `/'
 
 from texcavator.__init__ import DEBUG
 TEMPLATE_DEBUG = DEBUG
@@ -91,7 +92,7 @@ STATIC_ROOT = os.path.join( PROJECT_GRANNY, "texcavator_static" ) + os.sep
 # '/biland_static/' literal also in apache config & possibly in *.js files: so change together
 STATIC_URL = '/static/'
 if DEBUG == True:
-	print >> sys.stderr, "STATIC_URL:", STATIC_URL
+    print >> sys.stderr, "STATIC_URL:", STATIC_URL
 
 # URL prefix for admin static files -- CSS, JavaScript and images.
 # Make sure to use a trailing slash.
@@ -101,18 +102,18 @@ ADMIN_MEDIA_PREFIX = '/static/admin/'
 # Additional locations of static files
 # add trailing `/'
 STATICFILES_DIRS = (
-	# Put strings here, like "/home/html/static" or "C:/www/django/static".
-	# Always use forward slashes, even on Windows.
-	# Don't forget to use absolute paths, not relative paths.
-	os.path.join( PROJECT_ROOT, "static" ) + os.sep,
+    # Put strings here, like "/home/html/static" or "C:/www/django/static".
+    # Always use forward slashes, even on Windows.
+    # Don't forget to use absolute paths, not relative paths.
+    os.path.join( PROJECT_ROOT, "static" ) + os.sep,
 )
 
 # List of finder classes that know how to find static files in
 # various locations.
 STATICFILES_FINDERS = (
-	'django.contrib.staticfiles.finders.FileSystemFinder',
-	'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-#	'django.contrib.staticfiles.finders.DefaultStorageFinder',
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+#    'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
 
 # Make this unique, and don't share it with anybody.
@@ -120,105 +121,56 @@ SECRET_KEY = '*j9i^g9&78r-_9l%y$8ddt+kb4zgbx@!thm6sz64n05%hu(%8t'
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
-	'django.template.loaders.filesystem.Loader',
-	'django.template.loaders.app_directories.Loader',
-#	 'django.template.loaders.eggs.Loader',
+    'django.template.loaders.filesystem.Loader',
+    'django.template.loaders.app_directories.Loader',
+#     'django.template.loaders.eggs.Loader',
 )
 
 MIDDLEWARE_CLASSES = (
-	'django.middleware.common.CommonMiddleware',
-	'django.contrib.sessions.middleware.SessionMiddleware',
-	'django.middleware.csrf.CsrfViewMiddleware',
-	'django.contrib.auth.middleware.AuthenticationMiddleware',
-	'django.contrib.messages.middleware.MessageMiddleware',
-	'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
-	'django.middleware.locale.LocaleMiddleware',				# i18n
+    'django.middleware.common.CommonMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
+    'django.middleware.locale.LocaleMiddleware',                # i18n
 )
 
 ROOT_URLCONF = 'texcavator.urls'
 
 TEMPLATE_DIRS = (
-	# Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
-	# Always use forward slashes, even on Windows.
-	# Don't forget to use absolute paths, not relative paths.
-	os.path.join( PROJECT_ROOT, "templates" ),
+    # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
+    # Always use forward slashes, even on Windows.
+    # Don't forget to use absolute paths, not relative paths.
+    os.path.join( PROJECT_ROOT, "templates" ),
 )
 
 INSTALLED_APPS = (
-	'django.contrib.auth',		# required for admin
-	'django.contrib.admin',		# managers admin site
-	'django.contrib.admindocs',	# managers admin docs
-	'django.contrib.contenttypes',
-	'django.contrib.sessions',
-	'django.contrib.sites',
-	'django.contrib.messages',
-	'django.contrib.flatpages',
-	'django.contrib.staticfiles',
+    'django.contrib.auth',        # required for admin
+    'django.contrib.admin',        # managers admin site
+    'django.contrib.admindocs',    # managers admin docs
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.sites',
+    'django.contrib.messages',
+    'django.contrib.flatpages',
+    'django.contrib.staticfiles',
 
-	'services',			# biland
-	'lexicon',			# biland
-	'list',				# biland
-    'query'
+    'services',            # biland
+    'lexicon',            # biland
+    'list',                # biland
+    'query',
+
+    'djcelery'
+
 )
 
-if PROJECT_CELERY:					# Celery
-	INSTALLED_APPS += (
-		'djcelery',
-		'djkombu',						# only needed for kombu < 2.0.0
-	#	'kombu.transport.django',		# kombu >= 2.0.0 contains django-kombu
-	)
-
-	# Do NOT put these Celery settings in a separate celeryconfig.py, the initialization 
-	# [order] is wrong: then amqp as broker is used, even if we specify django. 
-	import djcelery
-	djcelery.setup_loader()
-
-	CELERYD_FORCE_EXECV       = True	# Celery-2.5: Solution for hanging workers
-	CELERYD_CONCURRENCY       = 0		# defaults to the number of available CPUs/cores
-	CELERY_SEND_EVENTS        = True	# Send events so the worker can be monitored by tools like celerymon
-
-	# if using the default, remove custom rate limits in tasks.py ...
-	#CELERY_DEFAULT_RATE_LIMIT = "500/s"	# rate limit for tasks that do not have a custom rate limit
-	CELERY_DISABLE_RATE_LIMITS = True		# disable all rate limits, even if tasks has explicit rate limits se
-
-	# these block my celery-django communication
-	#CELERY_AMQP_TASK_RESULT_EXPIRES = True
-	#CELERY_IGNORE_RESULT = True
-
-	#CELERY_ALWAYS_EAGER = True	# tasks will be executed locally by blocking until the task returns
-	#CELERY_EAGER_PROPAGATES_EXCEPTIONS = True	# eagerly executed tasks will propagate exceptions
-
-	# try to return JSON from celery tasks
-	#CELERY_TASK_SERIALIZER = 'json'
-	#CELERY_RESULT_SERIALIZER = 'json'
-
-
-# Broker settings
-PROJECT_BROKER = "DjangoDB"
-#PROJECT_BROKER = "RabbitMQ"
-
-if PROJECT_BROKER == "DjangoDB":
-	BROKER_URL = "django://"
-	BROKER_BACKEND = "djkombu.transport.DatabaseTransport"
-
-elif PROJECT_BROKER == "RabbitMQ":
-#	BROKER_URL      = "amqp://guest:guest@localhost:5672/"		# transport://userid:password@hostname:port/virtual_host
-	BROKER_URL      = "pyamqp://guest:guest@localhost:5672/"
-	BROKER_BACKEND  = "amqplib"
-#	BROKER_HOST     = "localhost"		# deprecation in version 2.5
-#	BROKER_PORT     =  5672				# deprecation in version 2.5
-#	BROKER_VHOST    = "/"				# deprecation in version 2.5
-#	BROKER_USER     = "guest"			# deprecation in version 2.5
-#	BROKER_PASSWORD = "guest"			# deprecation in version 2.5
-
-#	BROKER_HEARTBEAT  = 10				# this requires the amqp python module; only for pyamqp transport
-#	BROKER_USE_SSL    = True
-#	BROKER_POOL_LIMIT = 10				# default = 10
-#	BROKER_CONNECTION_TIMEOUT = 4s		# default = 4 seconds
-#	BROKER_CONNECTION_RETRY   = True
-#	BROKER_CONNECTION_MAX_RETRIES = 100	# Default is 100 retries.
-#	BROKER_TRANSPORT_OPTIONS = {}		# dict of additional options
-
+# CELERY SETTINGS
+BROKER_URL = 'redis://localhost:6379/0'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
 
 # Local-memory caching
 # If you want the speed advantages of in-memory caching but don't have the capability of running Memcached, 
@@ -285,9 +237,9 @@ LOGIN_REDIRECT_URL = '/'
 
 # local settings: db, ...
 try:
-	from settings_local import *
+    from settings_local import *
 except ImportError:
-	print >> sys.stderr, "No settings_local"
-	pass
+    print >> sys.stderr, "No settings_local"
+    pass
 
 # [eof]

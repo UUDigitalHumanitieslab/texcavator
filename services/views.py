@@ -31,6 +31,7 @@ from sys import exit, stderr, exc_info
 import httplib
 import logging
 import requests
+from itertools import chain
 
 import logging
 logger = logging.getLogger( __name__ )
@@ -48,7 +49,8 @@ from django.views.decorators.csrf import csrf_exempt
 
 from es import get_search_parameters, do_search, count_search_results, \
         single_document_word_cloud, multiple_document_word_cloud, \
-        _KB_DISTRIBUTION_VALUES, _KB_ARTICLE_TYPE_VALUES
+        get_document_ids, termvector_word_cloud, _KB_DISTRIBUTION_VALUES, \
+        _KB_ARTICLE_TYPE_VALUES
 
 from texcavator.settings import TEXCAVATOR_DATE_RANGE
 from texcavator.utils import json_response_message
@@ -58,11 +60,12 @@ from services.elasticsearch_biland import es_doc_count, query2docids
 from services.elasticsearch_biland import search_xtas_elasticsearch, retrieve_xtas_elasticsearch
 from services.elasticsearch_biland import elasticsearch_htmlresp
 
-from query.models import Query
-from query.utils import get_query
+from query.models import Query, StopWord
+from query.utils import get_query, get_query_object
 
 from services.export import export_csv
 from services.request import request2article_types, is_literal
+from tasks import generate_tv_cloud
 
 @login_required
 def search( request ):
@@ -207,6 +210,91 @@ def cloud( request ):
     
     ctype = 'application/json; charset=UTF-8'
     return HttpResponse(json.dumps(result), content_type = ctype)
+
+
+@csrf_exempt
+@login_required
+def tv_cloud(request):
+    """Generate termvector word cloud."""
+    if settings.DEBUG:
+        print >> stderr, "termvector cloud()"
+
+    result = None
+
+    params = get_search_parameters(request.REQUEST)
+
+    ids = request.REQUEST.get('ids')
+
+    # Cloud by ids
+    if ids:
+        ids = ids.split(',')
+
+        if len(ids) == 1:
+            # Word cloud for single document
+            t_vector = single_document_word_cloud(settings.ES_INDEX,
+                                                  settings.ES_DOCTYPE,
+                                                  ids[0])
+
+            ctype = 'application/json; charset=UTF-8'
+            return HttpResponse(json.dumps(t_vector), content_type=ctype)
+        else:
+            # Word cloud for multiple ids
+            result = multiple_document_word_cloud(params.get('collection'),
+                                                  settings.ES_DOCTYPE,
+                                                  params.get('query'),
+                                                  params.get('dates'),
+                                                  params.get('distributions'),
+                                                  params.get('article_types'),
+                                                  ids)
+
+    # Cloud by queryID
+    query_id = request.GET.get('queryID')
+    min_length = int(request.GET.get('min_length', 2))
+
+    stopwords = []
+    if request.GET.get('stopwords') == "1":
+        stopwords_user = StopWord.objects.filter(user=request.user) \
+                                         .filter(query=None)
+        stopwords_query = StopWord.objects.filter(user=request.user) \
+                                          .filter(query__id=query_id)
+
+        stopwords = [stopw.word for stopw in list(chain(stopwords_user,
+                                                        stopwords_query))]
+
+    task = generate_tv_cloud.delay(params, min_length, stopwords)
+
+    params = {'task': task.id}
+
+    return json_response_message('ok', '', params)
+
+
+@login_required
+def check_status_by_task_id(request, task_id):
+    """Returns the status of the generate_tv_cloud task. If the task is
+    finished, the results of the task are returned.
+    """
+    if not request.is_ajax():
+        return json_response_message('ERROR', 'No access.')
+
+    # TODO: use generic AsyncResult (from celery.result import AsyncResult)
+    # so this function can be used tu check the status of all asynchronous
+    # tasks. However, when this import statement is put in this module, an
+    # error is produced (celery module has no attribute result).
+    # When typing this import statement in the Python
+    # console or in the Django interactive shell, there is no error message.
+    result = generate_tv_cloud.AsyncResult(task_id)
+
+    try:
+        if result.ready():
+            if result.successful():
+                return json_response_message('ok', '', result.get())
+            else:
+                return json_response_message('ERROR', 'Generating word cloud '
+                                             'failed.')
+        else:
+            return json_response_message('WAITING', result.status)
+    except AttributeError as e:
+        return json_response_message('ERROR', 'Other error: {}'.format(str(e)))
 
 
 @csrf_exempt

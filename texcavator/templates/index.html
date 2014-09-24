@@ -966,24 +966,22 @@ function onClickExecuteCloud( queryID )
 	var config = getConfig();
 	var datastore = config[ "datastore" ];
 		
-    params = {
-		datastore   : datastore,
-		collections : collection,				// 	can be more than 1
-		queryID   : queryID,
-		dateRange   : getDateRangeString()
-	}
+    params = getSearchParameters();
 
 	params = getCloudParameters( params );					// add user-changeable parameters
-	console.log( "generating doc_id list cloud..." );
 
+    params["queryID"] = queryID;
+    params["query"] = dojo.byId("query").value;
+
+    console.log( "generating doc_id list cloud..." );
+    console.log(params);
 
 	dojo.xhrGet({
         url: "services/cloud",
 		content: params, 
 		failOk: false,			// true: No dojo console error message
 		handleAs: "json",
-		load: function( resp )
-		{
+    }).then(function( resp ){
 			if( typeof( resp ) == "string" )
 			{ var json_data = dojo.fromJson( resp ); }
 			else
@@ -996,19 +994,66 @@ function onClickExecuteCloud( queryID )
 				var title = "Cloud data request failed";
 				var buttons = { "OK": true };
 				genDialog( title, json_data.error, buttons );
-				return resp;
+				return null;
 			}
 			else
 			{
-				createCloud( "normal", json_data, "borderContainer", cloud_pane );
-				return resp;
+				console.log("got task_id: "+json_data.task);
+                return json_data.task;
 			}
-		},
-		error: function( err ) { console.error( err ); }
-	});
-
+		}, function( err ) { console.error( err ); }
+    ).then(function(task_id){
+        console.log("Start polling!")
+        console.log("task_id: "+task_id)
+        if(task_id){
+            setTimeout(check_status, 0.05);
+            // check every second
+            window.interval_id = setInterval(function(){ check_status(task_id); }, 1000);
+        } else {
+            console.log('Error: no task_id returned.');
+        }
+    });
 } // onClickExecuteCloud
 
+/*
+ * Functions for polling celery task
+ */
+ function handle_error(xhr, textStatus, errorThrown) {
+     clearInterval(window.interval_id);
+     console.log("Please report this error: "+errorThrown+xhr.status+xhr.responseText);
+ }
+
+ function show_status(obj) {
+     console.log(obj);
+     if (obj.error) {
+        clearInterval(window.interval_id);
+        console.log(obj.error);
+     }
+     if (obj.status == "WAITING"){
+        // do nothing
+     }
+     else if (obj.status == "ok"){
+        console.log("finished generating cloud");
+        clearInterval(window.interval_id);
+        // show the solution
+        createCloud( "normal", obj, "borderContainer", "cloudPane" );
+     } else {
+        clearInterval(window.interval_id);
+        console.log("other status for celery task");
+        console.log(obj);
+     }
+}
+
+function check_status(task_id) {
+    console.log('and for the third time: task_id='+task_id);
+    $.ajax({
+        type: "GET",
+        url: "/services/task_status/"+task_id,
+        success: show_status,
+        error: handle_error
+    });
+}
+        
 
 // button Save query
 function queryToLexicon()

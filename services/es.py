@@ -5,9 +5,12 @@
 from django.conf import settings
 
 import json
+from collections import Counter
 from datetime import datetime
 from elasticsearch import Elasticsearch
 from elasticsearch.client import indices
+
+from texcavator import utils
 
 _ES_RETURN_FIELDS = ('article_dc_title',
                      'paper_dcterms_temporal',
@@ -27,6 +30,7 @@ _KB_ARTICLE_TYPE_VALUES = {'st_article': 'artikel',
                            'st_family': 'familiebericht'}
 
 _DOCUMENT_TEXT_FIELD = 'text_content'
+_DOCUMENT_TITLE_FIELD = 'article_dc_title'
 _AGG_FIELD = _DOCUMENT_TEXT_FIELD
 
 
@@ -327,6 +331,57 @@ def multiple_document_word_cloud(idx, typ, query, date_range, dist, art_types,
         'result': result,
         'status': 'ok',
         'took': aggr.get('took', 0)
+    }
+
+
+def termvector_word_cloud(idx, typ, doc_ids, min_length=0, stopwords=None,
+                          chunk_size=1000):
+    """Return data required to draw a word cloud for multiple documents by
+    merging termvectors.
+    """
+
+    wordcloud = Counter()
+
+    for ids in utils.chunks(doc_ids, chunk_size):
+        bdy = {
+            'ids': ids,
+            'parameters': {
+                # TODO: add title field
+                'fields': [_DOCUMENT_TEXT_FIELD, _DOCUMENT_TITLE_FIELD],
+                'term_statistics': False,
+                'field_statistics': False,
+                'offsets': False,
+                'payloads': False,
+                'positions': False
+            }
+        }
+
+        t_vectors = _es().mtermvectors(index='kb', doc_type='doc', body=bdy)
+
+        for doc in t_vectors.get('docs'):
+            for field, data in doc.get('term_vectors').iteritems():
+                temp = {}
+                for term, details in data.get('terms').iteritems():
+                    if len(term) >= min_length:
+                        temp[term] = int(details['term_freq'])
+                wordcloud.update(temp)
+
+    if not stopwords:
+        stopwords = []
+    for stopw in stopwords:
+        del wordcloud[stopw]
+
+    result = []
+    for term, count in wordcloud.most_common(100):
+        result.append({
+            'term': term,
+            'count': count
+        })
+
+    return {
+        'max_count': wordcloud.most_common(1)[0][1],
+        'result': result,
+        'status': 'ok'
     }
 
 
