@@ -39,8 +39,8 @@ class Query(models.Model):
         """Return a JSON serializable representation of the query object, that 
         contains all relevant data and metadata.
         """
-        excl_art_types = [a.art_type for a in self.exclude_article_types.all()]
-        excl_distr = [d.distribution for d in self.exclude_distributions.all()]
+        excl_art_types = [a.name for a in self.exclude_article_types.all()]
+        excl_distr = [d.name for d in self.exclude_distributions.all()]
 
         return {
             'query_id': self.id,
