@@ -228,6 +228,10 @@ LOGGING = {
             'handlers': ['file'],
             'level': 'DEBUG',
         },
+        'elasticsearch.trace': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+        },
     }
 }
 
