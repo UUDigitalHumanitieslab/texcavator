@@ -172,7 +172,7 @@ function createQueryLine( item )
 		query: item[ "fields" ][ "query" ],
 		pk: item.pk,
 		iconClass: "dijitIconSearch",
-		onClick: function() { onClickExecute( item.pk, this.query ); }
+		onClick: function() { onClickExecute(item); }
 	})).domNode, buttonsNode );
 
 

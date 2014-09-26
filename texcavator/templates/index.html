@@ -879,14 +879,17 @@ function onClickExecuteCloudStopwords( lexiconID )
 
 
 // button Uitvoeren: metadata graphics + query word cloud
-function onClickExecute( queryID, query )
+function onClickExecute(item)
 {
-	console.log( "onClickExecute() queryID: " + queryID + " : " + query );
+    queryID = item.pk;
+	query = item["fields"]["query"];
+
+    console.log( "onClickExecute() queryID: " + queryID + " : " + query );
+    console.log(item);
 
 	storeLexiconID( queryID );			// query.js
 
-	dojo.byId( 'query' ).value = query;
-	dojo.empty( dojo.byId( "cql" ) );
+    setQueryMetadata(item);
 	searchSubmit();							// HTML search result in Search panel of accordion
 	dijit.byId( 'leftAccordion' ).back();
 
