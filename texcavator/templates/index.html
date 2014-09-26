@@ -352,8 +352,8 @@ function setQueryMetadata(item){
     dojo.byId("queryComment").value = item["fields"]["comment"];
 
     // Daterange
-    var beginDate = stringToDate(item["fields"]["date_lower"]);
-    var endDate = stringToDate(item["fields"]["date_upper"]);
+    beginDate = stringToDate(item["fields"]["date_lower"]);
+    endDate = stringToDate(item["fields"]["date_upper"]);
     console.log("Date range: "+beginDate+" - "+endDate);
 
     dijit.byId( "begindate" ).set( "value", beginDate );
