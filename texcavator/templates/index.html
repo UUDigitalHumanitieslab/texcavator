@@ -335,13 +335,22 @@ function researchSubmit( item )
 
 	accordionSelectChild( "searchPane" );
 
-	var query = item[ "fields" ][ "query" ];
+    setQueryMetadata(item);
 
+    searchSubmit();
+
+} // researchSubmit()
+
+function setQueryMetadata(item){
+	var query = item[ "fields" ][ "query" ];
+	console.log( "query: " + query );
+	dojo.byId( "query" ).value = query;		// display query in Search textBox
+
+    // set query meta data
     // set query title and comment
     dojo.byId("lexiconItemTitle").value = item["fields"]["title"];
     dojo.byId("queryComment").value = item["fields"]["comment"];
 
-    // set query meta data
     // Daterange
     var beginDate = stringToDate(item["fields"]["date_lower"]);
     var endDate = stringToDate(item["fields"]["date_upper"]);
@@ -454,14 +463,40 @@ function researchSubmit( item )
     });
 
     console.log(getSearchParameters());
+}
 
-	console.log( "query: " + query );
-	dojo.byId( "query" ).value = query;		// display query in Search textBox
+function nextResults( amount )
+{
+//	console.log( "nextResults() amount: " + amount );
+	if( dojo.byId( "query" ).value == "" ) { return; }		// nothing to do
+	var oldStartRecord = parseInt( dojo.byId( 'startRecord' ).value );
+	var newStartRecord = oldStartRecord + amount;
+	if( newStartRecord < 1 ) { newStartRecord = 1; }
+	dojo.byId( 'startRecord' ).value = newStartRecord;
+//	console.log( "nextResults() startRecord: " + dojo.byId( 'startRecord' ).value );
 
-    searchSubmit();
+	searchSubmit();				// HTML search result in Search panel of accordion
+}
+</script>
 
-} // researchSubmit()
 
+<script type="text/javascript" src="{{ STATIC_URL }}js/biland.js"></script>
+
+<script type="text/javascript">
+	dojo.require( "dojo.domReady!" );
+	dojo.require( "dojo.fx" );
+	dojo.require( "dojo.html" );
+
+	dojo.require( "dijit.Dialog" );
+	dojo.require( "dijit.Menu" );
+	dojo.require( "dijit.ProgressBar" );
+	dojo.require( "dijit.form.TextBox" );
+	dojo.require( "dijit.form.Button" );
+	dojo.require( "dijit.form.ToggleButton" );
+	dojo.require( "dijit.form.HorizontalRule" );
+	dojo.require( "dijit.form.HorizontalRuleLabels" );
+
+	dojo.require( "dojox.form.RangeSlider" );
 
 function nextResults( amount )
 {
@@ -844,14 +879,17 @@ function onClickExecuteCloudStopwords( lexiconID )
 
 
 // button Uitvoeren: metadata graphics + query word cloud
-function onClickExecute( queryID, query )
+function onClickExecute(item)
 {
-	console.log( "onClickExecute() queryID: " + queryID + " : " + query );
+    queryID = item.pk;
+	query = item["fields"]["query"];
+
+    console.log( "onClickExecute() queryID: " + queryID + " : " + query );
+    console.log(item);
 
 	storeLexiconID( queryID );			// query.js
 
-	dojo.byId( 'query' ).value = query;
-	dojo.empty( dojo.byId( "cql" ) );
+    setQueryMetadata(item);
 	searchSubmit();							// HTML search result in Search panel of accordion
 	dijit.byId( 'leftAccordion' ).back();
 

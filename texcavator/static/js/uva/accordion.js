@@ -172,7 +172,7 @@ function createQueryLine( item )
 		query: item[ "fields" ][ "query" ],
 		pk: item.pk,
 		iconClass: "dijitIconSearch",
-		onClick: function() { onClickExecute( item.pk, this.query ); }
+		onClick: function() { onClickExecute(item); }
 	})).domNode, buttonsNode );
 
 
@@ -195,7 +195,7 @@ function createQueryLine( item )
 		pk: item.pk,
 		onClick: function() {
 			var collection = collection_fromradio();
-			showTimeline( this.pk, title, query_string, collection );	// timeline.js
+			showTimeline(item, collection);	// timeline.js
 		}
 	})).domNode, buttonsNode );
 
