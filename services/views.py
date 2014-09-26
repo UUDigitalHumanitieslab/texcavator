@@ -225,6 +225,19 @@ def tv_cloud(request):
 
     ids = request.REQUEST.get('ids')
 
+    query_id = request.GET.get('queryID')
+    min_length = int(request.GET.get('min_length', 2))
+
+    stopwords = []
+    if request.GET.get('stopwords') == "1":
+        stopwords_user = StopWord.objects.filter(user=request.user) \
+                                         .filter(query=None)
+        stopwords_query = StopWord.objects.filter(user=request.user) \
+                                          .filter(query__id=query_id)
+
+        stopwords = [stopw.word for stopw in list(chain(stopwords_user,
+                                                        stopwords_query))]
+
     # Cloud by ids
     if ids:
         ids = ids.split(',')
@@ -233,7 +246,9 @@ def tv_cloud(request):
             # Word cloud for single document
             t_vector = single_document_word_cloud(settings.ES_INDEX,
                                                   settings.ES_DOCTYPE,
-                                                  ids[0])
+                                                  ids[0],
+                                                  min_length,
+                                                  stopwords)
 
             ctype = 'application/json; charset=UTF-8'
             return HttpResponse(json.dumps(t_vector), content_type=ctype)
@@ -248,18 +263,6 @@ def tv_cloud(request):
                                                   ids)
 
     # Cloud by queryID
-    query_id = request.GET.get('queryID')
-    min_length = int(request.GET.get('min_length', 2))
-
-    stopwords = []
-    if request.GET.get('stopwords') == "1":
-        stopwords_user = StopWord.objects.filter(user=request.user) \
-                                         .filter(query=None)
-        stopwords_query = StopWord.objects.filter(user=request.user) \
-                                          .filter(query__id=query_id)
-
-        stopwords = [stopw.word for stopw in list(chain(stopwords_user,
-                                                        stopwords_query))]
 
     task = generate_tv_cloud.delay(params, min_length, stopwords)
 

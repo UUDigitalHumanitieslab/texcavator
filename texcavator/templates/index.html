@@ -634,16 +634,7 @@ function nextResults( amount )
 		scanImages( collection, record_id, zipfile );	// scan_images.js : scan[s] + View at KB tab
 
 		// create single article cloud
-		if( stopwordsRemove() )							// remove stopwords from cloud
-		{
-			// retrieve current stopword list from db, then call retrieveRecordCloudData()
-			var call_func = true;
-			var boundFunction = dojo.hitch( this, retrieveRecordCloudData, record_id, ocr_text );
-			var lexiconID = null;		// single article not necessarily tied to a lexicon
-			stopwordsGetString( lexiconID, call_func, boundFunction );
-		}
-		else
-		{ retrieveRecordCloudData( record_id, ocr_text ); }
+		retrieveRecordCloudData( record_id, ocr_text );
 	}
 
 	var retrieveRecordCloudData = function( record_id, ocr_text )
@@ -652,10 +643,11 @@ function nextResults( amount )
 
 		// create single article cloud
 		var params = { ids: record_id };
-		params = getCloudParameters( params );				// add user-changeable parameters from config
+	    params = getCloudParameters( params );
 
 		params[ "collections" ] = ES_INDEX;		// 	can be more than 1
-		var cloud_pane = "cloudPane";
+		
+        var cloud_pane = "cloudPane";
 
         dojo.xhrGet({
             url: "services/cloud",
