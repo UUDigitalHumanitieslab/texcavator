@@ -34,9 +34,14 @@ var zoomLimit = 10*60000;		// Ten minutes //24*3600000; // One days
 var detectBursts = true;
 
 
-var showTimeline = function( lexiconId, lexiconTitle, query_string, collection )
+var showTimeline = function(item, collection)
 {
-	console.log( "showTimeline() lexiconId: " + lexiconId + ", lexiconTitle: " + lexiconTitle + ", collection: " + collection );
+    lexiconId = item.pk;
+    lexiconTitle = item["fields"]["title"];
+    query_string = item["fields"]["query"];
+    console.log( "showTimeline() lexiconId: " + lexiconId + ", lexiconTitle: " + lexiconTitle + ", collection: " + collection );
+
+    setQueryMetadata(item);
 
 	storeLexiconID( lexiconId );			// query.js
 	storeLexiconTitle( lexiconTitle );		// query.js

@@ -195,7 +195,7 @@ function createQueryLine( item )
 		pk: item.pk,
 		onClick: function() {
 			var collection = collection_fromradio();
-			showTimeline( this.pk, title, query_string, collection );	// timeline.js
+			showTimeline(item, collection);	// timeline.js
 		}
 	})).domNode, buttonsNode );
 
