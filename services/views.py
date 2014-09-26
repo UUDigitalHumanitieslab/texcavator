@@ -247,6 +247,7 @@ def tv_cloud(request):
             t_vector = single_document_word_cloud(settings.ES_INDEX,
                                                   settings.ES_DOCTYPE,
                                                   ids[0],
+                                                  min_length,
                                                   stopwords)
 
             ctype = 'application/json; charset=UTF-8'

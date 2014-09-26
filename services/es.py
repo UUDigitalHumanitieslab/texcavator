@@ -229,7 +229,7 @@ def word_cloud_aggregation(agg_name, num_words=100):
     return agg
 
 
-def single_document_word_cloud(idx, typ, doc_id, stopwords=None):
+def single_document_word_cloud(idx, typ, doc_id, min_length=0, stopwords=None):
     """Return data required to draw a word cloud for a single document.
 
     Returns a dict that contains word frequencies for all the terms in the
@@ -269,7 +269,7 @@ def single_document_word_cloud(idx, typ, doc_id, stopwords=None):
         for term, count_dict in t_vector.get('term_vectors'). \
                 get(_DOCUMENT_TEXT_FIELD).get('terms').iteritems():
 
-            if term not in stopwords:
+            if term not in stopwords and len(term) >= min_length:
                 count = count_dict.get('term_freq')
                 if count > max_count:
                     max_count = count
