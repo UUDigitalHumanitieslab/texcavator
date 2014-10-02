@@ -49,8 +49,8 @@ from django.views.decorators.csrf import csrf_exempt
 
 from es import get_search_parameters, do_search, count_search_results, \
         single_document_word_cloud, multiple_document_word_cloud, \
-        get_document_ids, termvector_word_cloud, _KB_DISTRIBUTION_VALUES, \
-        _KB_ARTICLE_TYPE_VALUES
+        get_document_ids, termvector_word_cloud, get_document, \
+        _KB_DISTRIBUTION_VALUES, _KB_ARTICLE_TYPE_VALUES
 
 from texcavator.settings import TEXCAVATOR_DATE_RANGE
 from texcavator.utils import json_response_message
@@ -299,6 +299,15 @@ def check_status_by_task_id(request, task_id):
     except AttributeError as e:
         return json_response_message('ERROR', 'Other error: {}'.format(str(e)))
 
+
+def retrieve_document(request, doc_id):
+    document = get_document(settings.ES_INDEX, settings.ES_DOCTYPE, doc_id)
+
+    print document
+
+    if document:
+        return json_response_message('SUCCESS', '', document)
+    return json_response_message('ERROR', 'Document not found.')
 
 @csrf_exempt
 def proxy( request ):
