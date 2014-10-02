@@ -303,8 +303,6 @@ def check_status_by_task_id(request, task_id):
 def retrieve_document(request, doc_id):
     document = get_document(settings.ES_INDEX, settings.ES_DOCTYPE, doc_id)
 
-    print document
-
     if document:
         return json_response_message('SUCCESS', '', document)
     return json_response_message('ERROR', 'Document not found.')
