@@ -340,30 +340,6 @@ def proxy( request ):
         ctype = 'application/json; charset=UTF-8'
         return HttpResponse( celery_check(), content_type = ctype )
 
-
-    elif len(request_path) > 2 and request_path[2] == u'retrieve':
-        if settings.DEBUG == True:
-            print >> stderr, "Retrieve request", request.REQUEST
-
-        datastore = request.REQUEST[ "datastore" ]
-        if settings.DEBUG == True:
-            print >> stderr, "datastore:", datastore
-
-        if datastore == "DSTORE_ELASTICSEARCH":
-            return retrieve_xtas_elasticsearch( request )       # elasticsearch.py
-        elif datastore == "DSTORE_MONGODB":
-            return retrieve_xtas_mongodb( request)              # xTAS MongoDB
-        elif datastore == "DSTORE_KBRESOLVER":
-            return retrieve_kb_resolver( request)               # KB Resolver
-        else:
-            msg = "Unknown datastore: %s" % datastore
-            if settings.DEBUG == True:
-                print >> stderr, msg
-            resp_dict = { "status" : "FAILURE", "msg" : msg }
-            json_list = json.dumps( resp_dict )
-            ctype = 'application/json; charset=UTF-8'
-            return HttpResponse( json_list, content_type = ctype )
-
     elif len( request_path ) > 3 and request_path[ 2 ] == u'scan':
         return download_scan_image( request )
 
