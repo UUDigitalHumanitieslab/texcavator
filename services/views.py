@@ -300,6 +300,7 @@ def check_status_by_task_id(request, task_id):
         return json_response_message('ERROR', 'Other error: {}'.format(str(e)))
 
 
+@login_required
 def retrieve_document(request, doc_id):
     document = get_document(settings.ES_INDEX, settings.ES_DOCTYPE, doc_id)
 
