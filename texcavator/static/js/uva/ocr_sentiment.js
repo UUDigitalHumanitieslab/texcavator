@@ -22,7 +22,7 @@ function clearTextview()
 
 
 
-function updateTextview( collection, record_id, data )
+function updateTextview( collection, record_id, data, documentObj )
 {
 	console.log( "updateTextview(): " + record_id );
 	var record_id_ocr = record_id + ":ocr";
@@ -71,41 +71,23 @@ function updateTextview( collection, record_id, data )
 					//	{ console.log( word + ": " + sentiment + " ?" ); }
 					});
 				//	dojo.byId( "record" ).innerHTML = data.replace( /<(\/?)title>/g, "<$1b>" );
-					writeTextview( record_id, data );
+					writeTextview( record_id, data, documentObj );
 				}
 			}
 		);
 	}
 	else	// update article text view without highlighting
-	{ writeTextview( record_id, data ); }
+	{ writeTextview( record_id, data, documentObj ); }
 } // updateTextview()
 
 
-function writeTextview( record_id, data )
+function writeTextview( record_id, data, documentObj )
 {
 	console.log( "writeTextview() " + record_id);
-		// bold title, if present
+    
+    article_text = documentObj.text_content.replace(/\n\n/g, "</br></br>");
 
-	if( data.search( "<title />" ) > 0 )
-	{
-	//	console.log( "replacing" );
-	// with "<title />" dojo corrupts the data ?!
-		data = data.replace( /<title \/>/g, "<title><\/title>" );
-	}
-	else if ( data.search( "<title></title>" ) > 0 )
-	{
-	//	console.log( "not bolding" );
-	}
-	else
-	{
-	//	console.log( "bolding" );
-		data = data.replace( /<(\/?)title>/g, "<$1b>" );
-	}
-
-	if( record_id.startsWith( "ddd:" ) )
-	{ dojo.byId( "record" ).innerHTML = data; }		// KB
-	else
-	{ dojo.byId( "record2" ).innerHTML = data; }	// StaBi
+	dojo.byId( "record" ).innerHTML = "<b>"+documentObj.article_dc_title+"</b></br>"+article_text;
 }
 
 // [eof]

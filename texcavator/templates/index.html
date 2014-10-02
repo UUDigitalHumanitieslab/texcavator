@@ -553,14 +553,10 @@ function nextResults( amount )
         dojo.place( new dijit.ProgressBar( { indeterminate: true } ).domNode, dojo.byId( ocr_pane ), "only" );
 		dojo.place( new dijit.ProgressBar( { indeterminate: true } ).domNode, dojo.byId( cloud_pane ), "only" );
 
-		var url = "services/retrieve/doc/?id=" + record_id;
+		var url = "services/retrieve/" + record_id;
 
 		dojo.xhrGet({
 			url: url,
-			content: { 
-				"datastore"  : datastore,
-				"collection" : collection
-			},
 			failOk: false,			// true: No dojo console error message
 			handleAs: "json",
 			load: function( resp )
@@ -569,10 +565,11 @@ function nextResults( amount )
 				dojo.empty( dojo.byId( ocr_pane ) );			// remove ProgressBar
 				dojo.empty( dojo.byId( cloud_pane ) );			// remove ProgressBar
 
-				if( resp.status === "ok" )
+				if( resp.status === "SUCCESS" )
 				{
-					var ocr_text = resp.text;
-					processRecord( record_id, ocr_text, zipfile );
+                    console.log(resp);
+					var ocr_text = resp.text_content;
+					processRecord( record_id, ocr_text, zipfile, resp );
 				}
 				else
 				{
@@ -622,14 +619,14 @@ function nextResults( amount )
 	}
 
 
-	var processRecord = function( record_id, ocr_text, zipfile )
+	var processRecord = function( record_id, ocr_text, zipfile, documentObj )
 	{
 		console.log( "processRecord: " + record_id );
 	//	console.log( "processRecord: OCR: " + ocr_text );
 
 		var collection = ES_INDEX;
 
-		updateTextview( collection, record_id, ocr_text );			// update article in Text tab
+		updateTextview( collection, record_id, ocr_text, documentObj );			// update article in Text tab
 
 		scanImages( collection, record_id, zipfile );	// scan_images.js : scan[s] + View at KB tab
 

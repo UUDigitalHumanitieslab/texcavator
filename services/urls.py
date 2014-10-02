@@ -26,7 +26,7 @@ urlpatterns = patterns( 'services.views',
 
 	url( r'kb/resolver/$', 'retrieve_kb_resolver'),
 	url( r'logger/$',          'proxy' ),
-	url( r'retrieve/',         'proxy' ),
+    url( r'retrieve/(?P<doc_id>[\w:]+)',         'retrieve_document' ),
 	url( r'search/$',          'search' ),
 	url( r'scan/$',            'proxy' ),
 )

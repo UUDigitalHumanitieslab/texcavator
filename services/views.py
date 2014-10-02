@@ -49,8 +49,8 @@ from django.views.decorators.csrf import csrf_exempt
 
 from es import get_search_parameters, do_search, count_search_results, \
         single_document_word_cloud, multiple_document_word_cloud, \
-        get_document_ids, termvector_word_cloud, _KB_DISTRIBUTION_VALUES, \
-        _KB_ARTICLE_TYPE_VALUES
+        get_document_ids, termvector_word_cloud, get_document, \
+        _KB_DISTRIBUTION_VALUES, _KB_ARTICLE_TYPE_VALUES
 
 from texcavator.settings import TEXCAVATOR_DATE_RANGE
 from texcavator.utils import json_response_message
@@ -300,6 +300,13 @@ def check_status_by_task_id(request, task_id):
         return json_response_message('ERROR', 'Other error: {}'.format(str(e)))
 
 
+def retrieve_document(request, doc_id):
+    document = get_document(settings.ES_INDEX, settings.ES_DOCTYPE, doc_id)
+
+    if document:
+        return json_response_message('SUCCESS', '', document)
+    return json_response_message('ERROR', 'Document not found.')
+
 @csrf_exempt
 def proxy( request ):
     '''Proxy a request and return the result'''
@@ -330,30 +337,6 @@ def proxy( request ):
             print >> stderr, "Celery request\n"
         ctype = 'application/json; charset=UTF-8'
         return HttpResponse( celery_check(), content_type = ctype )
-
-
-    elif len(request_path) > 2 and request_path[2] == u'retrieve':
-        if settings.DEBUG == True:
-            print >> stderr, "Retrieve request", request.REQUEST
-
-        datastore = request.REQUEST[ "datastore" ]
-        if settings.DEBUG == True:
-            print >> stderr, "datastore:", datastore
-
-        if datastore == "DSTORE_ELASTICSEARCH":
-            return retrieve_xtas_elasticsearch( request )       # elasticsearch.py
-        elif datastore == "DSTORE_MONGODB":
-            return retrieve_xtas_mongodb( request)              # xTAS MongoDB
-        elif datastore == "DSTORE_KBRESOLVER":
-            return retrieve_kb_resolver( request)               # KB Resolver
-        else:
-            msg = "Unknown datastore: %s" % datastore
-            if settings.DEBUG == True:
-                print >> stderr, msg
-            resp_dict = { "status" : "FAILURE", "msg" : msg }
-            json_list = json.dumps( resp_dict )
-            ctype = 'application/json; charset=UTF-8'
-            return HttpResponse( json_list, content_type = ctype )
 
     elif len( request_path ) > 3 and request_path[ 2 ] == u'scan':
         return download_scan_image( request )
