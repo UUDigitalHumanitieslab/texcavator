@@ -85,7 +85,7 @@ function writeTextview( record_id, data, documentObj )
 {
 	console.log( "writeTextview() " + record_id);
     
-    article_text = documentObj.text_content.replace('\n\n\n', '</br></br>');
+    article_text = documentObj.text_content.replace(/\n\n/g, "</br></br>");
 
 	dojo.byId( "record" ).innerHTML = "<b>"+documentObj.article_dc_title+"</b></br>"+article_text;
 }
