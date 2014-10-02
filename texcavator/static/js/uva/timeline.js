@@ -702,15 +702,7 @@ function burstClicked( data, index, element )
 		ids: d.docs.join(',')		// cloud not by tag name, but by comma separated ids string
 	};
 
-	if( stopwordsRemove() )						// remove stopwords from cloud
-	{
-		// retrieve current stopword list from db, then call onClickExecuteCloud()
-		var lexiconId = retrieveLexiconID();
-		var call_func = true;
-		var boundFunction = dojo.hitch( this, burstCloud, params );
-		stopwordsGetString( lexiconId, call_func, boundFunction );
-	}
-	else { burstCloud( params ); }
+	burstCloud( params );
 
 //	dojo.query( '#sparksDialog .dijitTooltipConnector' )[ 0 ].style.position = "relative";
 	var oldPosition = dojo.position( dijit.byId( 'sparksDialog' )._popupWrapper );
