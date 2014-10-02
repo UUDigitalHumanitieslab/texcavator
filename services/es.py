@@ -275,23 +275,17 @@ def single_document_word_cloud(idx, typ, doc_id, min_length=0, stopwords=None):
         stopwords = []
 
     if t_vector.get('found', False):
-        result = []
-        max_count = 0
+        wordcloud = Counter()
         for field, data in t_vector.get('term_vectors').iteritems():
             for term, count_dict in data.get('terms').iteritems():
                 if term not in stopwords and len(term) >= min_length:
-                    count = count_dict.get('term_freq')
-                    if count > max_count:
-                        max_count = count
+                    wordcloud[term] += int(count_dict.get('term_freq'))
 
-                    result.append(
-                        {
-                            'term': term,
-                            'count': count
-                        })
+        common_terms = wordcloud.most_common(100)
+        result = [{'term': t, 'count': c} for t, c in common_terms]
 
         return {
-            'max_count': max_count,
+            'max_count': common_terms[0][0],
             'result': result,
             'status': 'ok'
         }
