@@ -102,6 +102,16 @@ def count_search_results(idx, typ, query, date_range, dist, art_types):
     return _es().count(index=idx, doc_type=typ, body=q)
 
 
+def get_document(idx, typ, doc_id):
+    """Return a document given its id.
+    """
+    result = _es().get(index=idx, doc_type=typ, id=doc_id)
+
+    if result.get('found'):
+        return result['_source']
+    return None
+
+
 def create_query(query_str, date_range, dist, art_types):
     """Create elasticsearch query from input string.
 
