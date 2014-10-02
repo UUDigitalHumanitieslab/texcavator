@@ -105,11 +105,12 @@ def count_search_results(idx, typ, query, date_range, dist, art_types):
 def get_document(idx, typ, doc_id):
     """Return a document given its id.
     """
-    result = _es().get(index=idx, doc_type=typ, id=doc_id)
+    try:
+        result = _es().get(index=idx, doc_type=typ, id=doc_id)
+    except:
+        return None
 
-    if result.get('found'):
-        return result['_source']
-    return None
+    return result['_source']
 
 
 def create_query(query_str, date_range, dist, art_types):
