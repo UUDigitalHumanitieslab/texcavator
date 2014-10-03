@@ -615,9 +615,10 @@ function burstSearch( lexicon_query, date_range, max_records )
 	dojo.xhrGet({
 		url : url,
 		content : params,									// key:value pairs
-		handleAs : "text",									// HTML data returned from the server
+		handleAs : "json",									// HTML data returned from the server
 		load : function( data ) {
-			dojo.byId( "search-result" ).innerHTML = data;	// put html text in panel
+            console.log(data);
+			dojo.byId( "search-result" ).innerHTML = data.html;	// put html text in panel
 		},
 		error: function( err ) {
 			console.error( err );							// display the error
