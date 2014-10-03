@@ -615,9 +615,10 @@ function burstSearch( lexicon_query, date_range, max_records )
 	dojo.xhrGet({
 		url : url,
 		content : params,									// key:value pairs
-		handleAs : "text",									// HTML data returned from the server
+		handleAs : "json",									// HTML data returned from the server
 		load : function( data ) {
-			dojo.byId( "search-result" ).innerHTML = data;	// put html text in panel
+            console.log(data);
+			dojo.byId( "search-result" ).innerHTML = data.html;	// put html text in panel
 		},
 		error: function( err ) {
 			console.error( err );							// display the error
@@ -702,15 +703,7 @@ function burstClicked( data, index, element )
 		ids: d.docs.join(',')		// cloud not by tag name, but by comma separated ids string
 	};
 
-	if( stopwordsRemove() )						// remove stopwords from cloud
-	{
-		// retrieve current stopword list from db, then call onClickExecuteCloud()
-		var lexiconId = retrieveLexiconID();
-		var call_func = true;
-		var boundFunction = dojo.hitch( this, burstCloud, params );
-		stopwordsGetString( lexiconId, call_func, boundFunction );
-	}
-	else { burstCloud( params ); }
+	burstCloud( params );
 
 //	dojo.query( '#sparksDialog .dijitTooltipConnector' )[ 0 ].style.position = "relative";
 	var oldPosition = dojo.position( dijit.byId( 'sparksDialog' )._popupWrapper );
@@ -731,37 +724,37 @@ function burstCloud( params )
 	params = getCloudParameters( params );		// add user-changeable parameters from config
 //	console.log( params );
 
-    dojo.xhrGet({
+	dojo.xhrGet({
         url: "services/cloud",
-        content: params,
-        handleAs: 'text',
-        load: function(resp_text){
+		content: params, 
+		failOk: false,			// true: No dojo console error message
+		handleAs: "json",
+    }).then(function( resp ){
+        
+            console.log("requesting task id for burstcloud");
+            console.log(resp);
 
-			resp_json = dojo.fromJson( resp_text )
-		//	console.log( resp_json );
-			status = resp_json.status;
-			if( status == "error" )
-			{
-				closePopup();
-				console.error( resp_json.msg );
-				var title = "Cloud request failed";
-				var buttons = { "OK": true };
-				genDialog( title, resp_json.msg, buttons );
-			}
-			else
-			{
-				console.log( "burstCloud(): " + status );
-				if( resp_text instanceof Error ) {
-					dojo.place( "<div>Timeout in xTas.</div>", dojo.byId( "cloudPane" ), "only" );
-				} else {
-					placeCloudInTarget( "burst", resp_json, 'cloud' );
-				}
-			}
-		
-        },
-        error: function(error){
-            console.error(err);
-            return err;
+            if( resp.status != "ok" ){
+	    		console.error( resp.msg );
+		    	closePopup();
+    			var title = "Cloud request failed";
+			    var buttons = { "OK": true };
+		    	genDialog( title, resp.msg, buttons );
+	    		return null;
+    		} else {
+		    	console.log("got task_id: "+resp.task);
+                return resp.task;
+    		}
+	    }, function( err ) { console.error( err ); }
+    ).then(function(task_id){
+        console.log("Start polling!")
+        console.log("task_id: "+task_id)
+        if(task_id){
+            setTimeout(check_status, 0.05);
+            // check every second
+            window.interval_id = setInterval(function(){ check_status(task_id); }, 1000);
+        } else {
+            console.log('Error: no task_id returned.');
         }
     });
 } // burstCloud()
