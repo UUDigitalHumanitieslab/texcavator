@@ -1,15 +1,17 @@
 # -*- coding: utf-8 -*-
+import os
 from sys import stderr, exc_info
 from datetime import datetime, date
 import json
+from urllib import quote_plus
 
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.core import serializers
+from django.core.validators import email_re
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import authenticate
 
 from django.conf import settings
 
@@ -19,6 +21,8 @@ from texcavator.utils import json_response_message
 from query.utils import query2docidsdate
 from query.burstsdetector import bursts
 from services.es import get_search_parameters
+from query.download import create_zipname, execute
+
 
 @login_required
 def index(request):
@@ -269,3 +273,65 @@ def stopwords(request):
     }
 
     return json_response_message('SUCCESS', '', params)
+
+
+@csrf_exempt
+@login_required
+def download_prepare(request):
+    """
+    Request from BiLand to create the ocr+meta-data zipfile for download
+    """
+    if settings.DEBUG:
+        print >> stderr, "download_prepare()"
+        print >> stderr, request.REQUEST
+
+    req_dict = request.REQUEST
+
+    params = get_search_parameters(request.REQUEST)
+    query_str = params['query']
+
+    if query_str == "":
+        msg = "empty query title or content"
+        if settings.DEBUG:
+            print >> stderr, msg
+            print >> stderr, request.META
+        resp_dict = {'status': "error", 'msg': msg}
+        return HttpResponse(json.dumps(resp_dict))
+
+    user = request.user
+
+    if user.email == "":
+        msg = "Preparing your download for query <br/><b>" + query_str + "</b> failed.<br/>A valid email address is needed for user <br/><b>" + user.username + "</b>"
+        if settings.DEBUG:
+            print >> stderr, msg
+        resp_dict = {'status': 'error', 'msg': msg}
+        json_list = json.dumps(resp_dict)
+        ctype = 'application/json; charset=UTF-8'
+        return HttpResponse(json_list, content_type=ctype)
+
+    if not email_re.match(user.email):
+        msg = "Preparing your download for query <br/><b>" + query_str + "</b> failed.<br/>The email address of user <b>" + user.username +  "</b> could not be validated: <b>" + to_email + "</b>"
+        if settings.DEBUG:
+            print >> stderr, msg
+        resp_dict = {'status': 'error', 'msg': msg}
+        json_list = json.dumps(resp_dict)
+        ctype = 'application/json; charset=UTF-8'
+        return HttpResponse(json_list, content_type=ctype)
+
+    print '-------------------------------->', user
+    print '-------------------------------->', user.username
+    print '-------------------------------->', user.email
+
+    zip_basename = create_zipname(user.username, query_str)
+    url = os.path.join('http://{}'.format(request.get_host()), "lexicon/download/data/" + quote_plus(zip_basename))
+    email_message = "BiLand Query: " + query_str + "\n" + zip_basename + \
+        "\nURL: " + url
+
+    # zip documents by management cmd
+    execute(req_dict, zip_basename, user.email, email_message)
+
+    msg = "Your download for query <b>" + query_str + "</b> is being prepared.<br/>When ready, an email will be sent to <b>" + user.email + "</b>"
+    resp_dict = {'status': 'SUCCESS', 'msg': msg}
+    json_list = json.dumps(resp_dict)
+    ctype = 'application/json; charset=UTF-8'
+    return HttpResponse(json_list, content_type=ctype)
