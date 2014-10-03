@@ -1063,7 +1063,11 @@ function onClickExecuteCloud( queryID )
         console.log("finished generating cloud");
         clearInterval(window.interval_id);
         // show the solution
-        createCloud( "normal", obj, "borderContainer", "cloudPane" );
+        if(obj.burstcloud){
+            placeCloudInTarget( "burst", obj, 'cloud' );
+        } else {
+            createCloud( "normal", obj, "borderContainer", "cloudPane" );
+        }
      } else {
         clearInterval(window.interval_id);
         console.log("other status for celery task");

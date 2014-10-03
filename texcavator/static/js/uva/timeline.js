@@ -723,37 +723,37 @@ function burstCloud( params )
 	params = getCloudParameters( params );		// add user-changeable parameters from config
 //	console.log( params );
 
-    dojo.xhrGet({
+	dojo.xhrGet({
         url: "services/cloud",
-        content: params,
-        handleAs: 'text',
-        load: function(resp_text){
+		content: params, 
+		failOk: false,			// true: No dojo console error message
+		handleAs: "json",
+    }).then(function( resp ){
+        
+            console.log("requesting task id for burstcloud");
+            console.log(resp);
 
-			resp_json = dojo.fromJson( resp_text )
-		//	console.log( resp_json );
-			status = resp_json.status;
-			if( status == "error" )
-			{
-				closePopup();
-				console.error( resp_json.msg );
-				var title = "Cloud request failed";
-				var buttons = { "OK": true };
-				genDialog( title, resp_json.msg, buttons );
-			}
-			else
-			{
-				console.log( "burstCloud(): " + status );
-				if( resp_text instanceof Error ) {
-					dojo.place( "<div>Timeout in xTas.</div>", dojo.byId( "cloudPane" ), "only" );
-				} else {
-					placeCloudInTarget( "burst", resp_json, 'cloud' );
-				}
-			}
-		
-        },
-        error: function(error){
-            console.error(err);
-            return err;
+            if( resp.status != "ok" ){
+	    		console.error( resp.msg );
+		    	closePopup();
+    			var title = "Cloud request failed";
+			    var buttons = { "OK": true };
+		    	genDialog( title, resp.msg, buttons );
+	    		return null;
+    		} else {
+		    	console.log("got task_id: "+resp.task);
+                return resp.task;
+    		}
+	    }, function( err ) { console.error( err ); }
+    ).then(function(task_id){
+        console.log("Start polling!")
+        console.log("task_id: "+task_id)
+        if(task_id){
+            setTimeout(check_status, 0.05);
+            // check every second
+            window.interval_id = setInterval(function(){ check_status(task_id); }, 1000);
+        } else {
+            console.log('Error: no task_id returned.');
         }
     });
 } // burstCloud()
