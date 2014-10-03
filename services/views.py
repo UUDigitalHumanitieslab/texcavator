@@ -27,68 +27,57 @@ FL-04-Jul-2013: -> BILAND app
 FL-19-Dec-2013: Changed
 """
 
-from sys import exit, stderr, exc_info
-import httplib
-import logging
+from sys import stderr, exc_info
 import requests
 from itertools import chain
 
 import logging
-logger = logging.getLogger( __name__ )
+logger = logging.getLogger(__name__)
 
 import json
 
-from datetime import datetime
-
 from django.conf import settings
 from django.http import HttpResponse, HttpResponseNotFound
-from django.utils.http import urlencode
 from django.utils.html import escape
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 
 from es import get_search_parameters, do_search, count_search_results, \
-        single_document_word_cloud, multiple_document_word_cloud, \
-        get_document_ids, termvector_word_cloud, get_document, \
-        _KB_DISTRIBUTION_VALUES, _KB_ARTICLE_TYPE_VALUES
+    single_document_word_cloud, multiple_document_word_cloud, get_document
 
-from texcavator.settings import TEXCAVATOR_DATE_RANGE
 from texcavator.utils import json_response_message
 from services.celery import celery_check
-from lexicon.models import LexiconItem
-from services.elasticsearch_biland import es_doc_count, query2docids
-from services.elasticsearch_biland import search_xtas_elasticsearch, retrieve_xtas_elasticsearch
 from services.elasticsearch_biland import elasticsearch_htmlresp
 
-from query.models import Query, StopWord
-from query.utils import get_query, get_query_object
+from query.models import StopWord
+from query.utils import get_query
 
 from services.export import export_csv
-from services.request import request2article_types, is_literal
 from tasks import generate_tv_cloud
 
+
 @login_required
-def search( request ):
+def search(request):
     params = get_search_parameters(request.REQUEST)
-    
+
     valid_q, result = do_search(settings.ES_INDEX,
                                 settings.ES_DOCTYPE,
                                 params['query'],
-                                params['start']-1, # Zero based counting
+                                params['start']-1,  # Zero based counting
                                 params['result_size'],
                                 params['dates'],
                                 params['distributions'],
                                 params['article_types'])
     if valid_q:
-        html_str = elasticsearch_htmlresp(settings.ES_INDEX, 
-                                          params['start'], 
+        html_str = elasticsearch_htmlresp(settings.ES_INDEX,
+                                          params['start'],
                                           params['result_size'],
                                           result)
         resp = {
-                'status': 'ok',
-                'html': html_str
-               }
-        return HttpResponse(json.dumps(resp), 
+            'status': 'ok',
+            'html': html_str
+        }
+        return HttpResponse(json.dumps(resp),
                             'application/json; charset=UTF-8')
     else:
         result = escape(result).replace('\n', '<br />')
@@ -98,32 +87,31 @@ def search( request ):
         return json_response_message('error', msg)
 
 
-def request2extra4log( request ):
+def request2extra4log(request):
     # pop conflicting keys
-#   extra = request.META
-#   extra.pop( "module", None )         # "Attempt to overwrite 'module' in LogRecord"
+    #extra = request.META
+    #extra.pop( "module", None )  # Attempt to overwrite 'module' in LogRecord
     # do we need to pop more?
 
     # minimum variant, can't do without 'REMOTE_ADDR' key
     try:
-        remote_addr = request.META[ 'REMOTE_ADDR' ]
+        remote_addr = request.META['REMOTE_ADDR']
     except:
         remote_addr = ""
-    extra = { 'REMOTE_ADDR' : remote_addr }
+    extra = {'REMOTE_ADDR': remote_addr}
     return extra
-
 
 
 @csrf_exempt
 @login_required
-def doc_count( request ):
+def doc_count(request):
     if settings.DEBUG:
         print >> stderr, "doc_count()"
-    
+
     queryID = request.REQUEST.get('queryID')
 
     if queryID:
-	    # get the query string from the Django db
+        # get the query string from the Django db
         query, response = get_query(queryID)
 
         if not query:
@@ -132,7 +120,7 @@ def doc_count( request ):
         return json_response_message('error', 'Missing query id.')
 
     params = get_search_parameters(request.REQUEST)
-    
+
     result = count_search_results(params['collection'],
                                   settings.ES_DOCTYPE,
                                   query,
@@ -143,42 +131,42 @@ def doc_count( request ):
     doc_count = result.get('count', 'error')
 
     if not doc_count == 'error':
-        params = {'doc_count' : str(doc_count)}
+        params = {'doc_count': str(doc_count)}
         return json_response_message('ok', 'Retrieved document count.', params)
-    
-    return json_response_message('error', 'Unable to retrieve document count' \
-                              ' for query "{query}"' % query )
+
+    return json_response_message('error', 'Unable to retrieve document count'
+                                 ' for query "{query}"' % query)
 
 
 @csrf_exempt
 @login_required
-def cloud( request ):
+def cloud(request):
     if settings.DEBUG:
         print >> stderr, "cloud()"
-    
+
     result = None
 
     params = get_search_parameters(request.REQUEST)
-    
+
     ids = request.REQUEST.get('ids')
-    
+
     # Cloud by ids
     if ids:
         ids = ids.split(',')
 
         if len(ids) == 1:
             # Word cloud for single document
-            t_vector = single_document_word_cloud(settings.ES_INDEX, 
+            t_vector = single_document_word_cloud(settings.ES_INDEX,
                                                   settings.ES_DOCTYPE,
                                                   ids[0])
 
             ctype = 'application/json; charset=UTF-8'
-            return HttpResponse(json.dumps(t_vector), content_type = ctype)
+            return HttpResponse(json.dumps(t_vector), content_type=ctype)
         else:
             # Word cloud for multiple ids
-            result = multiple_document_word_cloud(params.get('collection'), 
-                                                  settings.ES_DOCTYPE, 
-                                                  params.get('query'), 
+            result = multiple_document_word_cloud(params.get('collection'),
+                                                  settings.ES_DOCTYPE,
+                                                  params.get('query'),
                                                   params.get('dates'),
                                                   params.get('distributions'),
                                                   params.get('article_types'),
@@ -194,22 +182,22 @@ def cloud( request ):
             return response
 
         # for some reason, the collection to be searched is stored in parameter
-        # 'collections' (with s added) instead of 'collection' as expected by 
+        # 'collections' (with s added) instead of 'collection' as expected by
         # get_search_parameters.
         coll = request.REQUEST.get('collections', settings.ES_INDEX)
 
-        result = multiple_document_word_cloud(coll, 
-                                              settings.ES_DOCTYPE, 
-                                              query, 
+        result = multiple_document_word_cloud(coll,
+                                              settings.ES_DOCTYPE,
+                                              query,
                                               params.get('dates'),
                                               params.get('distributions'),
                                               params.get('article_types'))
 
     if not result:
-        return json_response_message('error', 'No word cloud result generated.')
-    
+        return json_response_message('error', 'No word cloud generated.')
+
     ctype = 'application/json; charset=UTF-8'
-    return HttpResponse(json.dumps(result), content_type = ctype)
+    return HttpResponse(json.dumps(result), content_type=ctype)
 
 
 @csrf_exempt
@@ -296,19 +284,20 @@ def retrieve_document(request, doc_id):
         return json_response_message('SUCCESS', '', document)
     return json_response_message('ERROR', 'Document not found.')
 
+
 @csrf_exempt
-def proxy( request ):
+def proxy(request):
     '''Proxy a request and return the result'''
 
-    extra = request2extra4log( request )
+    extra = request2extra4log(request)
 
-    if settings.DEBUG == True:
+    if settings.DEBUG:
         print >> stderr, "services/views.py/proxy()"
 
-    logger.debug( "services/views.py/proxy()", extra = extra )
+    logger.debug("services/views.py/proxy()", extra=extra)
 
-    logger.debug( "request.path_info: %s" % request.path_info, extra = extra )
-    if settings.DEBUG == True:
+    logger.debug("request.path_info: %s" % request.path_info, extra=extra)
+    if settings.DEBUG:
         print >> stderr, "request.path_info:", request.path_info
         print >> stderr, "request.REQUEST:", request.REQUEST
 
@@ -316,22 +305,22 @@ def proxy( request ):
 
     # Handle requests for specific services
 
-    if len(request_path) > 2 and request_path[2] == u'logger' and request.GET.has_key('message'):
-        logger.debug( request.REQUEST['message'], extra = extra )
+    if len(request_path) > 2 and request_path[2] == u'logger' \
+            and request.GET.has_key('message'):
+        logger.debug(request.REQUEST['message'], extra=extra)
         return HttpResponse('OK')
 
-
     elif len(request_path) > 2 and request_path[2] == u'celery':
-        if settings.DEBUG == True:
+        if settings.DEBUG:
             print >> stderr, "Celery request\n"
         ctype = 'application/json; charset=UTF-8'
-        return HttpResponse( celery_check(), content_type = ctype )
+        return HttpResponse(celery_check(), content_type=ctype)
 
-    elif len( request_path ) > 3 and request_path[ 2 ] == u'scan':
-        return download_scan_image( request )
+    elif len(request_path) > 3 and request_path[2] == u'scan':
+        return download_scan_image(request)
 
     # If all fails, do a 404
-    if settings.DEBUG == True:
+    if settings.DEBUG:
         print >> stderr, "proxy: HttpResponseNotFound()"
     return HttpResponseNotFound()
 
@@ -339,219 +328,92 @@ def proxy( request ):
 @csrf_exempt
 @login_required
 def export_cloud(request):
-    if settings.DEBUG == True:
+    if settings.DEBUG:
         print >> stderr, "Export CSV request"
-    return export_csv( request )
+    return export_csv(request)
 
 
-def download_scan_image( request ):
+def download_scan_image(request):
     """download scan image file"""
     from django.core.servers.basehttp import FileWrapper
-    import mimetypes
     import os
 
-    if settings.DEBUG == True:
+    if settings.DEBUG:
         print >> stderr, "download_scan_image()"
 
     req_dict = request.REQUEST
-    _id = req_dict[ "id" ]
-    id_parts = _id.split( '-' )
-    zipfile = req_dict[ "zipfile" ]
-    scandir = zipfile.split( '_' )[ 0 ]
-    if settings.DEBUG == True:
+    _id = req_dict["id"]
+    id_parts = _id.split('-')
+    zipfile = req_dict["zipfile"]
+    scandir = zipfile.split('_')[0]
+    if settings.DEBUG:
         print >> stderr, _id, id_parts
         print >> stderr, zipfile, scandir
 
-    # The filenames in the stabi dirs are not named in a consequent way. Some contain the dir name, some not. 
+    # The filenames in the stabi dirs are not named in a consequent way.
+    # Some contain the dir name, some not.
     # We added the dirname to the downsized jpegs if it was missing
-    if _id.count( '-' ) == 2:           # YYYY-MM-DD
+    if _id.count('-') == 2:           # YYYY-MM-DD
         id4 = _id + '-'
         id4 += scandir
         filename = id4 + "_Seite_1.jpeg"
     else:
-        dirname = id_parts[ 3 ]
+        # dirname = id_parts[ 3 ]
         id4 = _id
         filename = _id + "_Seite_1.jpeg"
 
-    basedir = os.path.join( settings.STABI_IMG_DOWNLOAD, scandir, id4 )
+    basedir = os.path.join(settings.STABI_IMG_DOWNLOAD, scandir, id4)
 
-#   pathname = os.path.join( settings.PROJECT_PARENT, basedir, filename )
-    pathname = os.path.join( settings.PROJECT_GRANNY, basedir, filename )   # Django-1.5 extra dir level
+    pathname = os.path.join(settings.PROJECT_GRANNY, basedir, filename)
 
-    if settings.DEBUG == True:
+    if settings.DEBUG:
         print >> stderr, "basedir:  %s" % basedir
         print >> stderr, "filename: %s" % filename
         print >> stderr, "pathname: %s" % pathname
 
 #   filename = "1863-07-01-9838247_Seite_1.png"
 #   filename = "1872-01-17-9838247.pdf"
-#   pathname = os.path.join( settings.PROJECT_PARENT, "BILAND_download", filename )
 
-    if settings.DEBUG == True:
+    if settings.DEBUG:
         print >> stderr, pathname
 
-    wrapper = FileWrapper( open( pathname ) )
-    content_type = mimetypes.guess_type( pathname )[ 0 ]
-    response = HttpResponse( wrapper, mimetype = 'content_type' )
-#   response = HttpResponse( wrapper, content_type = 'application/pdf' )
-    response[ 'Content-Disposition' ] = "attachment; filename=%s" % filename
+    wrapper = FileWrapper(open(pathname))
+    # content_type = mimetypes.guess_type( pathname )[ 0 ]
+    response = HttpResponse(wrapper, mimetype='content_type')
+    response['Content-Disposition'] = "attachment; filename=%s" % filename
     return response
-
-
-
-def proxyResponse(method, host, port, path, data = {}, headers = {}):
-    '''Proxy a request and return the result'''
-
-    # Build a HTTP Connection to the host
-    connection = httplib.HTTPConnection(host, port)
-    
-    if method == 'POST':
-        # Set the correct header for the type of content we are sending
-        headers['Content-Type'] = 'application/x-www-form-urlencoded'
-        # Make the request
-        connection.request(method, '/' + path, urlencode(data, True), headers)
-    else:
-        # Make a query based on the data to send
-        query = ('?' + urlencode(data, True)) if len(data) else ''
-        if settings.DEBUG == True:
-            print >> stderr, "GET ", "host:", host, "\nport:", port, "\npath:", path, "\ndata:", data
-            print >> stderr, "query:", query
-        # Make the request
-        connection.request(method, '/' + path + query)
-
-    # Get the response for the request
-    response = connection.getresponse()
-
-    # Check if response is a redirect   
-    if response.status == 301 or response.status == 302:
-        from urlparse import urlparse
-        # parse_qs was moved from cgi to urlparse, can use both
-        try:
-            from urlparse import parse_qs
-        except ImportError:
-            from cgi import parse_qs
-        url = urlparse(response.getheader('Location'))
-        # If the redirect uses the query string, mix it in with original data
-        if(len(url.query)):
-            data.update(parse_qs(url.query))
-        # Do a new proxyResponse
-        return proxyResponse(method, url.netloc, url.port, url.path, data, headers)
-
-#   print >> stderr, "response status:", response.status
-
-    return response
-
-
-
-def buildResponse(response, content = ''):
-    '''Build a Django HttpResponse, based on a httplib HTTPResponse.'''
-
-    # if no content is given, try to read the response
-    if len(content) == 0:
-        content = response.read()
-        
-    # Get all headers from the httplib HTTPResponse
-    responseHeaders = response.getheaders()
-    # Make the Django HttpResponse, with the correct Content-Type
-    httpResponse = HttpResponse(content, status=response.status, 
-                                content_type=response.getheader('Content-Type'))
-    
-    # Add all headers from the response
-    for header, value in responseHeaders:
-        # Prevent adding of Hop-by-hop headers
-        if header not in ['connection', 'transfer-encoding', 'content-length']:
-            httpResponse[header] = value
-    
-    return httpResponse
-
-
-
-def applyXSLT( request, data, stylesheet ):
-    extra = request2extra4log( request )
-
-    '''Apply a XSLT transformation from a XSLT file to XML data.'''
-    # Use either lxml or libxml2 and libxslt
-
-#   print >> stderr, "services/views.py/applyXSLT()"
-#   print >> stderr, "input:\n", data
-
-    try:
-        from lxml import etree
-
-    #   print >> stderr, "using lxml.etree"
-    #   print >> stderr, "etree.parse"
-        try:
-            styledoc = etree.parse( stylesheet )
-        #   print >> stderr, styledoc
-        except:
-            type, value, tb = exc_info()
-            if settings.DEBUG == True:
-                print >> stderr, "stylesheet could not be parsed: %s" % value
-            logger.debug( "stylesheet could not be parsed: %s", value, extra = extra )
-
-    #   print >> stderr, "etree.fromstring"
-        doc = etree.fromstring( data )
-
-    #   print >> stderr, "etree.XSLT"
-        transform = etree.XSLT( styledoc )
-
-        result = transform( doc )
-    #   print >> stderr, "\noutput:\n", unicode(result)
-    #   print >> stderr, "\noutput:\n", result.encode( 'utf-8' )    # 'lxml.etree._XSLTResultTree' object has no attribute 'encode'
-    #   print >> stderr, "done"
-        return unicode( result )
-
-    except ImportError:
-        import libxml2
-        import libxslt
-
-    #   print >> stderr, "using libxml2+libxslt"
-        styledoc = libxml2.parseFile( stylesheet )
-        style = libxslt.parseStylesheetDoc( styledoc )
-        # Re-encode the document for compatibility
-        doc = libxml2.parseDoc( data.decode( 'utf-8' ).encode( 'UTF-8' ) )
-        result = style.applyStylesheet( doc, None )
-        res = style.saveResultToString( result )
-        style.freeStylesheet()
-        doc.freeDoc()
-        result.freeDoc()
-    #   print >> stderr, "\noutput\n:\n", res
-        return res
 
 
 @login_required
-def retrieve_kb_resolver( request ):
-	extra = request2extra4log( request )
+def retrieve_kb_resolver(request):
+    extra = request2extra4log(request)
 
-	host = 'resolver.kb.nl'
-	port = 80
-	path = 'resolve'
-	logger.debug( 'retrieve_kb_resolver: %s', request.META[ "QUERY_STRING" ], extra = extra )
+    host = 'resolver.kb.nl'
+    port = 80
+    path = 'resolve'
+    logger.debug('retrieve_kb_resolver: %s', request.META["QUERY_STRING"], extra=extra)
 
-	kb_resolver_url = "http://" + host + ':' + str( port ) + '/' + path + '?urn=' + request.REQUEST[ "id" ]
-	try:
-		response = requests.get( kb_resolver_url )
-	except:
-		if settings.DEBUG == True:
-			print >> stderr, "url: %s" % kb_resolver_url
-		type, value, tb = exc_info()
-		msg = "KB Resolver request failed: %s" % value.message
-		if settings.DEBUG == True:
-			print >> stderr, msg
-		resp_dict = { "status" : "FAILURE", "msg" : msg }
-		json_list = json.dumps( resp_dict )
-		ctype = 'application/json; charset=UTF-8'
-		return HttpResponse( json_list, content_type = ctype )
+    kb_resolver_url = "http://" + host + ':' + str(port) + '/' + path + '?urn=' + request.REQUEST["id"]
+    try:
+        response = requests.get(kb_resolver_url)
+    except:
+        if settings.DEBUG:
+            print >> stderr, "url: %s" % kb_resolver_url
+        type, value, tb = exc_info()
+        msg = "KB Resolver request failed: %s" % value.message
+        if settings.DEBUG:
+            print >> stderr, msg
+        resp_dict = {"status": "FAILURE", "msg": msg}
+        json_list = json.dumps(resp_dict)
+        ctype = 'application/json; charset=UTF-8'
+        return HttpResponse(json_list, content_type=ctype)
 
-	resp_dict = \
-	{
-		"status" : "SUCCESS",
-		"text"   : response.content
-	}
+    resp_dict = \
+        {
+            "status": "SUCCESS",
+            "text": response.content
+        }
 
-	json_list = json.dumps( resp_dict )
-	ctype = 'application/json; charset=UTF-8'
-	return HttpResponse( json_list, content_type = ctype )
-
-
-# [eof]
+    json_list = json.dumps(resp_dict)
+    ctype = 'application/json; charset=UTF-8'
+    return HttpResponse(json_list, content_type=ctype)

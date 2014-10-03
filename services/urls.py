@@ -1,34 +1,21 @@
 # -*- coding: utf-8 -*-
 
-"""
---------------------------------------------------------------------------------
-Author:		Fons Laan, ILPS-ISLA, University of Amsterdam
-Project		BiLand
-Name:		urls.py
-Version:	0.2
-Goal:		services/urls definitions
+from django.conf.urls import patterns, url
 
-FL-26-Mar-2013: Created
-FL-09-Sep-2013: Changed
-"""
+urlpatterns = patterns(
+    'services.views',
 
-from django.conf.urls import patterns, include, url 
+    url(r'doc_count/$', 'doc_count'),
 
-# some URLs do not end with '$' because their path varies and may be longer
-urlpatterns = patterns( 'services.views',
-	url( r'doc_count/$',       'doc_count' ),
+    url(r'export_cloud/$', 'export_cloud'),
 
-	url( r'celery/$',          'proxy' ),
-	url( r'export_cloud/$',          'export_cloud' ),
+    url(r'cloud/$', 'tv_cloud'),
+    url(r'task_status/(?P<task_id>[\w-]+)$', 'check_status_by_task_id'),
 
-	url( r'cloud/$',          'tv_cloud' ),
-	url( r'task_status/(?P<task_id>[\w-]+)$', 'check_status_by_task_id' ),
+    url(r'kb/resolver/$', 'retrieve_kb_resolver'),
+    url(r'retrieve/(?P<doc_id>[\w:]+)', 'retrieve_document'),
+    url(r'search/$', 'search'),
 
-	url( r'kb/resolver/$', 'retrieve_kb_resolver'),
-	url( r'logger/$',          'proxy' ),
-    url( r'retrieve/(?P<doc_id>[\w:]+)',         'retrieve_document' ),
-	url( r'search/$',          'search' ),
-	url( r'scan/$',            'proxy' ),
+    url(r'scan/$', 'proxy'),
+    url(r'logger/$', 'proxy'),
 )
-
-# [eof]
