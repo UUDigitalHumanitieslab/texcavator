@@ -1072,6 +1072,9 @@ function onClickExecuteCloud( queryID )
         clearInterval(window.interval_id);
         console.log("other status for celery task");
         console.log(obj);
+		var title = "Wordcloud failed";
+		var buttons = { "OK": true };
+		genDialog( title, obj.msg, buttons );
      }
 }
 
