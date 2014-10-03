@@ -219,8 +219,6 @@ def tv_cloud(request):
     if settings.DEBUG:
         print >> stderr, "termvector cloud()"
 
-    result = None
-
     params = get_search_parameters(request.REQUEST)
 
     ids = request.REQUEST.get('ids')
@@ -252,19 +250,9 @@ def tv_cloud(request):
 
             ctype = 'application/json; charset=UTF-8'
             return HttpResponse(json.dumps(t_vector), content_type=ctype)
-        else:
-            # Word cloud for multiple ids
-            result = multiple_document_word_cloud(params.get('collection'),
-                                                  settings.ES_DOCTYPE,
-                                                  params.get('query'),
-                                                  params.get('dates'),
-                                                  params.get('distributions'),
-                                                  params.get('article_types'),
-                                                  ids)
 
-    # Cloud by queryID
-
-    task = generate_tv_cloud.delay(params, min_length, stopwords)
+    # Cloud by queryID or multiple ids
+    task = generate_tv_cloud.delay(params, min_length, stopwords, ids)
 
     params = {'task': task.id}
 
