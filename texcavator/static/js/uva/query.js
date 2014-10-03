@@ -758,8 +758,6 @@ function okDownload( query_title )
 	console.log( "date range: [" + min_date_str + ',' +  max_date_str + ']');
 
 	var params = getSearchParameters();			// from config
-	params[ "username" ]    = glob_username;
-	params[ "password" ]    = glob_password;
 	params[ "collection" ]  = ES_INDEX;
 	params[ "query_title" ] = query_title;
 	params[ "query" ]       = query_content;
@@ -768,7 +766,7 @@ function okDownload( query_title )
 	params[ "format" ] = config[ "querydataexport" ][ "format" ]	// "json" or "xml"
 
 	dojo.xhrGet({
-		url: "lexicon/download/prepare/",
+		url: "query/download/prepare/",
 		content: params,
 		handleAs: "json",
 		load: function( result ) {
