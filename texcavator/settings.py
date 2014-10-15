@@ -26,9 +26,8 @@ FL-12-Nov-2013: Changed
 
 import os
 import sys
-import djcelery
 
-from settings_local import PROJECT_GRANNY, PROJECT_PARENT, PROJECT_ROOT, PROJECT_CELERY
+from settings_local import PROJECT_GRANNY, PROJECT_PARENT, PROJECT_ROOT
 
 PROJECT_GRANNY = os.path.normpath( PROJECT_GRANNY )        # zap trailing `/'
 PROJECT_PARENT = os.path.normpath( PROJECT_PARENT )        # zap trailing `/'

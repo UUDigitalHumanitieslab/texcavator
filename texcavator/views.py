@@ -43,7 +43,6 @@ def index( request ):
 	data = {
 		"PROJECT_NAME": "Horizon",
 
-		"CELERY_OWNER": settings.CELERY_OWNER,
 		"SRU_DATE_LIMITS": daterange,
 
 		"QUERY_DATA_DOWNLOAD_ALLOW": settings.QUERY_DATA_DOWNLOAD_ALLOW,

@@ -25,8 +25,6 @@ from socket import gethostname, gethostbyaddr
 PROJECT_ROOT   = os.path.abspath( os.path.dirname( __file__ ) )
 PROJECT_PARENT = os.path.dirname( PROJECT_ROOT )
 PROJECT_GRANNY = os.path.dirname( PROJECT_PARENT )
-# now also disabled automatic starting of celeryd in /etc/rc.d/rc.local
-PROJECT_CELERY = False
 
 sys.path.append( PROJECT_PARENT )
 
@@ -92,14 +90,6 @@ DATABASES = {
 		'PORT'     : '',					# Set to empty string for default. Not used with sqlite3.
 	}
 }
-
-if PROJECT_CELERY:
-	CELERY_OWNER = "aclaan"			# who started celeryd ?
-	CELERYD_LOG_FILE = os.path.join( PROJECT_ROOT, "BILAND_Celery.log" )
-	if DEBUG == True:
-		print >> sys.stderr, "CELERYD_LOG_FILE: %s" % CELERYD_LOG_FILE
-else:
-	CELERY_OWNER = None
 
 TEXCAVATOR_DATE_RANGE = "18500101,19901231"
 
