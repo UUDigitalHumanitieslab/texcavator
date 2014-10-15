@@ -156,7 +156,6 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
 
     'services',            # biland
-    'list',                # biland
     'query',
 
     'djcelery'
