@@ -33,8 +33,6 @@ urlpatterns += patterns( '',
 	url( r'^logout$', 'texcavator.views.user_logout' ),
 	
 	url( r'^services/', include( 'services.urls' ) ),
-	url( r'^lexicon/', include( 'lexicon.urls' ) ),
-	url( r'^list/', include( 'list.urls' ) ),
 	url( r'^query/', include( 'query.urls' ) ),
 
 	# Not used?
