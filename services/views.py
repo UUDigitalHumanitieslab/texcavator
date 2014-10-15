@@ -46,7 +46,6 @@ from es import get_search_parameters, do_search, count_search_results, \
     single_document_word_cloud, multiple_document_word_cloud, get_document
 
 from texcavator.utils import json_response_message
-from services.celery import celery_check
 from services.elasticsearch_biland import elasticsearch_htmlresp
 
 from query.models import StopWord
@@ -309,12 +308,6 @@ def proxy(request):
             and request.GET.has_key('message'):
         logger.debug(request.REQUEST['message'], extra=extra)
         return HttpResponse('OK')
-
-    elif len(request_path) > 2 and request_path[2] == u'celery':
-        if settings.DEBUG:
-            print >> stderr, "Celery request\n"
-        ctype = 'application/json; charset=UTF-8'
-        return HttpResponse(celery_check(), content_type=ctype)
 
     elif len(request_path) > 3 and request_path[2] == u'scan':
         return download_scan_image(request)

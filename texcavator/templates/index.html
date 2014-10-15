@@ -252,7 +252,7 @@ dojo.ready( function() {
 	{ ILPS_LOGGING = false; }
 } );
 
-dojo.ready( function() { celeryCheckFailure( "{{ CELERY_OWNER }}"  ); } );	// celery.js
+dojo.ready( function() { celeryCheckFailure( "None" ); } );	// celery.js
 dojo.ready( function() { storeDateLimits(     {{ SRU_DATE_LIMITS }} ); } );	// toolbar.js
 dojo.ready( function() { createYearSlider(    {{ SRU_DATE_LIMITS }}); } );	// accordion.js, uses the stored SRU_DATE_LIMITS
 
