@@ -46,8 +46,6 @@ def download_collect(req_dict, zip_basename, to_email, email_message):
     if settings.DEBUG:
         print >> stderr, msg
 
-    query_str, literal, date_begin, date_end, start_record, chunk_size, collection=request2parms(req_dict)
-
     # download format: JSON or XML
     try:
         format = req_dict["format"]
@@ -56,7 +54,8 @@ def download_collect(req_dict, zip_basename, to_email, email_message):
     if settings.DEBUG:
         print >> stderr, "format", format
 
-    es_query_str = query_str
+    params = get_search_parameters(req_dict)
+    es_query_str = params['query']
 
     msg = "es_query: %s" % es_query_str
     logger.debug(msg)
@@ -64,7 +63,7 @@ def download_collect(req_dict, zip_basename, to_email, email_message):
     # just get the hit count
     start_record = 0
     chunk_1_size = 1
-    hits, resp_object = get_es_chunk(es_query_str, start_record, chunk_1_size)
+    hits, resp_object = get_es_chunk(params, start_record, chunk_1_size)
 
     zip_basedir = settings.QUERY_DATA_DOWNLOAD_PATH
     zip_filename = zip_basename + ".zip"
@@ -125,7 +124,7 @@ def download_collect(req_dict, zip_basename, to_email, email_message):
             print >> stderr, "nchunk:", nchunk, "of", nchunks, \
                              "start_record:", start_record
 
-        hits, resp_obj = get_es_chunk(es_query_str, start_record, chunk_size)
+        hits, resp_obj = get_es_chunk(params, start_record, chunk_size)
 
         hits_list = hits["hits"]
         hits_zipped += len(hits_list)
@@ -262,7 +261,7 @@ def hit2csv_data(csv_writer, hit, es_header_names, kb_header_names):
     csv_writer.writerow(data_line)
 
 
-def get_es_chunk(es_query_str, start_record, chunk_size):
+def get_es_chunk(params, start_record, chunk_size):
     """Retrieve a # chunksize documents from ElasticSearch index."""
     msg = "%s: %s" % (__name__, "get_es_chunk")
     logger.debug(msg)
@@ -271,12 +270,12 @@ def get_es_chunk(es_query_str, start_record, chunk_size):
 
     validity, es_dict = do_search(settings.ES_INDEX,
                                   settings.ES_DOCTYPE,
-                                  es_query_str,
+                                  params['query'],
                                   start_record,
                                   chunk_size,
-                                  daterange2dates(''),
-                                  [],
-                                  [],
+                                  params['dates'],
+                                  params['distributions'],
+                                  params['article_types'],
                                   True)
 
     return es_dict['hits'], None
