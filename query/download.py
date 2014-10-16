@@ -26,7 +26,6 @@ from django.core.servers.basehttp import FileWrapper
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 
-from services.request import request2parms
 from services.es import do_search, daterange2dates, get_search_parameters
 
 
