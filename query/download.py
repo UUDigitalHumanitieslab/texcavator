@@ -289,30 +289,6 @@ def clean_filename(s):
     return s
 
 
-@csrf_exempt
-def download_data(request, zip_basename):
-    """
-    This request occurs when the user clicks the download link that we emailed
-    """
-    msg = "download_data() zip_basename: %s" % zip_basename
-    logger.debug(msg)
-    if settings.DEBUG:
-        print >> stderr, msg
-    # to do: use mod_xsendfile
-
-    zip_basedir = os.path.join(settings.PROJECT_PARENT,
-                               settings.QUERY_DATA_DOWNLOAD_PATH)
-    zip_filename = zip_basename + ".zip"
-    zip_pathname = os.path.join(zip_basedir, zip_filename)
-
-    wrapper = FileWrapper(open(zip_pathname, 'r'))
-    response = HttpResponse(wrapper, content_type='application/zip')
-    response['Content-Length'] = os.path.getsize(zip_pathname)
-    response['Content-Disposition'] = "attachment; filename=%s" % zip_filename
-
-    return response
-
-
 def execute(merge_dict, zip_basename, to_email, email_message):
     if settings.DEBUG:
         print >> stderr, "execute()"
