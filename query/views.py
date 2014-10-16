@@ -4,6 +4,7 @@ from sys import stderr, exc_info
 from datetime import datetime, date
 import json
 from urllib import quote_plus
+from urlparse import urljoin
 
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
@@ -12,6 +13,7 @@ from django.core.validators import email_re
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
+from django.core.servers.basehttp import FileWrapper
 
 from django.conf import settings
 
@@ -323,9 +325,12 @@ def download_prepare(request):
     print '-------------------------------->', user.email
 
     zip_basename = create_zipname(user.username, query_str)
-    url = os.path.join('http://{}'.format(request.get_host()), "lexicon/download/data/" + quote_plus(zip_basename))
+    url = urljoin('http://{}'.format(request.get_host()), "/query/download/" + quote_plus(zip_basename))
     email_message = "BiLand Query: " + query_str + "\n" + zip_basename + \
         "\nURL: " + url
+    if settings.DEBUG:
+        print >> stderr, email_message
+        print >> stderr, 'http://{}'.format(request.get_host())
 
     # zip documents by management cmd
     execute(req_dict, zip_basename, user.email, email_message)
@@ -335,3 +340,27 @@ def download_prepare(request):
     json_list = json.dumps(resp_dict)
     ctype = 'application/json; charset=UTF-8'
     return HttpResponse(json_list, content_type=ctype)
+
+
+@csrf_exempt
+@login_required
+def download_data(request, zip_name):
+    """
+    This request occurs when the user clicks the download link that we emailed
+    """
+    msg = "download_data() zip_basename: %s" % zip_name
+    if settings.DEBUG:
+        print >> stderr, msg
+    # to do: use mod_xsendfile
+
+    zip_basedir = os.path.join(settings.PROJECT_PARENT,
+                               settings.QUERY_DATA_DOWNLOAD_PATH)
+    zip_filename = zip_name + ".zip"
+    zip_pathname = os.path.join(zip_basedir, zip_filename)
+
+    wrapper = FileWrapper(open(zip_pathname, 'r'))
+    response = HttpResponse(wrapper, content_type='application/zip')
+    response['Content-Length'] = os.path.getsize(zip_pathname)
+    response['Content-Disposition'] = "attachment; filename=%s" % zip_filename
+
+    return response

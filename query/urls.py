@@ -14,4 +14,5 @@ urlpatterns = patterns( 'query.views',
     url( r'^stopwords$', 'stopwords' ),
 
     url( r'^download/prepare/$',                    'download_prepare' ),
+    url(r'^download/(?P<zip_name>.*)$', 'download_data'),
 )
