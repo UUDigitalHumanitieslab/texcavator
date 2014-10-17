@@ -250,7 +250,7 @@ def hit2csv_data(csv_writer, hit, es_header_names, kb_header_names):
             if _source[kb_name] == '-':
                 val = ''
             else:
-                val = _source[kb_name].encode("utf-8")
+                val = _source[kb_name].replace('\n', ' ').encode("utf-8")
         except:
             val = ""
         kb_line.append(val)
