@@ -1,24 +1,8 @@
 # -*- coding: utf-8 -*-
 
-"""
---------------------------------------------------------------------------------
-Author:		Fons Laan, ILPS-ISLA, University of Amsterdam
-Project:	BiLand
-Name:		elasticsearch.py
-Version:	0.23
-Goal:		ElasticSearch functions
+""" Old ElasticSearch BiLand functionality.
 
-def es_queryid2esurl( lexiconID, collection, es_path )
-def query2docids( lexicon_id, collection, date_begin, date_end )
-def query2docidsdate( lexicon_id, collection, date_begin, date_end )
-def es_doc_count( req_dict )
-def elasticsearch_htmlresp( collection, start_rec, es_dict, prev_next )
-def search_xtas_elasticsearch( request )
-def retrieve_xtas_elasticsearch( request )
-
-FL-15-Feb-2013: Created
-FL-04-Jul-2013: -> BILAND app
-FL-19-Dec-2013: Changed
+This module must be removed.
 """
 
 from sys import stderr
@@ -31,7 +15,27 @@ ES_CHUNK_SIZE = 2000
 
 
 def elasticsearch_htmlresp(collection, start_record, chunk_size, es_dict):
-    """Create HTML response from ElasticSearch request"""
+    """Create HTML response from ElasticSearch request.
+
+    Parameters
+    ----------
+    collection : str
+        The collection search results have been retrieved from. For Texcavator
+        the collection is the ElasticSearch index name.
+    start_record : int
+        Search results are returned as a numbered list. The start record is the
+        number this list should start with (pagination).
+    chunck_size : int
+        The number of results displayed.
+    es_dict : dictionary
+        Dictionary returned by ElasticSearch for a search request (contains the
+        returned documents).
+
+    Returns
+    -------
+    string : str
+        The html string for displaying the search results.
+    """
     if settings.DEBUG:
         print >> stderr, "elasticsearch_htmlresp()"
 

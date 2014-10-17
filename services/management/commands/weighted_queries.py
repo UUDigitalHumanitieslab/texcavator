@@ -13,8 +13,8 @@ from django.conf import settings
 from services.es import do_search, daterange2dates
 from services.models import QueryTerm
 
-
 logger = logging.getLogger(__name__)
+
 
 class Command(BaseCommand):
     args = '<#-query-terms, #-repetitions>'

@@ -13,8 +13,8 @@ from services.es import _es
 from services.models import DocID
 from texcavator import utils
 
-
 logger = logging.getLogger(__name__)
+
 
 class Command(BaseCommand):
     args = '<#-documents, size-of-ES-chunks, #-repetitions>'
