@@ -11,6 +11,7 @@ from services.es import get_document_ids, termvector_word_cloud
 
 @shared_task
 def generate_tv_cloud(search_params, min_length, stopwords, ids=None):
+    """Generates multiple document word clouds using the termvector approach"""
     burst = True
     # get ids
     if not ids:

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+"""URL mappings for the services app"""
 from django.conf.urls import patterns, url
 
 urlpatterns = patterns(

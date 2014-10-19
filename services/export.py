@@ -1,15 +1,5 @@
 # -*- coding: utf-8 -*-
-
-"""
---------------------------------------------------------------------------------
-Author:		Fons Laan, ILPS-ISLA, University of Amsterdam
-Project:	BiLand
-Name:		services/export.py
-Version:	0.2
-Goal:		Export functions
-
-FL-14-Jun-2012: Created
-FL-26-Aug-2013: Changed
+"""Functionality for exporting cloud data.
 """
 
 from sys import stderr
@@ -22,6 +12,8 @@ from django.http import HttpResponse
 
 
 def export_csv(request):
+    """Export cloud data to a cvs file
+    """
     dict = request.REQUEST		# searches POST first, then GET
 
     try:

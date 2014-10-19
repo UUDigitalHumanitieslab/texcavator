@@ -1,32 +1,6 @@
 # -* coding: utf-8 -*-
-
+"""Views for the services app
 """
---------------------------------------------------------------------------------
-Copyright:  Daan Odijk, Fons Laan, ILPS-ISLA, University of Amsterdam
-Project:    BiLand
-Name:       services/views.py
-Version:    0.35
-Goal:       services/views
-
-def request2extra4log( request )
-def daterange2dates( dateRange_str )
-def doc_count( request )
-def cloud( request )
-def proxy( request )
-def download_scan_image( request )
-def proxyResponse(method, host, port, path, data = {}, headers = {})
-def buildResponse(response, content = '')
-def applyXSLT( request, data, stylesheet )
-
-DO-%%-%%%-2011: Created
-FL-07-Feb-2013: No more default daterange
-FL-14-Feb-2013: Switch MongoDB / ElasticSearch
-FL-13-May-2013: dojox.analytics
-FL-06-Jun-2013: changed 'extra' for logging
-FL-04-Jul-2013: -> BILAND app
-FL-19-Dec-2013: Changed
-"""
-
 from sys import stderr, exc_info
 import requests
 from itertools import chain
@@ -52,11 +26,12 @@ from query.models import StopWord
 from query.utils import get_query
 
 from services.export import export_csv
-from tasks import generate_tv_cloud
+from services.tasks import generate_tv_cloud
 
 
 @login_required
 def search(request):
+    """Perform search request and return html string with results"""
     params = get_search_parameters(request.REQUEST)
 
     valid_q, result = do_search(settings.ES_INDEX,
@@ -86,24 +61,10 @@ def search(request):
         return json_response_message('error', msg)
 
 
-def request2extra4log(request):
-    # pop conflicting keys
-    #extra = request.META
-    #extra.pop( "module", None )  # Attempt to overwrite 'module' in LogRecord
-    # do we need to pop more?
-
-    # minimum variant, can't do without 'REMOTE_ADDR' key
-    try:
-        remote_addr = request.META['REMOTE_ADDR']
-    except:
-        remote_addr = ""
-    extra = {'REMOTE_ADDR': remote_addr}
-    return extra
-
-
 @csrf_exempt
 @login_required
 def doc_count(request):
+    """Return the number of documents returned by a query"""
     if settings.DEBUG:
         print >> stderr, "doc_count()"
 
@@ -140,6 +101,15 @@ def doc_count(request):
 @csrf_exempt
 @login_required
 def cloud(request):
+    """Return word cloud data using the terms aggregation approach
+
+    This view is currently not used, because it uses the terms aggregation
+    approach to generate word clouds, and this is not feasible in ES.
+
+    Returns word cloud data for a single document word cloud (based on a single
+    document id) and multiple document word clouds (either based on a list of
+    document ids (i.e., timeline burst cloud) or a query with metadata).
+    """
     if settings.DEBUG:
         print >> stderr, "cloud()"
 
@@ -202,7 +172,14 @@ def cloud(request):
 @csrf_exempt
 @login_required
 def tv_cloud(request):
-    """Generate termvector word cloud."""
+    """Generate termvector word cloud using the termvector approach.
+
+    Returns word cloud data for a single document word cloud (based on a single
+    document id) and multiple document word clouds (either based on a list of
+    document ids (i.e., timeline burst cloud) or a query with metadata).
+
+    For multiple document word clouds, a celery task generates the cloud data.
+    """
     if settings.DEBUG:
         print >> stderr, "termvector cloud()"
 
@@ -248,8 +225,9 @@ def tv_cloud(request):
 
 @login_required
 def check_status_by_task_id(request, task_id):
-    """Returns the status of the generate_tv_cloud task. If the task is
-    finished, the results of the task are returned.
+    """Returns the status of the generate_tv_cloud task
+
+    If the task is finished, the results of the task are returned.
     """
     if not request.is_ajax():
         return json_response_message('ERROR', 'No access.')
@@ -277,6 +255,7 @@ def check_status_by_task_id(request, task_id):
 
 @login_required
 def retrieve_document(request, doc_id):
+    """Retrieve a document from the ES index"""
     document = get_document(settings.ES_INDEX, settings.ES_DOCTYPE, doc_id)
 
     if document:
@@ -286,16 +265,17 @@ def retrieve_document(request, doc_id):
 
 @csrf_exempt
 def proxy(request):
-    '''Proxy a request and return the result'''
+    """Proxy a request and return the result
 
-    extra = request2extra4log(request)
-
+    This view takes over the role of the url mappings and must therefore be
+    removed as soon as possible.
+    """
     if settings.DEBUG:
         print >> stderr, "services/views.py/proxy()"
 
-    logger.debug("services/views.py/proxy()", extra=extra)
+    logger.debug("services/views.py/proxy()")
 
-    logger.debug("request.path_info: %s" % request.path_info, extra=extra)
+    logger.debug("request.path_info: %s" % request.path_info)
     if settings.DEBUG:
         print >> stderr, "request.path_info:", request.path_info
         print >> stderr, "request.REQUEST:", request.REQUEST
@@ -306,7 +286,7 @@ def proxy(request):
 
     if len(request_path) > 2 and request_path[2] == u'logger' \
             and request.GET.has_key('message'):
-        logger.debug(request.REQUEST['message'], extra=extra)
+        logger.debug(request.REQUEST['message'])
         return HttpResponse('OK')
 
     elif len(request_path) > 3 and request_path[2] == u'scan':
@@ -321,6 +301,7 @@ def proxy(request):
 @csrf_exempt
 @login_required
 def export_cloud(request):
+    """Export cloud data to cvs file"""
     if settings.DEBUG:
         print >> stderr, "Export CSV request"
     return export_csv(request)
@@ -379,12 +360,10 @@ def download_scan_image(request):
 
 @login_required
 def retrieve_kb_resolver(request):
-    extra = request2extra4log(request)
-
     host = 'resolver.kb.nl'
     port = 80
     path = 'resolve'
-    logger.debug('retrieve_kb_resolver: %s', request.META["QUERY_STRING"], extra=extra)
+    logger.debug('retrieve_kb_resolver: %s', request.META["QUERY_STRING"])
 
     kb_resolver_url = "http://" + host + ':' + str(port) + '/' + path + '?urn=' + request.REQUEST["id"]
     try:
