@@ -46,6 +46,9 @@ class Command(BaseCommand):
             document_set = DocID.objects.order_by('?')[0:query_size]
             doc_ids = [doc.doc_id for doc in document_set]
 
+            if len(doc_ids) == 0:
+                print 'No document ids found.\nPlease run the gatherdocids ' \
+                      'command first.\n\n'
 
             query = {
                 "query": {
