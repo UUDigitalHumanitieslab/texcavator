@@ -12,10 +12,10 @@ import time
 
 from services.es import _es
 from services.models import DocID
-from texcavator import utils
 
 
 logger = logging.getLogger(__name__)
+
 
 class Command(BaseCommand):
     args = '<#-documents, #-repetitions>'
@@ -40,8 +40,6 @@ class Command(BaseCommand):
             c1 = time.time()
             es_time = []
 
-            wordcloud = Counter()
-
             # select random documents
             document_set = DocID.objects.order_by('?')[0:query_size]
             doc_ids = [doc.doc_id for doc in document_set]
@@ -60,19 +58,20 @@ class Command(BaseCommand):
                         }
                     }
                 },
-                "aggs" : {
-                    "words" : {
-                        "terms" : { 
-                            "field" : "tags",
+                "aggs": {
+                    "words": {
+                        "terms": {
+                            "field": "tags",
                             "size": 100
                         }
                     }
                 },
                 "size": 0
             }
-            
+
             c3 = time.time()
-            result =_es().search(index='kb', doc_type='doc', body=query)
+            result = _es().search(index='kb', doc_type='doc', body=query)
+            wordcloud = result.get('aggregations').get('words').get('buckets')
             c4 = time.time()
 
             c2 = time.time()
@@ -80,8 +79,9 @@ class Command(BaseCommand):
             elapsed_c = (c2-c1)*1000
             response_times.append(elapsed_c)
             es_time.append((c4-c3)*1000)
-            
-            self.stdout.write(str(elapsed_c)+' ES: '+str(sum(es_time))+' #results: '+str(len(result.get('aggregations').get('words').get('buckets'))))
+
+            self.stdout.write(str(elapsed_c)+' ES: '+str(sum(es_time)) +
+                              ' #results: '+str(len(wordcloud)))
             self.stdout.flush()
 
         avg = float(sum(response_times)/len(response_times))
