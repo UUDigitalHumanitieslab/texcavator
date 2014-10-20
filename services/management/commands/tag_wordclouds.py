@@ -72,7 +72,7 @@ class Command(BaseCommand):
             }
             
             c3 = time.time()
-            _es().search(index='kb', doc_type='doc', body=query)
+            result =_es().search(index='kb', doc_type='doc', body=query)
             c4 = time.time()
 
             c2 = time.time()
@@ -81,7 +81,7 @@ class Command(BaseCommand):
             response_times.append(elapsed_c)
             es_time.append((c4-c3)*1000)
             
-            self.stdout.write(str(elapsed_c)+' ES: '+str(sum(es_time)))
+            self.stdout.write(str(elapsed_c)+' ES: '+str(sum(es_time))+' #results: '+str(len(result.get('aggregations').get('words').get('buckets'))))
             self.stdout.flush()
 
         avg = float(sum(response_times)/len(response_times))
