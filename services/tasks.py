@@ -4,7 +4,7 @@
 from __future__ import absolute_import
 from collections import Counter
 
-from celery import shared_task
+from celery import shared_task, current_task
 
 from django.conf import settings
 from services.es import get_document_ids, termvector_wordcloud, \
@@ -14,8 +14,11 @@ from texcavator import utils
 
 @shared_task
 def generate_tv_cloud(search_params, min_length, stopwords, ids=None):
+    current_task.update_state(state='PROGRESS')
+
     burst = True
     chunk_size = 1000
+    progress = 0
     wordcloud_counter = Counter()
 
     # get ids
@@ -36,5 +39,12 @@ def generate_tv_cloud(search_params, min_length, stopwords, ids=None):
                                       subset,
                                       min_length)
         wordcloud_counter = wordcloud_counter + result
+
+        progress = progress + len(subset)
+        info = {
+            'current': progress,
+            'total': len(ids)
+        }
+        current_task.update_state(state='PROGRESS', meta=info)
 
     return counter2wordclouddata(wordcloud_counter, burst, stopwords)
