@@ -35,6 +35,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 import json
+from celery.result import AsyncResult
 
 from django.conf import settings
 from django.http import HttpResponse, HttpResponseNotFound
@@ -273,6 +274,14 @@ def check_status_by_task_id(request, task_id):
             return json_response_message('WAITING', task.status, task.result)
     except AttributeError as e:
         return json_response_message('ERROR', 'Other error: {}'.format(str(e)))
+
+
+def cancel_by_task_id(request, task_id):
+    """Cancel Celery task.
+    """
+    AsyncResult(task_id).revoke(terminate=True)
+
+    return json_response_message('ok', '')
 
 
 @login_required
