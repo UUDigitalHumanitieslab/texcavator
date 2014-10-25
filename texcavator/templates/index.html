@@ -976,7 +976,9 @@ function onClickExecuteCloud( queryID )
     var tc = dijit.byId( art_container );
 	tc.selectChild( dijit.byId( cloud_pane ) );		// select cloud tab
 
-	dojo.place( new dijit.ProgressBar({ indeterminate: true }).domNode, dojo.byId( cloud_pane ), "only" );
+    var pBar = new dijit.ProgressBar({ indeterminate: true });
+	dojo.place( pBar.domNode, dojo.byId( cloud_pane ), "first" );
+	dojo.place('<div id="wordcloud_progress">Progress: 0 of ?</div>', pBar.domNode, "after");
 
 	canvas = dojo.byId( "cloudCanvas" );
 	if( canvas && canvas.getContext )
@@ -1057,7 +1059,11 @@ function onClickExecuteCloud( queryID )
         console.log(obj.error);
      }
      if (obj.status == "WAITING"){
-        // do nothing
+        if ('total' in obj){
+            // update progress
+            console.log('Update wordcloud progress');
+            update_wordcloud_progress(obj.current, obj.total);
+        }
      }
      else if (obj.status == "ok"){
         console.log("finished generating cloud");
@@ -1088,6 +1094,9 @@ function check_status(task_id) {
     });
 }
         
+function update_wordcloud_progress(current, total){
+    dojo.byId( "wordcloud_progress" ).innerHTML = "Progress: "+current+" of "+total;
+}
 
 // button Save query
 function queryToLexicon()

@@ -260,17 +260,17 @@ def check_status_by_task_id(request, task_id):
     # error is produced (celery module has no attribute result).
     # When typing this import statement in the Python
     # console or in the Django interactive shell, there is no error message.
-    result = generate_tv_cloud.AsyncResult(task_id)
+    task = generate_tv_cloud.AsyncResult(task_id)
 
     try:
-        if result.ready():
-            if result.successful():
-                return json_response_message('ok', '', result.get())
+        if task.ready():
+            if task.successful():
+                return json_response_message('ok', '', task.get())
             else:
                 return json_response_message('ERROR', 'Generating word cloud '
                                              'failed.')
         else:
-            return json_response_message('WAITING', result.status)
+            return json_response_message('WAITING', task.status, task.result)
     except AttributeError as e:
         return json_response_message('ERROR', 'Other error: {}'.format(str(e)))
 
