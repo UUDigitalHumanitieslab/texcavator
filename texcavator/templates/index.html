@@ -975,10 +975,11 @@ function onClickExecuteCloud( queryID )
 	
     var tc = dijit.byId( art_container );
 	tc.selectChild( dijit.byId( cloud_pane ) );		// select cloud tab
-
+    
+    dojo.byId(cloud_pane).innerHTML = '';
     var pBar = new dijit.ProgressBar({ indeterminate: true });
 	dojo.place( pBar.domNode, dojo.byId( cloud_pane ), "first" );
-	dojo.place('<div id="wordcloud_progress">Progress: 0 of ?</div>', pBar.domNode, "after");
+    dojo.place('<div id="wordcloud_progress">Progress: 0 of ?</div><div id="cancel_wordcloud"></div>', pBar.domNode, "after");
 
 	canvas = dojo.byId( "cloudCanvas" );
 	if( canvas && canvas.getContext )
@@ -1038,6 +1039,8 @@ function onClickExecuteCloud( queryID )
             setTimeout(check_status, 0.05);
             // check every second
             window.interval_id = setInterval(function(){ check_status(task_id); }, 1000);
+            // create cancel button
+            dojo.byId('cancel_wordcloud').innerHTML = '<button onClick="cancel_celery_task(\''+task_id+'\');">Cancel wordcloud</button>';
         } else {
             console.log('Error: no task_id returned.');
         }
@@ -1095,7 +1098,22 @@ function check_status(task_id) {
 }
         
 function update_wordcloud_progress(current, total){
-    dojo.byId( "wordcloud_progress" ).innerHTML = "Progress: "+current+" of "+total;
+    if(dojo.byId("wordcloud_progress")){
+        dojo.byId( "wordcloud_progress" ).innerHTML = "Progress: "+current+" of "+total;
+    }
+}
+
+function cancel_celery_task(task_id){
+    console.log('canceling celery task '+task_id);
+
+    clearInterval(window.interval_id);
+    
+    $.ajax({
+        type: "GET",
+        url: "/services/cancel_task/"+task_id,
+        success: dojo.byId('cloudPane').innerHTML = '<div>Canceled generating wordcloud.</div>',
+        error: handle_error
+    });
 }
 
 // button Save query

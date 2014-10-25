@@ -11,6 +11,7 @@ urlpatterns = patterns(
 
     url(r'cloud/$', 'tv_cloud'),
     url(r'task_status/(?P<task_id>[\w-]+)$', 'check_status_by_task_id'),
+    url(r'cancel_task/(?P<task_id>[\w-]+)$', 'cancel_by_task_id'),
 
     url(r'kb/resolver/$', 'retrieve_kb_resolver'),
     url(r'retrieve/(?P<doc_id>[\w:]+)', 'retrieve_document'),
