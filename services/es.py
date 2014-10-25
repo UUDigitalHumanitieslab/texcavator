@@ -342,52 +342,57 @@ def multiple_document_word_cloud(idx, typ, query, date_range, dist, art_types,
     }
 
 
-def termvector_word_cloud(idx, typ, doc_ids, burst, min_length=0,
-                          stopwords=None, chunk_size=1000):
-    """Return data required to draw a word cloud for multiple documents by
-    merging termvectors.
+def termvector_wordcloud(idx, typ, doc_ids, min_length=0):
+    """Return word frequencies in a set of documents.
+    
+    The conuter returned by this method can be transformed into the input
+    expected by the interface by passing it to the counter2wordclouddata
+    method.
     """
-
     wordcloud = Counter()
 
-    for ids in utils.chunks(doc_ids, chunk_size):
-        bdy = {
-            'ids': ids,
-            'parameters': {
-                # TODO: add title field
-                'fields': [_DOCUMENT_TEXT_FIELD, _DOCUMENT_TITLE_FIELD],
-                'term_statistics': False,
-                'field_statistics': False,
-                'offsets': False,
-                'payloads': False,
-                'positions': False
-            }
+    bdy = {
+        'ids': doc_ids,
+        'parameters': {
+            'fields': [_DOCUMENT_TEXT_FIELD, _DOCUMENT_TITLE_FIELD],
+            'term_statistics': False,
+            'field_statistics': False,
+            'offsets': False,
+            'payloads': False,
+            'positions': False
         }
+    }
 
-        t_vectors = _es().mtermvectors(index='kb', doc_type='doc', body=bdy)
+    t_vectors = _es().mtermvectors(index='kb', doc_type='doc', body=bdy)
 
-        for doc in t_vectors.get('docs'):
-            for field, data in doc.get('term_vectors').iteritems():
-                temp = {}
-                for term, details in data.get('terms').iteritems():
-                    if len(term) >= min_length:
-                        temp[term] = int(details['term_freq'])
-                wordcloud.update(temp)
+    for doc in t_vectors.get('docs'):
+        for field, data in doc.get('term_vectors').iteritems():
+            temp = {}
+            for term, details in data.get('terms').iteritems():
+                if len(term) >= min_length:
+                    temp[term] = int(details['term_freq'])
+            wordcloud.update(temp)
 
+    return wordcloud
+
+
+def counter2wordclouddata(wordcloud_counter, burst, stopwords=None):
+    """Transform a counter into the data required to draw a word cloud.
+    """
     if not stopwords:
         stopwords = []
     for stopw in stopwords:
-        del wordcloud[stopw]
+        del wordcloud_counter[stopw]
 
     result = []
-    for term, count in wordcloud.most_common(100):
+    for term, count in wordcloud_counter.most_common(100):
         result.append({
             'term': term,
             'count': count
         })
 
     return {
-        'max_count': wordcloud.most_common(1)[0][1],
+        'max_count': wordcloud_counter.most_common(1)[0][1],
         'result': result,
         'status': 'ok',
         'burstcloud': burst
