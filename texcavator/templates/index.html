@@ -141,7 +141,6 @@
 			<div id="articleContainer" data-dojo-type="dijit.layout.TabContainer" data-dojo-props="splitter:true, region:'center', tabPosition: 'top', style:'height: 100%;'">
 				<div id="cloudPane" title="Cloud" dojoType="dijit.layout.ContentPane" selected="true">	<!-- Cloud -->
 					<div style="color:grey; text-align: center;">Cloud.</div>
-                    <div id="wordcloud_progress" style="display: none">Progress: 0 of ?</div>
 				</div>
 
 				<div id="record" title="OCR" dojoType="dijit.layout.ContentPane" selected="false">	<!-- OCR -->
@@ -977,7 +976,9 @@ function onClickExecuteCloud( queryID )
     var tc = dijit.byId( art_container );
 	tc.selectChild( dijit.byId( cloud_pane ) );		// select cloud tab
 
-	dojo.place( new dijit.ProgressBar({ indeterminate: true }).domNode, dojo.byId( cloud_pane ), "first" );
+    var pBar = new dijit.ProgressBar({ indeterminate: true });
+	dojo.place( pBar.domNode, dojo.byId( cloud_pane ), "first" );
+	dojo.place('<div id="wordcloud_progress">Progress: 0 of ?</div>', pBar.domNode, "after");
 
 	canvas = dojo.byId( "cloudCanvas" );
 	if( canvas && canvas.getContext )
@@ -1026,11 +1027,6 @@ function onClickExecuteCloud( queryID )
 			}
 			else
 			{
-                // Make progress information available
-                require(["dojo/dom-style"], function(domStyle){
-                    domStyle.set("wordcloud_progress", "display", "");
-                });
-
 				console.log("got task_id: "+json_data.task);
                 return json_data.task;
 			}
