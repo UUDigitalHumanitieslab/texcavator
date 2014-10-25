@@ -33,6 +33,12 @@ def generate_tv_cloud(search_params, min_length, stopwords, ids=None):
 
         ids = [doc['identifier'] for doc in doc_ids]
 
+    info = {
+        'current': 0,
+        'total': len(ids)
+    }
+    current_task.update_state(state='PROGRESS', meta=info)
+
     for subset in utils.chunks(ids, chunk_size):
         result = termvector_wordcloud(settings.ES_INDEX,
                                       settings.ES_DOCTYPE,
