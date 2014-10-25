@@ -1098,7 +1098,7 @@ function check_status(task_id) {
 }
         
 function update_wordcloud_progress(current, total){
-    if(dijit.byId("wordcloud_progress")){
+    if(dojo.byId("wordcloud_progress")){
         dojo.byId( "wordcloud_progress" ).innerHTML = "Progress: "+current+" of "+total;
     }
 }
