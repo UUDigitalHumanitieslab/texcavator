@@ -50,7 +50,7 @@ from texcavator.utils import json_response_message
 from services.elasticsearch_biland import elasticsearch_htmlresp
 
 from query.models import StopWord
-from query.utils import get_query
+from query.utils import get_query_object
 
 from services.export import export_csv
 from tasks import generate_tv_cloud
@@ -112,21 +112,21 @@ def doc_count(request):
 
     if queryID:
         # get the query string from the Django db
-        query, response = get_query(queryID)
+        query, response = get_query_object(queryID)
 
         if not query:
             return response
     else:
         return json_response_message('error', 'Missing query id.')
 
-    params = get_search_parameters(request.REQUEST)
+    params = query.get_query_dict()
 
-    result = count_search_results(params['collection'],
+    result = count_search_results(settings.ES_INDEX,
                                   settings.ES_DOCTYPE,
-                                  query,
+                                  params['query'],
                                   params['dates'],
-                                  params['distributions'],
-                                  params['article_types'])
+                                  params['exclude_distributions'],
+                                  params['exclude_article_types'])
 
     doc_count = result.get('count', 'error')
 

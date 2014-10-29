@@ -39,14 +39,18 @@ class Query(models.Model):
         """Return a JSON serializable representation of the query object, that 
         contains all relevant data and metadata.
         """
-        excl_art_types = [a.name for a in self.exclude_article_types.all()]
-        excl_distr = [d.name for d in self.exclude_distributions.all()]
+        excl_art_types = [a.id for a in self.exclude_article_types.all()]
+        excl_distr = [d.id for d in self.exclude_distributions.all()]
 
         return {
             'query_id': self.id,
             'query': self.query,
             'date_lower': str(self.date_lower),
             'date_upper': str(self.date_upper),
+            'dates': {
+                'lower': str(self.date_lower),
+                'upper': str(self.date_upper)
+            },
             'exclude_article_types': excl_art_types, 
             'exclude_distributions': excl_distr, 
             'comment': self.comment,
