@@ -2,10 +2,12 @@
 *.log
 *.old
 *~
-texcavator/static/js/Dojo-*
+texcavator/static/js/dojo-*
 celeryev.pid
 .exvim.*
 *.exvim
+
+*.tar.gz
 
 # Vim stuff
 .*.sw[op]
