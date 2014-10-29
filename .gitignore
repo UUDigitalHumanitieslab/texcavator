@@ -6,3 +6,6 @@ texcavator/static/js/Dojo-*
 celeryev.pid
 .exvim.*
 *.exvim
+
+# Vim stuff
+.*.sw[op]

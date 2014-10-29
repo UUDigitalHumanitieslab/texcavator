@@ -1,15 +1,14 @@
 # -*- coding: utf-8 -*-
 
-from django.conf import settings
 from django.conf.urls import patterns, include, url
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
 admin.autodiscover()
 
-from django.http import HttpResponse
-
 from django.views.generic import RedirectView, TemplateView
+
+
 urlpatterns = patterns( '',
 	url( r'^favicon\.ico$', RedirectView.as_view( url = '/static/image/icon/favicon.ico' ) ),
 	url( r'^robots\.txt$', TemplateView.as_view( template_name = 'robots.txt', content_type = 'text/plain' ) ),

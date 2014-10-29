@@ -5,6 +5,7 @@ is used for testing ElasticSearch performance on weighted queries (command:
 weighted_queries).
 """
 import logging
+import sys
 
 from django.core.management.base import BaseCommand
 from django.conf import settings
@@ -33,8 +34,6 @@ class Command(BaseCommand):
             print 'Document ids must be gathered before query terms can be ' \
                   'extracted. \n Please execute python manage.py gatherdocids'
             sys.exit(1)
-
-        match_all = {'query': {'match_all': {}}}
 
         # Empty database
         QueryTerm.objects.all().delete()

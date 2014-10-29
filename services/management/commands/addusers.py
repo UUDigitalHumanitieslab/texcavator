@@ -18,9 +18,8 @@ FL-03-Sep-2013: Changed
 """
 
 import os
-import datetime
 from time import time
-from sys import stderr, exc_info
+from sys import exc_info
 
 from django.conf import settings
 from django.contrib import auth

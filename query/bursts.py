@@ -25,7 +25,6 @@ FL-04-Apr-2013
 
 from sys import stderr
 import sys
-import os
 import collections
 import numpy
 import irutils

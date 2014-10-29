@@ -4,7 +4,7 @@ Query data download (export) functionality.
 """
 
 import os
-from sys import stderr, exc_info
+from sys import stderr
 import csv
 from time import strftime
 import datetime
@@ -22,11 +22,9 @@ import json
 
 from django.conf import settings
 from django.core.mail import send_mail
-from django.core.servers.basehttp import FileWrapper
 from django.http import HttpResponse
-from django.views.decorators.csrf import csrf_exempt
 
-from services.es import do_search, daterange2dates, get_search_parameters
+from services.es import do_search, get_search_parameters
 
 
 def create_zipname(username, query_title):
