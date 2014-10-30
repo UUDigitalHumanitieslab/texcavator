@@ -10,7 +10,6 @@ from datetime import datetime
 from elasticsearch import Elasticsearch
 from elasticsearch.client import indices
 
-from texcavator import utils
 
 _ES_RETURN_FIELDS = ('article_dc_title',
                      'paper_dcterms_temporal',

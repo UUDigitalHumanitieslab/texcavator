@@ -16,12 +16,8 @@ FL-04-Jul-2013: -> BILAND app
 FL-06-Nov-2013: Changed
 """
 
-from sys import stderr
-import json
-
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
-from django.http import HttpResponse
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.views.decorators.csrf import csrf_exempt

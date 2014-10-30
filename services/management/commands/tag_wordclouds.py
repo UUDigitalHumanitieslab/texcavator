@@ -7,7 +7,6 @@ import logging
 
 from django.core.management.base import BaseCommand
 
-from collections import Counter
 import time
 
 from services.es import _es

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
-from sys import stderr, exc_info
-from datetime import datetime, date
+from sys import stderr
+from datetime import datetime
 import json
 from urllib import quote_plus
 from urlparse import urljoin
@@ -11,7 +11,6 @@ from django.shortcuts import get_object_or_404
 from django.core import serializers
 from django.core.validators import email_re
 from django.views.decorators.csrf import csrf_exempt
-from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.core.servers.basehttp import FileWrapper
 

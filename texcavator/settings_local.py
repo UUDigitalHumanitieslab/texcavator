@@ -19,7 +19,6 @@ FL-20-Dec-2013: Changed
 
 import os
 import sys
-from socket import gethostname, gethostbyaddr
 
 
 PROJECT_ROOT   = os.path.abspath( os.path.dirname( __file__ ) )

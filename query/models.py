@@ -1,8 +1,7 @@
-import json
-
 from django.db import models
 
 from django.contrib.auth.models import User
+
 
 class ArticleType(models.Model):
     id = models.CharField(max_length=15, primary_key=True)
