@@ -68,7 +68,7 @@ var createLogin = function( projectname )
 
 	var dlgLogin = new dijit.Dialog({
 		id: "dlg-login",
-		title: "BiLand Login"
+		title: "Login"
 	});
 
 	dojo.style( dlgLogin.closeButtonNode, "visibility", "hidden" ); // hide the ordinary close button
@@ -381,7 +381,7 @@ var createResponse = function( msg, retry )
 {
 	var dlgResponse = new dijit.Dialog({
 		id: "message",
-		title: "BiLand Login"
+		title: "Login"
 	});
 
 	dojo.style( dlgResponse.closeButtonNode, "visibility", "hidden" );   // hide the ordinary close button

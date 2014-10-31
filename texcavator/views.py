@@ -29,15 +29,13 @@ from texcavator.timestamp import TIMESTAMP
 
 
 def index( request ):
-	"""Returns settings used in JavaScript and displays the application web
-    page.
-	"""
+	"""Render main page."""
 	date_limits = daterange2dates('')
 	dates = [date_limits['lower'], date_limits['upper']]
 	daterange = [int(d.replace('-', '')) for d in dates]
 
 	data = {
-		"PROJECT_NAME": "Horizon",
+		"PROJECT_NAME": settings.PROJECT_NAME,
 
 		"SRU_DATE_LIMITS": daterange,
 
