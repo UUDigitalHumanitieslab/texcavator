@@ -21,6 +21,9 @@ import os
 import sys
 
 
+# This determines the <title> of the web interface.
+PROJECT_NAME = 'Texcavator'
+
 PROJECT_ROOT   = os.path.abspath( os.path.dirname( __file__ ) )
 PROJECT_PARENT = os.path.dirname( PROJECT_ROOT )
 PROJECT_GRANNY = os.path.dirname( PROJECT_PARENT )
