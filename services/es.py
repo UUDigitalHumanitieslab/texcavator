@@ -479,6 +479,25 @@ def get_document_ids(idx, typ, query, date_range, dist=[], art_types=[]):
     return doc_ids
 
 
+def document_id_chunks(chunk_size, idx, typ, query, date_range, dist=[],
+                       art_types=[]):
+    q = create_query(query, date_range, dist, art_types)
+
+    get_more_docs = True
+    start = 0
+    fields = []
+
+    while get_more_docs:
+        results = _es().search(index=idx, doc_type=typ, body=q, from_=start,
+                               fields=fields, size=chunk_size)
+        yield [result['_id'] for result in results['hits']['hits']]
+
+        start = start + chunk_size
+
+        if len(results['hits']['hits']) < chunk_size:
+            get_more_docs = False
+
+
 def day_statistics(idx, typ, date_range, agg_name):
     q = create_day_statistics_query(date_range, agg_name)
 
