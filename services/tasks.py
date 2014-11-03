@@ -14,6 +14,7 @@ from texcavator import utils
 
 @shared_task
 def generate_tv_cloud(search_params, min_length, stopwords, ids=None):
+    # TODO: merge code for normal (non-timeline) and time line wordclouds
     current_task.update_state(state='PROGRESS')
 
     burst = True
@@ -22,6 +23,7 @@ def generate_tv_cloud(search_params, min_length, stopwords, ids=None):
     wordcloud_counter = Counter()
 
     if not ids:
+        # Normal (non-time line) wordcloud (based on query)
         burst = False
 
         result = count_search_results(settings.ES_INDEX,
@@ -59,6 +61,7 @@ def generate_tv_cloud(search_params, min_length, stopwords, ids=None):
             }
             current_task.update_state(state='PROGRESS', meta=info)
     else:
+        # Time line word cloud (based in list of document ids)
         for subset in utils.chunks(ids, chunk_size):
             result = termvector_wordcloud(settings.ES_INDEX,
                                           settings.ES_DOCTYPE,

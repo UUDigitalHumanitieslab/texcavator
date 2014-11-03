@@ -481,6 +481,10 @@ def get_document_ids(idx, typ, query, date_range, dist=[], art_types=[]):
 
 def document_id_chunks(chunk_size, idx, typ, query, date_range, dist=[],
                        art_types=[]):
+    """Generator for retrieving document ids for all results of a query.
+
+    Used by the generate_tv_cloud task.
+    """
     q = create_query(query, date_range, dist, art_types)
 
     get_more_docs = True
