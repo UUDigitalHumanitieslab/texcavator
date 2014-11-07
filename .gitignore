@@ -9,5 +9,7 @@ celeryev.pid
 
 *.tar.gz
 
+bower_components
+
 # Vim stuff
 .*.sw[op]
