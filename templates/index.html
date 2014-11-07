@@ -1,6 +1,6 @@
 {% load staticfiles %}
 <!DOCTYPE html>
-<html>
+<html ng-app="texcavatorApp">
     <head>
         <meta charset="utf-8"> 
         <title>{{ PROJECT_NAME }}</title>
@@ -8,7 +8,23 @@
         <link rel="stylesheet" href="{% static 'bootstrap-css-only/css/bootstrap.css' %}">
     </head>
 
-    <body>
-        Hello world!
+    <body ng-controller="texcavatorCtrl">
+        <div class="container">
+            <div class="row">
+                <div class="col-xs-12">
+                    <form class="form-inline">
+                        <div class="form-group">
+                            <div class="col-xs-4">
+                                <input ng-model="queryStr" type="text" class="form-control" id="queryStr">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Search</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <script src="{% static 'angular/angular.js' %}"></script>
+        <script src="{% static 'js/controllers.js' %}"></script>
     </body>
 </html>
