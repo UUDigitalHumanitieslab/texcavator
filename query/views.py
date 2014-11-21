@@ -17,7 +17,7 @@ from django.core.servers.basehttp import FileWrapper
 from django.conf import settings
 
 from query.models import Distribution, ArticleType, Query, DayStatistic, \
-                         StopWord
+    StopWord
 from texcavator.utils import json_response_message
 from query.utils import query2docidsdate
 from query.burstsdetector import bursts
@@ -37,8 +37,11 @@ def index(request):
 
     return json_response_message('OK', '', params)
 
+
 @login_required
 def query(request, query_id):
+    """Return a query.
+    """
     query = get_object_or_404(Query, pk=query_id)
     if not request.user == query.user:
         return json_response_message('ERROR', 'Query does not belong to user.')
@@ -53,10 +56,12 @@ def query(request, query_id):
 @csrf_exempt
 @login_required
 def create_query(request):
+    """Create a new query.
+    """
     params = get_search_parameters(request.POST)
     title = request.POST.get('title')
     comment = request.POST.get('comment')
-    
+
     date_lower = datetime.strptime(params['dates']['lower'], '%Y-%m-%d')
     date_upper = datetime.strptime(params['dates']['upper'], '%Y-%m-%d')
 
@@ -65,7 +70,7 @@ def create_query(request):
                   title=title,
                   comment=comment,
                   user=request.user,
-                  date_lower=date_lower, 
+                  date_lower=date_lower,
                   date_upper=date_upper)
         q.save()
 
@@ -86,6 +91,8 @@ def create_query(request):
 @csrf_exempt
 @login_required
 def delete(request, query_id):
+    """Delete a query.
+    """
     query = Query.objects.get(pk=query_id)
     if not query:
         return json_response_message('ERROR', 'Query not found.')
@@ -102,18 +109,20 @@ def delete(request, query_id):
 @csrf_exempt
 @login_required
 def update(request, query_id):
+    """Update a query.
+    """
     query = Query.objects.get(pk=query_id)
-    
+
     if not query:
         return json_response_message('ERROR', 'Query not found.')
-    
+
     if not request.user == query.user:
         return json_response_message('ERROR', 'Query does not belong to user.')
-    
+
     params = get_search_parameters(request.POST)
     title = request.POST.get('title')
     comment = request.POST.get('comment')
-    
+
     date_lower = datetime.strptime(params['dates']['lower'], '%Y-%m-%d')
     date_upper = datetime.strptime(params['dates']['upper'], '%Y-%m-%d')
 
@@ -121,7 +130,7 @@ def update(request, query_id):
         Query.objects.filter(pk=query_id).update(query=params['query'],
                                                  title=title,
                                                  comment=comment,
-                                                 date_lower=date_lower, 
+                                                 date_lower=date_lower,
                                                  date_upper=date_upper)
 
         query.exclude_distributions.clear()
@@ -142,6 +151,9 @@ def update(request, query_id):
 
 @login_required
 def timeline(request, query_id, resolution):
+    """Generate a timeline for a query.
+    """
+    # TODO: the timeline view should be moved to the services app
     if settings.DEBUG:
         print >> stderr, "query/bursts() query_id:", query_id, \
                          "resolution:", resolution
@@ -224,6 +236,8 @@ def timeline(request, query_id, resolution):
 @csrf_exempt
 @login_required
 def add_stopword(request):
+    """Add a stopword to the stopword list.
+    """
     query_id = request.POST.get('query_id')
     word = request.POST.get('stopword')
 
@@ -244,15 +258,17 @@ def add_stopword(request):
 @csrf_exempt
 @login_required
 def delete_stopword(request, stopword_id):
+    """Delete a stopword from the stopword list.
+    """
     stopword = StopWord.objects.get(pk=stopword_id)
     if not stopword:
         return json_response_message('ERROR', 'Stopword not found.')
 
     if not request.user == stopword.user:
-        return json_response_message('ERROR', 'Stopword does not belong to ' \
+        return json_response_message('ERROR', 'Stopword does not belong to '
                                               'user.')
     stopword.delete()
-    
+
     return json_response_message('SUCCESS', 'Stopword deleted.')
 
 
@@ -260,7 +276,8 @@ def delete_stopword(request, stopword_id):
 @csrf_exempt
 @login_required
 def stopwords(request):
-
+    """Return the stopword list for a user and query.
+    """
     stopwords = StopWord.objects.select_related().filter(user=request.user) \
                                 .order_by('word').order_by('query')
 
@@ -302,7 +319,9 @@ def download_prepare(request):
     user = request.user
 
     if user.email == "":
-        msg = "Preparing your download for query <br/><b>" + query_str + "</b> failed.<br/>A valid email address is needed for user <br/><b>" + user.username + "</b>"
+        msg = "Preparing your download for query <br/><b>" + query_str + \
+              "</b> failed.<br/>A valid email address is needed for user " \
+              "<br/><b>" + user.username + "</b>"
         if settings.DEBUG:
             print >> stderr, msg
         resp_dict = {'status': 'error', 'msg': msg}
@@ -311,7 +330,10 @@ def download_prepare(request):
         return HttpResponse(json_list, content_type=ctype)
 
     if not email_re.match(user.email):
-        msg = "Preparing your download for query <br/><b>" + query_str + "</b> failed.<br/>The email address of user <b>" + user.username +  "</b> could not be validated: <b>" + to_email + "</b>"
+        msg = "Preparing your download for query <br/><b>" + query_str + \
+              "</b> failed.<br/>The email address of user <b>" + \
+              user.username + "</b> could not be validated: <b>" + \
+              user.email + "</b>"
         if settings.DEBUG:
             print >> stderr, msg
         resp_dict = {'status': 'error', 'msg': msg}
@@ -319,12 +341,9 @@ def download_prepare(request):
         ctype = 'application/json; charset=UTF-8'
         return HttpResponse(json_list, content_type=ctype)
 
-    print '-------------------------------->', user
-    print '-------------------------------->', user.username
-    print '-------------------------------->', user.email
-
     zip_basename = create_zipname(user.username, query_str)
-    url = urljoin('http://{}'.format(request.get_host()), "/query/download/" + quote_plus(zip_basename))
+    url = urljoin('http://{}'.format(request.get_host()),
+                  "/query/download/" + quote_plus(zip_basename))
     email_message = "BiLand Query: " + query_str + "\n" + zip_basename + \
         "\nURL: " + url
     if settings.DEBUG:
@@ -334,7 +353,9 @@ def download_prepare(request):
     # zip documents by management cmd
     execute(req_dict, zip_basename, user.email, email_message)
 
-    msg = "Your download for query <b>" + query_str + "</b> is being prepared.<br/>When ready, an email will be sent to <b>" + user.email + "</b>"
+    msg = "Your download for query <b>" + query_str + \
+          "</b> is being prepared.<br/>When ready, an email will be sent " + \
+          "to <b>" + user.email + "</b>"
     resp_dict = {'status': 'SUCCESS', 'msg': msg}
     json_list = json.dumps(resp_dict)
     ctype = 'application/json; charset=UTF-8'
