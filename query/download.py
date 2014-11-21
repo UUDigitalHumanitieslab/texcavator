@@ -28,6 +28,8 @@ from services.es import do_search, get_search_parameters
 
 
 def create_zipname(username, query_title):
+    """Return a name for the zipfile containing the exported data.
+    """
     query_title_ = username + '_' + query_title
     query_title_ = clean_filename(query_title_)
     zip_basename = query_title_ + "_" + strftime("%Y.%m.%d-%H.%M.%S")
@@ -36,7 +38,7 @@ def create_zipname(username, query_title):
 
 
 def download_collect(req_dict, zip_basename, to_email, email_message):
-    """ Actual creation/collection of document files.
+    """ Collect the documents and put them in a zipfile.
     """
     msg = "%s: %s" % (__name__, "download_collect()")
     logger.debug(msg)
@@ -155,6 +157,10 @@ def download_collect(req_dict, zip_basename, to_email, email_message):
 
 
 def zip_chunk(ichunk, hits_list, zip_file, csv_writer, format):
+    """Zip a chunk of documents.
+
+    Documents are retrieved from elasticsearch in chunks.
+    """
     msg = "%s: %s" % (__name__, "zip_chunk()")
     logger.debug(msg)
     if settings.DEBUG:
@@ -187,6 +193,8 @@ def zip_chunk(ichunk, hits_list, zip_file, csv_writer, format):
 
 
 def hit2csv_header(csv_writer, ichunk, hit):
+    """Returns the header row of the csv that is created.
+    """
     es_header_names = ["_id", "_score"]
 
     kb_header_names = \
@@ -232,6 +240,8 @@ def hit2csv_header(csv_writer, ichunk, hit):
 
 
 def hit2csv_data(csv_writer, hit, es_header_names, kb_header_names):
+    """Writes a single document to the csv file.
+    """
     es_line = []
     for es_name in es_header_names:
         try:
@@ -279,7 +289,8 @@ def get_es_chunk(params, start_record, chunk_size):
 
 
 def clean_filename(s):
-    # strip problematic characters from filename
+    """Strip problematic characters from filename
+    """
     s = ''.join((c for c in unicodedata.normalize('NFD', s)
                  if unicodedata.category(c) != 'Mn'))
     s = s.replace(' ', '_')
@@ -288,6 +299,9 @@ def clean_filename(s):
 
 
 def execute(merge_dict, zip_basename, to_email, email_message):
+    """Start the creating the download and send an email to the user when it
+    is finished.
+    """
     if settings.DEBUG:
         print >> stderr, "execute()"
     logger.debug("%s: %s" % (__name__, "execute()"))
@@ -340,6 +354,8 @@ def execute(merge_dict, zip_basename, to_email, email_message):
 
 
 def expire_data():
+    """Delete old data from the data folder.
+    """
     msg = "%s: %s" % (__name__, "expire_data()")
     logger.debug(msg)
     if settings.DEBUG:

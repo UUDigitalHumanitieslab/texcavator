@@ -4,6 +4,11 @@ from django.contrib.auth.models import User
 
 
 class ArticleType(models.Model):
+    """Model to store the names of article types that are available in the
+    elasticsearch index.
+
+    The article types are part of the metadata of a query.
+    """
     id = models.CharField(max_length=15, primary_key=True)
     name = models.CharField(max_length=35)
 
@@ -12,6 +17,11 @@ class ArticleType(models.Model):
 
 
 class Distribution(models.Model):
+    """Model that stores the names of distributions that are available in the
+    elasticsearch index.
+
+    The distributions are part of the metadata of a query.
+    """
     id = models.CharField(max_length=15, primary_key=True)
     name = models.CharField(max_length=35)
 
@@ -20,6 +30,8 @@ class Distribution(models.Model):
 
 
 class Query(models.Model):
+    """Model to store a user's queries.
+    """
     query = models.TextField()
     date_lower = models.DateField()
     date_upper = models.DateField()
@@ -73,6 +85,11 @@ class DayStatistic(models.Model):
 
 
 class StopWord(models.Model):
+    """Model to store stopwords.
+
+    Stopwords can be stored for queries, or are applied to all queries of a
+    user.
+    """
     user = models.ForeignKey(User)
     query = models.ForeignKey(Query, null=True, blank=True)
     word = models.CharField(max_length=100)

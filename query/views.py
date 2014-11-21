@@ -40,6 +40,8 @@ def index(request):
 
 @login_required
 def query(request, query_id):
+    """Return a query.
+    """
     query = get_object_or_404(Query, pk=query_id)
     if not request.user == query.user:
         return json_response_message('ERROR', 'Query does not belong to user.')
@@ -54,6 +56,8 @@ def query(request, query_id):
 @csrf_exempt
 @login_required
 def create_query(request):
+    """Create a new query.
+    """
     params = get_search_parameters(request.POST)
     title = request.POST.get('title')
     comment = request.POST.get('comment')
@@ -87,6 +91,8 @@ def create_query(request):
 @csrf_exempt
 @login_required
 def delete(request, query_id):
+    """Delete a query.
+    """
     query = Query.objects.get(pk=query_id)
     if not query:
         return json_response_message('ERROR', 'Query not found.')
@@ -103,6 +109,8 @@ def delete(request, query_id):
 @csrf_exempt
 @login_required
 def update(request, query_id):
+    """Update a query.
+    """
     query = Query.objects.get(pk=query_id)
 
     if not query:
@@ -143,6 +151,9 @@ def update(request, query_id):
 
 @login_required
 def timeline(request, query_id, resolution):
+    """Generate a timeline for a query.
+    """
+    # TODO: the timeline view should be moved to the services app
     if settings.DEBUG:
         print >> stderr, "query/bursts() query_id:", query_id, \
                          "resolution:", resolution
@@ -225,6 +236,8 @@ def timeline(request, query_id, resolution):
 @csrf_exempt
 @login_required
 def add_stopword(request):
+    """Add a stopword to the stopword list.
+    """
     query_id = request.POST.get('query_id')
     word = request.POST.get('stopword')
 
@@ -245,6 +258,8 @@ def add_stopword(request):
 @csrf_exempt
 @login_required
 def delete_stopword(request, stopword_id):
+    """Delete a stopword from the stopword list.
+    """
     stopword = StopWord.objects.get(pk=stopword_id)
     if not stopword:
         return json_response_message('ERROR', 'Stopword not found.')
@@ -261,7 +276,8 @@ def delete_stopword(request, stopword_id):
 @csrf_exempt
 @login_required
 def stopwords(request):
-
+    """Return the stopword list for a user and query.
+    """
     stopwords = StopWord.objects.select_related().filter(user=request.user) \
                                 .order_by('word').order_by('query')
 
