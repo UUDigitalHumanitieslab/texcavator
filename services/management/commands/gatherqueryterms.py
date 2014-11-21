@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""Gather query terms and store them in the database. The collection of terms 
-is used for testing ElasticSearch performance on weighted queries (command: 
-weighted_queries).
+"""Gather query terms and store them in the database.
+The collection of terms is used for testing ElasticSearch performance on
+weighted queries (command: weighted_queries).
 """
 import logging
 import sys
@@ -11,11 +11,11 @@ from django.core.management.base import BaseCommand
 from django.conf import settings
 
 from services.es import _es
-from services.models import DocID, QueryTerm 
+from services.models import DocID, QueryTerm
 from texcavator import utils
 
-
 logger = logging.getLogger(__name__)
+
 
 class Command(BaseCommand):
     args = '<#-documents>'
@@ -40,7 +40,7 @@ class Command(BaseCommand):
 
         self.stdout.write('Retrieving {} documents...'.format(query_size))
 
-        terms = set() 
+        terms = set()
 
         # select random documents
         document_set = DocID.objects.order_by('?')[0:query_size]

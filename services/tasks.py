@@ -14,9 +14,7 @@ from texcavator import utils
 
 @shared_task
 def generate_tv_cloud(search_params, min_length, stopwords, ids=None):
-    # TODO: merge code for normal (non-timeline) and time line wordclouds
-    current_task.update_state(state='PROGRESS')
-
+    """Generates multiple document word clouds using the termvector approach"""
     burst = True
     chunk_size = 1000
     progress = 0

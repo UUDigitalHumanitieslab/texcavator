@@ -12,7 +12,6 @@ from django.conf import settings
 from services.es import _es
 from services.models import DocID
 
-
 logger = logging.getLogger(__name__)
 
 
