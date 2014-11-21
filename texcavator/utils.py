@@ -24,7 +24,7 @@ def json_response_message(status, message, params=None):
 
     Returns
     -------
-    object: HttpResponse object containing status, message, and parameters 
+    object: HttpResponse object containing status, message, and parameters
         encoded as json object
     """
     response = {
@@ -38,5 +38,5 @@ def json_response_message(status, message, params=None):
     for param, value in params.iteritems():
         response[param] = value
 
-    return HttpResponse(json.dumps(response), 
+    return HttpResponse(json.dumps(response),
                         'application/json; charset=UTF-8')
