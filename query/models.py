@@ -33,9 +33,8 @@ class Query(models.Model):
 
     date_created = models.DateTimeField(auto_now=True)
 
-    
     def get_query_dict(self):
-        """Return a JSON serializable representation of the query object, that 
+        """Return a JSON serializable representation of the query object, that
         contains all relevant data and metadata.
         """
         excl_art_types = [a.id for a in self.exclude_article_types.all()]
@@ -50,29 +49,27 @@ class Query(models.Model):
                 'lower': str(self.date_lower),
                 'upper': str(self.date_upper)
             },
-            'exclude_article_types': excl_art_types, 
-            'exclude_distributions': excl_distr, 
+            'exclude_article_types': excl_art_types,
+            'exclude_distributions': excl_distr,
             'comment': self.comment,
             'date_created': str(self.date_created)
         }
-
 
     def __unicode__(self):
         return self.query
 
 
-class DayStatistic( models.Model ):
+class DayStatistic(models.Model):
     """DayStatistic is used to generate timeline graphs. Data for the
     DayStatistic table is gathered with the 'gatherstatistics' management
     command.
     """
-    date    = models.DateField( unique = True )
-    count   = models.IntegerField()
-    checked = models.DateTimeField( auto_now = True )
+    date = models.DateField(unique=True)
+    count = models.IntegerField()
+    checked = models.DateTimeField(auto_now=True)
 
-
-    def __unicode__( self ):
-        return '{}: {}'.format(str(self.date), self.count) 
+    def __unicode__(self):
+        return '{}: {}'.format(str(self.date), self.count)
 
 
 class StopWord(models.Model):
@@ -80,7 +77,7 @@ class StopWord(models.Model):
     query = models.ForeignKey(Query, null=True, blank=True)
     word = models.CharField(max_length=100)
 
-    def __unicode__( self ):
+    def __unicode__(self):
         return self.word
 
     def get_stopword_dict(self):
