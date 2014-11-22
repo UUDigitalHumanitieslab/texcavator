@@ -18,13 +18,19 @@
                                 <input ng-model="queryStr" type="text" class="form-control" id="queryStr">
                             </div>
                         </div>
-                        <button type="submit" class="btn btn-primary">Search</button>
+                        <button ng-click="search()" type="submit" class="btn btn-primary">Search</button>
                     </form>
+                    <ul ng-show="searchResults">
+                        <li ng-repeat="item in searchResults">
+                        {% verbatim %}{{ item.fields.article_dc_title[0] }}{% endverbatim %}
+                        </li>
+                    </ul>
                 </div>
             </div>
         </div>
 
         <script src="{% static 'angular/angular.js' %}"></script>
+        <script src="{% static 'angular-bootstrap/ui-bootstrap-tpls.js' %}"></script>
         <script src="{% static 'js/controllers.js' %}"></script>
     </body>
 </html>
