@@ -47,7 +47,6 @@ from es import get_search_parameters, do_search, count_search_results, \
     single_document_word_cloud, multiple_document_word_cloud, get_document
 
 from texcavator.utils import json_response_message
-from services.elasticsearch_biland import elasticsearch_htmlresp
 
 from query.models import StopWord
 from query.utils import get_query_object
@@ -56,8 +55,13 @@ from services.export import export_csv
 from tasks import generate_tv_cloud
 
 
-@login_required
+# TODO: enable login_required for the search view
+#@login_required
 def search(request):
+    if settings.DEBUG:
+        print >> stderr, "search()"
+        print >> stderr, request.REQUEST
+
     params = get_search_parameters(request.REQUEST)
 
     valid_q, result = do_search(settings.ES_INDEX,
@@ -69,13 +73,9 @@ def search(request):
                                 params['distributions'],
                                 params['article_types'])
     if valid_q:
-        html_str = elasticsearch_htmlresp(settings.ES_INDEX,
-                                          params['start'],
-                                          params['result_size'],
-                                          result)
         resp = {
             'status': 'ok',
-            'html': html_str
+            'data': result
         }
         return HttpResponse(json.dumps(resp),
                             'application/json; charset=UTF-8')
