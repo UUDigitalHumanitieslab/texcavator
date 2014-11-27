@@ -20,11 +20,26 @@
                         </div>
                         <button ng-click="search()" type="submit" class="btn btn-primary">Search</button>
                     </form>
-                    <ul ng-show="searchResults">
+                    <ol ng-show="searchResults" start="{% verbatim %}{{ startRecord }}{% endverbatim %}">
                         <li ng-repeat="item in searchResults">
                         {% verbatim %}{{ item.fields.article_dc_title[0] }}{% endverbatim %}
                         </li>
-                    </ul>
+                    </ol>
+                    <pagination ng-show="searchResults" 
+                                total-items="totalSearchResults"
+                                ng-model="searchResultsPage"
+                                ng-change="pageChanged()"
+                                num-pages="numPages"
+                                max-size="5"
+                                class="pagination-sm"
+                                rotate="false"
+                                boundary-links="true"
+                                items-per-page="20"
+                                previous-text="&lsaquo;"
+                                next-text="&rsaquo;"
+                                first-text="&laquo;"
+                                last-text="&raquo;">
+                    </pagination>
                 </div>
             </div>
         </div>
