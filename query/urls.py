@@ -15,4 +15,6 @@ urlpatterns = patterns( 'query.views',
 
     url( r'^download/prepare/$',                    'download_prepare' ),
     url(r'^download/(?P<zip_name>.*)$', 'download_data'),
+
+    url(r'^metadata_options/$', 'get_query_metadata_options'),
 )

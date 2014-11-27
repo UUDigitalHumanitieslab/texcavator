@@ -25,6 +25,17 @@ from services.es import get_search_parameters
 from query.download import create_zipname, execute
 
 
+def get_query_metadata_options(request):
+    ds = Distribution.objects.all()
+    distributions = [{'id': d.id, 'name': d.name} for d in ds]
+
+    params = {
+        'distributions': distributions
+    }
+
+    return json_response_message('OK', '', params)
+
+
 @login_required
 def index(request):
     """Return a list of queries for a given user."""
