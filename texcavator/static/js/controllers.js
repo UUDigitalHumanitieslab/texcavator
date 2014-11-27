@@ -1,4 +1,4 @@
-angular.module('texcavatorApp', ['ui.bootstrap'])
+angular.module('texcavatorApp', ['ui.bootstrap', 'checklist-model'])
 
     .config(function($httpProvider){
         // set csrftoken for Django
@@ -9,6 +9,18 @@ angular.module('texcavatorApp', ['ui.bootstrap'])
     .controller('texcavatorCtrl', ['$scope', '$http', function($scope, $http) {
         $scope.startRecord = 1;
         $scope.maxResultsPerPage= 20;
+        $scope.query = {
+            distributions: []
+        }
+
+        $http.get('query/metadata_options/').
+            success(function (data) {
+            console.log(data);
+               $scope.distributions = data.distributions;
+           }).
+           error(function (error) {
+               $scope.distributions = [];
+           });
 
         $scope.search = function (newQuery) {
            console.log('search()');
@@ -18,6 +30,18 @@ angular.module('texcavatorApp', ['ui.bootstrap'])
                'startRecord': $scope.startRecord,
                'maximumRecords': $scope.maxResultsPerPage
            };
+
+           // add distributions
+           $scope.distributions.forEach(function (elem){
+               if($scope.query.distributions.indexOf(elem.id) != -1){
+                   params[elem.id] = 1;
+               } else {
+                   params[elem.id] = 0;
+               }
+           });
+
+           console.log('search parameters');
+           console.log(params);
 
            $http.get('services/search/', {params: params}).
                success(function (data) {

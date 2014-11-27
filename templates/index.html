@@ -19,6 +19,11 @@
                             </div>
                         </div>
                         <button ng-click="search()" type="submit" class="btn btn-primary">Search</button>
+                        {% verbatim %}
+                            <label ng-repeat="dist in distributions">
+                                <input type="checkbox" checklist-model="query.distributions" checklist-value="dist.id">{{ dist.name }}
+                            </label>
+                        {% endverbatim %}
                     </form>
                     <ol ng-show="searchResults" start="{% verbatim %}{{ startRecord }}{% endverbatim %}">
                         <li ng-repeat="item in searchResults">
