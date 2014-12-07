@@ -1,3 +1,23 @@
 .container {
     width: 1200px !important;
 }
+
+.row {
+    position: relative;
+}
+
+.buttonBottomBox {
+    position: absolute;
+    bottom:0;
+    right:0;
+}
+
+.biggerFont {
+    font-size: 100%;
+}
+
+/*
+div {
+    border: 1px solid #ddd;
+}
+*/

@@ -37,122 +37,183 @@
     </nav>
 
         <div class="container">
-            <div class="row">
-                <div class="col-xs-1">
+            <!-- <div class="row">
+                <div class="col-sm-1">
                     box
                 </div>
-                <div class="col-xs-1">
+                <div class="col-sm-1">
                     box
                 </div>
-                <div class="col-xs-1">
+                <div class="col-sm-1">
                     box
                 </div>
-                <div class="col-xs-1">
+                <div class="col-sm-1">
                     box
                 </div>
-                <div class="col-xs-1">
+                <div class="col-sm-1">
                     box
                 </div>
-                <div class="col-xs-1">
+                <div class="col-sm-1">
                     box
                 </div>
-                <div class="col-xs-1">
+                <div class="col-sm-1">
                     box
                 </div>
-                <div class="col-xs-1">
+                <div class="col-sm-1">
                     box
                 </div>
-                <div class="col-xs-1">
+                <div class="col-sm-1">
                     box
                 </div>
-                <div class="col-xs-1">
+                <div class="col-sm-1">
                     box
                 </div>
-                <div class="col-xs-1">
+                <div class="col-sm-1">
                     box
                 </div>
-                <div class="col-xs-1">
+                <div class="col-sm-1">
                     box
                 </div>
-            </div>
+            </div> -->
 
-            <!-- search form (with metadata) -->
-            <form id="search">
-                <div class="form-group">
-                    <div class="row">
-                        <div class="col-xs-2">
-                            <label class="control-label">Article type</label>
-                            <div class="checkbox">
-                                <label><input type="checkbox" value="" checked>article</label>
+            <!-- search form -->
+            <form id="search" role="form">
+
+                <!-- metadata row -->
+                <div class="row">
+                    <div class="col-sm-2 col-sm-offset-3 form-group">
+                        <label class="control-label">Article type</label>
+                        <div class="checkbox">
+                            <label><input type="checkbox" value="" checked>article</label>
+                        </div>
+                        <div class="checkbox">
+                            <label><input type="checkbox" value="">advertisements</label>
+                        </div>
+                        <div class="checkbox">
+                            <label><input type="checkbox" value="">illustration</label>
+                        </div>
+                        <div class="checkbox">
+                            <label><input type="checkbox" value="">family message</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-2 form-group">
+                        <label class="control-label">Distributions</label>
+                        <div class="checkbox">
+                            <label><input type="checkbox" value="" checked>national</label>
+                        </div>
+                        <div class="checkbox">
+                            <label><input type="checkbox" value="" checked>regional</label>
+                        </div>
+                        <div class="checkbox">
+                            <label><input type="checkbox" value="">Antilles</label>
+                        </div>
+                        <div class="checkbox">
+                            <label><input type="checkbox" value="">Surinam</label>
+                        </div>
+                        <div class="checkbox">
+                            <label><input type="checkbox" value="">Indonesia</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <label class="control-label">Time period</label>
+                        <div class="form-horizontal">
+                            <div class="form-group">
+                                <label class="control-label col-sm-3" for="date-lower">From</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" id="date-lower" value="01-01-1850">
+                                </div>
                             </div>
-                            <div class="checkbox">
-                                <label><input type="checkbox" value="">advertisements</label>
-                            </div>
-                            <div class="checkbox">
-                                <label><input type="checkbox" value="">illustration</label>
-                            </div>
-                            <div class="checkbox">
-                                <label><input type="checkbox" value="">family message</label>
+                            <div class="form-group">
+                                <label class="control-label col-sm-3" for="date-upper">To</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" id="date-upper" value="31-12-1990">
+                                </div>
                             </div>
                         </div>
-                        <div class="col-xs-2">
-                            <label class="control-label">Distributions</label>
-                            <div class="checkbox">
-                                <label><input type="checkbox" value="" checked>national</label>
+                        <div class="help-block">Date format: dd-mm-yyyy</div>
+                    </div>
+                </div>
+
+                <!-- metadata summary row - default options -->
+                <div class="row">
+                    <div class="col-sm-11">
+                        <p style="line-height: 190%;">
+                            Searching: <b>Article type(s)</b>: <span class="label label-default biggerFont">article</span>; <b>Distribution(s)</b>: <span class="label label-default biggerFont">national</span> <span class="label label-default biggerFont">regional</span>; <b>Time period</b>: <span class="label label-default biggerFont">01-01-1850</span> - <span class="label label-default biggerFont">31-12-1990</span>
+                        </p>
+                    </div>
+                    <div class="col-sm-1">
+                        <a><span class="glyphicon glyphicon-chevron-up"></span></a>
+                    </div>
+                </div>
+
+                <!-- metadata summary row - all options -->
+                <div class="row">
+                    <div class="col-sm-11">
+                        <p style="line-height: 190%;">
+                            Searching: <b>Article type(s)</b>: <span class="label label-default biggerFont">article</span> <span class="label label-default biggerFont">advertisement</span> <span class="label label-default biggerFont">illustration</span> <span class="label label-default biggerFont">family message</span>; <b>Distribution(s)</b>: <span class="label label-default biggerFont">national</span> <span class="label label-default biggerFont">regional</span> <span class="label label-default biggerFont">Antilles</span> <span class="label label-default biggerFont">Surinam</span> <span class="label label-default biggerFont">Indonesia</span>; <b>Time period</b>: <span class="label label-default biggerFont">01-01-1850</span> - <span class="label label-default biggerFont">31-12-1990</span>
+                        </p>
+                    </div>
+                    <div class="col-sm-1">
+                        <button class="btn btn-primary"><span class="glyphicon glyphicon-list"></span></button>
+                    </div>
+                </div>
+
+                <!-- row containing search box -->
+                <div class="row">
+                    <div class="col-sm-11 form-group">
+                        <input ng-model="queryStr" type="text" class="form-control" id="queryStr" autofocus>
+                    </div>
+                    <div class="col-sm-1 form-group">
+                        <button ng-click="search()" type="submit" class="btn btn-primary">Search</button>
+                    </div>
+                </div>
+
+                <!-- row containg search options + save -->
+                <div class="row">
+                    <div class="col-sm-3 form-inline">
+                        <div class="form-group">
+                            <label class="control-label">Order results by</label>
+                            <div class="radio">
+                                <label><input type="radio" name="optradio" checked>Score</label>
                             </div>
-                            <div class="checkbox">
-                                <label><input type="checkbox" value="" checked>regional</label>
-                            </div>
-                            <div class="checkbox">
-                                <label><input type="checkbox" value="">Antilles</label>
-                            </div>
-                            <div class="checkbox">
-                                <label><input type="checkbox" value="">Surinam</label>
-                            </div>
-                            <div class="checkbox">
-                                <label><input type="checkbox" value="">Indonesia</label>
+                            <div class="radio">
+                                <label><input type="radio" name="optradio">Date</label>
                             </div>
                         </div>
-                        <div class="col-xs-2">
-                            <label class="control-label">Time period</label>
-                            <div class="row">
-                                <div class="col-xs-12">
-                                    <div class="form-horizontal">
-                                        <div class="form-group">
-                                            <label class="control-label col-xs-3" for="date-lower">From</label>
-                                            <div class="col-xs-8">
-                                                <input type="text" class="form-control" id="date-lower" value="01-01-1850">
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="control-label col-xs-3" for="date-upper">To</label>
-                                            <div class="col-xs-8">
-                                                <input type="text" class="form-control" id="date-upper" value="31-12-1990">
-                                            </div>
-                                            <div class="col-xs-12 help-block">Date format: dd-mm-yyyy</div>
-                                        </div>
-                                    </div>
+                    </div>
+                    <div class="col-sm-5 col-sm-offset-3">
+                        <!-- <div class="form-group">
+                            <label class="control-label">Save query</label>
+                        </div> -->
+                        <div class="form-horizontal">
+                            <div class="form-group">
+                                <label class="control-label col-sm-2" for="query-title">Title</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" id="query-title">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-sm-2" for="query-comment">Comment</label>
+                                <div class="col-sm-10">
+                                    <textarea class="form-control" rows="3" id="query-comment"></textarea>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </form>
-            <div class="row">
-                <div class="col-xs-12">
-                    <form class="form-inline">
+                    <div class="col-sm-1 buttonBottomBox">
+                        <!-- <div class="form-group">
+                            <button type="submit" class="btn btn-primary">Save as ...</button>
+                        </div> -->
                         <div class="form-group">
-                            <div class="col-xs-4">
-                                <input ng-model="queryStr" type="text" class="form-control" id="queryStr" autofocus>
-                            </div>
+                            <button type="submit" class="btn btn-primary">Save query</button>
                         </div>
-                        <button ng-click="search()" type="submit" class="btn btn-primary">Search</button>
-                        {% verbatim %}
-                            <label ng-repeat="dist in distributions">
-                                <input type="checkbox" checklist-model="query.distributions" checklist-value="dist.id">{{ dist.name }}
-                            </label>
-                        {% endverbatim %}
-                    </form>
+                    </div>
+                </div>
+
+            </form>
+
+            <div class="row">
+                </div>
                     <ol ng-show="searchResults" start="{% verbatim %}{{ startRecord }}{% endverbatim %}">
                         <li ng-repeat="item in searchResults">
                         {% verbatim %}{{ item.fields.article_dc_title[0] }}{% endverbatim %}
