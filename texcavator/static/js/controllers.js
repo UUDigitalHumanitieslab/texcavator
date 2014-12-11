@@ -1,4 +1,4 @@
-angular.module('texcavatorApp', ['ui.bootstrap', 'checklist-model'])
+angular.module('texcavatorApp', ['ui.bootstrap', 'checklist-model', 'truncate'])
 
     .config(function($httpProvider){
         // set csrftoken for Django
@@ -274,6 +274,7 @@ angular.module('texcavatorApp', ['ui.bootstrap', 'checklist-model'])
             "_index":"kb_tags_filtered_20141203"
         }];
         $scope.totalSearchResults = 4352;
+        $scope.maxScore = 2.3224924;
 
         $http.get('query/metadata_options/').
             success(function (data) {

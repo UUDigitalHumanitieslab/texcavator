@@ -213,12 +213,20 @@
             </form>
 
             <div class="row">
-                </div>
-                    <ol ng-show="searchResults" start="{% verbatim %}{{ startRecord }}{% endverbatim %}">
+                <!-- list of search results -->
+                <div class="col-sm-3">
+                    {% verbatim %}
+                    {{ totalSearchResults }} results; max score: {{ maxScore | number:2 }}
+                    <ol ng-show="searchResults" start="{{ startRecord }}">
                         <li ng-repeat="item in searchResults">
-                        {% verbatim %}{{ item.fields.article_dc_title[0] }}{% endverbatim %}
+                            <a>{{ item.fields.article_dc_title[0] | characters:28 }}</a><br>
+                            {{ item.fields.paper_dc_date[0] }}<br>
+                            {{ item.fields.paper_dc_title[0] }}<br>
+                            {{ item.fields.paper_dcterms_temporal[0] }} - {{ item.fields.paper_dcterms_spatial[0] }}<br>
+                            Score: {{ item._score | number:2 }}
                         </li>
                     </ol>
+                    {% endverbatim %}
                     <pagination ng-show="searchResults" 
                                 total-items="totalSearchResults"
                                 ng-model="searchResultsPage"
@@ -236,11 +244,14 @@
                     </pagination>
                 </div>
             </div>
+
+            <!-- tabs containing visualizations of search results -->
         </div>
 
         <script src="{% static 'angular/angular.js' %}"></script>
         <script src="{% static 'angular-bootstrap/ui-bootstrap-tpls.js' %}"></script>
         <script src="{% static 'checklist-model/checklist-model.js' %}"></script>
+        <script src="{% static 'angular-truncate-original/src/truncate.js' %}"></script>
         <script src="{% static 'js/controllers.js' %}"></script>
     </body>
 </html>
