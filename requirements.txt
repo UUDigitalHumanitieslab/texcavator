@@ -12,3 +12,4 @@ kombu
 billiard
 pytz
 urllib3
+numpy
