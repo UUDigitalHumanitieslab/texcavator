@@ -12,6 +12,17 @@ Copyright Netherlands eScience Center, University of Amsterdam.
 Distributed under the terms of the Apache2 license. See LICENSE for details.
 
 
+Dependencies
+============
+Before installing Texcavator, make sure a MySQL and Redis server are present on
+the system. In apt-based Linux distros like Ubuntu, do::
+    
+    sudo apt-get install mysql-server redis-server
+
+Also make sure they are running. Furthermore, you will need a few development packages::
+    
+    sudo apt-get install libmysqlclient-dev libxml2-dev libxslt-dev
+
 Installation
 ============
 To install Texcavator, make a virtualenv and activate it, then::
@@ -22,9 +33,9 @@ Install Dojo::
 
     sh install-dojo.sh
 
-In ``settings.py``, change the path to the log, if your installation does
-not live in ``/home/jvdzwaan``. In ``texcavator/settings_local.py``, set up
-the database; for a quick test, set::
+In ``texcavator/settings.py``, change the path to the log, if your installation
+is not cloned into ``/home/jvdzwaan/Texcavator``. In
+``texcavator/settings_local.py``, set up the database; for a quick test, set::
 
     DATABASE_ENGINE = 'django.db.backends.sqlite3'
 
@@ -32,6 +43,9 @@ Make sure Redis and MySQL (if needed) are running.
 Populate the database if this is the first time you're running Texcavator::
 
     python manage.py syncdb
+
+When asked to create a Django superuser, choose ``yes``. The username and
+password you pick will be the administrator account for Texcavator.
 
 Finally, start Celery and the webserver::
 
@@ -41,6 +55,7 @@ Finally, start Celery and the webserver::
 
 (In production, use ``--loglevel=warn``.)
 
+Also make sure Elasticsearch is running.
 Texcavator is now ready for use at ``http://localhost:8000``.
 
 If you want to display timelines, run the management command
