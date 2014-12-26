@@ -316,7 +316,7 @@ angular.module('texcavatorApp', ['ui.bootstrap', 'checklist-model', 'truncate'])
            }).
            error(function (error) {
            });
-        }
+        };
 
         $scope.pageChanged = function () {
             $scope.startRecord = (($scope.searchResultsPage-1) * $scope.maxResultsPerPage)+1;
@@ -325,6 +325,6 @@ angular.module('texcavatorApp', ['ui.bootstrap', 'checklist-model', 'truncate'])
             console.log('showing results from: '+$scope.startRecord);
 
             $scope.search();
-        }
+        };
     }]);
 
