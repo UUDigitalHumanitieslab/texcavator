@@ -216,7 +216,10 @@
                 <!-- list of search results -->
                 <div class="col-sm-3">
                     {% verbatim %}
-                    {{ totalSearchResults }} results; max score: {{ maxScore | number:2 }}
+                    <h2>Results <span class="badge">{{ totalSearchResults }}</span></h2>
+                    <div>
+                        {{ totalSearchResults }} results; max score: {{ maxScore | number:2 }}
+                    </div>
                     <ol ng-show="searchResults" start="{{ startRecord }}">
                         <li ng-repeat="item in searchResults">
                             <a>{{ item.fields.article_dc_title[0] | characters:28 }}</a><br>
@@ -243,9 +246,44 @@
                                 last-text="&raquo;">
                     </pagination>
                 </div>
+
+                <!-- tabs containing visualizations of search results -->
+                <div class="col-sm-9">
+                    <tabset>
+                        <tab heading="Metadata">
+                            <p>Display metadata graphs</p>
+                        </tab>
+                        <tab heading="Word cloud">
+                            <p>Display word cloud</p>
+                        </tab>
+                        <tab heading="Time line">
+                            <p>Display time line</p>
+                        </tab>
+                        <tab>
+                            <tab-heading>
+                                Article | <a href="#" tooltip="Close article tabs" tooltip-placement="right">x</a>
+                            </tab-heading>
+                            <p>Article header with open in new tab, close article, view article in Delpher, favorite, blacklist</p>
+                            <p>Display article scan</p>
+                        </tab>
+                        <tab>
+                            <tab-heading>
+                                Article OCR text | <a>x</a>
+                            </tab-heading>
+                            <p>Article header with open in new tab, close article, view article in Delpher, favorite, blacklist</p>
+                            <p>Display article OCR text</p>
+                        </tab>
+                        <tab>
+                            <tab-heading>
+                                Article word cloud | <a>x</a>
+                            </tab-heading>
+                            <p>Article header with open in new tab, close article, view article in Delpher, favorite, blacklist</p>
+                            <p>Display article word cloud</p>
+                        </tab>
+                    </tabset>
+                </div>
             </div>
 
-            <!-- tabs containing visualizations of search results -->
         </div>
 
         <script src="{% static 'angular/angular.js' %}"></script>
