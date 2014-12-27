@@ -6,6 +6,7 @@
         <title>{{ PROJECT_NAME }}</title>
 
         <link rel="stylesheet" href="{% static 'bootstrap-css-only/css/bootstrap.css' %}">
+        <link rel="stylesheet" href="{% static 'nvd3/nv.d3.css' %}"/>
         <link rel="stylesheet" href="{% static 'css/style.css' %}">
     </head>
 
@@ -287,6 +288,9 @@
         </div>
 
         <script src="{% static 'angular/angular.js' %}"></script>
+        <script src="{% static 'd3/d3.js' %}"></script>
+        <script src="{% static 'nvd3/nv.d3.js' %}"></script>
+        <script src="{% static 'angularjs-nvd3-directives/dist/angularjs-nvd3-directives.js' %}"></script>
         <script src="{% static 'angular-bootstrap/ui-bootstrap-tpls.js' %}"></script>
         <script src="{% static 'checklist-model/checklist-model.js' %}"></script>
         <script src="{% static 'angular-truncate-original/src/truncate.js' %}"></script>

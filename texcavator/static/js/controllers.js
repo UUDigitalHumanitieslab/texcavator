@@ -1,4 +1,4 @@
-angular.module('texcavatorApp', ['ui.bootstrap', 'checklist-model', 'truncate'])
+angular.module('texcavatorApp', ['ui.bootstrap', 'checklist-model', 'truncate', 'nvd3ChartDirectives'])
 
     .config(function($httpProvider){
         // set csrftoken for Django
