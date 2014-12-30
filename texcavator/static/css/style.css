@@ -16,6 +16,10 @@
     font-size: 100%;
 }
 
+.remove-height {
+    height: auto;
+}
+
 /*
 div {
     border: 1px solid #ddd;

@@ -252,7 +252,52 @@
                 <div class="col-sm-9">
                     <tabset>
                         <tab heading="Metadata">
-                            <p>Display metadata graphs</p>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <h2>Article types</h2>
+                                    <nvd3-pie-chart
+                                        data="articleTypesData"
+                                        id="articleTypesChart"
+                                        width="350"
+                                        height="350"
+                                        x="xFunction()"
+                                        y="yFunction()"
+                                        showLabels="true"
+                                        tooltips="true">
+                                            <svg class="remove-height"></svg>
+                                    </nvd3-pie-chart>
+                                </div>
+                                <div class="col-sm-6">
+                                    <h2>Distributions</h2>
+                                    <nvd3-pie-chart
+                                        data="distributionsData"
+                                        id="DistributionsChart"
+                                        width="350"
+                                        height="350"
+                                        x="xFunction()"
+                                        y="yFunction()"
+                                        showLabels="true"
+                                        tooltips="true">
+                                            <svg class="remove-height"></svg>
+                                    </nvd3-pie-chart>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <h2>Newspapers</h2>
+                                    <nvd3-multi-bar-horizontal-chart
+                                        data="newspapersData"
+                                        id="newspapersChart"
+                                        width="800"
+                                        height="150"
+                                        tooltips="true"
+                                        showValues="true"
+                                        showXAxis="true"
+                                        margin="{left:100,top:0,bottom:0,right:0}">
+                                            <svg class="remove-height"></svg>
+                                    </nvd3-multi-bar-horizontal-chart>
+                                </div>
+                            </div>
                         </tab>
                         <tab heading="Word cloud">
                             <p>Display word cloud</p>

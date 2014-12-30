@@ -276,6 +276,40 @@ angular.module('texcavatorApp', ['ui.bootstrap', 'checklist-model', 'truncate', 
         $scope.totalSearchResults = 4352;
         $scope.maxScore = 2.3224924;
 
+        $scope.articleTypesData = [
+            { key: "Article", y: 5 },
+            { key: "Advertisement", y: 2 },
+            { key: "Illustration", y: 9 },
+            { key: "Family message", y: 7 },
+        ];
+
+        $scope.distributionsData = [
+            { key: "National", y: 5 },
+            { key: "Regional", y: 2 },
+            { key: "Antilles", y: 9 },
+            { key: "Surinam", y: 7 },
+            { key: "Indonesia", y: 5 },
+        ];
+
+        $scope.newspapersData = [
+            {
+                "key": "Series 1",
+                "values": [ [ "de Volkskrant" , 23] , [ "Het Parool" , 12] , [ "NRC" , 10] , [ "De Telegraaf" , 10] , [ "Echo" , 9] ]
+            },
+        ];
+
+        $scope.xFunction = function(){
+            return function(d) {
+                return d.key;
+            };
+        };
+
+        $scope.yFunction = function(){
+            return function(d){
+                return d.y;
+            };
+        };
+
         $http.get('query/metadata_options/').
             success(function (data) {
             console.log(data);
