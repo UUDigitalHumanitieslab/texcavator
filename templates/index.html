@@ -300,7 +300,9 @@
                             </div>
                         </tab>
                         <tab heading="Word cloud">
-                            <p>Display word cloud</p>
+                            <div class="fixed-width">
+                                <wordcloud data=wordCloudData></wordcloud>
+                            </div>
                         </tab>
                         <tab heading="Time line">
                             <p>Display time line</p>
@@ -342,5 +344,6 @@
         <script src="{% static 'checklist-model/checklist-model.js' %}"></script>
         <script src="{% static 'angular-truncate-original/src/truncate.js' %}"></script>
         <script src="{% static 'js/controllers.js' %}"></script>
+        <script src="{% static 'js/directives.js' %}"></script>
     </body>
 </html>

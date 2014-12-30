@@ -1,4 +1,7 @@
-angular.module('texcavatorApp', ['ui.bootstrap', 'checklist-model', 'truncate', 'nvd3ChartDirectives'])
+var app = angular.module('texcavatorApp', ['ui.bootstrap', 
+                                           'checklist-model', 
+                                           'truncate', 
+                                           'nvd3ChartDirectives'])
 
     .config(function($httpProvider){
         // set csrftoken for Django
@@ -310,10 +313,412 @@ angular.module('texcavatorApp', ['ui.bootstrap', 'checklist-model', 'truncate', 
             };
         };
 
+        $scope.wordCloudData = [
+        {
+            "key": "fiets",
+            "doc_count": 2114
+        },
+        {
+            "key": "den",
+            "doc_count": 1747
+        },
+        {
+            "key": "ter",
+            "doc_count": 1003
+        },
+        {
+            "key": "per",
+            "doc_count": 995
+        },
+        {
+            "key": "goed",
+            "doc_count": 937
+        },
+        {
+            "key": "zoo",
+            "doc_count": 924
+        },
+        {
+            "key": "no",
+            "doc_count": 909
+        },
+        {
+            "key": "jaar",
+            "doc_count": 873
+        },
+        {
+            "key": "alle",
+            "doc_count": 859
+        },
+        {
+            "key": "gt",
+            "doc_count": 856
+        },
+        {
+            "key": "uur",
+            "doc_count": 825
+        },
+        {
+            "key": "zeer",
+            "doc_count": 808
+        },
+        {
+            "key": "twee",
+            "doc_count": 787
+        },
+        {
+            "key": "groote",
+            "doc_count": 751
+        },
+        {
+            "key": "10",
+            "doc_count": 747
+        },
+        {
+            "key": "lt",
+            "doc_count": 739
+        },
+        {
+            "key": "adres",
+            "doc_count": 736
+        },
+        {
+            "key": "waar",
+            "doc_count": 730
+        },
+        {
+            "key": "nieuwe",
+            "doc_count": 729
+        },
+        {
+            "key": "heer",
+            "doc_count": 725
+        },
+        {
+            "key": "ten",
+            "doc_count": 706
+        },
+        {
+            "key": "eerste",
+            "doc_count": 697
+        },
+        {
+            "key": "zien",
+            "doc_count": 675
+        },
+        {
+            "key": "eenige",
+            "doc_count": 666
+        },
+        {
+            "key": "11",
+            "doc_count": 652
+        },
+        {
+            "key": "wegens",
+            "doc_count": 648
+        },
+        {
+            "key": "amp",
+            "doc_count": 641
+        },
+        {
+            "key": "weg",
+            "doc_count": 622
+        },
+        {
+            "key": "koop",
+            "doc_count": 618
+        },
+        {
+            "key": "kwam",
+            "doc_count": 618
+        },
+        {
+            "key": "prijs",
+            "doc_count": 608
+        },
+        {
+            "key": "15",
+            "doc_count": 597
+        },
+        {
+            "key": "rijwiel",
+            "doc_count": 595
+        },
+        {
+            "key": "wel",
+            "doc_count": 594
+        },
+        {
+            "key": "man",
+            "doc_count": 593
+        },
+        {
+            "key": "plaats",
+            "doc_count": 586
+        },
+        {
+            "key": "enz",
+            "doc_count": 582
+        },
+        {
+            "key": "le",
+            "doc_count": 577
+        },
+        {
+            "key": "geheel",
+            "doc_count": 573
+        },
+        {
+            "key": "12",
+            "doc_count": 568
+        },
+        {
+            "key": "werden",
+            "doc_count": 564
+        },
+        {
+            "key": "welke",
+            "doc_count": 562
+        },
+        {
+            "key": "25",
+            "doc_count": 560
+        },
+        {
+            "key": "heeren",
+            "doc_count": 560
+        },
+        {
+            "key": "huis",
+            "doc_count": 555
+        },
+        {
+            "key": "nieuw",
+            "doc_count": 551
+        },
+        {
+            "key": "20",
+            "doc_count": 545
+        },
+        {
+            "key": "br",
+            "doc_count": 544
+        },
+        {
+            "key": "blad",
+            "doc_count": 543
+        },
+        {
+            "key": "groot",
+            "doc_count": 542
+        },
+        {
+            "key": "staat",
+            "doc_count": 540
+        },
+        {
+            "key": "weer",
+            "doc_count": 540
+        },
+        {
+            "key": "af",
+            "doc_count": 539
+        },
+        {
+            "key": "do",
+            "doc_count": 536
+        },
+        {
+            "key": "aangeboden",
+            "doc_count": 529
+        },
+        {
+            "key": "komen",
+            "doc_count": 527
+        },
+        {
+            "key": "tijd",
+            "doc_count": 527
+        },
+        {
+            "key": "on",
+            "doc_count": 524
+        },
+        {
+            "key": "gevraagd",
+            "doc_count": 520
+        },
+        {
+            "key": "politie",
+            "doc_count": 517
+        },
+        {
+            "key": "30",
+            "doc_count": 516
+        },
+        {
+            "key": "fr",
+            "doc_count": 515
+        },
+        {
+            "key": "dag",
+            "doc_count": 514
+        },
+        {
+            "key": "rotterdam",
+            "doc_count": 514
+        },
+        {
+            "key": "to",
+            "doc_count": 514
+        },
+        {
+            "key": "terwijl",
+            "doc_count": 504
+        },
+        {
+            "key": "jarige",
+            "doc_count": 499
+        },
+        {
+            "key": "straat",
+            "doc_count": 485
+        },
+        {
+            "key": "ie",
+            "doc_count": 484
+        },
+        {
+            "key": "tusschen",
+            "doc_count": 478
+        },
+        {
+            "key": "dagen",
+            "doc_count": 475
+        },
+        {
+            "key": "bureau",
+            "doc_count": 472
+        },
+        {
+            "key": "50",
+            "doc_count": 468
+        },
+        {
+            "key": "goede",
+            "doc_count": 468
+        },
+        {
+            "key": "week",
+            "doc_count": 464
+        },
+        {
+            "key": "oud",
+            "doc_count": 457
+        },
+        {
+            "key": "alleen",
+            "doc_count": 453
+        },
+        {
+            "key": "wij",
+            "doc_count": 452
+        },
+        {
+            "key": "werk",
+            "doc_count": 447
+        },
+        {
+            "key": "gaan",
+            "doc_count": 445
+        },
+        {
+            "key": "16",
+            "doc_count": 444
+        },
+        {
+            "key": "maken",
+            "doc_count": 443
+        },
+        {
+            "key": "verder",
+            "doc_count": 442
+        },
+        {
+            "key": "slechts",
+            "doc_count": 441
+        },
+        {
+            "key": "thans",
+            "doc_count": 441
+        },
+        {
+            "key": "echter",
+            "doc_count": 438
+        },
+        {
+            "key": "net",
+            "doc_count": 434
+        },
+        {
+            "key": "zaak",
+            "doc_count": 434
+        },
+        {
+            "key": "ver",
+            "doc_count": 427
+        },
+        {
+            "key": "14",
+            "doc_count": 426
+        },
+        {
+            "key": "st",
+            "doc_count": 426
+        },
+        {
+            "key": "drie",
+            "doc_count": 423
+        },
+        {
+            "key": "beide",
+            "doc_count": 417
+        },
+        {
+            "key": "gulden",
+            "doc_count": 417
+        },
+        {
+            "key": "waarvan",
+            "doc_count": 416
+        },
+        {
+            "key": "woning",
+            "doc_count": 414
+        },
+        {
+            "key": "ging",
+            "doc_count": 412
+        },
+        {
+            "key": "toe",
+            "doc_count": 412
+        },
+        {
+            "key": "boven",
+            "doc_count": 408
+        },
+        {
+            "key": "dien",
+            "doc_count": 405
+        }];
+
         $http.get('query/metadata_options/').
             success(function (data) {
             console.log(data);
-               $scope.distributions = data.distributions;
+            $scope.distributions = data.distributions;
            }).
            error(function (error) {
                $scope.distributions = [];

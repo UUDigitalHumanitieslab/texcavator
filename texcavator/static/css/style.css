@@ -20,6 +20,10 @@
     height: auto;
 }
 
+.fixed-width {
+    width: 1000px;
+}
+
 /*
 div {
     border: 1px solid #ddd;

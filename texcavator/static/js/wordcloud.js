@@ -5,7 +5,8 @@
             var top = element[0].getBoundingClientRect().top;  
 
             var h = window.innerHeight - top;
-            var w = window.innerWidth - 50;
+            var w = window.innerWidth - 310;
+            w = 1000;
 
             var minHeight = 400;
             var minWidth = 500;
@@ -24,9 +25,11 @@
             //        wordScale.domain([data[data.length-1].doc_count, data[0].doc_count]).range([20, 100]);
             //      }
 
-            var wordScale = d3.scale.log().range([10, 100]);
+            var wordScale = d3.scale.log().range([14, 100]);
             if(data.length > 0) {
-                wordScale.domain([data[data.length-1].doc_count, data[0].doc_count]).range([10, 100]);
+                // min font: 14px
+                // max font: 100px
+                wordScale.domain([data[data.length-1].doc_count, data[0].doc_count]).range([14, 100]);
             };
 
             var fill = d3.scale.category20();
@@ -37,7 +40,7 @@
             .padding(5)
             //      .rotate(function() { return ~~(Math.random() * 2) * 90; })
             .rotate(0)
-            .font("Impact")
+            //.font("Impact")
             .fontSize(function(d) { return d.size; })
             .on("end", draw)
             .start();
@@ -49,13 +52,13 @@
                 .attr("class", "remove-height")
                 .append("g")
                 // for position of the wordcloud
-                .attr("transform", "translate(" + w/2.2 + "," +  h/2 + ")")
+                .attr("transform", "translate(" + w/2 + "," +  h/2 + ")")
                 .selectAll("text")
                 .data(words)
                 .enter().append("text")
                 .style("font-size", function(d) { return d.size + "px"; })
-                .style("font-family", "Impact")
-                .style("fill", function(d, i) { return fill(i); })
+                //.style("font-family", "Impact")
+                //.style("fill", function(d, i) { return fill(i); })
                 .attr("text-anchor", "middle")
                 .attr("transform", function(d) {
                     return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
