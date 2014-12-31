@@ -227,9 +227,9 @@
                         </div>
                     </div>
 
-                    <ol ng-show="searchResults" start="{{ startRecord }}">
+                    <ol ng-show="searchResults" class="search-results" start="{{ startRecord }}">
                         <li style="font-weight: bold;">
-                            <a tooltip="{{ selectedResult.fields.article_dc_title[0] }}" tooltip-placement="right">{{ selectedResult.fields.article_dc_title[0] | characters:28 }}</a><br>
+                            <a tooltip="{{ selectedResult.fields.article_dc_title[0] }}" tooltip-placement="right">{{ selectedResult.fields.article_dc_title[0] | characters:30 }}</a><br>
                             {{ selectedResult.fields.paper_dc_date[0] }}<br>
                             {{ selectedResult.fields.paper_dc_title[0] }}<br>
                             {{ selectedResult.fields.paper_dcterms_temporal[0] }} - {{ selectedResult.fields.paper_dcterms_spatial[0] }}<br>
@@ -237,7 +237,7 @@
                         </li>
 
                         <li ng-repeat="item in searchResults">
-                            <a tooltip="{{ item.fields.article_dc_title[0] }}" tooltip-placement="right">{{ item.fields.article_dc_title[0] | characters:28 }}</a><br>
+                            <a tooltip="{{ item.fields.article_dc_title[0] }}" tooltip-placement="right">{{ item.fields.article_dc_title[0] | characters:30 }}</a><br>
                             {{ item.fields.paper_dc_date[0] }}<br>
                             {{ item.fields.paper_dc_title[0] }}<br>
                             {{ item.fields.paper_dcterms_temporal[0] }} - {{ item.fields.paper_dcterms_spatial[0] }}<br>

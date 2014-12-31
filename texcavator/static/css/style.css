@@ -24,6 +24,10 @@
     width: 1000px;
 }
 
+.search-results {
+    padding-left: 20px;
+}
+
 /*
 div {
     border: 1px solid #ddd;
