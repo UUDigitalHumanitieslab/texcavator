@@ -715,6 +715,8 @@ var app = angular.module('texcavatorApp', ['ui.bootstrap',
             "doc_count": 405
         }];
 
+        $scope.articleCloudData = $scope.wordCloudData.slice(0, 10);
+
         $http.get('query/metadata_options/').
             success(function (data) {
             console.log(data);

@@ -535,8 +535,51 @@
                             <tab-heading>
                                 Article word cloud | <a>x</a>
                             </tab-heading>
-                            <p>Article header with open in new tab, close article, view article in Delpher, favorite, blacklist</p>
-                            <p>Display article word cloud</p>
+
+                            <div class="row">
+                                <div class="col-sm-12" style="margin-top: 10px;">
+                                    <div class="form-group">
+                                        <button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-new-window"></span> Open in new tab</button>
+                                        <button type="submit" class="btn btn-primary">Add to favorites</button>
+                                        <button type="submit" class="btn btn-primary">Add to blacklist</button>
+                                        <button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-new-window"></span> View in Delpher</button>
+                                        <button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-remove"></span> Close</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                        <!--
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-new-window"></span> Open in new tab</button>
+                                        <button type="submit" class="btn btn-primary">Remove from favorites</button>
+                                        <button type="submit" class="btn btn-primary">Remove from blacklist</button>
+                                        <button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-new-window"></span> View in Delpher</button>
+                                        <button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-remove"></span> Close</button>
+                                    </div>
+                                </div>
+                            </div>
+                        -->
+
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <span class="label label-default"><span class="glyphicon glyphicon-star"></span> Favorite</span>
+                                        <span class="label label-default"><span class="glyphicon glyphicon-ban-circle"></span> Blacklisted</span>
+                                        <small>1934-06-19 - Het nieuws van den dag voor Nederlandsch-Indië</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div>
+                                        <wordcloud data=articleCloudData></wordcloud>
+                                    </div>
+                                </div>
+                            </div>
+
                         </tab>
                     </tabset>
                 </div>
