@@ -300,8 +300,117 @@
                             </div>
                         </tab>
                         <tab heading="Word cloud">
-                            <div class="fixed-width">
-                                <wordcloud data=wordCloudData></wordcloud>
+                            <form>
+                                <div class="row" style="margin-top: 10px">
+                                    <div class="col-sm-3">
+                                        <div class="form-group form-inline">
+                                            <label class="control-label" for="wc-min-length">Min. word length:</label>
+                                            <input type="number" class="form-control" id="wc-min-length" value="2" style="width:60px">
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="form-group form-inline">
+                                            <label class="control-label" for="wc-max-words">Max. # words in cloud:</label>
+                                                <input type="number" class="form-control" id="wc-max-words" value="100" style="width:70px">
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="form-group form-inline">
+                                            <div class="checkbox" id="wc-remove-stopwords">
+                                                <label><input type="checkbox" checked></label>
+                                            </div>
+                                            <label class="control-label" for="wc-remove-stopwords">Remove stopwords</label>
+                                            <!--<button type="submit" class="btn btn-primary">Generate cloud</button>-->
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <button type="submit" class="btn btn-primary">Generate cloud</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    {% verbatim %}
+                                    <div class="col-sm-12" ng-init="dynamic = 3000">
+                                        <progressbar max="totalSearchResults" value="dynamic"><span style="color:white; white-space:nowrap;">{{dynamic}} / {{totalSearchResults}}</span></progressbar>
+                                    </div>
+                                    {% endverbatim %}
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <button type="submit" class="btn btn-primary">Cancel cloud</button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <button type="submit" class="btn btn-primary">Generate cloud</button>
+                                            <button type="submit" class="btn btn-primary">Shuffle words</button>
+                                            <button type="submit" class="btn btn-primary">View stopwords</button>
+                                            <button type="submit" class="btn btn-primary">Export cloud data</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="fixed-width">
+                                        <wordcloud data=wordCloudData></wordcloud>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <h2>Stopwords</h2>
+                                    <tabset type="pills">
+                                        <tab>
+                                            <tab-heading>
+                                                This query
+                                            </tab-heading>
+                                            <div class="col-sm-6">
+                                                <table class="table table-striped">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Word</th>
+                                                            <th>Type</th>
+                                                            <th>Remove</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    <tr>
+                                                        <td>groen</td>
+                                                        <td>this query</td>
+                                                        <td><a><span class="glyphicon glyphicon-remove-sign"></span></a></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>de</td>
+                                                        <td>all queries</td>
+                                                        <td><a><span class="glyphicon glyphicon-remove-sign"></span></a></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>het</td>
+                                                        <td>all queries</td>
+                                                        <td><a><span class="glyphicon glyphicon-remove-sign"></span></a></td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                         </tab>
+                                        <tab>
+                                            <tab-heading>
+                                                All queries
+                                            </tab-heading>
+                                            Stopwords for all queries
+                                        </tab>
+                                    </tabset>
+                                </div>
                             </div>
                         </tab>
                         <tab heading="Time line">
