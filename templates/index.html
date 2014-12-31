@@ -413,15 +413,58 @@
                                 </div>
                             </div>
                         </tab>
+
                         <tab heading="Time line">
                             <p>Display time line</p>
                         </tab>
+
                         <tab>
                             <tab-heading>
                                 Article | <a href="#" tooltip="Close article tabs" tooltip-placement="right">x</a>
                             </tab-heading>
-                            <p>Article header with open in new tab, close article, view article in Delpher, favorite, blacklist</p>
-                            <p>Display article scan</p>
+
+                            <div class="row">
+                                <div class="col-sm-12" style="margin-top: 10px;">
+                                    <div class="form-group">
+                                        <button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-new-window"></span> Open in new tab</button>
+                                        <button type="submit" class="btn btn-primary">Add to favorites</button>
+                                        <button type="submit" class="btn btn-primary">Add to blacklist</button>
+                                        <button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-new-window"></span> View in Delpher</button>
+                                        <button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-remove"></span> Close</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                        <!--
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-new-window"></span> Open in new tab</button>
+                                        <button type="submit" class="btn btn-primary">Remove from favorites</button>
+                                        <button type="submit" class="btn btn-primary">Remove from blacklist</button>
+                                        <button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-new-window"></span> View in Delpher</button>
+                                        <button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-remove"></span> Close</button>
+                                    </div>
+                                </div>
+                            </div>
+                        -->
+
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <span class="label label-default"><span class="glyphicon glyphicon-star"></span> Favorite</span>
+                                        <span class="label label-default"><span class="glyphicon glyphicon-ban-circle"></span> Blacklisted</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div>
+                                        <img src="{% static 'image/mockup/scan.jpg' %}">
+                                    </div>
+                                </div>
+                            </div>
                         </tab>
                         <tab>
                             <tab-heading>
