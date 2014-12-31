@@ -222,8 +222,16 @@
                         {{ totalSearchResults }} results; max score: {{ maxScore | number:2 }}
                     </div>
                     <ol ng-show="searchResults" start="{{ startRecord }}">
+                        <li style="font-weight: bold;">
+                            <a tooltip="{{ selectedResult.fields.article_dc_title[0] }}" tooltip-placement="right">{{ selectedResult.fields.article_dc_title[0] | characters:28 }}</a><br>
+                            {{ selectedResult.fields.paper_dc_date[0] }}<br>
+                            {{ selectedResult.fields.paper_dc_title[0] }}<br>
+                            {{ selectedResult.fields.paper_dcterms_temporal[0] }} - {{ selectedResult.fields.paper_dcterms_spatial[0] }}<br>
+                            Score: {{ selectedResult._score | number:2 }}
+                        </li>
+
                         <li ng-repeat="item in searchResults">
-                            <a>{{ item.fields.article_dc_title[0] | characters:28 }}</a><br>
+                            <a tooltip="{{ item.fields.article_dc_title[0] }}" tooltip-placement="right">{{ item.fields.article_dc_title[0] | characters:28 }}</a><br>
                             {{ item.fields.paper_dc_date[0] }}<br>
                             {{ item.fields.paper_dc_title[0] }}<br>
                             {{ item.fields.paper_dcterms_temporal[0] }} - {{ item.fields.paper_dcterms_spatial[0] }}<br>

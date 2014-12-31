@@ -16,7 +16,7 @@ var app = angular.module('texcavatorApp', ['ui.bootstrap',
             distributions: []
         }
 
-        $scope.searchResults = [{
+        $scope.selectedResult = {
             "_score":2.3224924,
             "_type":"doc",
             "_id":"ddd:010230127:mpeg21:a0230",
@@ -28,8 +28,9 @@ var app = angular.module('texcavatorApp', ['ui.bootstrap',
                 "paper_dcterms_spatial":["Nederlands-Indië / Indonesië"]
             },
             "_index":"kb_tags_filtered_20141203"
-        },
-        {
+        };
+
+        $scope.searchResults = [{
             "_score":2.0837216,
             "_type":"doc",
             "_id":"ddd:010247615:mpeg21:a0049",
