@@ -234,6 +234,9 @@
                             {{ selectedResult.fields.paper_dc_title[0] }}<br>
                             {{ selectedResult.fields.paper_dcterms_temporal[0] }} - {{ selectedResult.fields.paper_dcterms_spatial[0] }}<br>
                             Score: {{ selectedResult._score | number:2 }}
+                            &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                            <span class="glyphicon glyphicon-ban-circle" tooltip="Remove from blacklist" tooltip-placement="right"></span>
+                            <span class="glyphicon glyphicon-star" tooltip="Remove from favorites" tooltip-placement="right"></span>
                         </li>
 
                         <li ng-repeat="item in searchResults">
@@ -242,6 +245,9 @@
                             {{ item.fields.paper_dc_title[0] }}<br>
                             {{ item.fields.paper_dcterms_temporal[0] }} - {{ item.fields.paper_dcterms_spatial[0] }}<br>
                             Score: {{ item._score | number:2 }}
+                            &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                            <span class="glyphicon glyphicon-ok" tooltip="Add to blacklist" tooltip-placement="right"></span>
+                            <span class="glyphicon glyphicon-star-empty" tooltip="Add to favorites" tooltip-placement="right"></span>
                         </li>
                     </ol>
                     {% endverbatim %}
