@@ -218,9 +218,15 @@
                 <div class="col-sm-3">
                     {% verbatim %}
                     <h2>Results <span class="badge">{{ totalSearchResults }}</span></h2>
-                    <div>
-                        {{ totalSearchResults }} results; max score: {{ maxScore | number:2 }}
+                    <div class="row">
+                        <div class="col-sm-6">
+                            Max. score: {{ maxScore | number:2 }}
+                        </div>
+                        <div class="col-sm-3 form-group">
+                            <button type="submit" class="btn btn-primary">Export results</button>
+                        </div>
                     </div>
+
                     <ol ng-show="searchResults" start="{{ startRecord }}">
                         <li style="font-weight: bold;">
                             <a tooltip="{{ selectedResult.fields.article_dc_title[0] }}" tooltip-placement="right">{{ selectedResult.fields.article_dc_title[0] | characters:28 }}</a><br>
