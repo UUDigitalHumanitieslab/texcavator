@@ -135,29 +135,43 @@
                     </div>
                 </div>
 
-                <!-- metadata summary row - default options -->
+                <!-- metadata summary row - default options dates in form -->
                 <div class="row">
                     <div class="col-sm-11">
-                        <p style="line-height: 190%;">
-                            Searching: <b>Article type(s)</b>: <span class="label label-default biggerFont">article</span>; <b>Distribution(s)</b>: <span class="label label-default biggerFont">national</span> <span class="label label-default biggerFont">regional</span>; <b>Time period</b>: <span class="label label-default biggerFont">01-01-1850</span> - <span class="label label-default biggerFont">31-12-1990</span>
-                        </p>
+                        <div style="line-height: 190%;">
+                            <b>Article type(s)</b>: <span class="label label-default biggerFont">article</span>; <b>Distribution(s)</b>: <span class="label label-default biggerFont">national</span> <span class="label label-default biggerFont">regional</span>; 
+                            <!-- <b>Time period</b>: <span class="label label-default biggerFont">01-01-1850</span> - <span class="label label-default biggerFont">31-12-1990</span>-->
+                            <span class="form-inline">
+                                <b>Time period</b>: 
+                                <input type="text" class="form-control" id="date-lower2" value="01-01-1850" style="width: 120px;">
+                                - <input type="text" class="form-control" id="date-upper2" value="31-12-1990" style="width: 120px;"> 
+                                <span class="help-block" style="display: inline;">Date format: dd-mm-yyyy</span>
+                            </span>
+                        </div>
                     </div>
                     <div class="col-sm-1">
                         <a><span class="glyphicon glyphicon-chevron-up"></span></a>
                     </div>
                 </div>
 
-                <!-- metadata summary row - all options -->
+                <!-- metadata summary row - all options - dates in form -->
                 <div class="row">
                     <div class="col-sm-11">
                         <p style="line-height: 190%;">
-                            Searching: <b>Article type(s)</b>: <span class="label label-default biggerFont">article</span> <span class="label label-default biggerFont">advertisement</span> <span class="label label-default biggerFont">illustration</span> <span class="label label-default biggerFont">family message</span>; <b>Distribution(s)</b>: <span class="label label-default biggerFont">national</span> <span class="label label-default biggerFont">regional</span> <span class="label label-default biggerFont">Antilles</span> <span class="label label-default biggerFont">Surinam</span> <span class="label label-default biggerFont">Indonesia</span>; <b>Time period</b>: <span class="label label-default biggerFont">01-01-1850</span> - <span class="label label-default biggerFont">31-12-1990</span>
+                            <b>Article type(s)</b>: <span class="label label-default biggerFont">article</span> <span class="label label-default biggerFont">advertisement</span> <span class="label label-default biggerFont">illustration</span> <span class="label label-default biggerFont">family message</span>; <b>Distribution(s)</b>: <span class="label label-default biggerFont">national</span> <span class="label label-default biggerFont">regional</span> <span class="label label-default biggerFont">Antilles</span> <span class="label label-default biggerFont">Surinam</span> <span class="label label-default biggerFont">Indonesia</span>;
+                            <span class="form-inline">
+                                <b>Time period</b>: 
+                                <input type="text" class="form-control" id="date-lower2" value="01-01-1850" style="width: 120px;">
+                                - <input type="text" class="form-control" id="date-upper2" value="31-12-1990" style="width: 120px;"> 
+                                <span class="help-block" style="display: inline;">Date format: dd-mm-yyyy</span>
+                            </span>
                         </p>
                     </div>
                     <div class="col-sm-1">
                         <button class="btn btn-primary"><span class="glyphicon glyphicon-list"></span></button>
                     </div>
                 </div>
+
 
                 <!-- row containing search box -->
                 <div class="row">
