@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """Perform ElasticSearch term aggregations over random sets of documents.
+
+This command requires a set of document ids to be available in the database.
+To store these docids, run management command gatherdocids
 """
 import logging
 
