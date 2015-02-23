@@ -20,3 +20,14 @@ def test_json_ok_message():
 
     compare(response.content, '{"status": "ok", "msg": "test", "p": "test"}')
     assert_equals(response.status_code, 200)
+
+
+def test_chunks():
+    results = [chunk for chunk in utils.chunks([], 100)]
+    assert_equals(results, [])
+
+    results = [chunk for chunk in utils.chunks(range(5), 1)]
+    assert_equals(results, [[0], [1], [2], [3], [4]])
+
+    results = [chunk for chunk in utils.chunks(range(5), 2)]
+    assert_equals(results, [[0, 1], [2, 3], [4]])
