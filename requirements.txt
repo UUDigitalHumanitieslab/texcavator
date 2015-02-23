@@ -13,3 +13,8 @@ billiard
 pytz
 urllib3
 numpy
+Pygments
+docutils
+Jinja2
+markupsafe
+spinx
