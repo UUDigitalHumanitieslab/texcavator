@@ -61,10 +61,10 @@ def export_csv(request):
         zipped = False
 
     if zipped:
-        response = HttpResponse(mimetype="application/zip")
+        response = HttpResponse(content_type="application/zip")
         response['Content-Disposition'] = 'attachment; filename=' + filename
     else:
-        response = HttpResponse(mimetype="text/csv")
+        response = HttpResponse(content_type="text/csv")
         response['Content-Disposition'] = 'attachment; filename=' + filename
 
     fout = StringIO.StringIO()  # in-memory temp output file

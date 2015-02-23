@@ -361,8 +361,7 @@ def download_scan_image(request):
         print >> stderr, pathname
 
     wrapper = FileWrapper(open(pathname))
-    # content_type = mimetypes.guess_type( pathname )[ 0 ]
-    response = HttpResponse(wrapper, mimetype='content_type')
+    response = HttpResponse(wrapper, content_type='content_type')
     response['Content-Disposition'] = "attachment; filename=%s" % filename
     return response
 
