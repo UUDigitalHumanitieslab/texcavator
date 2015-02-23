@@ -3,6 +3,7 @@ dicttoxml
 Django
 django-celery
 django-extensions
+django-nose
 elasticsearch
 MySQL-python
 lxml
@@ -13,3 +14,4 @@ billiard
 pytz
 urllib3
 numpy
+nose
