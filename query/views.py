@@ -9,7 +9,7 @@ from urlparse import urljoin
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.core import serializers
-from django.core.validators import email_re
+from django.core.validators import validate_email
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 from django.core.servers.basehttp import FileWrapper
@@ -329,7 +329,9 @@ def download_prepare(request):
         ctype = 'application/json; charset=UTF-8'
         return HttpResponse(json_list, content_type=ctype)
 
-    if not email_re.match(user.email):
+    try:
+        validate_email(user.email)
+    except:
         msg = "Preparing your download for query <br/><b>" + query_str + \
               "</b> failed.<br/>The email address of user <b>" + \
               user.username + "</b> could not be validated: <b>" + \
