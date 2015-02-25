@@ -24,6 +24,9 @@ from query.burstsdetector import bursts
 from services.es import get_search_parameters
 from query.download import create_zipname, execute
 
+import logging
+logger = logging.getLogger(__name__)
+
 
 @login_required
 def index(request):
@@ -153,6 +156,8 @@ def update(request, query_id):
 def timeline(request, query_id, resolution):
     """Generate a timeline for a query.
     """
+    logger.info('query/timeline/ - user: {}'.format(request.user.username))
+
     # TODO: the timeline view should be moved to the services app
     if settings.DEBUG:
         print >> stderr, "query/bursts() query_id:", query_id, \
@@ -302,6 +307,8 @@ def download_prepare(request):
     if settings.DEBUG:
         print >> stderr, "download_prepare()"
         print >> stderr, request.REQUEST
+    logger.info('query/download/prepare - user: {}'.
+                format(request.user.username))
 
     req_dict = request.REQUEST
 
@@ -373,6 +380,8 @@ def download_data(request, zip_name):
     msg = "download_data() zip_basename: %s" % zip_name
     if settings.DEBUG:
         print >> stderr, msg
+    logger.info('query/download/{} - user: {}'.format(zip_name,
+                                                      request.user.username))
     # to do: use mod_xsendfile
 
     zip_basedir = os.path.join(settings.PROJECT_PARENT,
