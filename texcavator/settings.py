@@ -116,8 +116,11 @@ INSTALLED_APPS = (
     'services',
     'query',
 
-    'djcelery'
+    'djcelery',
+    'django_nose'
 )
+
+TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 
 # CELERY SETTINGS
 BROKER_URL = 'redis://localhost:6379/0'

@@ -42,10 +42,14 @@ is not cloned into ``/home/jvdzwaan/Texcavator``. In
 Make sure Redis and MySQL (if needed) are running.
 Populate the database if this is the first time you're running Texcavator::
 
-    python manage.py syncdb
+    python manage.py migrate
 
-When asked to create a Django superuser, choose ``yes``. The username and
-password you pick will be the administrator account for Texcavator.
+Create a Django superuser::
+
+    python manage.py createsuperuser
+
+The username and password you pick will be the administrator account for
+Texcavator.
 
 Finally, start Celery and the webserver::
 
