@@ -146,7 +146,7 @@ LOGGING = {
     },
     'handlers': {
         'file': {
-            'level': 'DEBUG',
+            'level': 'INFO',
             'class': 'logging.FileHandler',
             'filename': '/home/jvdzwaan/Texcavator/texcavator/'
                         'Texcavator_Django.log',
@@ -167,13 +167,17 @@ LOGGING = {
             'handlers': ['file'],
             'level': 'DEBUG',
         },
-        'elasticsearch': {
+        'query': {
             'handlers': ['file'],
             'level': 'DEBUG',
         },
+        'elasticsearch': {
+            'handlers': ['file'],
+            'level': 'INFO',
+        },
         'elasticsearch.trace': {
             'handlers': ['file'],
-            'level': 'DEBUG',
+            'level': 'WARN',
         },
     }
 }
