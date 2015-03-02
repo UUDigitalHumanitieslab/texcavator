@@ -1036,9 +1036,8 @@ function onClickExecuteCloud( queryID )
         console.log("Start polling!")
         console.log("task_id: "+task_id)
         if(task_id){
-            setTimeout(check_status, 0.05);
-            // check every second
-            window.interval_id = setInterval(function(){ check_status(task_id); }, 1000);
+            // 
+            check_status(task_id);
             // create cancel button
             dojo.byId('cancel_wordcloud').innerHTML = '<button onClick="cancel_celery_task(\''+task_id+'\');">Cancel wordcloud</button>';
         } else {
@@ -1088,13 +1087,16 @@ function onClickExecuteCloud( queryID )
 }
 
 function check_status(task_id) {
-    console.log('and for the third time: task_id='+task_id);
-    $.ajax({
-        type: "GET",
-        url: "/services/task_status/"+task_id,
-        success: show_status,
-        error: handle_error
-    });
+    window.interval_id = setTimeout(function(){
+        console.log('and for the third time: task_id='+task_id);
+        $.ajax({
+            type: "GET",
+            url: "/services/task_status/"+task_id,
+            success: show_status,
+            error: handle_error,
+            complete: check_status(task_id)
+        });
+    }, 1000);
 }
         
 function update_wordcloud_progress(current, total){
