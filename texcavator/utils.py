@@ -13,19 +13,18 @@ def chunks(l, n):
 
 
 def json_response_message(status, message, params=None):
-    """Return HttpResponse object specifying a message to be send to the user
-    interface.
+    """Return json object specifying a message to be send to the interface.
 
-    Parameters
-    ----------
-    status : string (ok|error)
-    message : string explaining status
-    params : dict containing additional parameters to include in the response
+    Args:
+        - status (str): (ok|error)
+        - message (str): string explaining status
+    Kwargs:
+        - params (dict): dictionary containing additional parameters to include
+          in the response
 
-    Returns
-    -------
-    object: HttpResponse object containing status, message, and parameters
-        encoded as json object
+    Returns:
+        HttpResponse object containing status, message, and
+        parameters encoded as json object
     """
     response = {
         'status': status,

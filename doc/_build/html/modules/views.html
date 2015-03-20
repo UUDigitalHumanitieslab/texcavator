@@ -1,0 +1,270 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Views &mdash; Texcavator 0.9 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.9',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="Texcavator 0.9 documentation" href="../index.html" />
+    <link rel="prev" title="Models" href="models.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="models.html" title="Models"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">Texcavator 0.9 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="views">
+<h1>Views<a class="headerlink" href="#views" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-texcavator.views">
+<span id="texcavator"></span><h2>Texcavator<a class="headerlink" href="#module-texcavator.views" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="texcavator.views.index">
+<tt class="descclassname">texcavator.views.</tt><tt class="descname">index</tt><big>(</big><em>request</em><big>)</big><a class="headerlink" href="#texcavator.views.index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Render main page.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-query.views">
+<span id="query"></span><h2>Query<a class="headerlink" href="#module-query.views" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="query.views.add_stopword">
+<tt class="descclassname">query.views.</tt><tt class="descname">add_stopword</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#query.views.add_stopword" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a stopword to the stopword list.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="query.views.create_query">
+<tt class="descclassname">query.views.</tt><tt class="descname">create_query</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#query.views.create_query" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a new query.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="query.views.delete">
+<tt class="descclassname">query.views.</tt><tt class="descname">delete</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#query.views.delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete a query.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="query.views.delete_stopword">
+<tt class="descclassname">query.views.</tt><tt class="descname">delete_stopword</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#query.views.delete_stopword" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete a stopword from the stopword list.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="query.views.download_data">
+<tt class="descclassname">query.views.</tt><tt class="descname">download_data</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#query.views.download_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>This request occurs when the user clicks the download link that we emailed</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="query.views.download_prepare">
+<tt class="descclassname">query.views.</tt><tt class="descname">download_prepare</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#query.views.download_prepare" title="Permalink to this definition">¶</a></dt>
+<dd><p>Request from BiLand to create the ocr+meta-data zipfile for download</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="query.views.index">
+<tt class="descclassname">query.views.</tt><tt class="descname">index</tt><big>(</big><em>request</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#query.views.index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a list of queries for a given user.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="query.views.query">
+<tt class="descclassname">query.views.</tt><tt class="descname">query</tt><big>(</big><em>request</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#query.views.query" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a query.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="query.views.stopwords">
+<tt class="descclassname">query.views.</tt><tt class="descname">stopwords</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#query.views.stopwords" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the stopword list for a user and query.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="query.views.timeline">
+<tt class="descclassname">query.views.</tt><tt class="descname">timeline</tt><big>(</big><em>request</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#query.views.timeline" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate a timeline for a query.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="query.views.update">
+<tt class="descclassname">query.views.</tt><tt class="descname">update</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#query.views.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update a query.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-services.views">
+<span id="services"></span><h2>Services<a class="headerlink" href="#module-services.views" title="Permalink to this headline">¶</a></h2>
+<p>Views for the services app</p>
+<dl class="function">
+<dt id="services.views.cancel_by_task_id">
+<tt class="descclassname">services.views.</tt><tt class="descname">cancel_by_task_id</tt><big>(</big><em>request</em>, <em>task_id</em><big>)</big><a class="headerlink" href="#services.views.cancel_by_task_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cancel Celery task.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="services.views.check_status_by_task_id">
+<tt class="descclassname">services.views.</tt><tt class="descname">check_status_by_task_id</tt><big>(</big><em>request</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#services.views.check_status_by_task_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the status of the generate_tv_cloud task</p>
+<p>If the task is finished, the results of the task are returned.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="services.views.cloud">
+<tt class="descclassname">services.views.</tt><tt class="descname">cloud</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#services.views.cloud" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return word cloud data using the terms aggregation approach</p>
+<p>This view is currently not used, because it uses the terms aggregation
+approach to generate word clouds, and this is not feasible in ES.</p>
+<p>Returns word cloud data for a single document word cloud (based on a single
+document id) and multiple document word clouds (either based on a list of
+document ids (i.e., timeline burst cloud) or a query with metadata).</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="services.views.doc_count">
+<tt class="descclassname">services.views.</tt><tt class="descname">doc_count</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#services.views.doc_count" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the number of documents returned by a query</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="services.views.download_scan_image">
+<tt class="descclassname">services.views.</tt><tt class="descname">download_scan_image</tt><big>(</big><em>request</em><big>)</big><a class="headerlink" href="#services.views.download_scan_image" title="Permalink to this definition">¶</a></dt>
+<dd><p>download scan image file</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="services.views.export_cloud">
+<tt class="descclassname">services.views.</tt><tt class="descname">export_cloud</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#services.views.export_cloud" title="Permalink to this definition">¶</a></dt>
+<dd><p>Export cloud data to cvs file</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="services.views.proxy">
+<tt class="descclassname">services.views.</tt><tt class="descname">proxy</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#services.views.proxy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Proxy a request and return the result</p>
+<p>This view takes over the role of the url mappings and must therefore be
+removed as soon as possible.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="services.views.retrieve_document">
+<tt class="descclassname">services.views.</tt><tt class="descname">retrieve_document</tt><big>(</big><em>request</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#services.views.retrieve_document" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve a document from the ES index</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="services.views.search">
+<tt class="descclassname">services.views.</tt><tt class="descname">search</tt><big>(</big><em>request</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#services.views.search" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform search request and return html string with results</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="services.views.tv_cloud">
+<tt class="descclassname">services.views.</tt><tt class="descname">tv_cloud</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#services.views.tv_cloud" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate termvector word cloud using the termvector approach.</p>
+<p>Returns word cloud data for a single document word cloud (based on a single
+document id) and multiple document word clouds (either based on a list of
+document ids (i.e., timeline burst cloud) or a query with metadata).</p>
+<p>For multiple document word clouds, a celery task generates the cloud data.</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Views</a><ul>
+<li><a class="reference internal" href="#module-texcavator.views">Texcavator</a></li>
+<li><a class="reference internal" href="#module-query.views">Query</a></li>
+<li><a class="reference internal" href="#module-services.views">Services</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="models.html"
+                        title="previous chapter">Models</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/modules/views.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="models.html" title="Models"
+             >previous</a> |</li>
+        <li><a href="../index.html">Texcavator 0.9 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2015, Janneke van der Zwaan.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>

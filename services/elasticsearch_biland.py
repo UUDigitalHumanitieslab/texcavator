@@ -17,24 +17,22 @@ ES_CHUNK_SIZE = 2000
 def elasticsearch_htmlresp(collection, start_record, chunk_size, es_dict):
     """Create HTML response from ElasticSearch request.
 
-    Parameters
-    ----------
-    collection : str
-        The collection search results have been retrieved from. For Texcavator
-        the collection is the ElasticSearch index name.
-    start_record : int
-        Search results are returned as a numbered list. The start record is the
-        number this list should start with (pagination).
-    chunck_size : int
-        The number of results displayed.
-    es_dict : dictionary
-        Dictionary returned by ElasticSearch for a search request (contains the
-        returned documents).
+    Parameters:
+        collection : str
+            The collection search results have been retrieved from. For
+            Texcavator the collection is the ElasticSearch index name.
+        start_record : int
+            Search results are returned as a numbered list. The start record is
+            the number this list should start with (pagination).
+        chunck_size : int
+            The number of results displayed.
+        es_dict : dictionary
+            Dictionary returned by ElasticSearch for a search request (contains
+            the returned documents).
 
-    Returns
-    -------
-    string : str
-        The html string for displaying the search results.
+    Returns:
+        string : str
+            The html string for displaying the search results.
     """
     if settings.DEBUG:
         print >> stderr, "elasticsearch_htmlresp()"
