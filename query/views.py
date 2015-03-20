@@ -9,7 +9,7 @@ from urlparse import urljoin
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.core import serializers
-from django.core.validators import email_re
+from django.core.validators import validate_email
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 from django.core.servers.basehttp import FileWrapper
@@ -23,6 +23,9 @@ from query.utils import query2docidsdate
 from query.burstsdetector import bursts
 from services.es import get_search_parameters
 from query.download import create_zipname, execute
+
+import logging
+logger = logging.getLogger(__name__)
 
 
 @login_required
@@ -153,6 +156,8 @@ def update(request, query_id):
 def timeline(request, query_id, resolution):
     """Generate a timeline for a query.
     """
+    logger.info('query/timeline/ - user: {}'.format(request.user.username))
+
     # TODO: the timeline view should be moved to the services app
     if settings.DEBUG:
         print >> stderr, "query/bursts() query_id:", query_id, \
@@ -302,6 +307,8 @@ def download_prepare(request):
     if settings.DEBUG:
         print >> stderr, "download_prepare()"
         print >> stderr, request.REQUEST
+    logger.info('query/download/prepare - user: {}'.
+                format(request.user.username))
 
     req_dict = request.REQUEST
 
@@ -329,7 +336,9 @@ def download_prepare(request):
         ctype = 'application/json; charset=UTF-8'
         return HttpResponse(json_list, content_type=ctype)
 
-    if not email_re.match(user.email):
+    try:
+        validate_email(user.email)
+    except:
         msg = "Preparing your download for query <br/><b>" + query_str + \
               "</b> failed.<br/>The email address of user <b>" + \
               user.username + "</b> could not be validated: <b>" + \
@@ -371,6 +380,8 @@ def download_data(request, zip_name):
     msg = "download_data() zip_basename: %s" % zip_name
     if settings.DEBUG:
         print >> stderr, msg
+    logger.info('query/download/{} - user: {}'.format(zip_name,
+                                                      request.user.username))
     # to do: use mod_xsendfile
 
     zip_basedir = os.path.join(settings.PROJECT_PARENT,

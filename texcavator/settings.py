@@ -116,8 +116,11 @@ INSTALLED_APPS = (
     'services',
     'query',
 
-    'djcelery'
+    'djcelery',
+    'django_nose'
 )
+
+TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 
 # CELERY SETTINGS
 BROKER_URL = 'redis://localhost:6379/0'
@@ -143,7 +146,7 @@ LOGGING = {
     },
     'handlers': {
         'file': {
-            'level': 'DEBUG',
+            'level': 'INFO',
             'class': 'logging.FileHandler',
             'filename': '/home/jvdzwaan/Texcavator/texcavator/'
                         'Texcavator_Django.log',
@@ -164,13 +167,17 @@ LOGGING = {
             'handlers': ['file'],
             'level': 'DEBUG',
         },
-        'elasticsearch': {
+        'query': {
             'handlers': ['file'],
             'level': 'DEBUG',
         },
+        'elasticsearch': {
+            'handlers': ['file'],
+            'level': 'INFO',
+        },
         'elasticsearch.trace': {
             'handlers': ['file'],
-            'level': 'DEBUG',
+            'level': 'WARN',
         },
     }
 }

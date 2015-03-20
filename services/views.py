@@ -33,6 +33,9 @@ from services.tasks import generate_tv_cloud
 @login_required
 def search(request):
     """Perform search request and return html string with results"""
+
+    logger.info('services/search/ - user: {}'.format(request.user.username))
+
     params = get_search_parameters(request.REQUEST)
 
     valid_q, result = do_search(settings.ES_INDEX,
@@ -66,6 +69,9 @@ def search(request):
 @login_required
 def doc_count(request):
     """Return the number of documents returned by a query"""
+
+    logger.info('services/doc_count/ - user: {}'.format(request.user.username))
+
     if settings.DEBUG:
         print >> stderr, "doc_count()"
 
@@ -183,6 +189,8 @@ def tv_cloud(request):
     """
     if settings.DEBUG:
         print >> stderr, "termvector cloud()"
+    logger.info('services/cloud/ - termvector word cloud')
+    logger.info('services/cloud/ - user: {}'.format(request.user.username))
 
     params = get_search_parameters(request.REQUEST)
 
@@ -207,6 +215,7 @@ def tv_cloud(request):
 
         if len(ids) == 1:
             # Word cloud for single document
+            logger.info('services/cloud/ - single document word cloud')
             t_vector = single_document_word_cloud(settings.ES_INDEX,
                                                   settings.ES_DOCTYPE,
                                                   ids[0],
@@ -217,7 +226,10 @@ def tv_cloud(request):
             return HttpResponse(json.dumps(t_vector), content_type=ctype)
 
     # Cloud by queryID or multiple ids
+    logger.info('services/cloud/ - multiple document word cloud')
     task = generate_tv_cloud.delay(params, min_length, stopwords, ids)
+
+    logger.info('services/cloud/ - Celery task id: {}'.format(task.id))
 
     params = {'task': task.id}
 
@@ -257,6 +269,8 @@ def check_status_by_task_id(request, task_id):
 def cancel_by_task_id(request, task_id):
     """Cancel Celery task.
     """
+    logger.info('services/cancel_task/{}'.format(task_id))
+
     AsyncResult(task_id).revoke(terminate=True)
 
     return json_response_message('ok', '')
@@ -265,6 +279,8 @@ def cancel_by_task_id(request, task_id):
 @login_required
 def retrieve_document(request, doc_id):
     """Retrieve a document from the ES index"""
+    logger.info('services/retrieve/{}'.format(doc_id))
+
     document = get_document(settings.ES_INDEX, settings.ES_DOCTYPE, doc_id)
 
     if document:
@@ -311,6 +327,8 @@ def proxy(request):
 @login_required
 def export_cloud(request):
     """Export cloud data to cvs file"""
+    logger.info('services/export_cloud/')
+
     if settings.DEBUG:
         print >> stderr, "Export CSV request"
     return export_csv(request)
@@ -318,6 +336,8 @@ def export_cloud(request):
 
 def download_scan_image(request):
     """download scan image file"""
+    logger.info('download_scan_image')
+
     from django.core.servers.basehttp import FileWrapper
     import os
 
@@ -361,14 +381,15 @@ def download_scan_image(request):
         print >> stderr, pathname
 
     wrapper = FileWrapper(open(pathname))
-    # content_type = mimetypes.guess_type( pathname )[ 0 ]
-    response = HttpResponse(wrapper, mimetype='content_type')
+    response = HttpResponse(wrapper, content_type='content_type')
     response['Content-Disposition'] = "attachment; filename=%s" % filename
     return response
 
 
 @login_required
 def retrieve_kb_resolver(request):
+    logger.info('services/kb/resolver/')
+
     host = 'resolver.kb.nl'
     port = 80
     path = 'resolve'
