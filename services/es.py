@@ -49,39 +49,38 @@ def do_search(idx, typ, query, start, num, date_range, exclude_distributions,
     This method accepts boolean queries in the Elasticsearch query string
     syntax (see Elasticsearch reference).
 
-    Parameters
-    ----------
-    idx : str
-        The name of the elasticsearch index
-    typ : str
-        The type of document requested
-    query : str
-        A query string in the Elasticsearch query string language
-    start : int
-        An integer representing the index of the first result to be retrieved
-    num : int
-        The total number of results to be retrieved
-    date_range : dict
-        A dictionary containg the upper and lower dates of the
-        requested date range
-    exclude_distributions : list
-        A list of strings respresenting distributions that should be excluded
-        from the search
-    exclude_article_types : list
-        A list of strings representing article types that should be excluded
-        from the search
-    return_source : boolean, optional
-        A boolean indicating whether the _source of ES documents should be
-        returned or a smaller selection of document fields. The smaller set of
-        document fields (stored in _ES_RETURN_FIELDS) is the default
+    Parameters:
+        idx : str
+            The name of the elasticsearch index
+        typ : str
+            The type of document requested
+        query : str
+            A query string in the Elasticsearch query string language
+        start : int
+            An integer representing the index of the first result to be
+            retrieved
+        num : int
+            The total number of results to be retrieved
+        date_range : dict
+            A dictionary containg the upper and lower dates of the
+            requested date range
+        exclude_distributions : list
+            A list of strings respresenting distributions that should be
+            excluded from the search
+        exclude_article_types : list
+            A list of strings representing article types that should be
+            excluded from the search
+        return_source : boolean, optional
+            A boolean indicating whether the _source of ES documents should be
+            returned or a smaller selection of document fields. The smaller set
+            of document fields (stored in _ES_RETURN_FIELDS) is the default
 
-    Returns
-    -------
-    validity : boolean
-        A boolean indicating whether the input query string is valid.
-    results : list
-        A list of elasticsearch results or a message explaining why the input
-        query string is invalid.
+    Returns:
+        validity : boolean
+            A boolean indicating whether the input query string is valid.
+        results : list
+            A list of elasticsearch results or a message explaining why the
+            input query string is invalid.
     """
     q = create_query(query, date_range, exclude_distributions,
                      exclude_article_types)
@@ -118,14 +117,13 @@ def count_search_results(idx, typ, query, date_range, exclude_distributions,
 def get_document(idx, typ, doc_id):
     """Return a document given its id.
 
-    Parameters
-    ----------
-    idx : str
-        The name of the elasticsearch index
-    typ : str
-        The type of document requested
-    doc_id : str
-        The id of the document to be retrieved
+    Parameters:
+        idx : str
+            The name of the elasticsearch index
+        typ : str
+            The type of document requested
+        doc_id : str
+            The id of the document to be retrieved
     """
     try:
         result = _es().get(index=idx, doc_type=typ, id=doc_id)
@@ -190,15 +188,13 @@ def create_ids_query(ids):
     Create Elasticsearch query that returns documents based on a list of
     ids.
 
-    Parameters
-    ----------
-    ids : list
-        A list containing document ids
+    Parameters:
+        ids : list
+            A list containing document ids
 
-    Returns
-    -------
-    query : dict
-        A dictionary representing an ES ids query
+    Returns:
+        query : dict
+            A dictionary representing an ES ids query
     """
     query = {
         'query': {
@@ -279,25 +275,23 @@ def single_document_word_cloud(idx, typ, doc_id, min_length=0, stopwords=None):
     """Return data required to draw a word cloud for a single document.
 
 
-    Parameters
-    ----------
-    idx : str
-        The name of the elasticsearch index
-    typ : str
-        The type of document requested
-    doc_id : str
-        The id of the document the word cloud should be created for
-    min_length : int, optional
-        The minimum length of words in the word cloud
-    stopwords : list, optional
-        A list of words that should be removed from the word cloud
+    Parameters:
+        idx : str
+            The name of the elasticsearch index
+        typ : str
+            The type of document requested
+        doc_id : str
+            The id of the document the word cloud should be created for
+        min_length : int, optional
+            The minimum length of words in the word cloud
+        stopwords : list, optional
+            A list of words that should be removed from the word cloud
 
-    Returns
-    -------
-    dict : dict
-        A dictionary that contains word frequencies for all the terms in The
-        document. The data returned is formatted according to what is expected
-        by the user interface:
+    Returns:
+        dict : dict
+            A dictionary that contains word frequencies for all the terms in
+            the document. The data returned is formatted according to what is
+            expected by the user interface:
         {
             'status': 'ok'
             'max_count': ...
@@ -357,10 +351,12 @@ def multiple_document_word_cloud(idx, typ, query, date_range, dist, art_types,
     of memory very quickly. Therefore, another approach to generating word
     cloud data was added: termvector_word_cloud
 
-    See also
-    --------
-    single_document_word_cloud() generate data for a single document word cloud
-    termvector_word_cloud() generate word cloud data using termvector approach
+    See also:
+        :func:`single_document_word_cloud` generate data for a single document
+        word cloud
+
+        :func:`termvector_word_cloud` generate word cloud data using termvector
+        approach
     """
     if not ids:
         ids = []
@@ -406,16 +402,17 @@ def termvector_wordcloud(idx, typ, doc_ids, min_length=0):
 
     Return data required to draw a word cloud for multiple documents by
     'manually' merging termvectors.
-    
+
     The counter returned by this method can be transformed into the input
     expected by the interface by passing it to the counter2wordclouddata
     method.
 
     See also
-    --------
-    single_document_word_cloud() generate data for a single document word cloud
-    multiple_document_word_cloud() generate word cloud data using terms
-    aggregation approach
+        :func:`single_document_word_cloud` generate data for a single document
+        word cloud
+
+        :func:`multiple_document_word_cloud` generate word cloud data using
+        terms aggregation approach
     """
     wordcloud = Counter()
 
@@ -470,15 +467,13 @@ def counter2wordclouddata(wordcloud_counter, burst, stopwords=None):
 def get_search_parameters(req_dict):
     """Return a tuple of search parameters extracted from a dictionary
 
-    Parameters
-    ----------
-    req_dict : dict
-        A Django request dictionary
+    Parameters:
+        req_dict : dict
+            A Django request dictionary
 
-    Returns
-    -------
-    dict : dict
-        A dictionary that contains query metadata
+    Returns:
+        dict : dict
+            A dictionary that contains query metadata
     """
     query_str = req_dict.get('query', None)
 
