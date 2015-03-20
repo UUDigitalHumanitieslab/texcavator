@@ -1,0 +1,597 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Additional Modules &mdash; Texcavator 0.9 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.9',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="Texcavator 0.9 documentation" href="../index.html" />
+    <link rel="next" title="Management Commands" href="commands.html" />
+    <link rel="prev" title="Views" href="views.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="commands.html" title="Management Commands"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="views.html" title="Views"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">Texcavator 0.9 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="additional-modules">
+<h1>Additional Modules<a class="headerlink" href="#additional-modules" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="texcavator">
+<h2>Texcavator<a class="headerlink" href="#texcavator" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-texcavator.utils">
+<span id="utils"></span><h3>Utils<a class="headerlink" href="#module-texcavator.utils" title="Permalink to this headline">¶</a></h3>
+<p>Utility functions for the Texcavator app</p>
+<dl class="function">
+<dt id="texcavator.utils.chunks">
+<tt class="descclassname">texcavator.utils.</tt><tt class="descname">chunks</tt><big>(</big><em>l</em>, <em>n</em><big>)</big><a class="headerlink" href="#texcavator.utils.chunks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Yield successive n-sized chunks from l.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="texcavator.utils.json_response_message">
+<tt class="descclassname">texcavator.utils.</tt><tt class="descname">json_response_message</tt><big>(</big><em>status</em>, <em>message</em>, <em>params=None</em><big>)</big><a class="headerlink" href="#texcavator.utils.json_response_message" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return json object specifying a message to be send to the interface.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><ul class="first last simple">
+<li>status (str): (ok|error)</li>
+<li>message (str): string explaining status</li>
+</ul>
+</dd>
+<dt>Kwargs:</dt>
+<dd><ul class="first last simple">
+<li>params (dict): dictionary containing additional parameters to include
+in the response</li>
+</ul>
+</dd>
+<dt>Returns:</dt>
+<dd>HttpResponse object containing status, message, and
+parameters encoded as json object</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="query">
+<h2>Query<a class="headerlink" href="#query" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-query.burstsdetector.bursts">
+<span id="burstsdetector"></span><h3>Burstsdetector<a class="headerlink" href="#module-query.burstsdetector.bursts" title="Permalink to this headline">¶</a></h3>
+<p>bursts.py</p>
+<dl class="docutils">
+<dt>should work as </dt>
+<dd>import bursts
+[list of bursts] = bursts.bursts(docs2date, date2countC=backgroundcounts, resolution=&#8217;week&#8217;, doc2relevance={},  burstdetector=&#8217;kleinberg&#8217;, normalise=True, bg_smooth=True)</dd>
+</dl>
+<p>where
+doc2date: is a dictionary from document id to a datetime (or date) object
+doc2relevance: is a dictionary from document id to a relevance score. Can be empty, then the bursts are not weighted by document relevance
+date2countC: date2counts of the collection for background smoothing and/or normalisation. Not implemented yet.
+resolution: in [day, week, month, year]
+burstdetector: in [kleinberg, default] The default detector is my implementation. Kleinberg has a lot of parameters and might not work without careful tuning
+normalise: in [True, False] Normalise with a background collection 
+bg_smooth= in [True, False] Smooth with a background collection. Avoiding empty bins/dates, unless the background collection doesn&#8217;t have anything either</p>
+<p>Created by Maria-Hendrike Peetz on 2011-10-07.
+FL-21-Nov-2012  do not use just &#8216;print&#8217;, but print &gt;&gt; stderr for mod_wsgi
+FL-18-Nov-2012  print only in DEBUG mode
+FL-21-Jan-2013  circumvent exception in defaultdetector() for empty range
+FL-04-Apr-2013</p>
+</div>
+<div class="section" id="module-query.download">
+<span id="download"></span><h3>Download<a class="headerlink" href="#module-query.download" title="Permalink to this headline">¶</a></h3>
+<p>Query data download (export) functionality.</p>
+<dl class="function">
+<dt id="query.download.clean_filename">
+<tt class="descclassname">query.download.</tt><tt class="descname">clean_filename</tt><big>(</big><em>s</em><big>)</big><a class="headerlink" href="#query.download.clean_filename" title="Permalink to this definition">¶</a></dt>
+<dd><p>Strip problematic characters from filename</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="query.download.create_zipname">
+<tt class="descclassname">query.download.</tt><tt class="descname">create_zipname</tt><big>(</big><em>username</em>, <em>query_title</em><big>)</big><a class="headerlink" href="#query.download.create_zipname" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a name for the zipfile containing the exported data.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="query.download.download_collect">
+<tt class="descclassname">query.download.</tt><tt class="descname">download_collect</tt><big>(</big><em>req_dict</em>, <em>zip_basename</em>, <em>to_email</em>, <em>email_message</em><big>)</big><a class="headerlink" href="#query.download.download_collect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Collect the documents and put them in a zipfile.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="query.download.execute">
+<tt class="descclassname">query.download.</tt><tt class="descname">execute</tt><big>(</big><em>merge_dict</em>, <em>zip_basename</em>, <em>to_email</em>, <em>email_message</em><big>)</big><a class="headerlink" href="#query.download.execute" title="Permalink to this definition">¶</a></dt>
+<dd><p>Start the creating the download and send an email to the user when it
+is finished.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="query.download.expire_data">
+<tt class="descclassname">query.download.</tt><tt class="descname">expire_data</tt><big>(</big><big>)</big><a class="headerlink" href="#query.download.expire_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete old data from the data folder.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="query.download.get_es_chunk">
+<tt class="descclassname">query.download.</tt><tt class="descname">get_es_chunk</tt><big>(</big><em>params</em>, <em>start_record</em>, <em>chunk_size</em><big>)</big><a class="headerlink" href="#query.download.get_es_chunk" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve a # chunksize documents from ElasticSearch index.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="query.download.hit2csv_data">
+<tt class="descclassname">query.download.</tt><tt class="descname">hit2csv_data</tt><big>(</big><em>csv_writer</em>, <em>hit</em>, <em>es_header_names</em>, <em>kb_header_names</em><big>)</big><a class="headerlink" href="#query.download.hit2csv_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes a single document to the csv file.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="query.download.hit2csv_header">
+<tt class="descclassname">query.download.</tt><tt class="descname">hit2csv_header</tt><big>(</big><em>csv_writer</em>, <em>ichunk</em>, <em>hit</em><big>)</big><a class="headerlink" href="#query.download.hit2csv_header" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the header row of the csv that is created.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="query.download.zip_chunk">
+<tt class="descclassname">query.download.</tt><tt class="descname">zip_chunk</tt><big>(</big><em>ichunk</em>, <em>hits_list</em>, <em>zip_file</em>, <em>csv_writer</em>, <em>format</em><big>)</big><a class="headerlink" href="#query.download.zip_chunk" title="Permalink to this definition">¶</a></dt>
+<dd><p>Zip a chunk of documents.</p>
+<p>Documents are retrieved from elasticsearch in chunks.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="id1">
+<h3>Utils<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<span class="target" id="module-query.utils"></span><p>Utility functions for saved queries.</p>
+<dl class="function">
+<dt id="query.utils.get_query">
+<tt class="descclassname">query.utils.</tt><tt class="descname">get_query</tt><big>(</big><em>query_id</em><big>)</big><a class="headerlink" href="#query.utils.get_query" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the query stored for a query id and an appropriate error
+message if the query cannot be retrieved.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="query.utils.get_query_object">
+<tt class="descclassname">query.utils.</tt><tt class="descname">get_query_object</tt><big>(</big><em>query_id</em><big>)</big><a class="headerlink" href="#query.utils.get_query_object" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the query object stored for a query id and an appropriate error
+message if the query cannot be retrieved.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="query.utils.query2docidsdate">
+<tt class="descclassname">query.utils.</tt><tt class="descname">query2docidsdate</tt><big>(</big><em>query_id</em>, <em>collection</em>, <em>date_begin</em>, <em>date_end</em><big>)</big><a class="headerlink" href="#query.utils.query2docidsdate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the document ids plus their date for the query and date range.</p>
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="services">
+<h2>Services<a class="headerlink" href="#services" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="elasticsearch-biland">
+<h3>Elasticsearch_biland<a class="headerlink" href="#elasticsearch-biland" title="Permalink to this headline">¶</a></h3>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Must be replaced as soon as possible (however, this requires a new user
+interface).</p>
+</div>
+<span class="target" id="module-services.elasticsearch_biland"></span><p>Old ElasticSearch BiLand functionality.</p>
+<p>This module must be removed.</p>
+<dl class="function">
+<dt id="services.elasticsearch_biland.elasticsearch_htmlresp">
+<tt class="descclassname">services.elasticsearch_biland.</tt><tt class="descname">elasticsearch_htmlresp</tt><big>(</big><em>collection</em>, <em>start_record</em>, <em>chunk_size</em>, <em>es_dict</em><big>)</big><a class="headerlink" href="#services.elasticsearch_biland.elasticsearch_htmlresp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create HTML response from ElasticSearch request.</p>
+<dl class="docutils">
+<dt>Parameters:</dt>
+<dd><dl class="first last docutils">
+<dt>collection <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd>The collection search results have been retrieved from. For
+Texcavator the collection is the ElasticSearch index name.</dd>
+<dt>start_record <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
+<dd>Search results are returned as a numbered list. The start record is
+the number this list should start with (pagination).</dd>
+<dt>chunck_size <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
+<dd>The number of results displayed.</dd>
+<dt>es_dict <span class="classifier-delimiter">:</span> <span class="classifier">dictionary</span></dt>
+<dd>Dictionary returned by ElasticSearch for a search request (contains
+the returned documents).</dd>
+</dl>
+</dd>
+<dt>Returns:</dt>
+<dd><dl class="first last docutils">
+<dt>string <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd>The html string for displaying the search results.</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="es">
+<h3>Es<a class="headerlink" href="#es" title="Permalink to this headline">¶</a></h3>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This is the ElasticSearch functionality that should be used.</p>
+</div>
+<span class="target" id="module-services.es"></span><p>Elasticsearch functionality</p>
+<dl class="function">
+<dt id="services.es.count_search_results">
+<tt class="descclassname">services.es.</tt><tt class="descname">count_search_results</tt><big>(</big><em>idx</em>, <em>typ</em>, <em>query</em>, <em>date_range</em>, <em>exclude_distributions</em>, <em>exclude_article_types</em><big>)</big><a class="headerlink" href="#services.es.count_search_results" title="Permalink to this definition">¶</a></dt>
+<dd><p>Count the number of results for a query</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="services.es.counter2wordclouddata">
+<tt class="descclassname">services.es.</tt><tt class="descname">counter2wordclouddata</tt><big>(</big><em>wordcloud_counter</em>, <em>burst</em>, <em>stopwords=None</em><big>)</big><a class="headerlink" href="#services.es.counter2wordclouddata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transform a counter into the data required to draw a word cloud.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="services.es.create_day_statistics_query">
+<tt class="descclassname">services.es.</tt><tt class="descname">create_day_statistics_query</tt><big>(</big><em>date_range</em>, <em>agg_name</em><big>)</big><a class="headerlink" href="#services.es.create_day_statistics_query" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create ES query to gather day statistics for the given date range.</p>
+<p>This function is used by the gatherstatistics management command.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="services.es.create_ids_query">
+<tt class="descclassname">services.es.</tt><tt class="descname">create_ids_query</tt><big>(</big><em>ids</em><big>)</big><a class="headerlink" href="#services.es.create_ids_query" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns an Elasticsearch ids query.</p>
+<p>Create Elasticsearch query that returns documents based on a list of
+ids.</p>
+<dl class="docutils">
+<dt>Parameters:</dt>
+<dd><dl class="first last docutils">
+<dt>ids <span class="classifier-delimiter">:</span> <span class="classifier">list</span></dt>
+<dd>A list containing document ids</dd>
+</dl>
+</dd>
+<dt>Returns:</dt>
+<dd><dl class="first last docutils">
+<dt>query <span class="classifier-delimiter">:</span> <span class="classifier">dict</span></dt>
+<dd>A dictionary representing an ES ids query</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="services.es.create_query">
+<tt class="descclassname">services.es.</tt><tt class="descname">create_query</tt><big>(</big><em>query_str</em>, <em>date_range</em>, <em>exclude_distributions</em>, <em>exclude_article_types</em><big>)</big><a class="headerlink" href="#services.es.create_query" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create elasticsearch query from input string.</p>
+<p>This method accepts boolean queries in the Elasticsearch query string
+syntax (see Elasticsearch reference).</p>
+<p>Returns a dict that represents the query in the elasticsearch query DSL.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="services.es.daterange2dates">
+<tt class="descclassname">services.es.</tt><tt class="descname">daterange2dates</tt><big>(</big><em>date_range_str</em><big>)</big><a class="headerlink" href="#services.es.daterange2dates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a dictionary containing the date boundaries specified.</p>
+<p>If the input string does not specify two dates, the maximum date range is
+retrieved from the settings.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="services.es.day_statistics">
+<tt class="descclassname">services.es.</tt><tt class="descname">day_statistics</tt><big>(</big><em>idx</em>, <em>typ</em>, <em>date_range</em>, <em>agg_name</em><big>)</big><a class="headerlink" href="#services.es.day_statistics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gather day statistics for all dates in the date range</p>
+<p>This function is used by the gatherstatistics management command.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="services.es.do_search">
+<tt class="descclassname">services.es.</tt><tt class="descname">do_search</tt><big>(</big><em>idx</em>, <em>typ</em>, <em>query</em>, <em>start</em>, <em>num</em>, <em>date_range</em>, <em>exclude_distributions</em>, <em>exclude_article_types</em>, <em>return_source=False</em><big>)</big><a class="headerlink" href="#services.es.do_search" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns ElasticSearch search results.</p>
+<p>Fetch all documents matching the query and return a list of
+elasticsearch results.</p>
+<p>This method accepts boolean queries in the Elasticsearch query string
+syntax (see Elasticsearch reference).</p>
+<dl class="docutils">
+<dt>Parameters:</dt>
+<dd><dl class="first last docutils">
+<dt>idx <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd>The name of the elasticsearch index</dd>
+<dt>typ <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd>The type of document requested</dd>
+<dt>query <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd>A query string in the Elasticsearch query string language</dd>
+<dt>start <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
+<dd>An integer representing the index of the first result to be
+retrieved</dd>
+<dt>num <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
+<dd>The total number of results to be retrieved</dd>
+<dt>date_range <span class="classifier-delimiter">:</span> <span class="classifier">dict</span></dt>
+<dd>A dictionary containg the upper and lower dates of the
+requested date range</dd>
+<dt>exclude_distributions <span class="classifier-delimiter">:</span> <span class="classifier">list</span></dt>
+<dd>A list of strings respresenting distributions that should be
+excluded from the search</dd>
+<dt>exclude_article_types <span class="classifier-delimiter">:</span> <span class="classifier">list</span></dt>
+<dd>A list of strings representing article types that should be
+excluded from the search</dd>
+<dt>return_source <span class="classifier-delimiter">:</span> <span class="classifier">boolean, optional</span></dt>
+<dd>A boolean indicating whether the _source of ES documents should be
+returned or a smaller selection of document fields. The smaller set
+of document fields (stored in _ES_RETURN_FIELDS) is the default</dd>
+</dl>
+</dd>
+<dt>Returns:</dt>
+<dd><dl class="first last docutils">
+<dt>validity <span class="classifier-delimiter">:</span> <span class="classifier">boolean</span></dt>
+<dd>A boolean indicating whether the input query string is valid.</dd>
+<dt>results <span class="classifier-delimiter">:</span> <span class="classifier">list</span></dt>
+<dd>A list of elasticsearch results or a message explaining why the
+input query string is invalid.</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="services.es.document_id_chunks">
+<tt class="descclassname">services.es.</tt><tt class="descname">document_id_chunks</tt><big>(</big><em>chunk_size</em>, <em>idx</em>, <em>typ</em>, <em>query</em>, <em>date_range</em>, <em>dist=[]</em>, <em>art_types=[]</em><big>)</big><a class="headerlink" href="#services.es.document_id_chunks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generator for retrieving document ids for all results of a query.</p>
+<p>Used by the generate_tv_cloud task.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="services.es.get_document">
+<tt class="descclassname">services.es.</tt><tt class="descname">get_document</tt><big>(</big><em>idx</em>, <em>typ</em>, <em>doc_id</em><big>)</big><a class="headerlink" href="#services.es.get_document" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a document given its id.</p>
+<dl class="docutils">
+<dt>Parameters:</dt>
+<dd><dl class="first last docutils">
+<dt>idx <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd>The name of the elasticsearch index</dd>
+<dt>typ <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd>The type of document requested</dd>
+<dt>doc_id <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd>The id of the document to be retrieved</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="services.es.get_document_ids">
+<tt class="descclassname">services.es.</tt><tt class="descname">get_document_ids</tt><big>(</big><em>idx</em>, <em>typ</em>, <em>query</em>, <em>date_range</em>, <em>exclude_distributions=[]</em>, <em>exclude_article_types=[]</em><big>)</big><a class="headerlink" href="#services.es.get_document_ids" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a list of document ids and dates for a query</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="services.es.get_search_parameters">
+<tt class="descclassname">services.es.</tt><tt class="descname">get_search_parameters</tt><big>(</big><em>req_dict</em><big>)</big><a class="headerlink" href="#services.es.get_search_parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a tuple of search parameters extracted from a dictionary</p>
+<dl class="docutils">
+<dt>Parameters:</dt>
+<dd><dl class="first last docutils">
+<dt>req_dict <span class="classifier-delimiter">:</span> <span class="classifier">dict</span></dt>
+<dd>A Django request dictionary</dd>
+</dl>
+</dd>
+<dt>Returns:</dt>
+<dd><dl class="first last docutils">
+<dt>dict <span class="classifier-delimiter">:</span> <span class="classifier">dict</span></dt>
+<dd>A dictionary that contains query metadata</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="services.es.multiple_document_word_cloud">
+<tt class="descclassname">services.es.</tt><tt class="descname">multiple_document_word_cloud</tt><big>(</big><em>idx</em>, <em>typ</em>, <em>query</em>, <em>date_range</em>, <em>dist</em>, <em>art_types</em>, <em>ids=None</em><big>)</big><a class="headerlink" href="#services.es.multiple_document_word_cloud" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return data required to draw a word cloud for multiple documents</p>
+<p>This function generates word cloud data using terms aggregations in ES.
+However, for newspaper articles this approach is not feasible; ES runs out
+of memory very quickly. Therefore, another approach to generating word
+cloud data was added: termvector_word_cloud</p>
+<dl class="docutils">
+<dt>See also:</dt>
+<dd><p class="first"><a class="reference internal" href="#services.es.single_document_word_cloud" title="services.es.single_document_word_cloud"><tt class="xref py py-func docutils literal"><span class="pre">single_document_word_cloud()</span></tt></a> generate data for a single document
+word cloud</p>
+<p class="last"><tt class="xref py py-func docutils literal"><span class="pre">termvector_word_cloud()</span></tt> generate word cloud data using termvector
+approach</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="services.es.single_document_word_cloud">
+<tt class="descclassname">services.es.</tt><tt class="descname">single_document_word_cloud</tt><big>(</big><em>idx</em>, <em>typ</em>, <em>doc_id</em>, <em>min_length=0</em>, <em>stopwords=None</em><big>)</big><a class="headerlink" href="#services.es.single_document_word_cloud" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return data required to draw a word cloud for a single document.</p>
+<dl class="docutils">
+<dt>Parameters:</dt>
+<dd><dl class="first last docutils">
+<dt>idx <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd>The name of the elasticsearch index</dd>
+<dt>typ <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd>The type of document requested</dd>
+<dt>doc_id <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd>The id of the document the word cloud should be created for</dd>
+<dt>min_length <span class="classifier-delimiter">:</span> <span class="classifier">int, optional</span></dt>
+<dd>The minimum length of words in the word cloud</dd>
+<dt>stopwords <span class="classifier-delimiter">:</span> <span class="classifier">list, optional</span></dt>
+<dd>A list of words that should be removed from the word cloud</dd>
+</dl>
+</dd>
+<dt>Returns:</dt>
+<dd><dl class="first docutils">
+<dt>dict <span class="classifier-delimiter">:</span> <span class="classifier">dict</span></dt>
+<dd>A dictionary that contains word frequencies for all the terms in
+the document. The data returned is formatted according to what is
+expected by the user interface:</dd>
+</dl>
+<dl class="docutils">
+<dt>{</dt>
+<dd><p class="first">&#8216;status&#8217;: &#8216;ok&#8217;
+&#8216;max_count&#8217;: ...
+&#8216;result&#8217;:</p>
+<blockquote class="last">
+<div><dl class="docutils">
+<dt>[</dt>
+<dd><dl class="first last docutils">
+<dt>{</dt>
+<dd>&#8216;term&#8217;: ...
+&#8216;count&#8217;: ...</dd>
+</dl>
+</dd>
+</dl>
+<p>]</p>
+</div></blockquote>
+</dd>
+</dl>
+<p class="last">}</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="services.es.termvector_wordcloud">
+<tt class="descclassname">services.es.</tt><tt class="descname">termvector_wordcloud</tt><big>(</big><em>idx</em>, <em>typ</em>, <em>doc_ids</em>, <em>min_length=0</em><big>)</big><a class="headerlink" href="#services.es.termvector_wordcloud" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return word frequencies in a set of documents.</p>
+<p>Return data required to draw a word cloud for multiple documents by
+&#8216;manually&#8217; merging termvectors.</p>
+<p>The counter returned by this method can be transformed into the input
+expected by the interface by passing it to the counter2wordclouddata
+method.</p>
+<dl class="docutils">
+<dt>See also</dt>
+<dd><p class="first"><a class="reference internal" href="#services.es.single_document_word_cloud" title="services.es.single_document_word_cloud"><tt class="xref py py-func docutils literal"><span class="pre">single_document_word_cloud()</span></tt></a> generate data for a single document
+word cloud</p>
+<p class="last"><a class="reference internal" href="#services.es.multiple_document_word_cloud" title="services.es.multiple_document_word_cloud"><tt class="xref py py-func docutils literal"><span class="pre">multiple_document_word_cloud()</span></tt></a> generate word cloud data using
+terms aggregation approach</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="services.es.word_cloud_aggregation">
+<tt class="descclassname">services.es.</tt><tt class="descname">word_cloud_aggregation</tt><big>(</big><em>agg_name</em>, <em>num_words=100</em><big>)</big><a class="headerlink" href="#services.es.word_cloud_aggregation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return aggragation part of terms aggregation (=word cloud) that can be
+added to any Elasticsearch query.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-services.tasks">
+<span id="tasks"></span><h3>Tasks<a class="headerlink" href="#module-services.tasks" title="Permalink to this headline">¶</a></h3>
+<p>Services celery tasks.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Additional Modules</a><ul>
+<li><a class="reference internal" href="#texcavator">Texcavator</a><ul>
+<li><a class="reference internal" href="#module-texcavator.utils">Utils</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#query">Query</a><ul>
+<li><a class="reference internal" href="#module-query.burstsdetector.bursts">Burstsdetector</a></li>
+<li><a class="reference internal" href="#module-query.download">Download</a></li>
+<li><a class="reference internal" href="#id1">Utils</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#services">Services</a><ul>
+<li><a class="reference internal" href="#elasticsearch-biland">Elasticsearch_biland</a></li>
+<li><a class="reference internal" href="#es">Es</a></li>
+<li><a class="reference internal" href="#module-services.tasks">Tasks</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="views.html"
+                        title="previous chapter">Views</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="commands.html"
+                        title="next chapter">Management Commands</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/modules/other.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="commands.html" title="Management Commands"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="views.html" title="Views"
+             >previous</a> |</li>
+        <li><a href="../index.html">Texcavator 0.9 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2015, Janneke van der Zwaan.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>

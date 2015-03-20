@@ -1,0 +1,194 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Models &mdash; Texcavator 0.9 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.9',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="Texcavator 0.9 documentation" href="../index.html" />
+    <link rel="next" title="Views" href="views.html" />
+    <link rel="prev" title="Welcome to Texcavator’s documentation!" href="../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="views.html" title="Views"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../index.html" title="Welcome to Texcavator’s documentation!"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">Texcavator 0.9 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="models">
+<h1>Models<a class="headerlink" href="#models" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-query.models">
+<span id="query"></span><h2>Query<a class="headerlink" href="#module-query.models" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="query.models.ArticleType">
+<em class="property">class </em><tt class="descclassname">query.models.</tt><tt class="descname">ArticleType</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#query.models.ArticleType" title="Permalink to this definition">¶</a></dt>
+<dd><p>Model to store the names of article types that are available in the
+elasticsearch index.</p>
+<p>The article types are part of the metadata of a query.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="query.models.DayStatistic">
+<em class="property">class </em><tt class="descclassname">query.models.</tt><tt class="descname">DayStatistic</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#query.models.DayStatistic" title="Permalink to this definition">¶</a></dt>
+<dd><p>DayStatistic is used to generate timeline graphs. Data for the
+DayStatistic table is gathered with the &#8216;gatherstatistics&#8217; management
+command.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="query.models.Distribution">
+<em class="property">class </em><tt class="descclassname">query.models.</tt><tt class="descname">Distribution</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#query.models.Distribution" title="Permalink to this definition">¶</a></dt>
+<dd><p>Model that stores the names of distributions that are available in the
+elasticsearch index.</p>
+<p>The distributions are part of the metadata of a query.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="query.models.Query">
+<em class="property">class </em><tt class="descclassname">query.models.</tt><tt class="descname">Query</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#query.models.Query" title="Permalink to this definition">¶</a></dt>
+<dd><p>Model to store a user&#8217;s queries.</p>
+<dl class="method">
+<dt id="query.models.Query.get_query_dict">
+<tt class="descname">get_query_dict</tt><big>(</big><big>)</big><a class="headerlink" href="#query.models.Query.get_query_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a JSON serializable representation of the query object, that
+contains all relevant data and metadata.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="query.models.StopWord">
+<em class="property">class </em><tt class="descclassname">query.models.</tt><tt class="descname">StopWord</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#query.models.StopWord" title="Permalink to this definition">¶</a></dt>
+<dd><p>Model to store stopwords.</p>
+<p>Stopwords can be stored for queries, or are applied to all queries of a
+user.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-services.models">
+<span id="services"></span><h2>Services<a class="headerlink" href="#module-services.models" title="Permalink to this headline">¶</a></h2>
+<p>Models used for measuring ElasticSearch performance in management commands.</p>
+<dl class="class">
+<dt id="services.models.DocID">
+<em class="property">class </em><tt class="descclassname">services.models.</tt><tt class="descname">DocID</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#services.models.DocID" title="Permalink to this definition">¶</a></dt>
+<dd><p>Model for a document id used to generate queries of certain sizes</p>
+<p>This model is used to store document ids. The document ids are used to
+generate query sets of certain sizes. These query sets are used to test the
+performance of generating word cloud data using ES in multiple management
+commands.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="services.models.QueryTerm">
+<em class="property">class </em><tt class="descclassname">services.models.</tt><tt class="descname">QueryTerm</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#services.models.QueryTerm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Model to store query terms used to generate random queries</p>
+<p>See management commands gatherqueryterms and weighted_queries.</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Models</a><ul>
+<li><a class="reference internal" href="#module-query.models">Query</a></li>
+<li><a class="reference internal" href="#module-services.models">Services</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../index.html"
+                        title="previous chapter">Welcome to Texcavator&#8217;s documentation!</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="views.html"
+                        title="next chapter">Views</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/modules/models.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="views.html" title="Views"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../index.html" title="Welcome to Texcavator’s documentation!"
+             >previous</a> |</li>
+        <li><a href="../index.html">Texcavator 0.9 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2015, Janneke van der Zwaan.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>

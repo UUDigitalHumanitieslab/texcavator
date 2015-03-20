@@ -1,0 +1,183 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Management Commands &mdash; Texcavator 0.9 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.9',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="Texcavator 0.9 documentation" href="../index.html" />
+    <link rel="prev" title="Additional Modules" href="other.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="other.html" title="Additional Modules"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">Texcavator 0.9 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="management-commands">
+<h1>Management Commands<a class="headerlink" href="#management-commands" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="query">
+<h2>Query<a class="headerlink" href="#query" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-query.management.commands.export_queries">
+<span id="export-queries"></span><h3>export_queries<a class="headerlink" href="#module-query.management.commands.export_queries" title="Permalink to this headline">¶</a></h3>
+<p>Export queries and associated metadata of selected users.</p>
+</div>
+<div class="section" id="module-query.management.commands.export_stopwords">
+<span id="export-stopwords"></span><h3>export_stopwords<a class="headerlink" href="#module-query.management.commands.export_stopwords" title="Permalink to this headline">¶</a></h3>
+<p>Export stopwords of selected users.</p>
+</div>
+<div class="section" id="module-query.management.commands.gatherstatistics">
+<span id="gatherstatistics"></span><h3>gatherstatistics<a class="headerlink" href="#module-query.management.commands.gatherstatistics" title="Permalink to this headline">¶</a></h3>
+<p>Gather statistics of the total number of documents per day and put them in
+the database.</p>
+</div>
+<div class="section" id="module-query.management.commands.zipquerydata">
+<span id="zipquerydata"></span><h3>zipquerydata<a class="headerlink" href="#module-query.management.commands.zipquerydata" title="Permalink to this headline">¶</a></h3>
+<p>Management command for creating a zipfile of a set of documents (query
+export).</p>
+</div>
+</div>
+<div class="section" id="services">
+<h2>Services<a class="headerlink" href="#services" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-services.management.commands.gatherdocids">
+<span id="gatherdocids"></span><h3>gatherdocids<a class="headerlink" href="#module-services.management.commands.gatherdocids" title="Permalink to this headline">¶</a></h3>
+<p>Gather document ids of documents in the index and store them in the
+database. The collection of document ids is used for testing ElasticSearch
+performance on term aggregations (command: esperformance).</p>
+</div>
+<div class="section" id="module-services.management.commands.gatherqueryterms">
+<span id="gatherqueryterms"></span><h3>gatherqueryterms<a class="headerlink" href="#module-services.management.commands.gatherqueryterms" title="Permalink to this headline">¶</a></h3>
+<p>Gather query terms and store them in the database.
+The collection of terms is used for testing ElasticSearch performance on
+weighted queries (command: weighted_queries).</p>
+</div>
+<div class="section" id="esperformance">
+<h3>esperformance<a class="headerlink" href="#esperformance" title="Permalink to this headline">¶</a></h3>
+<hr class="docutils" />
+<span class="target" id="module-services.management.commands.tag_wordclouds"></span><p>Generate word clouds based on words added as tags for random sets of
+documents.</p>
+</div>
+<div class="section" id="module-services.management.commands.termvector_wordclouds">
+<span id="termvector-wordclouds"></span><h3>termvector_wordclouds<a class="headerlink" href="#module-services.management.commands.termvector_wordclouds" title="Permalink to this headline">¶</a></h3>
+<p>Generate word clouds based on termvectors for random sets of documents.</p>
+</div>
+<div class="section" id="module-services.management.commands.tv_wc_no_client">
+<span id="tv-wc-no-client"></span><h3>tv_wc_no_client<a class="headerlink" href="#module-services.management.commands.tv_wc_no_client" title="Permalink to this headline">¶</a></h3>
+<p>Generate word clouds based on termvectors for random sets of documents.</p>
+</div>
+<div class="section" id="module-services.management.commands.weighted_queries">
+<span id="weighted-queries"></span><h3>weighted_queries<a class="headerlink" href="#module-services.management.commands.weighted_queries" title="Permalink to this headline">¶</a></h3>
+<p>Perform searches with random weighted queries in ElasticSearch.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Management Commands</a><ul>
+<li><a class="reference internal" href="#query">Query</a><ul>
+<li><a class="reference internal" href="#module-query.management.commands.export_queries">export_queries</a></li>
+<li><a class="reference internal" href="#module-query.management.commands.export_stopwords">export_stopwords</a></li>
+<li><a class="reference internal" href="#module-query.management.commands.gatherstatistics">gatherstatistics</a></li>
+<li><a class="reference internal" href="#module-query.management.commands.zipquerydata">zipquerydata</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#services">Services</a><ul>
+<li><a class="reference internal" href="#module-services.management.commands.gatherdocids">gatherdocids</a></li>
+<li><a class="reference internal" href="#module-services.management.commands.gatherqueryterms">gatherqueryterms</a></li>
+<li><a class="reference internal" href="#esperformance">esperformance</a></li>
+<li><a class="reference internal" href="#module-services.management.commands.termvector_wordclouds">termvector_wordclouds</a></li>
+<li><a class="reference internal" href="#module-services.management.commands.tv_wc_no_client">tv_wc_no_client</a></li>
+<li><a class="reference internal" href="#module-services.management.commands.weighted_queries">weighted_queries</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="other.html"
+                        title="previous chapter">Additional Modules</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/modules/commands.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="other.html" title="Additional Modules"
+             >previous</a> |</li>
+        <li><a href="../index.html">Texcavator 0.9 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2015, Janneke van der Zwaan.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>

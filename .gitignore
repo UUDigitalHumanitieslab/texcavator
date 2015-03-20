@@ -1,0 +1,13 @@
+*.pyc
+*.log
+*.old
+*~
+texcavator/static/js/dojo-*
+celeryev.pid
+.exvim.*
+*.exvim
+
+*.tar.gz
+
+# Vim stuff
+.*.sw[op]
