@@ -148,8 +148,7 @@ LOGGING = {
         'file': {
             'level': 'INFO',
             'class': 'logging.FileHandler',
-            'filename': '/home/jvdzwaan/Texcavator/texcavator/'
-                        'Texcavator_Django.log',
+            'filename': PROJECT_PARENT + '/Texcavator_Django.log',
             'formatter': 'verbose'
         },
     },

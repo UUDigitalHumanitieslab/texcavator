@@ -68,12 +68,12 @@ if DEBUG:
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'test_db_texcavator',
-        'USER': 'root',
-        'PASSWORD': 'geheim',
-        'HOST': '',
-        'PORT': '',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'tex',
+        'USER': 'tex',
+        'PASSWORD': 'tex',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
 
