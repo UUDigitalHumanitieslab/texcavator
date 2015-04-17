@@ -1,6 +1,6 @@
 Celery==3.1.10
 dicttoxml
-Django
+Django==1.7.7
 django-celery
 django-extensions
 django-nose
