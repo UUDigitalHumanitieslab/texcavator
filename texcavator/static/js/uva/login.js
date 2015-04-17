@@ -283,7 +283,7 @@ var createLogout = function()
 {
 	var dlgLogout = new dijit.Dialog({
 		id: "dlg-logout",
-		title: "BiLand Logout"
+		title: "Logout"
 	});
 
 	dojo.style( dlgLogout.closeButtonNode, "visibility", "hidden" ); // hide the ordinary close button
