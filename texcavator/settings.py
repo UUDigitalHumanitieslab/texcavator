@@ -6,12 +6,12 @@ import os
 import sys
 
 from settings_local import PROJECT_GRANNY, PROJECT_PARENT, PROJECT_ROOT
+from texcavator.__init__ import DEBUG
 
 PROJECT_GRANNY = os.path.normpath(PROJECT_GRANNY)      # zap trailing `/'
 PROJECT_PARENT = os.path.normpath(PROJECT_PARENT)      # zap trailing `/'
 PROJECT_ROOT = os.path.normpath(PROJECT_ROOT)          # zap trailing `/'
 
-from texcavator.__init__ import DEBUG
 TEMPLATE_DEBUG = DEBUG
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
@@ -30,7 +30,7 @@ TIME_ZONE = 'Europe/Amsterdam'
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
 LANGUAGE_CODE = 'en'
-#LANGUAGE_CODE = 'nl-nl'
+# LANGUAGE_CODE = 'nl-nl'
 
 SITE_ID = 1
 

@@ -7,6 +7,7 @@ from django.core.management.base import BaseCommand
 from query.models import StopWord
 from query.management.commands.export_queries import users
 
+
 class Command(BaseCommand):
     args = ''
     help = 'Export stopwords'

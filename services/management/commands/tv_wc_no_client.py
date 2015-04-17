@@ -18,6 +18,7 @@ from texcavator import utils
 
 logger = logging.getLogger(__name__)
 
+
 class Command(BaseCommand):
     args = '<#-documents, size-of-ES-chunks, #-repetitions>'
     help = 'Generate word clouds using term vectors. #-documents is the ' \

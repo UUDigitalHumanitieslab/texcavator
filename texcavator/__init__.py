@@ -7,4 +7,3 @@ from .celery import app as celery_app
 
 # for settings.py & settings_local.py
 DEBUG = True
-#DEBUG = False

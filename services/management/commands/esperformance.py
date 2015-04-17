@@ -16,6 +16,7 @@ from services.models import DocID
 
 logger = logging.getLogger(__name__)
 
+
 class Command(BaseCommand):
     args = '<#-documents, #-repetitions>'
     help = 'Perform ElasticSearch term aggregations. #-documents is the ' \

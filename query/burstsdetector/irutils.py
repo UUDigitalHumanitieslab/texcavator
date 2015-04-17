@@ -6,7 +6,6 @@ rdate = re.compile(r"BLOG06-(\d+)-.+?", re.DOTALL | re.IGNORECASE)
 
 
 def docno2date(docno):
-    #print docno
     datestring = rdate.search(docno).group(1).strip()
     if int(datestring[0]) > 2:
         datestring = "19" + datestring

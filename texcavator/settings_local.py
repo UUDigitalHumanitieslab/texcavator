@@ -5,6 +5,8 @@
 import os
 import sys
 
+from texcavator.__init__ import DEBUG
+
 # This determines the <title> of the web interface.
 PROJECT_NAME = 'Texcavator'
 
@@ -13,8 +15,6 @@ PROJECT_PARENT = os.path.dirname(PROJECT_ROOT)
 PROJECT_GRANNY = os.path.dirname(PROJECT_PARENT)
 
 sys.path.append(PROJECT_PARENT)
-
-from texcavator.__init__ import DEBUG
 
 if DEBUG:
     print >> sys.stderr, "PROJECT_GRANNY:", PROJECT_GRANNY

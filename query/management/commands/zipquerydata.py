@@ -9,7 +9,6 @@ from time import time, localtime, strftime
 from sys import exc_info
 
 import logging
-logger = logging.getLogger(__name__)
 
 import json
 
@@ -17,6 +16,8 @@ from django.conf import settings
 from django.core.management.base import BaseCommand
 
 from query.download import download_collect
+
+logger = logging.getLogger(__name__)
 
 
 class Command(BaseCommand):

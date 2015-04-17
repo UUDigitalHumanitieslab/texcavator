@@ -16,7 +16,6 @@ import base64
 import subprocess
 
 import logging
-logger = logging.getLogger(__name__)
 
 import json
 
@@ -25,6 +24,8 @@ from django.core.mail import send_mail
 from django.http import HttpResponse
 
 from services.es import do_search, get_search_parameters
+
+logger = logging.getLogger(__name__)
 
 
 def create_zipname(username, query_title):

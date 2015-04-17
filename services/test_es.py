@@ -1,10 +1,11 @@
 import os
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "texcavator.settings")
 
 from nose.tools import assert_equals
 
 from services.es import single_document_word_cloud, daterange2dates
 from texcavator.settings import ES_INDEX, ES_DOCTYPE, TEXCAVATOR_DATE_RANGE
+
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "texcavator.settings")
 
 
 def test_single_document_word_cloud_invalid_id():

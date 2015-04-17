@@ -6,7 +6,6 @@ import requests
 from itertools import chain
 
 import logging
-logger = logging.getLogger(__name__)
 
 import json
 from celery.result import AsyncResult
@@ -28,6 +27,8 @@ from query.utils import get_query_object
 
 from services.export import export_csv
 from services.tasks import generate_tv_cloud
+
+logger = logging.getLogger(__name__)
 
 
 @login_required

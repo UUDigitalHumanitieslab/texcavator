@@ -5,11 +5,12 @@
 # fix encoding of output
 import sys
 import codecs
-sys.stdout = codecs.getwriter('utf8')(sys.stdout)
 
 from django.core.management.base import BaseCommand
 
 from query.models import Query
+
+sys.stdout = codecs.getwriter('utf8')(sys.stdout)
 
 # users that gave permission to export their queries
 users = ['jdekruif', 'jesperverhoef', 'mwevers', 'lwalma', 'mvdbos',
