@@ -9,5 +9,6 @@ celeryev.pid
 
 *.tar.gz
 
-# Vim stuff
+# IDE stuff
 .*.sw[op]
+.idea
