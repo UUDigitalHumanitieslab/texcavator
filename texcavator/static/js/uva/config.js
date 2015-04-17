@@ -38,7 +38,8 @@ var config = {
 			surinam:	true,		// type: "Suriname"						Suriname
 			indonesia:	true		// type: "Nederlands-Indië/Indonesië"	Indonesië
 		},
-		chunk_size : 20
+		chunk_size : 20,
+		sort_order : '_score'
 	},
 
 	cloud: {				// word cloud
@@ -111,6 +112,7 @@ function getSearchParameters()
 	params = {
 		datastore      : config[ "datastore" ],
 		maximumRecords : config[ "search" ][ "chunk_size" ],
+		sort_order     : config[ "search" ][ "sort_order" ],
 
 		st_article     : config[ "search" ][ "type" ][ "article" ],
 		st_advert      : config[ "search" ][ "type" ][ "advert" ],
@@ -413,6 +415,22 @@ var createConfig = function()
 		id: "label-search_chunk",
 		for: "ns-search-chunk",
 		innerHTML: "&nbsp;Search chunk size<br/>"
+	}, cpSearch.domNode );
+
+	var divSortOrder = dojo.create( "div", {
+		id: "div-sort-order"
+	}, cpSearch.domNode );
+
+	var sortOrderBox = new dijit.form.TextBox({
+		id: "tb-sort-order",
+		value: config[ "search" ][ "sort_order" ],
+		onChange: function( value ) { config[ "search" ][ "sort_order" ] = value; }
+	}, divSortOrder );
+
+	var labelSortOrder = dojo.create( "label", {
+		id: "label-sort-order",
+		for: "tb-sort-order",
+		innerHTML: "&nbsp;Sort order (syntax: <em>fieldname:order</em>, multiple orders separated by commas)<br/>"
 	}, cpSearch.domNode );
 
 

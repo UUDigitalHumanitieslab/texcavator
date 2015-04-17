@@ -24,7 +24,7 @@ def elasticsearch_htmlresp(collection, start_record, chunk_size, es_dict):
         start_record : int
             Search results are returned as a numbered list. The start record is
             the number this list should start with (pagination).
-        chunck_size : int
+        chunk_size : int
             The number of results displayed.
         es_dict : dictionary
             Dictionary returned by ElasticSearch for a search request (contains
@@ -68,7 +68,7 @@ def elasticsearch_htmlresp(collection, start_record, chunk_size, es_dict):
             html_str = html_str + href_next
         html_str += '</span>'
 
-    if hits_total == 0:
+    if hits_total == 0 or not hits_max_score:
         html_str += '<p>Found ' + "%s" % hits_total + ' records.'
     else:
         html_str += '<p>Found ' + "%s" % hits_total + ' records, '
@@ -120,9 +120,10 @@ def elasticsearch_htmlresp(collection, start_record, chunk_size, es_dict):
         if paper_dcterms_spatial != "":
             item_str += ', ' + paper_dcterms_spatial
 
-        item_str += ' [score: '
-        item_str += "%1.2f" % _score
-        item_str += ']'
+        if _score:
+            item_str += ' [score: '
+            item_str += "%1.2f" % _score
+            item_str += ']'
 
         item_str += "</li>"
         html_str += item_str
