@@ -18,5 +18,5 @@ Pygments
 docutils
 Jinja2
 markupsafe
-spinx
+sphinx
 nose
