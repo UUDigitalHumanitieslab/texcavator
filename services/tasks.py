@@ -2,11 +2,13 @@
 """Services celery tasks.
 """
 from __future__ import absolute_import
+
 from collections import Counter
 
 from celery import shared_task, current_task
 
 from django.conf import settings
+
 from services.es import document_id_chunks, termvector_wordcloud, \
     counter2wordclouddata, count_search_results
 from texcavator import utils
@@ -52,7 +54,7 @@ def generate_tv_cloud(search_params, min_length, stopwords, ids=None):
                                           min_length)
             wordcloud_counter = wordcloud_counter + result
 
-            progress = progress + len(subset)
+            progress += len(subset)
             info = {
                 'current': progress,
                 'total': doc_count
@@ -67,7 +69,7 @@ def generate_tv_cloud(search_params, min_length, stopwords, ids=None):
                                           min_length)
             wordcloud_counter = wordcloud_counter + result
 
-            progress = progress + len(subset)
+            progress += len(subset)
             info = {
                 'current': progress,
                 'total': len(ids)
