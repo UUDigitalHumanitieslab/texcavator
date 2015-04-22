@@ -33,9 +33,9 @@ Install Dojo::
 
     sh install-dojo.sh
 
-In ``texcavator/settings.py``, change the path to the log, if your installation
-is not cloned into ``/home/jvdzwaan/Texcavator``. In
-``texcavator/settings_local.py``, set up the database; for a quick test, set::
+In ``texcavator/settings.py``, you can change the path to the log file, if you like.
+
+In ``texcavator/settings_local.py``, set up the database; for a quick test, set::
 
     DATABASE_ENGINE = 'django.db.backends.sqlite3'
 
@@ -67,6 +67,10 @@ If you want to display timelines, run the management command
 
     python manage.py gatherstatistics
 
+Downloading of query data requires a running SMTP server; you can use Python's build in for that::
+
+    python -m smtpd -n -c DebuggingServer localhost:1025
+
 Preparing the data
 ==================
 
@@ -89,7 +93,7 @@ Texcavator requires that the documents are stored in a ``doc_type`` doc that has
 * paper_dcterms_temporal
 * text_content
 
-And mapping:
+And mapping::
 
     { 
         'doc': {
