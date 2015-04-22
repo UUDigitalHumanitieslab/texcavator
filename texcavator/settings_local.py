@@ -30,13 +30,9 @@ ES_DOCTYPE = 'doc'
 
 QUERY_DATA_DOWNLOAD_ALLOW = True
 
-# when True QUERY_DATA_VPYTHON_PATH is needed
-QUERY_DATA_DOWNLOAD_DETACH = True
 QUERY_DATA_DOWNLOAD_PATH = os.path.join(PROJECT_GRANNY,
                                         "BILAND_download/query_data")
 
-# virtual python
-QUERY_DATA_VPYTHON_PATH = os.path.join(PROJECT_GRANNY, ".virtualenvs/texc")
 QUERY_DATA_CHUNK_SIZE = 100		# no. of documents from ES with 1 query
 QUERY_DATA_DELETE_DATA = True		# delete query download data
 QUERY_DATA_EXPIRE_DAYS = 1			# delete after one day
@@ -51,12 +47,8 @@ if DEBUG:
 
     print >> sys.stderr, "QUERY_DATA_DOWNLOAD_ALLOW:  %s" % \
         QUERY_DATA_DOWNLOAD_ALLOW
-    print >> sys.stderr, "QUERY_DATA_DOWNLOAD_DETACH: %s" % \
-        QUERY_DATA_DOWNLOAD_DETACH
     print >> sys.stderr, "QUERY_DATA_DOWNLOAD_PATH:   %s" % \
         QUERY_DATA_DOWNLOAD_PATH
-    print >> sys.stderr, "QUERY_DATA_VPYTHON_PATH:    %s" % \
-        QUERY_DATA_VPYTHON_PATH
     print >> sys.stderr, "QUERY_DATA_CHUNK_SIZE:      %s" % \
         QUERY_DATA_CHUNK_SIZE
     print >> sys.stderr, "QUERY_DATA_DELETE_DATA:     %s" % \
