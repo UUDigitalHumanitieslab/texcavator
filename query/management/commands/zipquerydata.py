@@ -66,6 +66,10 @@ class Command(BaseCommand):
         fpath_debug = os.path.join(zip_basedir, fname_debug)
         self.stdout.write("%s\n" % fpath_debug)
 
+        # Create the directory if it doesn't exist
+        if not os.path.exists(zip_basedir):
+            os.makedirs(zip_basedir)
+
         try:
             file_debug = open(fpath_debug, 'w')
         except:
