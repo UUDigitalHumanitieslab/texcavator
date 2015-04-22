@@ -302,7 +302,7 @@ def stopwords(request):
 @login_required
 def download_prepare(request):
     """
-    Request from BiLand to create the ocr+meta-data zipfile for download
+    Request from texcavator to create the ocr+meta-data zipfile for download
     """
     if settings.DEBUG:
         print >> stderr, "download_prepare()"
@@ -353,7 +353,7 @@ def download_prepare(request):
     zip_basename = create_zipname(user.username, query_str)
     url = urljoin('http://{}'.format(request.get_host()),
                   "/query/download/" + quote_plus(zip_basename))
-    email_message = "BiLand Query: " + query_str + "\n" + zip_basename + \
+    email_message = "Texcavator query: " + query_str + "\n" + zip_basename + \
         "\nURL: " + url
     if settings.DEBUG:
         print >> stderr, email_message
