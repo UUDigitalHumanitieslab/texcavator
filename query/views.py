@@ -389,7 +389,7 @@ def download_data(request, zip_name):
     zip_filename = zip_name + ".zip"
     zip_pathname = os.path.join(zip_basedir, zip_filename)
 
-    wrapper = FileWrapper(open(zip_pathname, 'r'))
+    wrapper = FileWrapper(open(zip_pathname, 'rb'))
     response = HttpResponse(wrapper, content_type='application/zip')
     response['Content-Length'] = os.path.getsize(zip_pathname)
     response['Content-Disposition'] = "attachment; filename=%s" % zip_filename
