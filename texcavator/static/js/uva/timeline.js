@@ -1,6 +1,3 @@
-// FL-24-Aug-2012 Created
-// FL-23-Sep-2013 Changed
-
 dojo.require( "dijit.Tooltip" );
 dojo.require( "dijit.popup" );
 
@@ -24,8 +21,6 @@ function burstCloud( params )
 function closePopup() {}
 */
 
-//var intervals = [ "year", "month", "week", "day", "hour", "minute"] ;
-//var intervals = [ "month", "week", "day"]; //, "hour", "5m" ];		//, "minute" ];
 var intervals = [ "year", "month", "day" ];
 
 var zoomLimit = 8*24*3600000;	// Eight days
@@ -59,11 +54,8 @@ var showTimeline = function(item, collection)
 }
 
 
-
 function loadGraphData( lexiconId ) 
 {
-//	console.log( "loadGraphData() lexiconId: " + lexiconId  );
-
 	burstData = {};
 	burstIntervalIndex = 0;
 	burstAnimation = false;
@@ -85,11 +77,8 @@ function loadGraphData( lexiconId )
 }
 
 
-
 function getDataForInterval( lexiconId, intervalIndex, callback ) 
 {
-//	console.log( "getDataForInterval(): " + intervalIndex );
-
 	var interval = intervals[ intervalIndex ];
 
 	getData( lexiconId, "created_at", interval, function( data )
@@ -156,45 +145,26 @@ function getDataForInterval( lexiconId, intervalIndex, callback )
 }
 
 
-
 function getData( lexiconId, field, interval, callback )
 {
-//	console.log( "getData()" );
-
-//	var timeline_url = "http://zookst14.science.uva.nl:9200/semantictwittertest/tweet/_search?pretty=true"
-//	var timeline_url = "http://node428.das3.science.uva.nl:9200/semantictwittertest/tweet/_search?pretty=true"
 	var timeline_url = "query/timeline/" + lexiconId + "/" + interval;
-//	console.log( "url: " + timeline_url );
 
 	var config = getConfig();
 	var collection = retrieveCollectionUsed();
 	timeline_url = timeline_url + "?collection=" + collection;
 
-	if( config[ "timeline" ][ "normalize" ] == true )
-	{ timeline_url = timeline_url + "&normalize=1" }
-	else
-	{ timeline_url = timeline_url + "&normalize=0" }
+	if( config[ "timeline" ][ "normalize" ] == true ) {
+	    timeline_url += "&normalize=1";
+	}
+	else {
+	    timeline_url += "&normalize=0";
+	}
 
 	var dateBeginStr = getDateBeginStr();
 	var dateEndStr   = getDateEndStr();
 	console.log( "daterange: from " + dateBeginStr + " till " + dateEndStr );
 	timeline_url = timeline_url + "&begindate=" + dateBeginStr + "&enddate=" + dateEndStr;
 	console.log( "timeline_url: " + timeline_url );
-
-	/*
-	if( config[ "timeline" ][ "burst_detect" ] == true )
-	{ timeline_url = timeline_url + "&burstdetect=1" }
-	else
-	{ timeline_url = timeline_url + "&burstdetect=0" }
-	*/
-
-	/*
-	// with POST: Component returned failure code: 0x80460001 (NS_ERROR_CANNOT_CONVERT_DATA)
-	data: {
-		"normalize": normalize,
-		"burstdetect": burstdetect
-	},
-	*/
 
 	$.ajax({
 		url: timeline_url,
@@ -208,7 +178,6 @@ function getData( lexiconId, field, interval, callback )
 
 			$.each( rawData, function( key, value ) 
 			{
-			//	console.log( value );
 				data.push(
 				{
 					start: new Date( key ),
@@ -232,11 +201,8 @@ function getData( lexiconId, field, interval, callback )
 }
 
 
-
 function getEndOfInterval( date, interval ) 
 {
-//	console.log( "getEndOfInterval()" );
-
 	if( interval == "year" ) 
 	{ return new Date( date.getTime() + 365*24*3600000 - 1 ); }
 
@@ -264,11 +230,8 @@ function getEndOfInterval( date, interval )
 }
 
 
-
 function createGraph() 
 {
-//	console.log( "createGraph()" );
-
 	var config = getConfig();
 
 	// Create a place for the chart
@@ -304,13 +267,6 @@ function createGraph()
 
 	var body = svg.append( "svg:g" );
 
-	/*
-	var area = d3.svg.area()
-		.x( function( d ) { return x( ( d.start.getTime() + d.end.getTime() )/2 ); } )
-		.y0( 0 )
-		.y1( function( d ) { return y( d.value ); } )
-		.interpolate( "cardinal-open " );
-	*/
 	var area = d3.svg.area()
 		.x( function( d ) { return x( d.start ); } )
 		.y0( 0 )
@@ -594,22 +550,13 @@ function createGraph()
 function burstSearch( lexicon_query, date_range, max_records ) 
 {
 	console.log( "burstSearch()" );
-//	console.log( lexicon_query );
-//	console.log( date_range );
 
-	// how to select accordion child?
 	accordionSelectChild( "searchPane" );
-//	var accordion = dijit.byId( "leftAccordion" );
-//	var selected_child = accordion.get( "selectedChildWidget" );
-//	if( selected_child.id !== "searchPane" ) { accordion.back(); }	// show Search pane
-//	console.log( selected_child );
 
 	var params = getSearchParameters();		// get user-changeable parameters from config
 	params.query = lexicon_query;			// insert the query string
 	params.dateRange = date_range;			// replace dateRange from the date widgets with the timeline bar dateRange
 	params.maximumRecords = max_records;
-
-//	console.log( params );
 
 	var url = "services/search/";
 	dojo.xhrGet({
@@ -635,26 +582,6 @@ function burstClicked( data, index, element )
 	var e = element;
 	var d = data;
 
-	/*
-	index = histogram bar index, starting at 0
-	element = svg bar, e.g.
-		<rect class="bursts" height="300" x="0" width="32.69024529281904" style="opacity: 0.5; fill: steelblue;">
-	data = \
-	{
-		burst : false,												// false: blue, true: red
-		count : 14,													// # of documents
-		docs  : ["ddd:010312015:mpeg21:a0042:ocr", ...],			// list of doc_ids
-		end   : Date {Fri Jan 01 1943 00:59:59 GMT+0100 (CET)}		// end date
-		index : 92,													// ?
-		start : Date {Thu Jan 01 1942 01:00:00 GMT+0100 (CEST)},	//
-		value : 14													// 
-	}
-	*/
-
-//	console.log( data );
-//	console.log( index );
-//	console.log( element);
-
 	var lexicon_id    = retrieveLexiconID();
 	var lexicon_title = retrieveLexiconTitle();
 	var lexicon_query = retrieveLexiconQuery();
@@ -663,8 +590,6 @@ function burstClicked( data, index, element )
 	dijit.byId( "query" ).set( "value", lexicon_query );	// show query in TextBox
 
 	// show burst articles in accordion
-//	var start_date  = d.start.toString().substr( 4, 11 );
-//	var stop_date   = d.end.toString().substr( 4, 11 );
 	var start_date  = toDateString( d.start );			// toDateString() : toolbar.js
 	var stop_date   = toDateString( d.end );			// toDateString() : toolbar.js
 	var date_range  = start_date + "," + stop_date
@@ -677,10 +602,6 @@ function burstClicked( data, index, element )
 
 	burstSearch( lexicon_query, date_range, max_records );
 
-	//dijit.byId('sparksDropDownButton').domNode.style.left = (e.x-50) + "px";
-	/*if(o.shape.fillStyle.b > 0)
-		dijit.byId('sparksDropDownButton').closeDropDown();
-	else*/
 	dijit.byId( 'sparksDropDownButton' ).openDropDown();
 
 	var template = '<b>{burst}{start} - {end}: <a href="{link}">{count} documents</a>.</b><br /><br /><div id="cloud"></div>';
@@ -705,7 +626,6 @@ function burstClicked( data, index, element )
 
 	burstCloud( params );
 
-//	dojo.query( '#sparksDialog .dijitTooltipConnector' )[ 0 ].style.position = "relative";
 	var oldPosition = dojo.position( dijit.byId( 'sparksDialog' )._popupWrapper );
 	var newLeft  = dojo.position( "chartDiv" ).x;
 	var newWidth = dojo.position( "chartDiv" ).w;
@@ -722,7 +642,6 @@ function burstCloud( params )
 {
 	console.log( "burstCloud()" );
 	params = getCloudParameters( params );		// add user-changeable parameters from config
-//	console.log( params );
 
 	dojo.xhrGet({
         url: "services/cloud",
