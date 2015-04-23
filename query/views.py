@@ -5,6 +5,7 @@ from datetime import datetime
 import json
 from urllib import quote_plus
 from urlparse import urljoin
+import logging
 
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
@@ -13,18 +14,16 @@ from django.core.validators import validate_email
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 from django.core.servers.basehttp import FileWrapper
-
 from django.conf import settings
 
-from query.models import Distribution, ArticleType, Query, DayStatistic, \
+from .models import Distribution, ArticleType, Query, DayStatistic, \
     StopWord
-from texcavator.utils import json_response_message
-from query.utils import query2docidsdate
-from query.burstsdetector import bursts
+from .utils import query2docidsdate
+from .burstsdetector import bursts
+from .download import create_zipname, execute
 from services.es import get_search_parameters
-from query.download import create_zipname, execute
+from texcavator.utils import json_response_message
 
-import logging
 logger = logging.getLogger(__name__)
 
 

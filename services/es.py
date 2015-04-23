@@ -4,12 +4,11 @@
 import json
 from collections import Counter
 from datetime import datetime
+
 from elasticsearch import Elasticsearch
 from elasticsearch.client import indices
 
 from django.conf import settings
-
-from texcavator import utils
 
 _ES_RETURN_FIELDS = ('article_dc_title',
                      'paper_dcterms_temporal',
@@ -550,7 +549,7 @@ def get_document_ids(idx, typ, query, date_range, exclude_distributions=[],
                                               '%Y-%m-%d').date()
                 })
 
-        start = start + num
+        start += num
 
         if len(results['hits']['hits']) < num:
             get_more_docs = False

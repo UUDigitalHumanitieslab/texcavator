@@ -5,7 +5,7 @@ from sys import stderr
 from django.conf import settings
 from django.db import DatabaseError
 
-from models import Query
+from .models import Query
 from services.es import get_document_ids
 from texcavator.utils import json_response_message
 
