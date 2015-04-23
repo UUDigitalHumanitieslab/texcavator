@@ -750,9 +750,7 @@ function burstCloud( params )
         console.log("Start polling!")
         console.log("task_id: "+task_id)
         if(task_id){
-            setTimeout(check_status, 0.05);
-            // check every second
-            window.interval_id = setInterval(function(){ check_status(task_id); }, 1000);
+            check_status(task_id);
         } else {
             console.log('Error: no task_id returned.');
         }

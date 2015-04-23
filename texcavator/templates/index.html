@@ -1036,9 +1036,7 @@ function onClickExecuteCloud( queryID )
         console.log("Start polling!")
         console.log("task_id: "+task_id)
         if(task_id){
-            //setTimeout(check_status, 0.05);
             // check every second
-            //window.interval_id = setInterval(function(){ check_status(task_id); }, 1000);
             check_status(task_id);
             // create cancel button
             dojo.byId('cancel_wordcloud').innerHTML = '<button onClick="cancel_celery_task(\''+task_id+'\');">Cancel wordcloud</button>';
@@ -1048,18 +1046,21 @@ function onClickExecuteCloud( queryID )
     });
 } // onClickExecuteCloud
 
+var interval_id;
+var task_number;
+
 /*
  * Functions for polling celery task
  */
  function handle_error(xhr, textStatus, errorThrown) {
-     clearInterval(window.interval_id);
+     clearTimeout(interval_id);
      console.log("Please report this error: "+errorThrown+xhr.status+xhr.responseText);
  }
 
  function show_status(obj) {
      console.log(obj);
      if (obj.error) {
-        clearInterval(window.interval_id);
+        clearTimeout(interval_id);
         console.log(obj.error);
      }
      if (obj.status == "WAITING"){
@@ -1068,10 +1069,12 @@ function onClickExecuteCloud( queryID )
             console.log('Update wordcloud progress');
             update_wordcloud_progress(obj.current, obj.total);
         }
+        clearTimeout(interval_id);
+        check_status(task_number);
      }
      else if (obj.status == "ok"){
         console.log("finished generating cloud");
-        clearInterval(window.interval_id);
+        clearTimeout(interval_id);
         // show the solution
         if(obj.burstcloud){
             placeCloudInTarget( "burst", obj, 'cloud' );
@@ -1079,7 +1082,7 @@ function onClickExecuteCloud( queryID )
             createCloud( "normal", obj, "borderContainer", "cloudPane" );
         }
      } else {
-        clearInterval(window.interval_id);
+        clearTimeout(interval_id);
         console.log("other status for celery task");
         console.log(obj);
 		var title = "Wordcloud failed";
@@ -1089,14 +1092,14 @@ function onClickExecuteCloud( queryID )
 }
 
 function check_status(task_id) {
-    window.interval_id = setTimeout(function(){
-        console.log('and for the third time: task_id='+task_id);
+    task_number = task_id;
+    interval_id = setTimeout(function(){
+        console.log('checking status of task_id ' + task_id);
         $.ajax({
             type: "GET",
-            url: "/services/task_status/"+task_id,
+            url: "/services/task_status/" + task_id,
             success: show_status,
-            error: handle_error,
-            complete: check_status(task_id)
+            error: handle_error
         });
     }, 1000);
 }
@@ -1110,7 +1113,7 @@ function update_wordcloud_progress(current, total){
 function cancel_celery_task(task_id){
     console.log('canceling celery task '+task_id);
 
-    clearInterval(window.interval_id);
+    clearTimeout(interval_id);
     
     $.ajax({
         type: "GET",
