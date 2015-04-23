@@ -4,10 +4,9 @@
 from sys import stderr, exc_info
 import requests
 from itertools import chain
-
 import logging
-
 import json
+
 from celery.result import AsyncResult
 
 from django.conf import settings
@@ -20,13 +19,13 @@ from es import get_search_parameters, do_search, count_search_results, \
     single_document_word_cloud, multiple_document_word_cloud, get_document
 
 from texcavator.utils import json_response_message
-from services.elasticsearch_biland import elasticsearch_htmlresp
 
 from query.models import StopWord
-from query.utils import get_query_object
+from query.utils import get_query_object, get_query
 
 from services.export import export_csv
 from services.tasks import generate_tv_cloud
+from services.elasticsearch_biland import elasticsearch_htmlresp
 
 logger = logging.getLogger(__name__)
 
@@ -52,12 +51,7 @@ def search(request):
                                           params['start'],
                                           params['result_size'],
                                           result)
-        resp = {
-            'status': 'ok',
-            'html': html_str
-        }
-        return HttpResponse(json.dumps(resp),
-                            'application/json; charset=UTF-8')
+        return json_response_message('ok', 'Search completed', {'html': html_str})
     else:
         result = escape(result).replace('\n', '<br />')
         msg = 'Unable to parse query "{q}"<br /><br />'. \
@@ -136,9 +130,7 @@ def cloud(request):
             t_vector = single_document_word_cloud(settings.ES_INDEX,
                                                   settings.ES_DOCTYPE,
                                                   ids[0])
-
-            ctype = 'application/json; charset=UTF-8'
-            return HttpResponse(json.dumps(t_vector), content_type=ctype)
+            return json_response_message('ok', 'Word cloud generated', t_vector)
         else:
             # Word cloud for multiple ids
             result = multiple_document_word_cloud(params.get('collection'),
@@ -222,19 +214,15 @@ def tv_cloud(request):
                                                   ids[0],
                                                   min_length,
                                                   stopwords)
-
-            ctype = 'application/json; charset=UTF-8'
-            return HttpResponse(json.dumps(t_vector), content_type=ctype)
+            return json_response_message('ok', 'Word cloud generated', t_vector)
 
     # Cloud by queryID or multiple ids
     logger.info('services/cloud/ - multiple document word cloud')
-    task = generate_tv_cloud.delay(params, min_length, stopwords, ids)
 
+    task = generate_tv_cloud.delay(params, min_length, stopwords, ids)
     logger.info('services/cloud/ - Celery task id: {}'.format(task.id))
 
-    params = {'task': task.id}
-
-    return json_response_message('ok', '', params)
+    return json_response_message('ok', '', {'task': task.id})
 
 
 @login_required
@@ -247,7 +235,7 @@ def check_status_by_task_id(request, task_id):
         return json_response_message('ERROR', 'No access.')
 
     # TODO: use generic AsyncResult (from celery.result import AsyncResult)
-    # so this function can be used tu check the status of all asynchronous
+    # so this function can be used to check the status of all asynchronous
     # tasks. However, when this import statement is put in this module, an
     # error is produced (celery module has no attribute result).
     # When typing this import statement in the Python

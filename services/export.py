@@ -12,13 +12,13 @@ from django.http import HttpResponse
 
 
 def export_csv(request):
-    """Export cloud data to a cvs file
+    """Export cloud data to a csv file
     """
     dict = request.REQUEST		# searches POST first, then GET
 
     try:
         content = dict["clouddata"]
-    except(KeyError):
+    except KeyError:
         content = ""
 
     try:
@@ -27,12 +27,12 @@ def export_csv(request):
             zipped = True
         else:
             zipped = False
-    except(KeyError):
+    except KeyError:
         zipped = False
 
     try:
         filename = dict["filename"]
-    except(KeyError):
+    except KeyError:
         if zipped:
             filename = "cloud.csv.zip"
         else:
@@ -40,7 +40,7 @@ def export_csv(request):
 
     try:
         separator_str = dict["separator"]
-    except(KeyError):
+    except KeyError:
         separator_str = "tab"
 
     if settings.DEBUG:
@@ -52,7 +52,7 @@ def export_csv(request):
 
     try:
         str_zipped = dict["zipped"]
-    except(KeyError):
+    except KeyError:
         str_zipped = 0
 
     if str_zipped == '1':

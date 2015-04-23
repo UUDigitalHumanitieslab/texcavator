@@ -1,8 +1,5 @@
 """Utility functions for the Texcavator app"""
-
-
-import json
-from django.http import HttpResponse
+from django.http import JsonResponse
 
 
 def chunks(l, n):
@@ -37,5 +34,4 @@ def json_response_message(status, message, params=None):
     for param, value in params.iteritems():
         response[param] = value
 
-    return HttpResponse(json.dumps(response),
-                        'application/json; charset=UTF-8')
+    return JsonResponse(response)

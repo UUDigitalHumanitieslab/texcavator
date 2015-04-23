@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.conf.urls import patterns, include, url
-
-# Enable the admin:
 from django.contrib import admin
-
 from django.views.generic import RedirectView, TemplateView
 
 admin.autodiscover()
@@ -15,10 +12,7 @@ urlpatterns = patterns(
     url(r'^robots\.txt$',
         TemplateView.as_view(template_name='robots.txt',
                              content_type='text/plain')),
-)
 
-urlpatterns += patterns(
-    '',
     # Enable admin documentation:
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     # Enable the admin:

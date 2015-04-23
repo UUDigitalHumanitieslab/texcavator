@@ -19,13 +19,9 @@ def index(request):
 
     data = {
         "PROJECT_NAME": settings.PROJECT_NAME,
-
         "SRU_DATE_LIMITS": daterange,
-
         "QUERY_DATA_DOWNLOAD_ALLOW": settings.QUERY_DATA_DOWNLOAD_ALLOW,
-
         "ES_INDEX": settings.ES_INDEX,
-
         "ILPS_LOGGING": settings.ILPS_LOGGING
     }
 

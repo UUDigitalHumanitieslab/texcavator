@@ -174,11 +174,11 @@ def timeline(request, query_id, resolution):
 
     begin = request.REQUEST.get('begindate')
     if not begin:
-        return json_response_message('ERROR', 'No begin date specified.', None)
+        return json_response_message('ERROR', 'No begin date specified.')
 
     end = request.REQUEST.get('enddate')
     if not end:
-        return json_response_message('ERROR', 'No end date specified.', None)
+        return json_response_message('ERROR', 'No end date specified.')
 
     begindate = datetime.strptime(begin, '%Y%m%d').date()
     enddate = datetime.strptime(end, '%Y%m%d').date()
