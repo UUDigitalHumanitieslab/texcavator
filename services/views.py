@@ -278,38 +278,13 @@ def retrieve_document(request, doc_id):
 
 
 @csrf_exempt
-def proxy(request):
-    """Proxy a request and return the result
+@login_required
+def log(request):
+    """Log the request message to the logger"""
+    logger.info('log')
 
-    This view takes over the role of the url mappings and must therefore be
-    removed as soon as possible.
-    """
-    if settings.DEBUG:
-        print >> stderr, "services/views.py/proxy()"
-
-    logger.debug("services/views.py/proxy()")
-
-    logger.debug("request.path_info: %s" % request.path_info)
-    if settings.DEBUG:
-        print >> stderr, "request.path_info:", request.path_info
-        print >> stderr, "request.REQUEST:", request.REQUEST
-
-    request_path = request.path_info.split('/')
-
-    # Handle requests for specific services
-
-    if len(request_path) > 2 and request_path[2] == u'logger' \
-            and request.GET.has_key('message'):
-        logger.debug(request.REQUEST['message'])
-        return HttpResponse('OK')
-
-    elif len(request_path) > 3 and request_path[2] == u'scan':
-        return download_scan_image(request)
-
-    # If all fails, do a 404
-    if settings.DEBUG:
-        print >> stderr, "proxy: HttpResponseNotFound()"
-    return HttpResponseNotFound()
+    logger.debug(request.REQUEST['message'])
+    return HttpResponse('OK')
 
 
 @csrf_exempt
@@ -323,8 +298,10 @@ def export_cloud(request):
     return export_csv(request)
 
 
+@csrf_exempt
+@login_required
 def download_scan_image(request):
-    """download scan image file"""
+    """Download scan image file"""
     logger.info('download_scan_image')
 
     from django.core.servers.basehttp import FileWrapper

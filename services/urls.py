@@ -17,6 +17,6 @@ urlpatterns = patterns(
     url(r'retrieve/(?P<doc_id>[\w:]+)', 'retrieve_document'),
     url(r'search/$', 'search'),
 
-    url(r'scan/$', 'proxy'),
-    url(r'logger/$', 'proxy'),
+    url(r'scan/$', 'download_scan_image'),
+    url(r'logger/$', 'log'),
 )
