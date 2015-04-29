@@ -80,8 +80,6 @@ var getCloudParameters = function( params )
 
 //	else { params[ "stopwords" ] = 0; }		// valid, but superfluous
 
-	// stopshort + stoplimit is done by JavaScript
-
 	// no more sentiment in cloud
 //	var sentimentcfg = config[ "sentiment" ];
 //	if( sentimentcfg[ "highlight" ] ) { params[ "sentiment" ] = 1; }
@@ -508,7 +506,6 @@ var placeCloudInTarget = function( cloud_src, json_data, target )
 	var fontscale  = config[ "cloud" ][ "fontscale" ];
 	var fontreduce = config[ "cloud" ][ "fontreduce" ];
 	var stopwords  = config[ "cloud" ][ "stopwords" ];
-	var stopshort  = config[ "cloud" ][ "stopshort" ];
 	var stoplimit  = config[ "cloud" ][ "stoplimit" ];
 
 	var wordCountMax = json_data.max_count 

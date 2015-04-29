@@ -54,12 +54,11 @@ var config = {
 	//	stopwords_cat:	"singleq",	// stopword category: "singleq", "allqs", "system"
 		stopwords_clean:false,		// remove superfluous stopwords
 		stopwords:		true,		// remove stopwords from list
-		stopshort:		true,		// remove very short words
-		stoplimit:		2,			// require word length > stoplimit
+		stoplimit:		4,			// require word length > stoplimit
 
 		refresh:		false,		// false: get cloud from cache; true: force recompute
-		fontscale:		50,			// font scale factor
-		fontreduce:		false,		// reduce fontsize differences
+		fontscale:		75,			// font scale factor
+		fontreduce:		true,		// reduce fontsize differences
 		stems:			false, 		// apply stemming
 
 		NER:			false,		// Named Entity Recognition
@@ -532,7 +531,7 @@ var createConfig = function()
 			{ var charstr = "character"; }
 			else
 			{ var charstr = "characters"; }
-			labelShort.innerHTML = "&nbsp;Remove words shorter than " + lenrequired + " " + charstr + "<br/>";
+			labelWMinLen.innerHTML = "&nbsp;Minimum word length<br/><em>This will remove words shorter than " + lenrequired + " " + charstr + "</em><br/>";
 		}
 	}, divWMinLen );
 
@@ -541,25 +540,6 @@ var createConfig = function()
 		for: "ns-wminlen",
 		innerHTML: "&nbsp;Minimum word length<br/>"
 	}, cpCloud.domNode );
-
-
-	var divShort = dojo.create( "div", {
-		id: "div-short"
-	}, cpCloud.domNode );
-
-	var cbShort = new dijit.form.CheckBox({
-		id: "cb-short",
-		checked: config[ "cloud" ][ "stopshort" ],
-		onChange: function( btn ) { config[ "cloud" ][ "stopshort" ] = btn; }
-	}, divShort );
-
-	var lenrequired = 1 + config[ 'cloud' ][ 'stoplimit' ];
-	var labelShort = dojo.create( "label", {
-		id: "label-short",
-		for: "cb-short",
-		innerHTML: "&nbsp;Remove words shorter than " + lenrequired + " characters<br/>"
-	}, cpCloud.domNode );
-
 
 	var divStem = dojo.create( "div", {
 		id: "div-stem"
