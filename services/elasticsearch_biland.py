@@ -127,7 +127,9 @@ def elasticsearch_htmlresp(collection, start_record, chunk_size, es_dict):
         item_str += "</li>"
         html_str += item_str
 
-    html_str += '</ol></body>'
+    html_str += '</ol>'
+    html_str += '<a href="#search">Back to top</a>'
+    html_str += '</body>'
 
     html = fromstring(html_str)
     html_str = etree.tostring(html, pretty_print=True)

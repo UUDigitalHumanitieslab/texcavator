@@ -38,7 +38,7 @@ var config = {
 			surinam:	true,		// type: "Suriname"						Suriname
 			indonesia:	true		// type: "Nederlands-Indië/Indonesië"	Indonesië
 		},
-		chunk_size : 20
+		chunk_size : 50
 	},
 
 	cloud: {				// word cloud
@@ -411,7 +411,7 @@ var createConfig = function()
 	var labelSearchChunk = dojo.create( "label", {
 		id: "label-search_chunk",
 		for: "ns-search-chunk",
-		innerHTML: "&nbsp;Search chunk size<br/>"
+		innerHTML: "&nbsp;Number of results to show<br/>"
 	}, cpSearch.domNode );
 
 
