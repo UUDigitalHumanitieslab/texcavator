@@ -24,7 +24,7 @@ Functions:
 			handleAs: "json",
 			load: function( json_data )
 			{	
-				if( json_data.status != "SUCCESS" )
+				if( json_data.status != "success" )
 				{
 					console.warn( "scanImagesKB: " + json_data.msg );
 					var title = "Retrieving KB metadata  failed";

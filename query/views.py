@@ -319,8 +319,7 @@ def download_prepare(request):
         if settings.DEBUG:
             print >> stderr, msg
             print >> stderr, request.META
-        resp_dict = {'status': "error", 'msg': msg}
-        return HttpResponse(json.dumps(resp_dict))
+        return json_response_message('error', msg)
 
     user = request.user
 
@@ -330,10 +329,7 @@ def download_prepare(request):
               "<br/><b>" + user.username + "</b>"
         if settings.DEBUG:
             print >> stderr, msg
-        resp_dict = {'status': 'error', 'msg': msg}
-        json_list = json.dumps(resp_dict)
-        ctype = 'application/json; charset=UTF-8'
-        return HttpResponse(json_list, content_type=ctype)
+        return json_response_message('error', msg)
 
     try:
         validate_email(user.email)
@@ -344,10 +340,7 @@ def download_prepare(request):
               user.email + "</b>"
         if settings.DEBUG:
             print >> stderr, msg
-        resp_dict = {'status': 'error', 'msg': msg}
-        json_list = json.dumps(resp_dict)
-        ctype = 'application/json; charset=UTF-8'
-        return HttpResponse(json_list, content_type=ctype)
+        return json_response_message('error', msg)
 
     zip_basename = create_zipname(user.username, query_str)
     url = urljoin('http://{}'.format(request.get_host()),
@@ -358,16 +351,13 @@ def download_prepare(request):
         print >> stderr, email_message
         print >> stderr, 'http://{}'.format(request.get_host())
 
-    # zip documents by management cmd
+    # zip documents by celery background task
     execute(req_dict, zip_basename, user.email, email_message)
 
     msg = "Your download for query <b>" + query_str + \
           "</b> is being prepared.<br/>When ready, an email will be sent " + \
           "to <b>" + user.email + "</b>"
-    resp_dict = {'status': 'SUCCESS', 'msg': msg}
-    json_list = json.dumps(resp_dict)
-    ctype = 'application/json; charset=UTF-8'
-    return HttpResponse(json_list, content_type=ctype)
+    return json_response_message('success', msg)
 
 
 @csrf_exempt

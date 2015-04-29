@@ -10,7 +10,7 @@ import json
 from celery.result import AsyncResult
 
 from django.conf import settings
-from django.http import HttpResponse, HttpResponseNotFound
+from django.http import HttpResponse
 from django.utils.html import escape
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
@@ -165,8 +165,7 @@ def cloud(request):
     if not result:
         return json_response_message('error', 'No word cloud generated.')
 
-    ctype = 'application/json; charset=UTF-8'
-    return HttpResponse(json.dumps(result), content_type=ctype)
+    return json_response_message('success', 'Word cloud generated', result)
 
 
 @csrf_exempt
@@ -284,7 +283,7 @@ def log(request):
     logger.info('log')
 
     logger.debug(request.REQUEST['message'])
-    return HttpResponse('OK')
+    return json_response_message('success', 'Message logged')
 
 
 @csrf_exempt
@@ -371,17 +370,6 @@ def retrieve_kb_resolver(request):
         msg = "KB Resolver request failed: %s" % value.message
         if settings.DEBUG:
             print >> stderr, msg
-        resp_dict = {"status": "FAILURE", "msg": msg}
-        json_list = json.dumps(resp_dict)
-        ctype = 'application/json; charset=UTF-8'
-        return HttpResponse(json_list, content_type=ctype)
+        return json_response_message('error', msg)
 
-    resp_dict = \
-        {
-            "status": "SUCCESS",
-            "text": response.content
-        }
-
-    json_list = json.dumps(resp_dict)
-    ctype = 'application/json; charset=UTF-8'
-    return HttpResponse(json_list, content_type=ctype)
+    return json_response_message('success', 'Resolving successful', {'text': response.content})
