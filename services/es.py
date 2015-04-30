@@ -39,7 +39,7 @@ def _es():
 
 
 def do_search(idx, typ, query, start, num, date_range, exclude_distributions,
-              exclude_article_types, return_source=False):
+              exclude_article_types, return_source=False, sort_order='_score'):
     """Returns ElasticSearch search results.
 
     Fetch all documents matching the query and return a list of
@@ -73,6 +73,10 @@ def do_search(idx, typ, query, start, num, date_range, exclude_distributions,
             A boolean indicating whether the _source of ES documents should be
             returned or a smaller selection of document fields. The smaller set
             of document fields (stored in _ES_RETURN_FIELDS) is the default
+        sort_order: string, optional
+            The sort order for this query. Syntax is fieldname:order, multiple
+            sort orders can be separated by commas. Note that if the sort_order
+            doesn't contain _score, no scores will be returned.
 
     Returns:
         validity : boolean
@@ -94,12 +98,12 @@ def do_search(idx, typ, query, start, num, date_range, exclude_distributions,
             # for each document return the _source field that contains all
             # document fields (no fields parameter in the ES call)
             return True, _es().search(index=idx, doc_type=typ, body=q,
-                                      from_=start, size=num)
+                                      from_=start, size=num, sort=sort_order)
         else:
             # for each document return the fields listed in_ES_RETURN_FIELDS
             return True, _es().search(index=idx, doc_type=typ, body=q,
                                       fields=_ES_RETURN_FIELDS, from_=start,
-                                      size=num)
+                                      size=num, sort=sort_order)
     return False, valid_q.get('explanations')[0].get('error')
 
 
@@ -497,6 +501,8 @@ def get_search_parameters(req_dict):
 
     collection = req_dict.get('collection', settings.ES_INDEX)
 
+    sort_order = req_dict.get('sort_order', '_score')
+
     return {
         'query': query_str,
         'start': start,
@@ -504,7 +510,8 @@ def get_search_parameters(req_dict):
         'dates': dates,
         'distributions': distributions,
         'article_types': article_types,
-        'collection': collection
+        'collection': collection,
+        'sort_order': sort_order
     }
 
 

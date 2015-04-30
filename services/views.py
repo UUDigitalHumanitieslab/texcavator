@@ -45,7 +45,8 @@ def search(request):
                                 params['result_size'],
                                 params['dates'],
                                 params['distributions'],
-                                params['article_types'])
+                                params['article_types'],
+                                sort_order=params['sort_order'])
     if valid_q:
         html_str = elasticsearch_htmlresp(settings.ES_INDEX,
                                           params['start'],

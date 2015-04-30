@@ -38,7 +38,8 @@ var config = {
 			surinam:	true,		// type: "Suriname"						Suriname
 			indonesia:	true		// type: "Nederlands-Indië/Indonesië"	Indonesië
 		},
-		chunk_size : 50
+		chunk_size : 50,
+		sort_order : "_score"
 	},
 
 	cloud: {				// word cloud
@@ -110,6 +111,7 @@ function getSearchParameters()
 	params = {
 		datastore      : config[ "datastore" ],
 		maximumRecords : config[ "search" ][ "chunk_size" ],
+		sort_order     : config[ "search" ][ "sort_order" ],
 
 		st_article     : config[ "search" ][ "type" ][ "article" ],
 		st_advert      : config[ "search" ][ "type" ][ "advert" ],
@@ -414,6 +416,75 @@ var createConfig = function()
 		innerHTML: "&nbsp;Number of results to show<br/>"
 	}, cpSearch.domNode );
 
+	var divSortOrder = dojo.create( "div", {
+		id: "div-sortorder"
+	}, cpSearch.domNode );
+
+	var textSortOrder = dojo.create( "label", {
+		id: "text-sortorder",
+		for: "div-sortorder",
+		innerHTML: "<hr/>Sort order<br/>"
+	}, cpSearch.domNode );
+
+	var divOrderScore = dojo.create( "div", {
+		id: "div-orderscore"
+	}, cpSearch.domNode );
+
+	var rbOrderScore = new dijit.form.RadioButton({
+		id: "rb-orderscore",
+		checked: config[ "search" ][ "sort_order" ] === "_score",
+		onChange: function( btn )
+		{
+			if( btn == true )
+			{ config[ "search" ][ "sort_order" ] = "_score"; }
+		},
+	}, "div-orderscore");
+
+	var labelOrderScore = dojo.create( "label", {
+		id: "label-orderscore",
+		for: "rb-orderscore",
+		innerHTML: "&nbsp;By score<br/>"
+	}, cpSearch.domNode );
+
+	var divOrderDateAsc = dojo.create( "div", {
+		id: "div-orderdateasc"
+	}, cpSearch.domNode );
+
+	var rbOrderDateAsc = new dijit.form.RadioButton({
+		id: "rb-orderdateasc",
+		checked: config[ "search" ][ "sort_order" ] === "paper_dc_date:asc,_score",
+		onChange: function( btn )
+		{
+			if( btn == true )
+			{ config[ "search" ][ "sort_order" ] = "paper_dc_date:asc,_score"; }
+		},
+	}, "div-orderdateasc");
+
+	var labelOrderDateAsc = dojo.create( "label", {
+		id: "label-orderdateasc",
+		for: "rb-orderdateasc",
+		innerHTML: "&nbsp;By date (oldest first)<br/>"
+	}, cpSearch.domNode );
+
+	var divOrderDateDesc = dojo.create( "div", {
+		id: "div-orderdatedesc"
+	}, cpSearch.domNode );
+
+	var rbOrderDateDesc = new dijit.form.RadioButton({
+		id: "rb-orderdatedesc",
+		checked: config[ "search" ][ "sort_order" ] === "paper_dc_date:desc,_score",
+		onChange: function( btn )
+		{
+			if( btn == true )
+			{ config[ "search" ][ "sort_order" ] = "paper_dc_date:desc,_score"; }
+		},
+	}, "div-orderdatedesc");
+
+	var labelOrderDateDesc = dojo.create( "label", {
+		id: "label-orderdatedesc",
+		for: "rb-orderdatedesc",
+		innerHTML: "&nbsp;By date (newest first)<br/>"
+	}, cpSearch.domNode );
 
 	var check_dctypes = function()
 	{
