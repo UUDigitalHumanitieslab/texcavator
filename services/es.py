@@ -75,8 +75,9 @@ def do_search(idx, typ, query, start, num, date_range, exclude_distributions,
             returned or a smaller selection of document fields. The smaller set
             of document fields (stored in _ES_RETURN_FIELDS) is the default
         sort_order: string, optional
-            The sort order for this query. Note that if set to something other
-            than _score, no scores will be returned.
+            The sort order for this query. Syntax is fieldname:order, multiple
+            sort orders can be separated by commas. Note that if the sort_order
+            doesn't contain _score, no scores will be returned.
 
     Returns:
         validity : boolean
