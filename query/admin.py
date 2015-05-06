@@ -8,6 +8,8 @@ class DayStatisticAdmin(admin.ModelAdmin):
 
 class StopWordAdmin(admin.ModelAdmin):
     list_display = ('word', 'user', 'query')
+    search_fields = ['word']
+    list_filter = ('user', 'query')
 
 admin.site.register(Query)
 admin.site.register(DayStatistic, DayStatisticAdmin)

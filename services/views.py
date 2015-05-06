@@ -188,19 +188,34 @@ def tv_cloud(request):
     params = get_search_parameters(request.REQUEST)
 
     ids = request.REQUEST.get('ids')
-
     query_id = request.GET.get('queryID')
     min_length = int(request.GET.get('min_length', 2))
+    use_stopwords = request.GET.get('stopwords') == "1"
+    use_default_stopwords = request.GET.get('stopwords_default') == "1"
 
+    # Retrieve the stopwords
     stopwords = []
-    if request.GET.get('stopwords') == "1":
-        stopwords_user = StopWord.objects.filter(user=request.user) \
-                                         .filter(query=None)
-        stopwords_query = StopWord.objects.filter(user=request.user) \
-                                          .filter(query__id=query_id)
+    if use_stopwords:
+        stopwords_user = list(StopWord.objects
+                              .filter(user=request.user)
+                              .filter(query=None)
+                              .values_list('word', flat=True))
 
-        stopwords = [stopw.word for stopw in list(chain(stopwords_user,
-                                                        stopwords_query))]
+        stopwords_query = []
+        if query_id:
+            stopwords_query = list(StopWord.objects
+                                   .filter(user=request.user)
+                                   .filter(query__id=query_id)
+                                   .values_list('word', flat=True))
+
+        stopwords_default = []
+        if use_default_stopwords:
+            stopwords_default = list(StopWord.objects
+                                     .filter(user=None)
+                                     .filter(query=None)
+                                     .values_list('word', flat=True))
+
+        stopwords = stopwords_user + stopwords_query + stopwords_default
 
     # Cloud by ids
     if ids:

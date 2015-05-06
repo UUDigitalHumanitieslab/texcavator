@@ -45,23 +45,7 @@ var getCloudParameters = function( params )
 	if( cloudcfg[ "stopwords" ] )
 	{
 		params[ "stopwords" ] = 1;
-
-		/*
-		var system_stopwords = config[ "cloud" ][ "system_stopwords" ];
-		var user_stopwords   = config[ "cloud" ][ "user_stopwords" ];
-
-		if( user_stopwords == "" )
-		{
-			var stopwords = system_stopwords;
-			console.log( "system stopwords: " + system_stopwords );
-		}
-		else
-		{
-			var stopwords = system_stopwords + "," + user_stopwords;
-			console.log( "user stopwords: " + user_stopwords );
-			console.log( "total stopwords: " + stopwords );
-		}
-		*/
+		params[ "stopwords_default" ] = cloudcfg[ "stopwords_default" ] ? 1 : 0;
 
 		// system stopwords now also from db
 		var stopwords_str = config[ "cloud" ][ "stopwords_str" ];

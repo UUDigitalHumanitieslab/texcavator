@@ -1,5 +1,4 @@
 from django.db import models
-
 from django.contrib.auth.models import User
 
 
@@ -87,10 +86,12 @@ class DayStatistic(models.Model):
 class StopWord(models.Model):
     """Model to store stopwords.
 
-    Stopwords can be stored for queries, or are applied to all queries of a
-    user.
+    Stopwords can be
+    - specific for a Query (applicable to a single User's Query, query/user != None)
+    - specific for a User (applicable for all of a User's Queries, query == None, user != None)
+    - non-specific/default (applicable to all Queries for all Users, user/query == None)
     """
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(User, null=True, blank=True)
     query = models.ForeignKey(Query, null=True, blank=True)
     word = models.CharField(max_length=100)
 

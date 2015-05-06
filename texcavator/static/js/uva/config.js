@@ -55,6 +55,7 @@ var config = {
 	//	stopwords_cat:	"singleq",	// stopword category: "singleq", "allqs", "system"
 		stopwords_clean:false,		// remove superfluous stopwords
 		stopwords:		true,		// remove stopwords from list
+		stopwords_default:	true,	// use default stopword set
 		stoplimit:		4,			// require word length > stoplimit
 
 		refresh:		false,		// false: get cloud from cache; true: force recompute
@@ -567,6 +568,17 @@ var createConfig = function()
 	}, cpCloud.domNode );
 
 
+	var divStopwords = dojo.create( "div", {
+		id: "div-stopwords"
+	}, cpCloud.domNode );
+
+	var textStopwords = dojo.create( "label", {
+		id: "text-stopwords",
+		for: "div-stopwords",
+		innerHTML: "<hr/>Stop words<br/>"
+	}, cpCloud.domNode );
+
+
 	var divStop = dojo.create( "div", {
 		id: "div-stop"
 	}, cpCloud.domNode );
@@ -581,6 +593,23 @@ var createConfig = function()
 		id: "label-stop",
 		for: "cb-stop",
 		innerHTML: "&nbsp;Remove stop words<br/>"
+	}, cpCloud.domNode );
+
+
+	var divStopDefault = dojo.create( "div", {
+		id: "div-stopdefault"
+	}, cpCloud.domNode );
+
+	var cbStopDefault = new dijit.form.CheckBox({
+		id: "cb-stopdefault",
+		checked: config[ "cloud" ][ "stopwords_default" ],
+		onChange: function( btn ) { config[ "cloud" ][ "stopwords_default" ] = btn; }
+	}, divStopDefault );
+
+	var labelStopDefault = dojo.create( "label", {
+		id: "label-stopdefault",
+		for: "cb-stopdefault",
+		innerHTML: "&nbsp;Use default stop word set<br/>"
 	}, cpCloud.domNode );
 
 
@@ -609,7 +638,7 @@ var createConfig = function()
 	var labelWMinLen = dojo.create( "label", {
 		id: "label-wminlen",
 		for: "ns-wminlen",
-		innerHTML: "&nbsp;Minimum word length<br/>"
+		innerHTML: "&nbsp;Minimum word length<hr/>"
 	}, cpCloud.domNode );
 
 	var divStem = dojo.create( "div", {
@@ -681,7 +710,7 @@ var createConfig = function()
 	var textCloudRender = dojo.create( "label", {
 		id: "text-cloudrender",
 		for: "div-cloudrender",
-		innerHTML: "Cloud rendering<br/>"
+		innerHTML: "<hr/>Cloud rendering<br/>"
 	}, cpCloud.domNode );
 
 
