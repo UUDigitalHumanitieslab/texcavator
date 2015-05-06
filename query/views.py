@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 import os
+import json
+import logging
+import csv
 from sys import stderr
 from datetime import datetime
-import json
 from urllib import quote_plus
 from urlparse import urljoin
-import logging
 
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
@@ -15,6 +16,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 from django.core.servers.basehttp import FileWrapper
 from django.conf import settings
+from django.db.models import Q
 
 from .models import Distribution, ArticleType, Query, DayStatistic, \
     StopWord
@@ -295,6 +297,27 @@ def stopwords(request):
     }
 
     return json_response_message('SUCCESS', '', params)
+
+
+@csrf_exempt
+@login_required
+def export_stopwords(request):
+    """Exports all stopwords for the current user to a .csv-file
+    """
+    sw = StopWord.objects.filter(Q(user=request.user) | Q(user=None)).order_by('word')
+
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="stopwords.csv"'
+
+    writer = csv.writer(response, delimiter=';')
+    writer.writerow(['word', 'user', 'query'])
+
+    for stopword in sw:
+        u = stopword.user.username if stopword.user else '(all)'
+        q = stopword.query if stopword.query else '(all)'
+        writer.writerow([stopword.word, u, q])
+
+    return response
 
 
 @csrf_exempt

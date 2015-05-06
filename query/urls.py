@@ -12,6 +12,7 @@ urlpatterns = patterns(
     url(r'^(?P<query_id>\d+)/update$', 'update'),
     url(r'^stopword/add$', 'add_stopword'),
     url(r'^stopword/(?P<stopword_id>\d+)/delete$', 'delete_stopword'),
+    url(r'^stopword/export$', 'export_stopwords'),
     url(r'^stopwords$', 'stopwords'),
 
     url(r'^download/prepare/$', 'download_prepare'),
