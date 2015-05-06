@@ -223,22 +223,6 @@ var createLogin = function( projectname )
 						createResponse( msg, retry );
 						showResponse();
 					}
-					else if( glob_username === "aclaan" )
-					{
-						var title = "Clarin OAuth";
-						var msg = "When will we have OAuth support?";
-						var buttons = { "OK": true };
-						genDialog( title, msg, buttons );
-					}
-					/*
-					else
-					{
-						var title = "BiLand MongoDB xTAS";
-						var msg = "This BiLand uses ElasticSearch for data storage. The previous WAHSP MongoDB xTAS is still available under: </br>http://zookst4.science.uva.nl:8082/wahsp";
-						var buttons = { "OK": true };
-						genDialog( title, msg, buttons );
-					}
-					*/
 				}
 				else
 				{

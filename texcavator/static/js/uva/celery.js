@@ -138,10 +138,8 @@ var celeryCheck = function( celery_owner )
 			var title = "Celery task queue status";
 			var buttons = { "OK": true, "Cancel": false };
 
-			if( glob_username === "aclaan" )					// who?
-			{ celeryDialog( title, app_data, buttons ); }		// using the textarea
-			else
-			{ genDialog( title, message, buttons ); }			// single text line
+			//celeryDialog( title, app_data, buttons );		// using the textarea
+			genDialog( title, message, buttons );			// single text line
 		},
 		error: function( err ) { console.error( err ); return err; }
 	});

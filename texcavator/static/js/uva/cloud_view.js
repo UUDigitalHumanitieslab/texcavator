@@ -771,10 +771,8 @@ var d3CreateCloud = function( target, cloud_src, svg_width, svg_height, weightFa
 
 		var stopwords_cat = "singleq"		// default
 
-		if( glob_username === "aclaan" || glob_username === "jdekruif" )
-		{ var change_system_stopwords = true; } 
-		else
-		{ var change_system_stopwords = false; } 
+		//var change_system_stopwords = true; // enable for superusers?
+		var change_system_stopwords = false;
 
 		var divQuery = dojo.create( "div", {
 			id: "div-stop-words"
