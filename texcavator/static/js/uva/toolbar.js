@@ -427,18 +427,8 @@ var showAbout = function()
 
 var createAbout = function()
 {
-	var config = getConfig();
-	var dualmode = config[ "dualmode" ];
-	if( dualmode == true )
-	{
-		var title =  "BiLand -- Collaborating Institutes";
-		var style = "width: 410px; height: 370px; text-align: right; line-height: 24px; margin: 5px;"
-	}
-	else 
-	{
-		var title =  "WAHSP/BiLand -- Collaborating Institutes";
-		var style = "width: 410px; height: 325px; text-align: right; line-height: 24px; margin: 5px;"
-	}
+    var title =  "Texcavator - Collaborating Institutes";
+    var style = "width: 420px; height: 420px; text-align: right; line-height: 24px; margin: 5px;"
 
 	var dlgAbout = new dijit.Dialog({
 		id: "about",
@@ -460,10 +450,8 @@ var createAbout = function()
 		style: "clear: both"
 	}, aboutContainer.domNode );
 
-	if( dualmode == true )
-	{ var innerHTML = "<a href='/static/BiLand_manual.pdf' target='_blank'>BiLand Manual</a>"; }
-	else
-	{ var innerHTML = "<a href='/static/WAHSP_manual.pdf' target='_blank'>WAHSP/BiLand Manual</a>"; }
+	// var innerHTML = "<a href='/static/BiLand_manual.pdf' target='_blank'>BiLand Manual</a>";
+	var innerHTML = "<a href='/static/WAHSP_manual.pdf' target='_blank'>WAHSP/BiLand Manual</a>";
 
 	dojo.create( "div", {
 		innerHTML: innerHTML,
@@ -500,14 +488,11 @@ var createAbout = function()
 		style: "clear: both"
 	}, aboutContainer.domNode );
 
-	if( dualmode == true )
-	{
-		dojo.create( "div", { innerHTML: "<hr>", style: "clear: both" }, aboutContainer.domNode );
-		dojo.create( "div", {
-			innerHTML: "<a href='http://staatsbibliothek-berlin.de/' target='_blank'><img src='/static/image/logos/StaatsbibliothekBerlin.png' height='40' align='left' /></a>",
-			style: "clear: both"
-		}, aboutContainer.domNode );
-	}
+    dojo.create( "div", { innerHTML: "<hr>", style: "clear: both" }, aboutContainer.domNode );
+    dojo.create( "div", {
+        innerHTML: "<a href='http://staatsbibliothek-berlin.de/' target='_blank'><img src='/static/image/logos/StaatsbibliothekBerlin.png' height='40' align='left' /></a>",
+        style: "clear: both"
+    }, aboutContainer.domNode );
 
 	var actionBar = dojo.create( "div", {
 		className: "dijitDialogPaneActionBar",
