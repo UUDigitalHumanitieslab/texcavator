@@ -446,7 +446,7 @@ function createQueryDlg()
 	var cpQData = new dijit.layout.ContentPane({
 		id: "cp-data",
 		title: "Data",
-		content: "<b>Download the query Data (OCR and Metadata)</b>"
+		content: "<b>Download the query data (OCR and metadata)</b>"
 	});
 
 

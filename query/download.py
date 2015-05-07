@@ -4,26 +4,23 @@ Query data download (export) functionality.
 """
 
 import os
-from sys import stderr
-from time import strftime
 import datetime
 import unicodedata
-
 import base64
-
 import logging
-
 import json
+from sys import stderr
+from time import strftime
 
 from django.conf import settings
 
-from tasks import zipquerydata
+from .tasks import zipquerydata
 
 logger = logging.getLogger(__name__)
 
 
 def create_zipname(username, query_title):
-    """Return a name for the zipfile containing the exported data.
+    """Returns a name for the zipfile containing the exported data.
     """
     query_title_ = username + '_' + query_title
     query_title_ = clean_filename(query_title_)
@@ -33,7 +30,7 @@ def create_zipname(username, query_title):
 
 
 def clean_filename(s):
-    """Strip problematic characters from filename
+    """Strips problematic characters from filename
     """
     s = ''.join((c for c in unicodedata.normalize('NFD', s)
                  if unicodedata.category(c) != 'Mn'))
@@ -42,9 +39,9 @@ def clean_filename(s):
     return s
 
 
-def execute(merge_dict, zip_basename, to_email, email_message):
-    """Start the creating the download and send an email to the user when it
-    is finished.
+def execute(req_dict, zip_basename, to_email, email_message):
+    """Expires old data and then compiles the Celery task
+    for sending the export via email.
     """
     if settings.DEBUG:
         print >> stderr, "execute()"
@@ -52,12 +49,6 @@ def execute(merge_dict, zip_basename, to_email, email_message):
 
     if settings.QUERY_DATA_DELETE_DATA:
         expire_data()        # delete old download stuff
-
-    keys = merge_dict.keys()
-    values = merge_dict.values()
-    req_dict = {}
-    for i in range(len(keys)):
-        req_dict[keys[i]] = values[i]
 
     # add the zip name & user email
     req_dict["zip_basename"] = zip_basename
@@ -82,7 +73,7 @@ def execute(merge_dict, zip_basename, to_email, email_message):
 
 
 def expire_data():
-    """Delete old data from the data folder.
+    """Deletes old data from the data folder.
     """
     msg = "%s: %s" % (__name__, "expire_data()")
     logger.debug(msg)

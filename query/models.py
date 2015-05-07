@@ -31,18 +31,20 @@ class Distribution(models.Model):
 class Query(models.Model):
     """Model to store a user's queries.
     """
+    title = models.CharField(max_length=100)
+    comment = models.TextField(blank=True)
     query = models.TextField()
     date_lower = models.DateField()
     date_upper = models.DateField()
+
     exclude_article_types = models.ManyToManyField(ArticleType, blank=True)
     exclude_distributions = models.ManyToManyField(Distribution, blank=True)
-
-    title = models.TextField()
-    comment = models.TextField(blank=True)
-
     user = models.ForeignKey(User)
 
     date_created = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = ('user', 'title')
 
     def get_query_dict(self):
         """Return a JSON serializable representation of the query object, that
