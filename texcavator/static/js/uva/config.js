@@ -575,7 +575,7 @@ var createConfig = function()
 	var textStopwords = dojo.create( "label", {
 		id: "text-stopwords",
 		for: "div-stopwords",
-		innerHTML: "<hr/>Stop words<br/>"
+		innerHTML: "<hr/>Stop words (<a href='query/stopword/export'>download as .csv</a>)<br/>"
 	}, cpCloud.domNode );
 
 
