@@ -51,7 +51,6 @@ var config = {
 	//	system_stopwords: "apos,quot,0,1,2,3,4,5,6,7,8,9,10,11,000,_,__,den,de,in,ter,ten",
 
 		// settable cloud params
-		stopwords_str:	"",			// loaded from db
 	//	stopwords_cat:	"singleq",	// stopword category: "singleq", "allqs", "system"
 		stopwords_clean:false,		// remove superfluous stopwords
 		stopwords:		true,		// remove stopwords from list

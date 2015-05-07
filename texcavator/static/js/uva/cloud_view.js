@@ -46,14 +46,6 @@ var getCloudParameters = function( params )
 	{
 		params[ "stopwords" ] = 1;
 		params[ "stopwords_default" ] = cloudcfg[ "stopwords_default" ] ? 1 : 0;
-
-		// system stopwords now also from db
-		var stopwords_str = config[ "cloud" ][ "stopwords_str" ];
-		if( stopwords_str === "" )
-		{ console.warn( "getCloudParameters: No stopwords ?" ); }
-		else
-		{ console.log( "stopwords: " + stopwords_str ); }
-		params[ "exclude" ] = stopwords_str;
 	}
 
     if(cloudcfg["stoplimit"]){
@@ -280,32 +272,6 @@ function stopwordsFillTable( stopwordsList, editglob, target )
 
 var stopwordsSave = function( word, stopwords_cat )
 {
-//	console.log( "stopwordsSave(): " + word );
-	var stopwords_csv = config[ "cloud" ][ "stopwords_str" ];
-
-	if( stopwords_csv === "" )
-	{ stopwords_list = [] }
-	else
-	{ var stopwords_list = stopwords_csv.split( "," ); }
-
-	if( stopwords_list.length == 0 )
-	{ config[ "cloud" ][ "stopwords_str" ] = word }
-	else
-	{
-	//	console.log( "len: " + stopwords_list.length );
-	//	console.log( "old: " + stopwords_csv );
-		var index = stopwords_list.indexOf( word );
-		if( index == 0 )	// new
-		{
-			stopwords_list.push( word );
-			var stopwords_csv = stopwords_list.toString();
-			config[ "cloud" ][ "stopwords_str" ] = stopwords_csv
-		//	console.log( "new: " + stopwords_csv );
-		}
-		else	// already in list
-			; // let the server trap this
-	}
-
 	var stopwords_clean = config[ "cloud" ][ "stopwords_clean" ];
 	if( stopwords_clean == true ) { stopwords_clean01 = 1; }
 	else { stopwords_clean01 = 0; }
