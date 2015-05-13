@@ -85,9 +85,13 @@ function writeTextview( record_id, data, documentObj )
 {
 	console.log( "writeTextview() " + record_id);
     
-    article_text = documentObj.text_content.replace(/\n\n/g, "</br></br>");
+    article_text = documentObj.text_content;
+    // Replace HTML entities
+    article_text = article_text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    // Replace line feeds
+    article_text = article_text.replace(/\n\n/g, "</br></br>");
 
-	dojo.byId( "record" ).innerHTML = "<b>"+documentObj.article_dc_title+"</b></br>"+article_text;
+	dojo.byId( "record" ).innerHTML = "<h1>" + documentObj.article_dc_title + "</h1><p>" + article_text + "</p>";
 }
 
 // [eof]
