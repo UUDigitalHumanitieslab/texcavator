@@ -95,47 +95,53 @@ Texcavator requires that the documents are stored in a ``doc_type`` doc that has
 
 And mapping::
 
-    { 
-        'doc': {
-            'properties': {
-                'article_dc_subject': {
-                    'type': 'string',
-                    'include_in_all': 'false', 
-                    'index': 'not_analyzed'
-                },
-                'article_dc_title': {
-                    'type': 'string', 
-                    'term_vector': 'with_positions_offsets_payloads'
-                },
-                'identifier': {
-                    'type': 'string', 
-                    'include_in_all': 'false', 
-                    'index': 'not_analyzed'
-                },
-                'paper_dc_date': {
-                    'format': 'dateOptionalTime', 
-                    'type': 'date'
-                },
-                'paper_dc_title': {
-                    'type': 'string', 
-                    'term_vector': 'with_positions_offsets_payloads'
-                },
-                'paper_dcterms_spatial': {
-                    'type': 'string', 
-                    'include_in_all': 'false', 
-                    'index': 'not_analyzed'
-                },
-                'paper_dcterms_temporal': {
-                    'type': 'string', 
-                    'include_in_all': 'false', 
-                    'index': 'not_analyzed'
-                },
-                'text_content': {
-                    'type': 'string', 
-                    'term_vector': 'with_positions_offsets_payloads'
-                },
+    PUT /kb
+    {
+      "mappings": {
+        "doc" : {
+          "properties" : {
+            "article_dc_subject": {
+              "type": "string",
+              "include_in_all": "false",
+              "index": "not_analyzed"
+            },
+              "article_dc_title": {
+              "type": "string",
+              "term_vector": "with_positions_offsets_payloads"
+            },
+            "identifier": {
+              "type": "string",
+              "include_in_all": "false",
+              "index": "not_analyzed"
+            },
+            "paper_dc_date": {
+              "format": "dateOptionalTime",
+              "type": "date"
+            },
+            "paper_dc_title": {
+              "type": "string",
+              "term_vector": "with_positions_offsets_payloads",
+              "fields": {
+                "raw": { "type": "string", "index": "not_analyzed" }
+              }
+            },
+            "paper_dcterms_spatial": {
+              "type": "string",
+              "include_in_all": "false",
+              "index": "not_analyzed"
+            },
+            "paper_dcterms_temporal": {
+              "type": "string",
+              "include_in_all": "false",
+              "index": "not_analyzed"
+            },
+            "text_content": {
+              "type": "string",
+              "term_vector": "with_positions_offsets_payloads"
             }
+          }
         }
+      }
     }
 
 An example document::
@@ -150,3 +156,4 @@ An example document::
         "paper_dcterms_temporal": "daily", 
         "text_content": "This is a test to see whether Texcavator works!"
     }'
+

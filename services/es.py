@@ -599,3 +599,27 @@ def day_statistics(idx, typ, date_range, agg_name):
     if 'took' in results:
         return results
     return None
+
+
+def metadata_aggregation(idx, typ):
+    agg = {
+        "aggregations": {
+            "distribution": {
+                "terms": {
+                    "field": "paper_dcterms_spatial"
+                }
+            },
+            "articletype": {
+                "terms": {
+                    "field": "article_dc_subject"
+                }
+            },
+            "newspapers": {
+                "terms": {
+                    "field": "paper_dc_title.raw",
+                    "size": 10
+                }
+            }
+        }
+    }
+    return _es().search(index=idx, doc_type=typ, body=agg, search_type='count')

@@ -147,12 +147,12 @@
 					<div style="color:grey; text-align: center;">Select an article.</div>
 				</div>
 
-				<!-- stat graphs -->
-				<!-- 
-				<div id="statistics" title="Statistics" dojoType="dijit.layout.ContentPane" selected="false">
-					<div style="color:grey; text-align: center;">Statistics.</div>
+				<div id="metadata" title="Metadata" dojoType="dijit.layout.ContentPane" selected="false"> <!-- Metadata -->
+					<div id="top" style="color:grey; text-align: center;">Metadata.</div>
+                    <div id="chart_articletype" style="display: inline-block;"><h1>Article types</h1><svg style="height: 400px; width: 525px;"></svg></div>
+                    <div id="chart_distribution" style="display: inline-block;"><h1>Distributions</h1><svg style="height: 400px; width: 525px;"></svg></div>
+                    <div id="chart_newspapers"><h1>Newspapers</h1><svg style="height: 400px; width: 1050px"></svg></div>
 				</div>
-				-->
 
 				<div id="timeline" title="Timeline" dojoType="dijit.layout.ContentPane" selected="false">	<!-- Timeline -->
 				<!-- <div id="chart"></div><br /> -->
@@ -831,7 +831,7 @@ function clearGui()
 
 	// KB
 	if( dojo.byId( "record" )     != undefined ) { dojo.empty( dojo.byId( "record" ) ); }		// clear ocr
-	if( dojo.byId( "statistics" ) != undefined ) { dojo.empty( dojo.byId( "statistics" ) ); }	// clear Statistics
+	if( dojo.byId( "metadata" )   != undefined ) { dojo.empty( dojo.byId( "metadata" ) ); }	    // clear Metadata
 	if( dojo.byId( "timeline" )   != undefined ) { dojo.empty( dojo.byId( "timeline" ) ); }		// clear Timeline
 
 	// close panes of scans & kb
@@ -882,8 +882,7 @@ function onClickExecute(item)
 	searchSubmit();							// HTML search result in Search panel of accordion
 	dijit.byId( 'leftAccordion' ).back();
 
-	console.log( "metadataGraphics temporarily not available" );
-//	metadataGraphics( lexiconID );		// create the metadata graphics (and select that tab)
+	metadataGraphics( queryID );		// create the metadata graphics
 
 	// Cloud
 	var config = getConfig();
