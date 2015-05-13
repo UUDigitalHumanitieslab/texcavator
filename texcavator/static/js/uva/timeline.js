@@ -660,7 +660,12 @@ function burstCloud( params )
 			    var buttons = { "OK": true };
 		    	genDialog( title, resp.msg, buttons );
 	    		return null;
-    		} else {
+    		}
+    		else if (resp.result)
+    		{
+    		    placeCloudInTarget( "burst", resp, 'cloud' );
+    		}
+    		else {
 		    	console.log("got task_id: "+resp.task);
                 return resp.task;
     		}
