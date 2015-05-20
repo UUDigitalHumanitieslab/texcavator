@@ -3,9 +3,7 @@
 """
 from sys import stderr, exc_info
 import requests
-from itertools import chain
 import logging
-import json
 
 from celery.result import AsyncResult
 
@@ -16,7 +14,8 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 
 from es import get_search_parameters, do_search, count_search_results, \
-    single_document_word_cloud, multiple_document_word_cloud, get_document
+    single_document_word_cloud, multiple_document_word_cloud, get_document, \
+    metadata_aggregation
 
 from texcavator.utils import json_response_message
 
@@ -389,3 +388,17 @@ def retrieve_kb_resolver(request):
         return json_response_message('error', msg)
 
     return json_response_message('success', 'Resolving successful', {'text': response.content})
+
+
+@csrf_exempt
+@login_required
+def metadata(request):
+    """This view will show metadata aggregations"""
+    params = get_search_parameters(request.REQUEST)
+    result = metadata_aggregation(settings.ES_INDEX,
+                                  settings.ES_DOCTYPE,
+                                  params['query'],
+                                  params['dates'],
+                                  params['distributions'],
+                                  params['article_types'])
+    return json_response_message('success', 'Complete', result['aggregations'])
