@@ -394,5 +394,11 @@ def retrieve_kb_resolver(request):
 @login_required
 def metadata(request):
     """This view will show metadata aggregations"""
-    result = metadata_aggregation(settings.ES_INDEX, settings.ES_DOCTYPE)
+    params = get_search_parameters(request.REQUEST)
+    result = metadata_aggregation(settings.ES_INDEX,
+                                  settings.ES_DOCTYPE,
+                                  params['query'],
+                                  params['dates'],
+                                  params['distributions'],
+                                  params['article_types'])
     return json_response_message('success', 'Complete', result['aggregations'])

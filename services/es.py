@@ -601,25 +601,29 @@ def day_statistics(idx, typ, date_range, agg_name):
     return None
 
 
-def metadata_aggregation(idx, typ):
-    agg = {
-        "aggregations": {
-            "distribution": {
-                "terms": {
-                    "field": "paper_dcterms_spatial"
-                }
-            },
-            "articletype": {
-                "terms": {
-                    "field": "article_dc_subject"
-                }
-            },
-            "newspapers": {
-                "terms": {
-                    "field": "paper_dc_title.raw",
-                    "size": 10
-                }
+def metadata_aggregation(idx, typ, query, date_range, exclude_distributions, exclude_article_types):
+    body = create_query(query, date_range, exclude_distributions, exclude_article_types)
+    body['aggs'] = metadata_dict()
+    print body
+    return _es().search(index=idx, doc_type=typ, body=body, search_type='count')
+
+
+def metadata_dict():
+    return {
+        "distribution": {
+            "terms": {
+                "field": "paper_dcterms_spatial"
+            }
+        },
+        "articletype": {
+            "terms": {
+                "field": "article_dc_subject"
+            }
+        },
+        "newspapers": {
+            "terms": {
+                "field": "paper_dc_title.raw",
+                "size": 10
             }
         }
     }
-    return _es().search(index=idx, doc_type=typ, body=agg, search_type='count')

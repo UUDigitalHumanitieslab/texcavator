@@ -1,12 +1,16 @@
 
 // create metadata graphics
-function metadataGraphics( queryID )
+function metadataGraphics( query )
 {
 	console.log( "metadataGraphics()" );
+
+	var params = getSearchParameters();
+	params["query"] = query;
 
     dojo.xhrGet( {
         url: "services/metadata/",
         handleAs: "json",
+        content: params,
     }).then(function( response ) {
         // Retrieve the data
         data_articletype = response['articletype']['buckets'];
