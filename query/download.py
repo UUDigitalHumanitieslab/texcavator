@@ -19,10 +19,11 @@ from .tasks import zipquerydata
 logger = logging.getLogger(__name__)
 
 
-def create_zipname(query):
+def create_zipname(user, query):
     """Returns a name for the zipfile containing the exported data.
     """
-    return query.title + '_' + query.date_created.strftime('%Y.%m.%d-%H.%M.%S')
+    date_created = query.date_created.strftime('%Y.%m.%d-%H.%M.%S')
+    return '_'.join([user.username, query.title, date_created])
 
 
 def clean_filename(s):

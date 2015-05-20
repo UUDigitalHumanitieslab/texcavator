@@ -354,7 +354,7 @@ def download_prepare(request):
             print >> stderr, msg
         return json_response_message('error', msg)
 
-    zip_basename = create_zipname(query)
+    zip_basename = create_zipname(user, query)
     url = urljoin('http://{}'.format(request.get_host()),
                   "/query/download/" + quote_plus(zip_basename))
     email_message = "Texcavator query: " + query.title + "\n" + zip_basename + \
