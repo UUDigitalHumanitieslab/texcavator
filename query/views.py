@@ -332,22 +332,11 @@ def download_prepare(request):
     logger.info('query/download/prepare - user: {}'.
                 format(request.user.username))
 
-    req_dict = request.REQUEST
-
-    params = get_search_parameters(request.REQUEST)
-    query_str = params['query']
-
-    if query_str == "":
-        msg = "empty query title or content"
-        if settings.DEBUG:
-            print >> stderr, msg
-            print >> stderr, request.META
-        return json_response_message('error', msg)
-
     user = request.user
+    query = Query.objects.get(title=request.GET.get('query_title'), user=user)
 
     if user.email == "":
-        msg = "Preparing your download for query <br/><b>" + query_str + \
+        msg = "Preparing your download for query <br/><b>" + query.title + \
               "</b> failed.<br/>A valid email address is needed for user " \
               "<br/><b>" + user.username + "</b>"
         if settings.DEBUG:
@@ -357,7 +346,7 @@ def download_prepare(request):
     try:
         validate_email(user.email)
     except:
-        msg = "Preparing your download for query <br/><b>" + query_str + \
+        msg = "Preparing your download for query <br/><b>" + query.title + \
               "</b> failed.<br/>The email address of user <b>" + \
               user.username + "</b> could not be validated: <b>" + \
               user.email + "</b>"
@@ -365,19 +354,19 @@ def download_prepare(request):
             print >> stderr, msg
         return json_response_message('error', msg)
 
-    zip_basename = create_zipname(user.username, query_str)
+    zip_basename = create_zipname(query)
     url = urljoin('http://{}'.format(request.get_host()),
                   "/query/download/" + quote_plus(zip_basename))
-    email_message = "Texcavator query: " + query_str + "\n" + zip_basename + \
+    email_message = "Texcavator query: " + query.title + "\n" + zip_basename + \
         "\nURL: " + url
     if settings.DEBUG:
         print >> stderr, email_message
         print >> stderr, 'http://{}'.format(request.get_host())
 
     # zip documents by celery background task
-    execute(req_dict, zip_basename, user.email, email_message)
+    execute(query, dict(request.REQUEST), zip_basename, user.email, email_message)
 
-    msg = "Your download for query <b>" + query_str + \
+    msg = "Your download for query <b>" + query.title + \
           "</b> is being prepared.<br/>When ready, an email will be sent " + \
           "to <b>" + user.email + "</b>"
     return json_response_message('success', msg)

@@ -7,6 +7,7 @@ import json
 import csv
 import zipfile
 
+from math import ceil
 from time import time, localtime, strftime
 from sys import exc_info, stderr
 from dicttoxml import dicttoxml
@@ -17,7 +18,7 @@ from django.conf import settings
 from django.core.mail import send_mail
 from django.http import HttpResponse
 
-from services.es import get_search_parameters, do_search
+from services.es import do_search
 
 logger = logging.getLogger(__name__)
 
@@ -138,23 +139,17 @@ def download_collect(req_dict, zip_basename, to_email, email_message):
         print >> stderr, msg
 
     # download format: JSON or XML
-    try:
-        format = req_dict["format"]
-    except:
-        format = "json"
+    format = req_dict.get('format', 'json')
     if settings.DEBUG:
         print >> stderr, "format", format
 
-    params = get_search_parameters(req_dict)
-    es_query_str = params['query']
-
-    msg = "es_query: %s" % es_query_str
+    msg = "es_query: %s" % req_dict['query']
     logger.debug(msg)
 
     # just get the hit count
     start_record = 0
     chunk_1_size = 1
-    hits, resp_object = get_es_chunk(params, start_record, chunk_1_size)
+    hits, resp_object = get_es_chunk(req_dict, start_record, chunk_1_size)
 
     zip_basedir = settings.QUERY_DATA_DOWNLOAD_PATH
     zip_filename = zip_basename + ".zip"
@@ -179,7 +174,6 @@ def download_collect(req_dict, zip_basename, to_email, email_message):
         return HttpResponse(json_list, content_type=ctype)
 
     # how many chunks do we need?
-    from math import ceil
     chunk_size = settings.QUERY_DATA_CHUNK_SIZE
     hits_total = hits["total"]
     nchunks = int(ceil(float(hits_total) / float(chunk_size)))
@@ -193,7 +187,6 @@ def download_collect(req_dict, zip_basename, to_email, email_message):
         try:
             csv_file = open(csv_pathname, 'w')
             quotechar = '"'        # default
-        #    quotechar='|'
             csv_writer = csv.writer(csv_file,
                                     delimiter='\t',
                                     quoting=csv.QUOTE_NONNUMERIC,
@@ -215,11 +208,11 @@ def download_collect(req_dict, zip_basename, to_email, email_message):
             print >> stderr, "nchunk:", nchunk, "of", nchunks, \
                              "start_record:", start_record
 
-        hits, resp_obj = get_es_chunk(params, start_record, chunk_size)
+        hits, resp_obj = get_es_chunk(req_dict, start_record, chunk_size)
 
         hits_list = hits["hits"]
         hits_zipped += len(hits_list)
-        zip_chunk(ichunk, hits_list, zip_file, csv_writer, format)
+        zip_chunk(req_dict, ichunk, hits_list, zip_file, csv_writer, format)
 
     if format == "csv":
         csv_file.close()
@@ -248,7 +241,7 @@ def download_collect(req_dict, zip_basename, to_email, email_message):
               fail_silently=False)
 
 
-def get_es_chunk(params, start_record, chunk_size):
+def get_es_chunk(req_dict, start_record, chunk_size):
     """Retrieve a # chunksize documents from ElasticSearch index."""
     msg = "%s: %s" % (__name__, "get_es_chunk")
     logger.debug(msg)
@@ -257,18 +250,18 @@ def get_es_chunk(params, start_record, chunk_size):
 
     validity, es_dict = do_search(settings.ES_INDEX,
                                   settings.ES_DOCTYPE,
-                                  params['query'],
+                                  req_dict['query'],
                                   start_record,
                                   chunk_size,
-                                  params['dates'],
-                                  params['distributions'],
-                                  params['article_types'],
+                                  req_dict['dates'],
+                                  req_dict['exclude_distributions'],
+                                  req_dict['exclude_article_types'],
                                   True)
 
     return es_dict['hits'], None
 
 
-def zip_chunk(ichunk, hits_list, zip_file, csv_writer, format):
+def zip_chunk(req_dict, ichunk, hits_list, zip_file, csv_writer, format):
     """Zip a chunk of documents.
 
     Documents are retrieved from elasticsearch in chunks.
@@ -295,16 +288,37 @@ def zip_chunk(ichunk, hits_list, zip_file, csv_writer, format):
             zip_file.writestr(pseudo_filename, xml.encode("utf-8"))
         elif format == "csv":
             if h == 0:
-                es_header_names, kb_header_names = hit2csv_header(csv_writer,
-                                                                  ichunk,
-                                                                  hit)
+                if ichunk == 0:
+                    hit2csv_metadata(csv_writer, req_dict)
+                es_header_names, kb_header_names = hit2csv_header(csv_writer, ichunk)
             hit2csv_data(csv_writer, hit, es_header_names, kb_header_names)
         else:         # "json"
             pseudo_filename += ".json"
             zip_file.writestr(pseudo_filename, json.dumps(hit))
 
 
-def hit2csv_header(csv_writer, ichunk, hit):
+def hit2csv_metadata(csv_writer, req_dict):
+    """Writes the metadata rows
+    """
+    md_header = ['comment',
+                 'query',
+                 'date executed',
+                 'excluded article types',
+                 'excluded distributions',
+                 'date lower',
+                 'date upper']
+    md_row = [req_dict['comment'],
+              req_dict['query'],
+              req_dict['date_created'],
+              req_dict['exclude_article_types'],
+              req_dict['exclude_distributions'],
+              req_dict['date_lower'],
+              req_dict['date_upper']]
+    csv_writer.writerow(md_header)
+    csv_writer.writerow(md_row)
+
+
+def hit2csv_header(csv_writer, ichunk):
     """Returns the header row of the csv that is created.
     """
     es_header_names = ["_id", "_score"]

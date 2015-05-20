@@ -19,14 +19,10 @@ from .tasks import zipquerydata
 logger = logging.getLogger(__name__)
 
 
-def create_zipname(username, query_title):
+def create_zipname(query):
     """Returns a name for the zipfile containing the exported data.
     """
-    query_title_ = username + '_' + query_title
-    query_title_ = clean_filename(query_title_)
-    zip_basename = query_title_ + "_" + strftime("%Y.%m.%d-%H.%M.%S")
-
-    return zip_basename
+    return query.title + '_' + query.date_created.strftime('%Y.%m.%d-%H.%M.%S')
 
 
 def clean_filename(s):
@@ -39,7 +35,7 @@ def clean_filename(s):
     return s
 
 
-def execute(req_dict, zip_basename, to_email, email_message):
+def execute(query, req_dict, zip_basename, to_email, email_message):
     """Expires old data and then compiles the Celery task
     for sending the export via email.
     """
@@ -50,14 +46,15 @@ def execute(req_dict, zip_basename, to_email, email_message):
     if settings.QUERY_DATA_DELETE_DATA:
         expire_data()        # delete old download stuff
 
-    # add the zip name & user email
-    req_dict["zip_basename"] = zip_basename
-    req_dict["to_email"] = to_email
-    req_dict["email_message"] = email_message
+    # add the request parameters
+    req_dict['zip_basename'] = zip_basename
+    req_dict['to_email'] = to_email
+    req_dict['email_message'] = email_message
+    req_dict.update(query.get_query_dict())
     if settings.DEBUG:
         print >> stderr, req_dict
-        print type(req_dict)
 
+    # convert to base64
     req_str = json.dumps(req_dict)
     req_base64 = base64.b64encode(req_str)
     if settings.DEBUG:
@@ -119,7 +116,7 @@ def expire_data():
             try:
                 os.remove(fpath)         # DELETING QUERY DATA DOWNLOAD FILE
             except Exception as e:
-                msg = "deleting qyery data file failed: %s" % str(e)
+                msg = "deleting query data file failed: %s" % str(e)
                 logger.debug(msg)
                 if settings.DEBUG:
                     print >> stderr, msg
