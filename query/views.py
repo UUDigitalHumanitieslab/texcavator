@@ -315,7 +315,7 @@ def export_stopwords(request):
     for stopword in sw:
         u = stopword.user.username if stopword.user else '(all)'
         q = stopword.query if stopword.query else '(all)'
-        writer.writerow([stopword.word, u, q])
+        writer.writerow([stopword.word.encode('utf-8'), u, q])
 
     return response
 
