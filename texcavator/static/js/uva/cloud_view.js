@@ -582,7 +582,7 @@ var wordCloudClicked = function( event )
 {
 //	console.log( "wordCloudClicked()" )
 	var query = dojo.byId( "query" ).value;
-	var newQuery = query + " AND " + event.word;
+	var newQuery = query + " +" + event.word;
 	if( !confirm( 'This adds ' + event.word + ' to the query. Do you want to continue?', 'Modify query' ) ) return;
 	dojo.byId( "query" ).value = newQuery;
 	dojo.empty( dojo.byId( "cql" ) );
