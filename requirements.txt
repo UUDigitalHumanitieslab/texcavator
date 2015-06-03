@@ -9,6 +9,9 @@ MySQL-python
 lxml
 redis
 requests
+kombu
+billiard
+urllib3
 numpy
 Pygments
 docutils
