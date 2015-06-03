@@ -46,28 +46,7 @@ def elasticsearch_htmlresp(collection, start_record, chunk_size, es_dict):
     html_str = '<head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></head>'
     html_str += '<body>'
     if hits_retrieved != hits_total:  # did not get everything
-        if start_record > 1:
-            have_prev = True
-        else:
-            have_prev = False
-
-        if start_record + chunk_size < hits_total:
-            have_next = True
-        else:
-            have_next = False
-
-        href_pref = '<a href="javascript:nextResults(-' + str( chunk_size ) + ');">previous</a>'
-        href_next = '<a href="javascript:nextResults(+' + str( chunk_size ) + ');">next</a>'
-
-        html_str += '<span style="float:right">'
-        if have_prev and have_next:
-            html_str = html_str + href_pref + ' | ' + href_next
-        elif have_prev:
-            html_str = html_str + href_pref
-        elif have_next:
-            html_str = html_str + href_next
-        html_str += '</span>'
-
+        html_str += paging_links(start_record, chunk_size, hits_total)
     if hits_total == 0 or not hits_max_score:
         html_str += '<p>Found ' + "%s" % hits_total + ' records.'
     else:
@@ -129,6 +108,7 @@ def elasticsearch_htmlresp(collection, start_record, chunk_size, es_dict):
         html_str += item_str
 
     html_str += '</ol>'
+    html_str += paging_links(start_record, chunk_size, hits_total)
     html_str += '<a href="#search">Back to top</a>'
     html_str += '</body>'
 
@@ -136,3 +116,22 @@ def elasticsearch_htmlresp(collection, start_record, chunk_size, es_dict):
     html_str = etree.tostring(html, pretty_print=True)
 
     return html_str
+
+
+def paging_links(start_record, chunk_size, hits_total):
+    have_prev = start_record > 1
+    have_next = start_record + chunk_size < hits_total
+
+    href_prev = '<a href="javascript:nextResults(-' + str(chunk_size) + ');">previous</a>'
+    href_next = '<a href="javascript:nextResults(+' + str(chunk_size) + ');">next</a>'
+
+    result = '<span style="float:right">'
+    if have_prev and have_next:
+        result += href_prev + ' | ' + href_next
+    elif have_prev:
+        result += href_prev
+    elif have_next:
+        result += href_next
+    result += '</span>'
+
+    return result
