@@ -164,11 +164,13 @@ Functions:
 
 		var scale = 0.3;
 		var identifier = record.parentNode.getAttributeNS("http://purl.org/dc/elements/1.1/", "identifier");
-		
+
+		var query = dojo.byId("query").value.replace(/[()]/g, ''); // removes parentheses from query
+
 		var url = "http://imageviewer.kb.nl/ImagingService/imagingService?colour=89c5e7";
 		url += "&coords=" + identifier + ":alto";
 		url += "&id=" + identifier + ":image";
-		url += "&words=" + escape(dojo.byId("query").value);
+		url += "&words=" + encodeURIComponent(query);
 		url += "&r=0&s=" + scale;
 
 		if( areas.length === 0 )	// use some dummy coordinates
