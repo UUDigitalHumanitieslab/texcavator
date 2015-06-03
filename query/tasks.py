@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-"""Celery task for creating a zipfile of a set of documents (query export)."""
+"""Task for creating a zipfile of a set of documents (query export).
+Could in the future be implemented with Celery."""
 import base64
 import os
 import logging
@@ -12,8 +13,6 @@ from time import time, localtime, strftime
 from sys import exc_info, stderr
 from dicttoxml import dicttoxml
 
-from celery import shared_task
-
 from django.conf import settings
 from django.core.mail import send_mail
 from django.http import HttpResponse
@@ -23,7 +22,6 @@ from services.es import do_search
 logger = logging.getLogger(__name__)
 
 
-@shared_task
 def zipquerydata(*args):
     t1 = time()
 

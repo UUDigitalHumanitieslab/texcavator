@@ -10,7 +10,6 @@ import base64
 import logging
 import json
 from sys import stderr
-from time import strftime
 
 from django.conf import settings
 
@@ -64,7 +63,7 @@ def execute(query, req_dict, zip_basename, to_email, email_message):
     if settings.DEBUG:
         print 'Calling zipquerydata\n'
 
-    task = zipquerydata.delay(req_base64)
+    task = zipquerydata(req_base64)
     msg = 'management/download/ - Celery task id: {}'.format(task.id)
     logger.info(msg)
     return msg
