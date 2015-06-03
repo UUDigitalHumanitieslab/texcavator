@@ -98,14 +98,14 @@ And mapping::
     PUT /kb
     {
       "mappings": {
-        "doc" : {
+        "doc": {
           "properties" : {
             "article_dc_subject": {
               "type": "string",
               "include_in_all": "false",
               "index": "not_analyzed"
             },
-              "article_dc_title": {
+            "article_dc_title": {
               "type": "string",
               "term_vector": "with_positions_offsets_payloads"
             },
@@ -122,7 +122,10 @@ And mapping::
               "type": "string",
               "term_vector": "with_positions_offsets_payloads",
               "fields": {
-                "raw": { "type": "string", "index": "not_analyzed" }
+                "raw": {
+                  "type": "string",
+                  "index": "not_analyzed"
+                }
               }
             },
             "paper_dcterms_spatial": {
@@ -137,7 +140,13 @@ And mapping::
             },
             "text_content": {
               "type": "string",
-              "term_vector": "with_positions_offsets_payloads"
+              "term_vector": "with_positions_offsets_payloads",
+              "fields": {
+                "stemmed": {
+                  "type": "string",
+                  "analyzer": "dutch"
+                }
+              }
             }
           }
         }
