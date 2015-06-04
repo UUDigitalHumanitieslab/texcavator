@@ -9,6 +9,7 @@ import unicodedata
 import base64
 import logging
 import json
+import subprocess
 from sys import stderr
 
 from django.conf import settings
@@ -63,8 +64,8 @@ def execute(query, req_dict, zip_basename, to_email, email_message):
     if settings.DEBUG:
         print 'Calling zipquerydata\n'
 
-    task = zipquerydata(req_base64)
-    msg = 'management/download/ - Celery task id: {}'.format(task.id)
+    zipquerydata(req_base64)
+    msg = 'management/download/'  # - Celery task id: {}'.format(task.id)
     logger.info(msg)
     return msg
 

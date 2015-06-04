@@ -369,7 +369,7 @@ def download_prepare(request):
     msg = "Your download for query <b>" + query.title + \
           "</b> is being prepared.<br/>When ready, an email will be sent " + \
           "to <b>" + user.email + "</b>"
-    return json_response_message('success', msg)
+    return json_response_message('SUCCESS', msg)
 
 
 @csrf_exempt
