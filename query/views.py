@@ -17,6 +17,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.servers.basehttp import FileWrapper
 from django.conf import settings
 from django.db.models import Q
+from django.db import IntegrityError
 
 from .models import Distribution, ArticleType, Query, DayStatistic, \
     StopWord
@@ -85,7 +86,8 @@ def create_query(request):
         for art_type in ArticleType.objects.all():
             if art_type.id in params['article_types']:
                 q.exclude_article_types.add(art_type)
-
+    except IntegrityError as _:
+        return json_response_message('ERROR', 'A query with this title already exists.')
     except Exception as e:
         return json_response_message('ERROR', str(e))
 
@@ -369,7 +371,7 @@ def download_prepare(request):
     msg = "Your download for query <b>" + query.title + \
           "</b> is being prepared.<br/>When ready, an email will be sent " + \
           "to <b>" + user.email + "</b>"
-    return json_response_message('success', msg)
+    return json_response_message('SUCCESS', msg)
 
 
 @csrf_exempt
