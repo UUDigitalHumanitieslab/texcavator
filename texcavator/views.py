@@ -32,6 +32,7 @@ def index(request):
 def user_login(request):
     username = request.POST.get('username')
     password = request.POST.get('password')
+    next_url = request.POST.get('next_url')
 
     user = authenticate(username=username, password=password)
 
@@ -39,7 +40,7 @@ def user_login(request):
         if user.is_active:
             login(request, user)
 
-            # TODO: are these datelimts really necessary?
+            # TODO: are these date_limits really necessary?
             date_limits = daterange2dates('')
             dates = [date_limits['lower'], date_limits['upper']]
             daterange = [int(d.replace('-', '')) for d in dates]
@@ -49,7 +50,8 @@ def user_login(request):
                 "user_name": user.username,
                 "daterange": daterange,
                 # TODO: what is timestamp used for? Is it really necessary
-                "timestamp": TIMESTAMP
+                "timestamp": TIMESTAMP,
+                "next_url": next_url
             }
 
             return json_response_message('SUCCESS', '', params)

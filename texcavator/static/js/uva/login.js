@@ -29,7 +29,6 @@ glob_username  = "";		// global
 glob_password  = "";		// global
 glob_userid    = null;		// global
 
-glob_projectn  = "";		// global: project related
 glob_begindate = "";		// global: project related
 glob_enddate   = "";		// global: project related
 
@@ -167,11 +166,10 @@ var createLogin = function( projectname )
 
 		glob_username = dijit.byId( "tb-username" ).get( "value" );
 		glob_password = dijit.byId( "tb-password" ).get( "value" );
-		glob_projectn = dijit.byId( "cb-projectn" ).get( "value" );
+		var next = location.search.split('next=')[1]; // TODO: dirty way to retrieve next url
 
 		dijit.byId( "tb-username" ).set( "value", default_username );
 		dijit.byId( "tb-password" ).set( "value", default_password );
-		dijit.byId( "cb-projectn" ).set( "value", default_projectn );
 
 		dojo.xhrPost({
 			url: "login",
@@ -179,13 +177,13 @@ var createLogin = function( projectname )
 			content: {
 				"username" : glob_username,
 				"password" : glob_password,
-				"projectname" : glob_projectn
+				"next_url" : next
 			},
 			load: function(response)
 			{
-			//	console.log( data );
 				var status = response["status"];
 				var msg = response["msg"];
+				var next_url = response["next_url"];
 
 				if( status === "SUCCESS" )
 				{
@@ -206,6 +204,11 @@ var createLogin = function( projectname )
 					var label = "<img src = '/static/image/icon/Tango/22/apps/preferences-users.png')/>" + glob_username;
 					btnUser.set( "label", label );
 					createQueryList();		// using username to filter the Saved queries
+
+					if ( next_url )
+					{
+					    window.location.href = next_url;
+					}
 
 					if( ILPS_LOGGING )
 					{
@@ -327,8 +330,7 @@ var createLogout = function()
 			    handleAs: "json",
 			    content: {
 				    "username" : glob_username,
-				    "password" : glob_password,
-				    "projectname" : glob_projectn
+				    "password" : glob_password
 			    },
 			    load: function(response)
 			    {
