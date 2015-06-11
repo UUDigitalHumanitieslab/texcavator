@@ -1,5 +1,5 @@
 from django.contrib import admin
-from query.models import Query, DayStatistic, StopWord
+from query.models import Query, DayStatistic, StopWord, Pillar, Newspaper
 
 
 class DayStatisticAdmin(admin.ModelAdmin):
@@ -11,6 +11,16 @@ class StopWordAdmin(admin.ModelAdmin):
     search_fields = ['word']
     list_filter = ('user', 'query')
 
+
+class NewspaperAdmin(admin.ModelAdmin):
+    list_display = ('id', 'title', 'start_date', 'end_date', 'editions', 'pillar')
+    search_fields = ['title']
+    list_filter = ('pillar', )
+
+
 admin.site.register(Query)
 admin.site.register(DayStatistic, DayStatisticAdmin)
 admin.site.register(StopWord, StopWordAdmin)
+admin.site.register(Pillar)
+admin.site.register(Newspaper, NewspaperAdmin)
+

@@ -1,0 +1,44 @@
+[
+{
+    "fields": {
+        "name": "Communistisch"
+    },
+    "model": "query.pillar",
+    "pk": 1
+},
+{
+    "fields": {
+        "name": "Confessioneel-protestants"
+    },
+    "model": "query.pillar",
+    "pk": 2
+},
+{
+    "fields": {
+        "name": "Joods"
+    },
+    "model": "query.pillar",
+    "pk": 3
+},
+{
+    "fields": {
+        "name": "Katholiek"
+    },
+    "model": "query.pillar",
+    "pk": 4
+},
+{
+    "fields": {
+        "name": "Liberaal"
+    },
+    "model": "query.pillar",
+    "pk": 5
+},
+{
+    "fields": {
+        "name": "Sociaal-democratisch"
+    },
+    "model": "query.pillar",
+    "pk": 6
+}
+]

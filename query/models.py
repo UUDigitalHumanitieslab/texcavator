@@ -28,6 +28,27 @@ class Distribution(models.Model):
         return self.id
 
 
+class Pillar(models.Model):
+    """Model that allows to store a categorization of newspapers along pillars."""
+    name = models.CharField(max_length=200, unique=True)
+
+    def __unicode__(self):
+        return self.name
+
+
+class Newspaper(models.Model):
+    """Model that stores the available newspapers"""
+    id = models.CharField(max_length=9, primary_key=True)
+    title = models.CharField(max_length=500)
+    start_date = models.DateField()
+    end_date = models.DateField()
+    editions = models.PositiveIntegerField()
+    pillar = models.ForeignKey(Pillar, null=True)
+
+    def __unicode__(self):
+        return self.title
+
+
 class Query(models.Model):
     """Model to store a user's queries.
     """
