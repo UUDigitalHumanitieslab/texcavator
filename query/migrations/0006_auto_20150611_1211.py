@@ -12,8 +12,8 @@ def load_fixture(apps, schema_editor):
 
 def unload_fixture(apps, schema_editor):
     """Will delete all existing Pillars"""
-    Pillar = apps.get_model('query', 'pillar')
-    Pillar.objects.all().delete()
+    pillar = apps.get_model('query', 'pillar')
+    pillar.objects.all().delete()
 
 
 class Migration(migrations.Migration):
