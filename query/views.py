@@ -5,7 +5,7 @@ import logging
 import csv
 from sys import stderr
 from datetime import datetime
-from urllib import quote_plus
+from urllib import quote_plus, unquote_plus
 from urlparse import urljoin
 
 from django.http import HttpResponse
@@ -389,7 +389,7 @@ def download_data(request, zip_name):
 
     zip_basedir = os.path.join(settings.PROJECT_PARENT,
                                settings.QUERY_DATA_DOWNLOAD_PATH)
-    zip_filename = zip_name + ".zip"
+    zip_filename = unquote_plus(zip_name) + ".zip"
     zip_pathname = os.path.join(zip_basedir, zip_filename)
 
     wrapper = FileWrapper(open(zip_pathname, 'rb'))
