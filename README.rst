@@ -8,6 +8,7 @@
 
 
 Copyright Netherlands eScience Center, University of Amsterdam.
+From 2015 onwards developed by the Digital Humanities Lab, Utrecht University.
 
 Distributed under the terms of the Apache2 license. See LICENSE for details.
 
@@ -16,18 +17,28 @@ Dependencies
 ============
 Before installing Texcavator, make sure a MySQL and Redis server are present on
 the system. In apt-based Linux distros like Ubuntu, do::
-    
+
     sudo apt-get install mysql-server redis-server
 
 Also make sure they are running. Furthermore, you will need a few development packages::
-    
-    sudo apt-get install libmysqlclient-dev libxml2-dev libxslt-dev
+
+    sudo apt-get install libmysqlclient-dev libxml2-dev libxslt-dev python-dev
+
+For Python development, it's almost customary to install git, pip and virtualenv::
+
+    sudo apt-get install git python-pip
+    sudo pip install virtualenv
 
 Installation
 ============
-To install Texcavator, make a virtualenv and activate it, then::
+To install Texcavator, clone the repository and make a virtualenv, activate it, and install the requirements::
 
-    pip install -r requirements.txt
+    cd ~
+    git clone https://github.com/UUDigitalHumanitieslab/texcavator.git
+    mkdir .virtualenvs
+    virtualenv .virtualenvs/texc
+    source .virtualenvs/texc/bin/activate
+    pip install -r texcavator/requirements.txt
 
 Install Dojo::
 
@@ -37,7 +48,12 @@ In ``texcavator/settings.py``, you can change the path to the log file, if you l
 
 In ``texcavator/settings_local.py``, set up the database; for a quick test, set::
 
-    DATABASE_ENGINE = 'django.db.backends.sqlite3'
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(PROJECT_PARENT, 'db.sqlite3')
+        }
+    }
 
 Make sure Redis and MySQL (if needed) are running.
 Populate the database if this is the first time you're running Texcavator::
@@ -82,7 +98,7 @@ Elasticsearch, see the website_. To get started using Elasticsearch see the quic
 
 Texcavator assumes the data is in an index called ``kb`` (tip: use it as an alias).
 
-Texcavator requires that the documents are stored in a ``doc_type`` doc that has at least the following fields:
+Texcavator requires that the documents are stored in a doc_type ``doc`` that has at least the following fields:
 
 * article_dc_subject
 * article_dc_title
