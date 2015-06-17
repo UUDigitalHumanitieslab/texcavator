@@ -3,6 +3,8 @@ from django.conf.urls import patterns, include, url
 from django.contrib import admin
 from django.views.generic import RedirectView, TemplateView
 
+import settings
+
 admin.autodiscover()
 
 urlpatterns = patterns(
@@ -36,3 +38,9 @@ urlpatterns = patterns(
             'post_reset_redirect': '/logout/'
         }),
 )
+
+if settings.DEBUG:
+    urlpatterns += patterns('',
+        (r'^500/$', TemplateView.as_view(template_name='500.html')),
+        (r'^404/$', TemplateView.as_view(template_name='404.html')),
+    )
