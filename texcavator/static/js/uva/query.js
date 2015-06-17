@@ -772,7 +772,7 @@ function okDownload( query_title )
 		load: function( result ) {
 			var status = result[ "status" ];
 			if( status === "SUCCESS" )
-			{ var title = "Preparing download"; }
+			{ var title = "Download finished"; }
 			else
 			{ var title = "Preparing download failed"; }
 
@@ -782,6 +782,8 @@ function okDownload( query_title )
 		},
 		error: function( err ) { console.error( err ); return err; }
 	});
+
+	genDialog( "Preparing download", "Your download is being prepared. This might take a while. When the download is finished, a message box will pop up.", { "OK": true } );
 }
 
 

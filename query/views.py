@@ -368,9 +368,9 @@ def download_prepare(request):
     # zip documents by celery background task
     execute(query, dict(request.REQUEST), zip_basename, user.email, email_message)
 
-    msg = "Your download for query <b>" + query.title + \
-          "</b> is being prepared.<br/>When ready, an email will be sent " + \
-          "to <b>" + user.email + "</b>"
+    msg = "Your export for query <b>" + query.title + \
+          "</b> is completed.<br/>An e-mail with a download link has been sent " + \
+          "to <b>" + user.email + "</b>."
     return json_response_message('SUCCESS', msg)
 
 
