@@ -15,18 +15,22 @@ Distributed under the terms of the Apache2 license. See LICENSE for details.
 
 Dependencies
 ============
-Before installing Texcavator, make sure a MySQL and Redis server are present on
-the system. In apt-based Linux distros like Ubuntu, do::
+Before installing Texcavator, make sure your packages are up-to-date and
+a MySQL and Redis server are present on the system.
+In apt-based Linux distros like Ubuntu, do::
 
+    sudo apt-get update
+    sudo apt-get upgrade
     sudo apt-get install mysql-server redis-server
 
 Also make sure they are running. Furthermore, you will need a few development packages::
 
-    sudo apt-get install libmysqlclient-dev libxml2-dev libxslt-dev python-dev
+    sudo apt-get install libmysqlclient-dev libxml2-dev libxslt-dev
 
-For Python development, it's almost customary to install git, pip and virtualenv::
+For Python development, it's almost customary to install git, python-dev, python-pip
+and the virtualenv package::
 
-    sudo apt-get install git python-pip
+    sudo apt-get install git python-dev python-pip
     sudo pip install virtualenv
 
 Installation
@@ -121,7 +125,7 @@ And mapping::
               "include_in_all": "false",
               "index": "not_analyzed"
             },
-              "article_dc_title": {
+            "article_dc_title": {
               "type": "string",
               "term_vector": "with_positions_offsets_payloads"
             },
@@ -173,3 +177,11 @@ An example document::
         "text_content": "This is a test to see whether Texcavator works!"
     }'
 
+Deployment
+==========
+
+For deployment, you could use Apache2 (we presume this installed) with mod_wsgi enabled ::
+
+    sudo apt-get install libapache2-mod-wsgi
+
+Then, follow the instructions on https://docs.djangoproject.com/en/1.7/howto/deployment/wsgi/modwsgi/ closely.
