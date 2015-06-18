@@ -107,7 +107,14 @@ And mapping::
             },
             "article_dc_title": {
               "type": "string",
-              "term_vector": "with_positions_offsets_payloads"
+              "term_vector": "with_positions_offsets_payloads",
+              "fields": {
+                "stemmed": {
+                  "type": "string",
+                  "analyzer": "dutch",
+                  "term_vector": "with_positions_offsets_payloads"
+                }
+              }
             },
             "identifier": {
               "type": "string",
@@ -144,7 +151,8 @@ And mapping::
               "fields": {
                 "stemmed": {
                   "type": "string",
-                  "analyzer": "dutch"
+                  "analyzer": "dutch",
+                  "term_vector": "with_positions_offsets_payloads"
                 }
               }
             }
