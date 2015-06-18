@@ -191,6 +191,7 @@ def tv_cloud(request):
     min_length = int(request.GET.get('min_length', 2))
     use_stopwords = request.GET.get('stopwords') == "1"
     use_default_stopwords = request.GET.get('stopwords_default') == "1"
+    stems = request.GET.get('stems') == "1"
 
     # Retrieve the stopwords
     stopwords = []
@@ -227,13 +228,14 @@ def tv_cloud(request):
                                                   settings.ES_DOCTYPE,
                                                   ids[0],
                                                   min_length,
-                                                  stopwords)
+                                                  stopwords,
+                                                  stems)
             return json_response_message('ok', 'Word cloud generated', t_vector)
 
     # Cloud by queryID or multiple ids
     logger.info('services/cloud/ - multiple document word cloud')
 
-    task = generate_tv_cloud.delay(params, min_length, stopwords, ids)
+    task = generate_tv_cloud.delay(params, min_length, stopwords, ids, stems)
     logger.info('services/cloud/ - Celery task id: {}'.format(task.id))
 
     return json_response_message('ok', '', {'task': task.id})

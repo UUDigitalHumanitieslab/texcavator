@@ -574,7 +574,7 @@ var createConfig = function()
 	var textStopwords = dojo.create( "label", {
 		id: "text-stopwords",
 		for: "div-stopwords",
-		innerHTML: "<hr/>Stop words (<a href='query/stopword/export'>download as .csv</a>)<br/>"
+		innerHTML: "<hr/><strong>Stop words</strong> (<a href='query/stopword/export'>download as .csv</a>)<br/>"
 	}, cpCloud.domNode );
 
 
@@ -637,7 +637,18 @@ var createConfig = function()
 	var labelWMinLen = dojo.create( "label", {
 		id: "label-wminlen",
 		for: "ns-wminlen",
-		innerHTML: "&nbsp;Minimum word length<hr/>"
+		innerHTML: "&nbsp;Minimum word length"
+	}, cpCloud.domNode );
+
+
+	var divOther = dojo.create( "div", {
+		id: "div-other"
+	}, cpCloud.domNode );
+
+	var textOther = dojo.create( "label", {
+		id: "text-other",
+		for: "div-other",
+		innerHTML: "<hr/><strong>Other options</strong><br/>"
 	}, cpCloud.domNode );
 
 	var divStem = dojo.create( "div", {
@@ -649,7 +660,6 @@ var createConfig = function()
 		checked: config[ "cloud" ][ "stems" ],
 		onChange: function( btn ) {
 			config[ "cloud" ][ "stems" ] = btn;
-			if( btn == true ) { dijit.byId( "cb-ner" ).set( "checked", false ); }		// either stemming, or NER
 		}
 	}, divStem );
 
@@ -657,27 +667,6 @@ var createConfig = function()
 		id: "label-stem",
 		for: "cb-stem",
 		innerHTML: "&nbsp;Stemming<br/>"
-	}, cpCloud.domNode );
-
-
-	var divNer = dojo.create( "div", {
-		id: "div-ner"
-	}, cpCloud.domNode );
-
-	var cbNer = new dijit.form.CheckBox({
-		disabled: false,
-		id: "cb-ner",
-		checked: config[ "cloud" ][ "NER" ],
-		onChange: function( btn ) {
-			config[ "cloud" ][ "NER" ] = btn;
-			if( btn == true ) { dijit.byId( "cb-stem" ).set( "checked", false ); }		// either stemming, or NER
-		}
-	}, divNer );
-
-	var labelNer = dojo.create( "label", {
-		id: "label-ner",
-		for: "cb-ner",
-		innerHTML: "&nbsp;Named Entity Recognition<br/>"
 	}, cpCloud.domNode );
 
 
@@ -709,7 +698,7 @@ var createConfig = function()
 	var textCloudRender = dojo.create( "label", {
 		id: "text-cloudrender",
 		for: "div-cloudrender",
-		innerHTML: "<hr/>Cloud rendering<br/>"
+		innerHTML: "<hr/><strong>Cloud rendering</strong><br/>"
 	}, cpCloud.domNode );
 
 
