@@ -396,6 +396,40 @@ var createConfig = function()
 	}, cpSearch.domNode );
 	*/
 
+	var divPillar = dojo.create( "div", {
+		id: "div-pillar"
+	}, cpSearch.domNode );
+
+	var textPillar = dojo.create( "label", {
+		id: "text-pillar",
+		for: "div-pillar",
+		innerHTML: "Pillar<br/>"
+	}, cpSearch.domNode );
+
+	dojo.xhrGet( {
+        url: "query/pillars",
+        handleAs: "json",
+        sync: true
+    }).then(function( response ) {
+        dojo.forEach(response.result, function(entry, i) {
+            var div = dojo.create( "div", {
+                id: "div-pillar-" + entry.name
+            }, cpSearch.domNode );
+
+            var cb = new dijit.form.CheckBox({
+                id: "cb-pillar-" + entry.name,
+                checked: false,
+                value: entry.id.toString()
+            }, div );
+
+            var label = dojo.create( "label", {
+                id: "label-pillar-" + entry.name,
+                for: "cb-pillar-" + entry.name,
+                innerHTML: "&nbsp;" + entry.name + "<br/>"
+            }, cpSearch.domNode );
+        });
+    });
+
 	var divSearchChunk = dojo.create( "div", {
 		id: "div-search-chunk"
 	}, cpSearch.domNode );

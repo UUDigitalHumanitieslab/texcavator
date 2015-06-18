@@ -60,6 +60,7 @@ class Query(models.Model):
 
     exclude_article_types = models.ManyToManyField(ArticleType, blank=True)
     exclude_distributions = models.ManyToManyField(Distribution, blank=True)
+    selected_pillars = models.ManyToManyField(Pillar, blank=True)
     user = models.ForeignKey(User)
 
     date_created = models.DateTimeField(auto_now=True)
@@ -73,6 +74,7 @@ class Query(models.Model):
         """
         excl_art_types = [a.id for a in self.exclude_article_types.all()]
         excl_distr = [d.id for d in self.exclude_distributions.all()]
+        selected_pillars = [d.name for d in self.selected_pillars.all()]
 
         return {
             'query_id': self.id,
@@ -85,6 +87,7 @@ class Query(models.Model):
             },
             'exclude_article_types': excl_art_types,
             'exclude_distributions': excl_distr,
+            'selected_pillars': selected_pillars,
             'comment': self.comment,
             'date_created': str(self.date_created)
         }

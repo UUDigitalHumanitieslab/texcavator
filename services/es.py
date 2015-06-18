@@ -39,7 +39,7 @@ def _es():
 
 
 def do_search(idx, typ, query, start, num, date_range, exclude_distributions,
-              exclude_article_types, return_source=False, sort_order='_score'):
+              exclude_article_types, selected_pillars, return_source=False, sort_order='_score'):
     """Returns ElasticSearch search results.
 
     Fetch all documents matching the query and return a list of
@@ -69,6 +69,9 @@ def do_search(idx, typ, query, start, num, date_range, exclude_distributions,
         exclude_article_types : list
             A list of strings representing article types that should be
             excluded from the search
+        selected_pillars : list
+            A list of string representing pillars that should be included into
+            the search. Each pillar is linked to a list of newspapers.
         return_source : boolean, optional
             A boolean indicating whether the _source of ES documents should be
             returned or a smaller selection of document fields. The smaller set
@@ -86,7 +89,7 @@ def do_search(idx, typ, query, start, num, date_range, exclude_distributions,
             input query string is invalid.
     """
     q = create_query(query, date_range, exclude_distributions,
-                     exclude_article_types)
+                     exclude_article_types, selected_pillars)
 
     valid_q = indices.IndicesClient(_es()).validate_query(index=idx,
                                                           doc_type=typ,
@@ -108,11 +111,11 @@ def do_search(idx, typ, query, start, num, date_range, exclude_distributions,
 
 
 def count_search_results(idx, typ, query, date_range, exclude_distributions,
-                         exclude_article_types):
+                         exclude_article_types, selected_pillars):
     """Count the number of results for a query
     """
     q = create_query(query, date_range, exclude_distributions,
-                     exclude_article_types)
+                     exclude_article_types, selected_pillars)
 
     return _es().count(index=idx, doc_type=typ, body=q)
 
@@ -137,7 +140,7 @@ def get_document(idx, typ, doc_id):
 
 
 def create_query(query_str, date_range, exclude_distributions,
-                 exclude_article_types):
+                 exclude_article_types, selected_pillars):
     """Create elasticsearch query from input string.
 
     This method accepts boolean queries in the Elasticsearch query string
@@ -531,13 +534,13 @@ def daterange2dates(date_range_str):
 
 
 def get_document_ids(idx, typ, query, date_range, exclude_distributions=[],
-                     exclude_article_types=[]):
+                     exclude_article_types=[], selected_pillars=[]):
     """Return a list of document ids and dates for a query
     """
     doc_ids = []
 
     q = create_query(query, date_range, exclude_distributions,
-                     exclude_article_types)
+                     exclude_article_types, selected_pillars)
 
     date_field = 'paper_dc_date'
     fields = [date_field]
@@ -565,12 +568,12 @@ def get_document_ids(idx, typ, query, date_range, exclude_distributions=[],
 
 
 def document_id_chunks(chunk_size, idx, typ, query, date_range, dist=[],
-                       art_types=[]):
+                       art_types=[], selected_pillars=[]):
     """Generator for retrieving document ids for all results of a query.
 
     Used by the generate_tv_cloud task.
     """
-    q = create_query(query, date_range, dist, art_types)
+    q = create_query(query, date_range, dist, art_types, selected_pillars)
 
     get_more_docs = True
     start = 0
@@ -601,8 +604,10 @@ def day_statistics(idx, typ, date_range, agg_name):
     return None
 
 
-def metadata_aggregation(idx, typ, query, date_range, exclude_distributions, exclude_article_types):
-    body = create_query(query, date_range, exclude_distributions, exclude_article_types)
+def metadata_aggregation(idx, typ, query, date_range,
+                         exclude_distributions, exclude_article_types, selected_pillars):
+    body = create_query(query, date_range,
+                        exclude_distributions, exclude_article_types, selected_pillars)
     body['aggs'] = metadata_dict()
     return _es().search(index=idx, doc_type=typ, body=body, search_type='count')
 

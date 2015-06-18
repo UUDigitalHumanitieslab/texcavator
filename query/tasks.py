@@ -254,6 +254,7 @@ def get_es_chunk(req_dict, start_record, chunk_size):
                                   req_dict['dates'],
                                   req_dict['exclude_distributions'],
                                   req_dict['exclude_article_types'],
+                                  req_dict['selected_pillars'],
                                   True)
 
     return es_dict['hits'], None
@@ -303,6 +304,7 @@ def hit2csv_metadata(csv_writer, req_dict):
                  'date executed',
                  'excluded article types',
                  'excluded distributions',
+                 'selected pillars',
                  'date lower',
                  'date upper']
     md_row = [req_dict['comment'],
@@ -310,6 +312,7 @@ def hit2csv_metadata(csv_writer, req_dict):
               req_dict['date_created'],
               req_dict['exclude_article_types'],
               req_dict['exclude_distributions'],
+              req_dict['selected_pillars'],
               req_dict['date_lower'],
               req_dict['date_upper']]
     csv_writer.writerow(md_header)

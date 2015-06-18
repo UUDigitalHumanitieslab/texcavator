@@ -15,6 +15,8 @@ urlpatterns = patterns(
     url(r'^stopword/export$', 'export_stopwords'),
     url(r'^stopwords$', 'stopwords'),
 
+    url(r'^pillars$', 'pillars'),
+
     url(r'^download/prepare/$', 'download_prepare'),
     url(r'^download/(?P<zip_name>.*)$', 'download_data'),
 )
