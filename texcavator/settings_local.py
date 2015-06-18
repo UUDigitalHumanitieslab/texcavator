@@ -75,3 +75,6 @@ EMAIL_HOST = 'localhost'
 EMAIL_PORT = 1025
 
 LOGIN_URL = '/'
+
+# Temporary setting for whether or not stemming is available
+STEMMING_AVAILABLE = True

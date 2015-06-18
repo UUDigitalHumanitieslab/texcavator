@@ -433,7 +433,7 @@ def termvector_wordcloud(idx, typ, doc_ids, min_length=0, stems=False):
         }
     }
 
-    t_vectors = _es().mtermvectors(index='kb', doc_type='doc', body=bdy)
+    t_vectors = _es().mtermvectors(index=idx, doc_type=typ, body=bdy)
 
     for doc in t_vectors.get('docs'):
         for field, data in doc.get('term_vectors').iteritems():
@@ -631,7 +631,11 @@ def metadata_dict():
 
 
 def get_cloud_fields(stems=False):
+    """
+    :param stems: Whether or not to use the stemmed versions of the fields.
+    :return: The fields on which the word cloud has to be created
+    """
     fields = [_DOCUMENT_TEXT_FIELD, _DOCUMENT_TITLE_FIELD]
-    if stems:
+    if stems and settings.STEMMING_AVAILABLE:
         fields = [f + '.stemmed' for f in fields]
     return fields
