@@ -97,6 +97,23 @@ And mapping::
 
     PUT /kb
     {
+      "settings": {
+        "analysis" : {
+          "analyzer" : {
+            "dutch_analyzer" : {
+              "type" : "custom",
+              "tokenizer": "standard",
+              "filter" : ["standard", "lowercase", "dutch_stemmer"]
+            }
+          },
+          "filter" : {
+            "dutch_stemmer" : {
+              "type" : "stemmer",
+              "name" : "dutch_kp"
+            }
+          }
+        }
+      },
       "mappings": {
         "doc": {
           "properties" : {
@@ -111,7 +128,7 @@ And mapping::
               "fields": {
                 "stemmed": {
                   "type": "string",
-                  "analyzer": "dutch",
+                  "analyzer": "dutch_analyzer",
                   "term_vector": "with_positions_offsets_payloads"
                 }
               }
@@ -151,7 +168,7 @@ And mapping::
               "fields": {
                 "stemmed": {
                   "type": "string",
-                  "analyzer": "dutch",
+                  "analyzer": "dutch_analyzer",
                   "term_vector": "with_positions_offsets_payloads"
                 }
               }
