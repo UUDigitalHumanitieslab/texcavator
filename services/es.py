@@ -274,7 +274,7 @@ def word_cloud_aggregation(agg_name, num_words=100):
     return agg
 
 
-def single_document_word_cloud(idx, typ, doc_id, min_length=0, stopwords=None):
+def single_document_word_cloud(idx, typ, doc_id, min_length=0, stopwords=None, stems=False):
     """Return data required to draw a word cloud for a single document.
 
 
@@ -289,6 +289,8 @@ def single_document_word_cloud(idx, typ, doc_id, min_length=0, stopwords=None):
             The minimum length of words in the word cloud
         stopwords : list, optional
             A list of words that should be removed from the word cloud
+        stems : boolean, optional
+            Whether or not we should look at the stemmed columns
 
     Returns:
         dict : dict
@@ -316,7 +318,7 @@ def single_document_word_cloud(idx, typ, doc_id, min_length=0, stopwords=None):
         }
 
     bdy = {
-        'fields': [_DOCUMENT_TEXT_FIELD, _DOCUMENT_TITLE_FIELD]
+        'fields': get_cloud_fields(stems)
     }
     t_vector = _es().termvector(index=idx, doc_type=typ, id=doc_id, body=bdy)
 
@@ -400,7 +402,7 @@ def multiple_document_word_cloud(idx, typ, query, date_range, dist, art_types,
     }
 
 
-def termvector_wordcloud(idx, typ, doc_ids, min_length=0):
+def termvector_wordcloud(idx, typ, doc_ids, min_length=0, stems=False):
     """Return word frequencies in a set of documents.
 
     Return data required to draw a word cloud for multiple documents by
@@ -422,7 +424,7 @@ def termvector_wordcloud(idx, typ, doc_ids, min_length=0):
     bdy = {
         'ids': doc_ids,
         'parameters': {
-            'fields': [_DOCUMENT_TEXT_FIELD, _DOCUMENT_TITLE_FIELD],
+            'fields': get_cloud_fields(stems),
             'term_statistics': False,
             'field_statistics': False,
             'offsets': False,
@@ -431,7 +433,7 @@ def termvector_wordcloud(idx, typ, doc_ids, min_length=0):
         }
     }
 
-    t_vectors = _es().mtermvectors(index='kb', doc_type='doc', body=bdy)
+    t_vectors = _es().mtermvectors(index=idx, doc_type=typ, body=bdy)
 
     for doc in t_vectors.get('docs'):
         for field, data in doc.get('term_vectors').iteritems():
@@ -626,3 +628,14 @@ def metadata_dict():
             }
         }
     }
+
+
+def get_cloud_fields(stems=False):
+    """
+    :param stems: Whether or not to use the stemmed versions of the fields.
+    :return: The fields on which the word cloud has to be created
+    """
+    fields = [_DOCUMENT_TEXT_FIELD, _DOCUMENT_TITLE_FIELD]
+    if stems and settings.STEMMING_AVAILABLE:
+        fields = [f + '.stemmed' for f in fields]
+    return fields

@@ -117,8 +117,25 @@ And mapping::
 
     PUT /kb
     {
+      "settings": {
+        "analysis" : {
+          "analyzer" : {
+            "dutch_analyzer" : {
+              "type" : "custom",
+              "tokenizer": "standard",
+              "filter" : ["standard", "lowercase", "dutch_stemmer"]
+            }
+          },
+          "filter" : {
+            "dutch_stemmer" : {
+              "type" : "stemmer",
+              "name" : "dutch_kp"
+            }
+          }
+        }
+      },
       "mappings": {
-        "doc" : {
+        "doc": {
           "properties" : {
             "article_dc_subject": {
               "type": "string",
@@ -127,7 +144,14 @@ And mapping::
             },
             "article_dc_title": {
               "type": "string",
-              "term_vector": "with_positions_offsets_payloads"
+              "term_vector": "with_positions_offsets_payloads",
+              "fields": {
+                "stemmed": {
+                  "type": "string",
+                  "analyzer": "dutch_analyzer",
+                  "term_vector": "with_positions_offsets_payloads"
+                }
+              }
             },
             "identifier": {
               "type": "string",
@@ -142,7 +166,10 @@ And mapping::
               "type": "string",
               "term_vector": "with_positions_offsets_payloads",
               "fields": {
-                "raw": { "type": "string", "index": "not_analyzed" }
+                "raw": {
+                  "type": "string",
+                  "index": "not_analyzed"
+                }
               }
             },
             "paper_dcterms_spatial": {
@@ -157,7 +184,14 @@ And mapping::
             },
             "text_content": {
               "type": "string",
-              "term_vector": "with_positions_offsets_payloads"
+              "term_vector": "with_positions_offsets_payloads",
+              "fields": {
+                "stemmed": {
+                  "type": "string",
+                  "analyzer": "dutch_analyzer",
+                  "term_vector": "with_positions_offsets_payloads"
+                }
+              }
             }
           }
         }

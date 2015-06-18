@@ -15,7 +15,7 @@ from texcavator import utils
 
 
 @shared_task
-def generate_tv_cloud(search_params, min_length, stopwords, ids=None):
+def generate_tv_cloud(search_params, min_length, stopwords, ids=None, stems=False):
     """Generates multiple document word clouds using the termvector approach"""
     burst = True
     chunk_size = 1000
@@ -51,7 +51,8 @@ def generate_tv_cloud(search_params, min_length, stopwords, ids=None):
             result = termvector_wordcloud(settings.ES_INDEX,
                                           settings.ES_DOCTYPE,
                                           subset,
-                                          min_length)
+                                          min_length,
+                                          stems)
             wordcloud_counter = wordcloud_counter + result
 
             progress += len(subset)
@@ -66,7 +67,8 @@ def generate_tv_cloud(search_params, min_length, stopwords, ids=None):
             result = termvector_wordcloud(settings.ES_INDEX,
                                           settings.ES_DOCTYPE,
                                           subset,
-                                          min_length)
+                                          min_length,
+                                          stems)
             wordcloud_counter = wordcloud_counter + result
 
             progress += len(subset)
