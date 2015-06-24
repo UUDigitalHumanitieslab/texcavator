@@ -125,7 +125,7 @@ def resolveDate(date, begindate, resolution):
     elif resolution == 'hours':
         return diff.seconds/3600.0 + diff.days*24
     elif resolution == 'halfday':
-        return  diff.seconds/(3600.*12.) + diff.days*2
+        return diff.seconds/(3600.*12.) + diff.days*2
 
 
 def unresolve(bursts, doc2date, resolution, mindate):
@@ -159,26 +159,11 @@ def resolve(doc2date, doc2relevance, date2countC, resolution):
     for date, c in date2countC.iteritems():
         date2countC_new[int(resolveDate(date, mindate, resolution))] += c
 #	print >> stderr, "date2countC_new.values():", date2countC_new.values()
-    m = max(date2countC_new.values())
-    for k in date2countC_new:
-        date2countC_new[k] /= float(m)
+    if date2countC_new.values():
+        m = max(date2countC_new.values())
+        for k in date2countC_new:
+            date2countC_new[k] /= float(m)
     return doc2date_new, date2count, date2countC_new, mindate, date2docs
-
-
-def resolveDate(date, begindate, resolution):
-    diff = date-begindate
-    if resolution == 'day':
-        return diff.days + diff.seconds/(3600.*24.)
-    elif resolution == 'week':
-        return resolveDate(date, begindate, 'day')/7.
-    elif resolution == 'month':
-        return (date.month - begindate.month) + (date.year - begindate.year)*12 + (date.day - begindate.day)/30
-    elif resolution == 'year':
-        return (date.year - begindate.year) + (date.month - begindate.month)/12. + (date.day - begindate.day)/30
-    elif resolution == 'hours':
-        return diff.seconds/3600.0 + diff.days*24
-    elif resolution == 'halfday':
-        return  diff.seconds/(3600.*12.) + diff.days*2
 
 
 def dates2intervals(dates2counts, doc2date, resolution='day'):
