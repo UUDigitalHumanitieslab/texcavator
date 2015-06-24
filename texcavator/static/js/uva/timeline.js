@@ -242,15 +242,17 @@ function createGraph()
 	else
 	{ dest.innerHTML = ""; }			// Clear existing destination
 
-    var w = $( "#chartDiv" ).width() - 30, 
+    var w = $( "#chartDiv" ).width() - 70, 
 	    h = $( "#chartDiv" ).height(),
-	    x = d3.time.scale().range( [ 0, w ] ),
-	    y = d3.scale.linear().range( [ h-20, h-20 ] );	// start with zero height at X-axis (20px reserved for ticks & years)
+	    x = d3.time.scale().range( [ 50, w-20 ] ),
+	    y = d3.scale.linear().range( [ h-20, h-20 ] ),	// start with zero height at X-axis (20px reserved for ticks & years)
+	    y_label = d3.scale.linear().range( [ h-20, 0 ] ); // start with zero height at X-axis (20px reserved for ticks & years)
 	console.log( "createGraph() w=" + w + ", h=" + h );	// debug: sometimes the graph is compressed to a small width
 
 	// Update the scale domains.
 	x.domain( burstData[ burstIntervalIndex ].dateRange );
 	y.domain( burstData[ burstIntervalIndex ].range );
+	y_label.domain( burstData[ burstIntervalIndex ].range );
 
 	// An SVG element
 	var svg = d3.select( "#chartDiv" ).append( "svg:svg" )
@@ -259,11 +261,6 @@ function createGraph()
 		.attr( "pointer-events", "all" )
 		.append( "svg:g" )
 		.call( d3.behavior.zoom().on( "zoom", redraw ) );
-
-	svg.append( "svg:rect" )
-		.attr( "width", w )
-		.attr( "height", h-19 )
-		.style( "fill", "white" );
 
 	var body = svg.append( "svg:g" );
 
@@ -317,8 +314,11 @@ function createGraph()
 		if( ticksX.length > 16 ) { ticksX = x.ticks( d3.time.years,  5 ); }
 		if( ticksX.length > 16 ) { ticksX = x.ticks( d3.time.years, 10 ); }
 		if( ticksX.length > 16 ) { ticksX = x.ticks( d3.time.years, 20 ); }
-		var fx = x.tickFormat( 10 );
-		var tx = function( d ) { return "translate(" + x( d ) + ",0)"; };
+
+		var fx = x.tickFormat(10), 
+			fy = y.tickFormat(10), 
+			tx = function(d) { return "translate(" + x(d) + ",0)"; },
+			ty = function(d) { return "translate(0," + y_label(d) + ")"; };
 
 		// Regenerate x-ticks
 		var gx = svg.selectAll( "g.x" )
@@ -341,6 +341,33 @@ function createGraph()
 			.text( fx );
 
 		gx.exit().remove();
+
+		// Regenerate y-ticks…
+		var gy = svg.selectAll("g.y")
+			.data(y.ticks(10), String)
+			.attr("transform", ty);
+
+		console.log(gy);
+
+		gy.select("text")
+			.text(fy);
+
+		var gye = gy.enter().insert("svg:g", "rect")
+			.attr("class", "y")
+			.attr("transform", ty);
+
+		gye.append("svg:line")
+			.attr("stroke", "#555")
+			.attr("x1", 45)
+			.attr("x2", 50);
+
+		gye.append("svg:text")
+			.attr("x", 40)
+			.attr("dy", ".35em")
+			.attr("text-anchor", "end")
+			.text(fy);
+
+		gy.exit().remove();
 
 		var newData;
 		filteredData = burstData[ burstIntervalIndex ].data.filter( filterFunction );
