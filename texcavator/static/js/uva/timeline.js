@@ -31,12 +31,12 @@ var detectBursts = true;
 
 var showTimeline = function(item, collection)
 {
-    lexiconId = item.pk;
-    lexiconTitle = item["fields"]["title"];
-    query_string = item["fields"]["query"];
-    console.log( "showTimeline() lexiconId: " + lexiconId + ", lexiconTitle: " + lexiconTitle + ", collection: " + collection );
+	lexiconId = item.pk;
+	lexiconTitle = item["fields"]["title"];
+	query_string = item["fields"]["query"];
+	console.log( "showTimeline() lexiconId: " + lexiconId + ", lexiconTitle: " + lexiconTitle + ", collection: " + collection );
 
-    setQueryMetadata(item);
+	setQueryMetadata(item);
 
 	storeLexiconID( lexiconId );			// query.js
 	storeLexiconTitle( lexiconTitle );		// query.js
@@ -107,8 +107,8 @@ function getDataForInterval( lexiconId, intervalIndex, callback )
 		var bogusStart = new Date( getEndOfInterval( new Date( data[ data.length-1 ].start ), intervals[ burstIntervalIndex ] ) + 1 );
 		burstData[ intervalIndex ].data.push( { 
 			start: bogusStart,
-    		end: getEndOfInterval( bogusStart, intervals[ burstIntervalIndex ] ),
-    		value: 0, burst: false,
+			end: getEndOfInterval( bogusStart, intervals[ burstIntervalIndex ] ),
+			value: 0, burst: false,
 			index: -1 });
 
 		// Set data for animation
@@ -154,10 +154,10 @@ function getData( lexiconId, interval, callback )
 	timeline_url = timeline_url + "?collection=" + collection;
 
 	if( config[ "timeline" ][ "normalize" ] == true ) {
-	    timeline_url += "&normalize=1";
+		timeline_url += "&normalize=1";
 	}
 	else {
-	    timeline_url += "&normalize=0";
+		timeline_url += "&normalize=0";
 	}
 
 	var dateBeginStr = getDateBeginStr();
@@ -242,11 +242,11 @@ function createGraph()
 	else
 	{ dest.innerHTML = ""; }			// Clear existing destination
 
-    var w = $( "#chartDiv" ).width() - 70, 
-	    h = $( "#chartDiv" ).height(),
-	    x = d3.time.scale().range( [ 50, w-20 ] ),
-	    y = d3.scale.linear().range( [ h-20, h-20 ] ),	// start with zero height at X-axis (20px reserved for ticks & years)
-	    y_label = d3.scale.linear().range( [ h-20, 0 ] ); // start with zero height at X-axis (20px reserved for ticks & years)
+	var w = $( "#chartDiv" ).width() - 70, 
+		h = $( "#chartDiv" ).height(),
+		x = d3.time.scale().range( [ 50, w-20 ] ),
+		y = d3.scale.linear().range( [ h-20, h-20 ] ),	// start with zero height at X-axis (20px reserved for ticks & years)
+		y_label = d3.scale.linear().range( [ h-20, 0 ] ); // start with zero height at X-axis (20px reserved for ticks & years)
 	console.log( "createGraph() w=" + w + ", h=" + h );	// debug: sometimes the graph is compressed to a small width
 
 	// Update the scale domains.
@@ -493,7 +493,8 @@ function createGraph()
 			.enter().append( "svg:text" )
 				.attr( "class", "period" )
 				.attr( "fill", "#555" )
-				.attr( "x", 5 ).attr( "y", 22 )
+				.attr( "x", 50 )
+				.attr( "y", 22 )
 				.attr( "dy", "1em" )
 				.attr( "text-anchor", "left" );
 
@@ -558,7 +559,7 @@ function createGraph()
 		});
 	}
 
-    dojo.place( button.domNode, 'chartDiv' );
+	dojo.place( button.domNode, 'chartDiv' );
 
 } // createGraph() 
 
@@ -581,7 +582,7 @@ function burstSearch( lexicon_query, date_range, max_records )
 		content : params,									// key:value pairs
 		handleAs : "json",									// HTML data returned from the server
 		load : function( data ) {
-            console.log(data);
+			console.log(data);
 			dojo.byId( "search-result" ).innerHTML = data.html;	// put html text in panel
 		},
 		error: function( err ) {
@@ -661,41 +662,41 @@ function burstCloud( params )
 	params = getCloudParameters( params );		// add user-changeable parameters from config
 
 	dojo.xhrGet({
-        url: "services/cloud",
+		url: "services/cloud",
 		content: params, 
 		failOk: false,			// true: No dojo console error message
 		handleAs: "json",
-    }).then(function( resp ){
-        
-            console.log("requesting task id for burstcloud");
-            console.log(resp);
+	}).then(function( resp ) {
+		console.log("requesting task id for burstcloud");
+		console.log(resp);
 
-            if( resp.status != "ok" ){
-	    		console.error( resp.msg );
-		    	closePopup();
-    			var title = "Cloud request failed";
-			    var buttons = { "OK": true };
-		    	genDialog( title, resp.msg, buttons );
-	    		return null;
-    		}
-    		else if (resp.result)
-    		{
-    		    placeCloudInTarget( "burst", resp, 'cloud' );
-    		}
-    		else {
-		    	console.log("got task_id: "+resp.task);
-                return resp.task;
-    		}
-	    }, function( err ) { console.error( err ); }
-    ).then(function(task_id){
-        console.log("Start polling!")
-        console.log("task_id: "+task_id)
-        if(task_id){
-            check_status(task_id);
-        } else {
-            console.log('Error: no task_id returned.');
-        }
-    });
+		if( resp.status != "ok" ){
+			console.error( resp.msg );
+			closePopup();
+			var title = "Cloud request failed";
+			var buttons = { "OK": true };
+			genDialog( title, resp.msg, buttons );
+			return;
+		}
+		else if (resp.result) // this will be the case for single documents
+		{
+			placeCloudInTarget( "burst", resp, 'cloud' );
+			return;
+		}
+		else {
+			console.log("Retrieved task_id: " + resp.task);
+			return resp.task;
+		}
+	}, function( err ) { console.error( err ); }
+	).then(function( task_id ) {
+		if ( task_id ) {
+			console.log("Start polling!");
+			console.log("task_id: " + task_id);
+			check_status(task_id);
+		} else {
+			console.log('No task_id returned');
+		}
+	});
 } // burstCloud()
 
 
