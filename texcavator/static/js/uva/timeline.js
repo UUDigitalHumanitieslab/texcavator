@@ -539,12 +539,9 @@ function createGraph()
 
 	if( dijit.byId( 'sparksDialog' ) == undefined ) 
 	{
-		var chart_div = "chartDiv";
-
 		var dialog = new dijit.TooltipDialog({
 			id: 'sparksDialog',
-			content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer eget risus metus. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. In convallis, nunc non pretium vulputate, orci mi mollis eros, nec gravida mauris purus vel felis. Quisque semper aliquam quam, ac pellentesque tortor viverra eget. Vestibulum vel orci non tellus fermentum ornare at quis mauris. Praesent a placerat magna. Aliquam porttitor accumsan elementum. Phasellus ac leo non magna sollicitudin gravida. Fusce dapibus posuere eros sed sollicitudin. Curabitur ut ligula lacus, eu porta magna.',
-			style: 'width: ' + dojo.position( chart_div ).w + 'px'
+			style: 'width: ' + dojo.position('chartDiv').w + 'px'
 		});
 	}
 
@@ -555,7 +552,8 @@ function createGraph()
 			id: 'sparksDropDownButton',
 			label: "Tooltip",
 			dropDown: dialog,
-			style: 'position: absolute; left: 0; top: 320px; visibility: hidden'
+			dropDownPosition: ["below"],
+			style: 'position: absolute; left: 0; top: 320px; visibility: hidden;'
 		});
 	}
 
@@ -610,7 +608,7 @@ function burstClicked( data, index, element )
 	// show burst articles in accordion
 	var start_date  = toDateString( d.start );			// toDateString() : toolbar.js
 	var stop_date   = toDateString( d.end );			// toDateString() : toolbar.js
-	var date_range  = start_date + "," + stop_date
+	var date_range  = start_date + "," + stop_date;
 
 	// retrieve all timeline bar records, not just the KB default 20
 	// the timeline bar sometimes has a few less than found by search: the lexicon_daystatistic 
@@ -643,16 +641,6 @@ function burstClicked( data, index, element )
 	};
 
 	burstCloud( params );
-
-	var oldPosition = dojo.position( dijit.byId( 'sparksDialog' )._popupWrapper );
-	var newLeft  = dojo.position( "chartDiv" ).x;
-	var newWidth = dojo.position( "chartDiv" ).w;
-
-	dijit.byId( 'sparksDialog' )._popupWrapper.style.left  = newLeft  + "px";
-	dijit.byId( 'sparksDialog' )._popupWrapper.style.width = newWidth + "px";
-	var newLeft = e.x.animVal.value + e.width.animVal.value/2;
-	newLeft -= dojo.position( dojo.query( '#sparksDialog .dijitTooltipConnector' )[ 0 ]).w/2;
-	dojo.query( '#sparksDialog .dijitTooltipConnector' )[ 0 ].style.left = newLeft + "px";
 } // burstClicked()
 
 
