@@ -81,7 +81,7 @@ function getDataForInterval( lexiconId, intervalIndex, callback )
 {
 	var interval = intervals[ intervalIndex ];
 
-	getData( lexiconId, "created_at", interval, function( data )
+	getData( lexiconId, interval, function( data )
 	{
 		var mean = d3.mean( data, function( d ) { return d.value; } );
 		var stddev = Math.sqrt( d3.mean( data, function( d ) { return Math.pow( d.value - mean, 2 ); } ) );
@@ -145,7 +145,7 @@ function getDataForInterval( lexiconId, intervalIndex, callback )
 }
 
 
-function getData( lexiconId, field, interval, callback )
+function getData( lexiconId, interval, callback )
 {
 	var timeline_url = "query/timeline/" + lexiconId + "/" + interval;
 
@@ -475,16 +475,8 @@ function createGraph()
 		var xDomain = x.domain()[ 1 ].getTime() - x.domain()[ 0 ].getTime();
 		var lexiconTitle = retrieveLexiconTitle();
 
-		if( xDomain > 3*365*24*3600000 )		// Just show year if domain is larger than 3 years
-		{
-			svg.selectAll( "text.period" )
-				.text( "Period: " + x.domain()[0].getFullYear() + " - " + x.domain()[1].getFullYear() + " , Query title: " + lexiconTitle );
-		}
-		else
-		{
-			svg.selectAll( "text.period" )
-				.text( "Period: " + x.domain()[0].toDateString() + " - " + x.domain()[1].toDateString() + " , Query title: " + lexiconTitle );
-		}
+		svg.selectAll( "text.period" )
+			.text( "Period: " + getDateBeginStr() + " - " + getDateEndStr() + " , Query title: " + lexiconTitle );
 
 		// If we have newData, set up animation
 		if( newData != undefined ) 
