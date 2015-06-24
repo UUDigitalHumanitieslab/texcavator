@@ -347,8 +347,6 @@ function createGraph()
 			.data(y.ticks(10), String)
 			.attr("transform", ty);
 
-		console.log(gy);
-
 		gy.select("text")
 			.text(fy);
 
