@@ -604,12 +604,12 @@ function burstClicked( data, index, element )
 
 	dijit.byId( 'sparksDropDownButton' ).openDropDown();
 
-	var template = '<b>{burst}{start} - {end}: <a href="{link}">{count} documents</a>.</b><br /><br /><div id="cloud"></div>';
+	var template = '<b>{burst}{start} - {end}: {count} documents.</b><br /><br /><div id="cloud"></div>';
 	var data = {
 		burst: (d.burst) ? "Burst " : "",
 		start: d.start.toString().substr(4, 11),
 		end: d.end.toString().substr(4, 11),
-		link: 'javascript:filterOnTime('+d.start.getTime()+', '+d.end.getTime()+')', count: d.count 
+		count: d.count
 	};
 
 	dijit.byId( "sparksDialog" ).set( "content", dojo.replace( template, data ) );
