@@ -469,14 +469,15 @@ function createGraph()
 					{ return ( d.burst ) ? "red" : "steelblue"; }
 					else
 					{ return "steelblue"; }
-				});
+				})
+				.style( "visibility", function(d) { 
+					return d.index == -1 ? "hidden" : "visible";
+				}); // Render bogus data invisible. TODO: Yes, this is ugly as hell.
 		}
-
 
 		function pathUpdateFunction( path ) {
 			path.attr( "d", area );
 		}			
-
 
 		// Place bursts at right spot
 		bursts.call( burstUpdateFunction );
