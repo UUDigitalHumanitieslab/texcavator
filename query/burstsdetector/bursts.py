@@ -119,9 +119,9 @@ def resolveDate(date, begindate, resolution):
     elif resolution == 'week':
         return resolveDate(date, begindate, 'day')/7.
     elif resolution == 'month':
-        return (date.month - begindate.month) + (date.year - begindate.year)*12 + diff.days/30
+        return (date.month - begindate.month) + (date.year - begindate.year)*12 + (date.day - begindate.day)/30
     elif resolution == 'year':
-        return (date.year - begindate.year) + (date.month - begindate.month)/12. + diff.days/365
+        return (date.year - begindate.year) + (date.month - begindate.month)/12. + (date.day - begindate.day)/30
     elif resolution == 'hours':
         return diff.seconds/3600.0 + diff.days*24
     elif resolution == 'halfday':
