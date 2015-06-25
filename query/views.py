@@ -110,7 +110,7 @@ def delete(request, query_id):
     if not request.user == query.user:
         return json_response_message('ERROR', 'Query does not belong to user.')
 
-    q = query.query
+    q = query.title
     query.delete()
 
     return json_response_message('SUCCESS', 'Query "{}" deleted.'.format(q))
