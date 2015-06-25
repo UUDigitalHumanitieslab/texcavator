@@ -791,8 +791,7 @@ function saveQuery(title, comment, query, url)
     console.log("url: "+url);
 	
     // get user-changeable parameters from config
-    var params = getSearchParameters();	
-    console.log(params);
+    var params = getSearchParameters();
 
     dojo.xhrPost({
         url: url,
@@ -813,7 +812,8 @@ function saveQuery(title, comment, query, url)
             st_advert: params["st_advert"],
             st_article: params["st_article"],
             st_family: params["st_family"],
-            st_illust: params["st_illust"] 
+            st_illust: params["st_illust"], 
+            pillars: params["pillars"]
         },
         load: function(result){
     		if( result["status"] !== "SUCCESS" )

@@ -514,7 +514,7 @@ def get_search_parameters(req_dict):
         if not use_type:
             article_types.append(typ)
 
-    pillars = req_dict.get('pillars', [])
+    pillars = [int(x) for x in req_dict.getlist('pillars')]
     collection = req_dict.get('collection', settings.ES_INDEX)
     sort_order = req_dict.get('sort_order', '_score')
 

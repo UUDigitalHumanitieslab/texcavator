@@ -360,7 +360,6 @@ function updateQueryDocCountsElasticSearch( item, collection )
 					doc_count = resp.doc_count;
 					config = getConfig();
 					var counts_str = " [" + doc_count + "] ";
-					console.log( counts_str );
 
 					var cspan = dojo.byId( "query-string-" + pk );
 					if( cspan != null )
