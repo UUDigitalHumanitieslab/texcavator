@@ -1,0 +1,44 @@
+[
+{
+    "fields": {
+        "name": "Communist"
+    },
+    "model": "query.pillar",
+    "pk": 1
+},
+{
+    "fields": {
+        "name": "Protestant"
+    },
+    "model": "query.pillar",
+    "pk": 2
+},
+{
+    "fields": {
+        "name": "Jewish"
+    },
+    "model": "query.pillar",
+    "pk": 3
+},
+{
+    "fields": {
+        "name": "Catholic"
+    },
+    "model": "query.pillar",
+    "pk": 4
+},
+{
+    "fields": {
+        "name": "Liberal"
+    },
+    "model": "query.pillar",
+    "pk": 5
+},
+{
+    "fields": {
+        "name": "Socialist"
+    },
+    "model": "query.pillar",
+    "pk": 6
+}
+]

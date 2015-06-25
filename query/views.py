@@ -20,7 +20,7 @@ from django.db.models import Q
 from django.db import IntegrityError
 
 from .models import Distribution, ArticleType, Query, DayStatistic, \
-    StopWord
+    StopWord, Pillar
 from .utils import query2docidsdate
 from .burstsdetector import bursts
 from .download import create_zipname, execute
@@ -86,6 +86,10 @@ def create_query(request):
         for art_type in ArticleType.objects.all():
             if art_type.id in params['article_types']:
                 q.exclude_article_types.add(art_type)
+
+        for pillar in Pillar.objects.all():
+            if pillar.id in params['pillars']:
+                q.selected_pillars.add(pillar)
     except IntegrityError as _:
         return json_response_message('ERROR', 'A query with this title already exists.')
     except Exception as e:
@@ -149,6 +153,10 @@ def update(request, query_id):
             if art_type.id in params['article_types']:
                 query.exclude_article_types.add(art_type)
 
+        query.selected_pillars.clear()
+        for pillar in Pillar.objects.all():
+            if pillar.id in params['pillars']:
+                query.selected_pillars.add(pillar)
     except Exception as e:
         return json_response_message('ERROR', str(e))
 
@@ -398,3 +406,10 @@ def download_data(request, zip_name):
     response['Content-Disposition'] = "attachment; filename=%s" % zip_filename
 
     return response
+
+
+@login_required
+def retrieve_pillars(request):
+    """Retrieves all pillars as JSON objects"""
+    pillars = Pillar.objects.all()
+    return json_response_message('ok', '', {'result': [{'id': p.id, 'name': p.name} for p in pillars]})

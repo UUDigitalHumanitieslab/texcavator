@@ -45,6 +45,7 @@ def search(request):
                                 params['dates'],
                                 params['distributions'],
                                 params['article_types'],
+                                params['pillars'],
                                 sort_order=params['sort_order'])
     if valid_q:
         html_str = elasticsearch_htmlresp(settings.ES_INDEX,
@@ -88,7 +89,8 @@ def doc_count(request):
                                   params['query'],
                                   params['dates'],
                                   params['exclude_distributions'],
-                                  params['exclude_article_types'])
+                                  params['exclude_article_types'],
+                                  params['selected_pillars'])
 
     doc_count = result.get('count', 'error')
 
@@ -139,6 +141,7 @@ def cloud(request):
                                                   params.get('dates'),
                                                   params.get('distributions'),
                                                   params.get('article_types'),
+                                                  params.get('pillars'),
                                                   ids)
 
     # Cloud by queryID
@@ -160,7 +163,8 @@ def cloud(request):
                                               query,
                                               params.get('dates'),
                                               params.get('distributions'),
-                                              params.get('article_types'))
+                                              params.get('article_types'),
+                                              params.get('pillars'))
 
     if not result:
         return json_response_message('error', 'No word cloud generated.')
@@ -402,5 +406,6 @@ def metadata(request):
                                   params['query'],
                                   params['dates'],
                                   params['distributions'],
-                                  params['article_types'])
+                                  params['article_types'],
+                                  params['pillars'])
     return json_response_message('success', 'Complete', result['aggregations'])
