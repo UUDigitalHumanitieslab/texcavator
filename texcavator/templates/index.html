@@ -462,6 +462,13 @@ function setQueryMetadata(item){
         config["search"]["type"]["family"] = val_st_family;
     });
 
+    // Set pillars as selected
+    var selected_pillars = item["fields"]["selected_pillars"];
+    $('.pillar input').each(function(i) {
+        var checked = selected_pillars.indexOf(parseInt($(this).val())) != -1;
+        dijit.byId($(this).attr('id')).set("checked", checked);
+    });
+
     console.log(getSearchParameters());
 }
 
