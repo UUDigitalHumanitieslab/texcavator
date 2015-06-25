@@ -75,6 +75,7 @@ class Query(models.Model):
         excl_art_types = [a.id for a in self.exclude_article_types.all()]
         excl_distr = [d.id for d in self.exclude_distributions.all()]
         selected_pillars = [d.id for d in self.selected_pillars.all()]
+        selected_pillar_names = [d.name for d in self.selected_pillars.all()]
 
         return {
             'query_id': self.id,
@@ -88,6 +89,7 @@ class Query(models.Model):
             'exclude_article_types': excl_art_types,
             'exclude_distributions': excl_distr,
             'selected_pillars': selected_pillars,
+            'selected_pillar_names': selected_pillar_names,
             'comment': self.comment,
             'date_created': str(self.date_created)
         }

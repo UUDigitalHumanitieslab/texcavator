@@ -312,7 +312,7 @@ def hit2csv_metadata(csv_writer, req_dict):
               req_dict['date_created'],
               req_dict['exclude_article_types'],
               req_dict['exclude_distributions'],
-              req_dict['selected_pillars'],
+              req_dict['selected_pillar_names'],
               req_dict['date_lower'],
               req_dict['date_upper']]
     csv_writer.writerow(md_header)
