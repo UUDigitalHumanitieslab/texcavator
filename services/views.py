@@ -141,6 +141,7 @@ def cloud(request):
                                                   params.get('dates'),
                                                   params.get('distributions'),
                                                   params.get('article_types'),
+                                                  params.get('pillars'),
                                                   ids)
 
     # Cloud by queryID
@@ -162,7 +163,8 @@ def cloud(request):
                                               query,
                                               params.get('dates'),
                                               params.get('distributions'),
-                                              params.get('article_types'))
+                                              params.get('article_types'),
+                                              params.get('pillars'))
 
     if not result:
         return json_response_message('error', 'No word cloud generated.')

@@ -124,10 +124,21 @@ function getSearchParameters()
 		sd_surinam     : config[ "search" ][ "distrib" ][ "surinam" ],
 		sd_indonesia   : config[ "search" ][ "distrib" ][ "indonesia" ],
 
+		pillars 	   : getPillars(),
+
 		dateRange      : getDateRangeString()
 	};
 
 	return params;
+}
+
+var getPillars = function () 
+{
+	var selected_pillars = []; 
+	$('.pillar input:checked').each(function(i) {
+		selected_pillars.push($(this).val());
+	});
+	return selected_pillars;
 }
 
 
@@ -383,19 +394,7 @@ var createConfig = function()
 		innerHTML: "&nbsp;Indonesia<br/><hr>"
 	}, cpSearch.domNode );
 
-
-	/*
-	var divFixedSearch = dojo.create( "div", {
-		id: "div-fixed-search"
-	}, cpSearch.domNode );
-
-	var textFixedSearch = dojo.create( "label", {
-		id: "text-fixed-search",
-		for: "div-fixed-search",
-		innerHTML: "(Fixed to only 'regular articles' for the time being.)<br/>"
-	}, cpSearch.domNode );
-	*/
-
+	/* Pillars starts here */
 	var divPillar = dojo.create( "div", {
 		id: "div-pillar"
 	}, cpSearch.domNode );
@@ -406,10 +405,11 @@ var createConfig = function()
 		innerHTML: "Pillar<br/>"
 	}, cpSearch.domNode );
 
+	// Retrieves pillars (synchronously)
 	dojo.xhrGet( {
         url: "query/pillars",
         handleAs: "json",
-        sync: true
+        sync: true 
     }).then(function( response ) {
         dojo.forEach(response.result, function(entry, i) {
             var div = dojo.create( "div", {
@@ -418,6 +418,7 @@ var createConfig = function()
 
             var cb = new dijit.form.CheckBox({
                 id: "cb-pillar-" + entry.name,
+                class: "pillar",
                 checked: false,
                 value: entry.id.toString()
             }, div );
@@ -427,8 +428,15 @@ var createConfig = function()
                 for: "cb-pillar-" + entry.name,
                 innerHTML: "&nbsp;" + entry.name + "<br/>"
             }, cpSearch.domNode );
+
+            // Add <hr> for last index
+            if (response.result.length - 1 == i) 
+            {
+            	label.innerHTML += "<hr>";
+            }
         });
     });
+    /* Pillars ends here */
 
 	var divSearchChunk = dojo.create( "div", {
 		id: "div-search-chunk"

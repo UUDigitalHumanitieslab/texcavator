@@ -409,7 +409,7 @@ def download_data(request, zip_name):
 
 
 @login_required
-def pillars(request):
-    """Retrieves all pillars"""
+def retrieve_pillars(request):
+    """Retrieves all pillars as JSON objects"""
     pillars = Pillar.objects.all()
     return json_response_message('ok', '', {'result': [{'id': p.id, 'name': p.name} for p in pillars]})

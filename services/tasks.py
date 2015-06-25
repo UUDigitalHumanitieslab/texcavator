@@ -31,7 +31,8 @@ def generate_tv_cloud(search_params, min_length, stopwords, ids=None):
                                       search_params['query'],
                                       search_params['dates'],
                                       search_params['distributions'],
-                                      search_params['article_types'])
+                                      search_params['article_types'],
+                                      search_params['pillars'])
         doc_count = result.get('count')
 
         info = {
@@ -46,7 +47,8 @@ def generate_tv_cloud(search_params, min_length, stopwords, ids=None):
                                          search_params['query'],
                                          search_params['dates'],
                                          search_params['distributions'],
-                                         search_params['article_types']):
+                                         search_params['article_types'],
+                                         search_params['pillars']):
 
             result = termvector_wordcloud(settings.ES_INDEX,
                                           settings.ES_DOCTYPE,

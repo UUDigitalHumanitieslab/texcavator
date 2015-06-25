@@ -10,6 +10,8 @@ from elasticsearch.client import indices
 
 from django.conf import settings
 
+from query.models import Newspaper
+
 _ES_RETURN_FIELDS = ('article_dc_title',
                      'paper_dcterms_temporal',
                      'paper_dcterms_spatial',
@@ -149,6 +151,25 @@ def create_query(query_str, date_range, exclude_distributions,
     Returns a dict that represents the query in the elasticsearch query DSL.
     """
 
+    filter_must = [
+        {
+            'range': {
+                'paper_dc_date': {
+                    'gte': date_range['lower'],
+                    'lte': date_range['upper']
+                }
+            }
+        }
+    ]
+
+    newspaper_ids = []
+    if selected_pillars:
+        newspapers = Newspaper.objects.filter(pillar__in=selected_pillars).values_list('id', flat=True)
+        newspaper_ids = list(newspapers)
+
+    if newspaper_ids:
+        filter_must.append({'terms': {'paper_dc_identifier': newspaper_ids}})
+
     filter_must_not = []
     for ds in exclude_distributions:
         filter_must_not.append(
@@ -168,16 +189,7 @@ def create_query(query_str, date_range, exclude_distributions,
                 },
                 'filter': {
                     'bool': {
-                        'must': [
-                            {
-                                'range': {
-                                    'paper_dc_date': {
-                                        'gte': date_range['lower'],
-                                        'lte': date_range['upper']
-                                    }
-                                }
-                            }
-                        ],
+                        'must': filter_must,
                         'must_not': filter_must_not
                     }
                 }
@@ -348,7 +360,7 @@ def single_document_word_cloud(idx, typ, doc_id, min_length=0, stopwords=None):
     }
 
 
-def multiple_document_word_cloud(idx, typ, query, date_range, dist, art_types,
+def multiple_document_word_cloud(idx, typ, query, date_range, dist, art_types, pillars,
                                  ids=None):
     """Return data required to draw a word cloud for multiple documents
 
@@ -371,7 +383,7 @@ def multiple_document_word_cloud(idx, typ, query, date_range, dist, art_types,
 
     # word cloud based on query
     if query:
-        q = create_query(query, date_range, dist, art_types)
+        q = create_query(query, date_range, dist, art_types, pillars)
         q['aggs'] = word_cloud_aggregation(agg_name)
     # word cloud based on document ids
     elif not query and len(ids) > 0:
@@ -502,8 +514,8 @@ def get_search_parameters(req_dict):
         if not use_type:
             article_types.append(typ)
 
+    pillars = req_dict.get('pillars', [])
     collection = req_dict.get('collection', settings.ES_INDEX)
-
     sort_order = req_dict.get('sort_order', '_score')
 
     return {
@@ -513,6 +525,7 @@ def get_search_parameters(req_dict):
         'dates': dates,
         'distributions': distributions,
         'article_types': article_types,
+        'pillars': pillars,
         'collection': collection,
         'sort_order': sort_order
     }
