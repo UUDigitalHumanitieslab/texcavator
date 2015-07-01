@@ -12,18 +12,17 @@ From 2015 onwards developed by the Digital Humanities Lab, Utrecht University.
 
 Distributed under the terms of the Apache2 license. See LICENSE for details.
 
-
 Dependencies
 ============
 Before installing Texcavator, make sure your packages are up-to-date and
 a MySQL and Redis server are present on the system.
-In apt-based Linux distros like Ubuntu, do::
+In apt-based Linux distros like Ubuntu/Debian, do::
 
     sudo apt-get update
     sudo apt-get upgrade
     sudo apt-get install mysql-server redis-server
 
-Also make sure they are running. Furthermore, you will need a few development packages::
+Make sure they are running. Furthermore, you will need a few development packages::
 
     sudo apt-get install libmysqlclient-dev libxml2-dev libxslt-dev
 
@@ -97,8 +96,8 @@ Preparing the data
 Make sure you have the kb data loaded in an Elasticsearch index. To install
 Elasticsearch, see the website_. To get started using Elasticsearch see the quickstart_.
 
-.. _website: http://www.elasticsearch.org/
-.. _quickstart: http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/getting-started.html
+.. _website: https://www.elastic.co/
+.. _quickstart: https://www.elastic.co/guide/en/elasticsearch/reference/current/getting-started.html
 
 Texcavator assumes the data is in an index called ``kb`` (tip: use it as an alias).
 
@@ -115,7 +114,7 @@ Texcavator requires that the documents are stored in a doc_type ``doc`` that has
 
 And mapping::
 
-    PUT /kb
+    curl -XPUT localhost:9200/kb -d '
     {
       "settings": {
         "analysis" : {
@@ -196,7 +195,7 @@ And mapping::
           }
         }
       }
-    }
+    }'
 
 An example document::
 
