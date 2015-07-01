@@ -1,16 +1,12 @@
-"""
-This file demonstrates writing tests using the unittest module. These will pass
-when you run "manage.py test".
-
-Replace this with more appropriate tests for your application.
-"""
-
 from django.test import TestCase
+
+from .models import StopWord
 
 
 class SimpleTest(TestCase):
-    def test_basic_addition(self):
+    def test_serialization(self):
+        """Tests the serialization of a StopWord
         """
-        Tests that 1 + 1 always equals 2.
-        """
-        self.assertEqual(1 + 1, 2)
+        s = StopWord(word='test')
+        self.assertEqual(s.get_stopword_dict(), {'id': s.id, 'user': '', 'query': '', 'word': s.word})
+
