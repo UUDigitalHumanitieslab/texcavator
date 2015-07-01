@@ -292,7 +292,6 @@ def word_cloud_aggregation(agg_name, num_words=100):
 def single_document_word_cloud(idx, typ, doc_id, min_length=0, stopwords=None, stems=False):
     """Return data required to draw a word cloud for a single document.
 
-
     Parameters:
         idx : str
             The name of the elasticsearch index
@@ -312,18 +311,21 @@ def single_document_word_cloud(idx, typ, doc_id, min_length=0, stopwords=None, s
             A dictionary that contains word frequencies for all the terms in
             the document. The data returned is formatted according to what is
             expected by the user interface:
-        {
-            'status': 'ok'
-            'max_count': ...
-            'result':
-                [
-                    {
-                        'term': ...
-                        'count': ...
-                    },
-                    ...
-                ]
-        }
+
+            .. code-block:: javascript
+
+                {
+                    'status': 'ok'
+                    'max_count': ...
+                    'result':
+                        [
+                            {
+                                'term': ...
+                                'count': ...
+                            },
+                            ...
+                        ]
+                }
     """
 
     if not doc_id:

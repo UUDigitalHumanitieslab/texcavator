@@ -32,7 +32,7 @@ logger = logging.getLogger(__name__)
 
 @login_required
 def index(request):
-    """Return a list of queries for a given user."""
+    """Returns a list of queries for a given user."""
     lexicon_items = Query.objects.filter(user=request.user) \
                                  .order_by('-date_created')
 
@@ -45,7 +45,7 @@ def index(request):
 
 @login_required
 def query(request, query_id):
-    """Return a query.
+    """Returns a query.
     """
     query = get_object_or_404(Query, pk=query_id)
     if not request.user == query.user:
@@ -61,7 +61,7 @@ def query(request, query_id):
 @csrf_exempt
 @login_required
 def create_query(request):
-    """Create a new query.
+    """Creates a new query.
     """
     params = get_search_parameters(request.POST)
     title = request.POST.get('title')
@@ -101,7 +101,7 @@ def create_query(request):
 @csrf_exempt
 @login_required
 def delete(request, query_id):
-    """Delete a query.
+    """Deletes a query.
     """
     query = Query.objects.get(pk=query_id)
     if not query:
@@ -119,7 +119,7 @@ def delete(request, query_id):
 @csrf_exempt
 @login_required
 def update(request, query_id):
-    """Update a query.
+    """Updates a query.
     """
     query = Query.objects.get(pk=query_id)
 
@@ -165,7 +165,7 @@ def update(request, query_id):
 
 @login_required
 def timeline(request, query_id, resolution):
-    """Generate a timeline for a query.
+    """Generates a timeline for a query.
     """
     logger.info('query/timeline/ - user: {}'.format(request.user.username))
 
@@ -252,7 +252,7 @@ def timeline(request, query_id, resolution):
 @csrf_exempt
 @login_required
 def add_stopword(request):
-    """Add a stopword to the stopword list.
+    """Adds a stopword to the stopword list.
     """
     query_id = request.POST.get('query_id')
     word = request.POST.get('stopword')
@@ -274,7 +274,7 @@ def add_stopword(request):
 @csrf_exempt
 @login_required
 def delete_stopword(request, stopword_id):
-    """Delete a stopword from the stopword list.
+    """Deletes a stopword from the stopword list.
     """
     stopword = StopWord.objects.get(pk=stopword_id)
     if not stopword:
@@ -292,7 +292,7 @@ def delete_stopword(request, stopword_id):
 @csrf_exempt
 @login_required
 def stopwords(request):
-    """Return the stopword list for a user and query.
+    """Returns the stopword list for a user and query.
     """
     stopwords = StopWord.objects.select_related().filter(user=request.user) \
                                 .order_by('word').order_by('query')
@@ -333,8 +333,7 @@ def export_stopwords(request):
 @csrf_exempt
 @login_required
 def download_prepare(request):
-    """
-    Request from texcavator to create the ocr+meta-data zipfile for download
+    """Prepares the ocr+meta-data zipfile for download
     """
     if settings.DEBUG:
         print >> stderr, "download_prepare()"
@@ -385,16 +384,21 @@ def download_prepare(request):
 @csrf_exempt
 @login_required
 def download_data(request, zip_name):
-    """
-    This request occurs when the user clicks the download link that we emailed
+    """Downloads the prepared data created from :func:`views.download_prepare` above
+
+    Parameters:
+        request: the default Django request
+        zip_name: the name of the zip to be downloaded
+
+    Returns:
+        A HTTPResponse that will allow downloading of the zip file.
     """
     msg = "download_data() zip_basename: %s" % zip_name
     if settings.DEBUG:
         print >> stderr, msg
     logger.info('query/download/{} - user: {}'.format(zip_name,
                                                       request.user.username))
-    # to do: use mod_xsendfile
-
+    # TODO: use mod_xsendfile
     zip_basedir = os.path.join(settings.PROJECT_PARENT,
                                settings.QUERY_DATA_DOWNLOAD_PATH)
     zip_filename = unquote_plus(zip_name) + ".zip"
@@ -410,6 +414,7 @@ def download_data(request, zip_name):
 
 @login_required
 def retrieve_pillars(request):
-    """Retrieves all pillars as JSON objects"""
+    """Retrieves all Pillars as JSON objects
+    """
     pillars = Pillar.objects.all()
     return json_response_message('ok', '', {'result': [{'id': p.id, 'name': p.name} for p in pillars]})

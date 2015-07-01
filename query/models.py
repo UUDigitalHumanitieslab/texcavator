@@ -29,7 +29,7 @@ class Distribution(models.Model):
 
 
 class Pillar(models.Model):
-    """Model that allows to store a categorization of newspapers along pillars."""
+    """Model that allows to store a categorization of Newspapers along Pillars."""
     name = models.CharField(max_length=200, unique=True)
 
     def __unicode__(self):
@@ -37,7 +37,7 @@ class Pillar(models.Model):
 
 
 class Newspaper(models.Model):
-    """Model that stores the available newspapers"""
+    """Model that stores the available Newspapers"""
     id = models.CharField(max_length=9, primary_key=True)
     title = models.CharField(max_length=500)
     start_date = models.DateField()
@@ -50,7 +50,7 @@ class Newspaper(models.Model):
 
 
 class Query(models.Model):
-    """Model to store a user's queries.
+    """Model to store a User's queries.
     """
     title = models.CharField(max_length=100)
     comment = models.TextField(blank=True)
@@ -66,10 +66,11 @@ class Query(models.Model):
     date_created = models.DateTimeField(auto_now=True)
 
     class Meta:
+        """Make sure that Query titles are unique for a User"""
         unique_together = ('user', 'title')
 
     def get_query_dict(self):
-        """Return a JSON serializable representation of the query object, that
+        """Returns a JSON serializable representation of the query object, that
         contains all relevant data and metadata.
         """
         excl_art_types = [a.id for a in self.exclude_article_types.all()]
@@ -114,7 +115,8 @@ class DayStatistic(models.Model):
 class StopWord(models.Model):
     """Model to store stopwords.
 
-    Stopwords can be
+    Stopwords can be:
+
     - specific for a Query (applicable to a single User's Query, query/user != None)
     - specific for a User (applicable for all of a User's Queries, query == None, user != None)
     - non-specific/default (applicable to all Queries for all Users, user/query == None)

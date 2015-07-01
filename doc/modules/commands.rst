@@ -22,10 +22,10 @@ gatherstatistics
 .. automodule:: query.management.commands.gatherstatistics
     :members:
 
-zipquerydata
+add_stopwords
 +++++++++++++
 
-.. automodule:: query.management.commands.zipquerydata
+.. automodule:: query.management.commands.add_stopwords
     :members:
 
 Services
@@ -49,8 +49,8 @@ esperformance
 .. automodule:: services.management.commands.esperformance
     :members:
 
- tag_wordclouds
-+++++++++++++++
+tag_wordclouds
+++++++++++++++
 
 .. automodule:: services.management.commands.tag_wordclouds
     :members:

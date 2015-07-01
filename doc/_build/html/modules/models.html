@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Models &mdash; Texcavator 0.9 documentation</title>
+    <title>Models &mdash; Texcavator 0.10.2 documentation</title>
     
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.9',
+        VERSION:     '0.10.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -23,12 +23,12 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="Texcavator 0.9 documentation" href="../index.html" />
+    <link rel="top" title="Texcavator 0.10.2 documentation" href="../index.html" />
     <link rel="next" title="Views" href="views.html" />
     <link rel="prev" title="Welcome to Texcavator’s documentation!" href="../index.html" /> 
   </head>
-  <body>
-    <div class="related">
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -43,14 +43,14 @@
         <li class="right" >
           <a href="../index.html" title="Welcome to Texcavator’s documentation!"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">Texcavator 0.9 documentation</a> &raquo;</li> 
+        <li><a href="../index.html">Texcavator 0.10.2 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="models">
 <h1>Models<a class="headerlink" href="#models" title="Permalink to this headline">¶</a></h1>
@@ -58,7 +58,7 @@
 <span id="query"></span><h2>Query<a class="headerlink" href="#module-query.models" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="query.models.ArticleType">
-<em class="property">class </em><tt class="descclassname">query.models.</tt><tt class="descname">ArticleType</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#query.models.ArticleType" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">query.models.</code><code class="descname">ArticleType</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#query.models.ArticleType" title="Permalink to this definition">¶</a></dt>
 <dd><p>Model to store the names of article types that are available in the
 elasticsearch index.</p>
 <p>The article types are part of the metadata of a query.</p>
@@ -66,7 +66,7 @@ elasticsearch index.</p>
 
 <dl class="class">
 <dt id="query.models.DayStatistic">
-<em class="property">class </em><tt class="descclassname">query.models.</tt><tt class="descname">DayStatistic</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#query.models.DayStatistic" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">query.models.</code><code class="descname">DayStatistic</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#query.models.DayStatistic" title="Permalink to this definition">¶</a></dt>
 <dd><p>DayStatistic is used to generate timeline graphs. Data for the
 DayStatistic table is gathered with the &#8216;gatherstatistics&#8217; management
 command.</p>
@@ -74,20 +74,32 @@ command.</p>
 
 <dl class="class">
 <dt id="query.models.Distribution">
-<em class="property">class </em><tt class="descclassname">query.models.</tt><tt class="descname">Distribution</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#query.models.Distribution" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">query.models.</code><code class="descname">Distribution</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#query.models.Distribution" title="Permalink to this definition">¶</a></dt>
 <dd><p>Model that stores the names of distributions that are available in the
 elasticsearch index.</p>
 <p>The distributions are part of the metadata of a query.</p>
 </dd></dl>
 
 <dl class="class">
+<dt id="query.models.Newspaper">
+<em class="property">class </em><code class="descclassname">query.models.</code><code class="descname">Newspaper</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#query.models.Newspaper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Model that stores the available Newspapers</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="query.models.Pillar">
+<em class="property">class </em><code class="descclassname">query.models.</code><code class="descname">Pillar</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#query.models.Pillar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Model that allows to store a categorization of Newspapers along Pillars.</p>
+</dd></dl>
+
+<dl class="class">
 <dt id="query.models.Query">
-<em class="property">class </em><tt class="descclassname">query.models.</tt><tt class="descname">Query</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#query.models.Query" title="Permalink to this definition">¶</a></dt>
-<dd><p>Model to store a user&#8217;s queries.</p>
+<em class="property">class </em><code class="descclassname">query.models.</code><code class="descname">Query</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#query.models.Query" title="Permalink to this definition">¶</a></dt>
+<dd><p>Model to store a User&#8217;s queries.</p>
 <dl class="method">
 <dt id="query.models.Query.get_query_dict">
-<tt class="descname">get_query_dict</tt><big>(</big><big>)</big><a class="headerlink" href="#query.models.Query.get_query_dict" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a JSON serializable representation of the query object, that
+<code class="descname">get_query_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#query.models.Query.get_query_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a JSON serializable representation of the query object, that
 contains all relevant data and metadata.</p>
 </dd></dl>
 
@@ -95,10 +107,14 @@ contains all relevant data and metadata.</p>
 
 <dl class="class">
 <dt id="query.models.StopWord">
-<em class="property">class </em><tt class="descclassname">query.models.</tt><tt class="descname">StopWord</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#query.models.StopWord" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">query.models.</code><code class="descname">StopWord</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#query.models.StopWord" title="Permalink to this definition">¶</a></dt>
 <dd><p>Model to store stopwords.</p>
-<p>Stopwords can be stored for queries, or are applied to all queries of a
-user.</p>
+<p>Stopwords can be:</p>
+<ul class="simple">
+<li>specific for a Query (applicable to a single User&#8217;s Query, query/user != None)</li>
+<li>specific for a User (applicable for all of a User&#8217;s Queries, query == None, user != None)</li>
+<li>non-specific/default (applicable to all Queries for all Users, user/query == None)</li>
+</ul>
 </dd></dl>
 
 </div>
@@ -107,7 +123,7 @@ user.</p>
 <p>Models used for measuring ElasticSearch performance in management commands.</p>
 <dl class="class">
 <dt id="services.models.DocID">
-<em class="property">class </em><tt class="descclassname">services.models.</tt><tt class="descname">DocID</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#services.models.DocID" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">services.models.</code><code class="descname">DocID</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#services.models.DocID" title="Permalink to this definition">¶</a></dt>
 <dd><p>Model for a document id used to generate queries of certain sizes</p>
 <p>This model is used to store document ids. The document ids are used to
 generate query sets of certain sizes. These query sets are used to test the
@@ -117,7 +133,7 @@ commands.</p>
 
 <dl class="class">
 <dt id="services.models.QueryTerm">
-<em class="property">class </em><tt class="descclassname">services.models.</tt><tt class="descname">QueryTerm</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#services.models.QueryTerm" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">services.models.</code><code class="descname">QueryTerm</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#services.models.QueryTerm" title="Permalink to this definition">¶</a></dt>
 <dd><p>Model to store query terms used to generate random queries</p>
 <p>See management commands gatherqueryterms and weighted_queries.</p>
 </dd></dl>
@@ -129,7 +145,7 @@ commands.</p>
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
   <h3><a href="../index.html">Table Of Contents</a></h3>
   <ul>
@@ -146,12 +162,14 @@ commands.</p>
   <h4>Next topic</h4>
   <p class="topless"><a href="views.html"
                         title="next chapter">Views</a></p>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="../_sources/modules/models.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
-<div id="searchbox" style="display: none">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/modules/models.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="../search.html" method="get">
       <input type="text" name="q" />
@@ -168,7 +186,7 @@ commands.</p>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -183,12 +201,12 @@ commands.</p>
         <li class="right" >
           <a href="../index.html" title="Welcome to Texcavator’s documentation!"
              >previous</a> |</li>
-        <li><a href="../index.html">Texcavator 0.9 documentation</a> &raquo;</li> 
+        <li><a href="../index.html">Texcavator 0.10.2 documentation</a> &raquo;</li> 
       </ul>
     </div>
-    <div class="footer">
+    <div class="footer" role="contentinfo">
         &copy; Copyright 2015, Janneke van der Zwaan.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3b2.
     </div>
   </body>
 </html>

@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Management Commands &mdash; Texcavator 0.9 documentation</title>
+    <title>Management Commands &mdash; Texcavator 0.10.2 documentation</title>
     
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.9',
+        VERSION:     '0.10.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -23,11 +23,11 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="Texcavator 0.9 documentation" href="../index.html" />
+    <link rel="top" title="Texcavator 0.10.2 documentation" href="../index.html" />
     <link rel="prev" title="Additional Modules" href="other.html" /> 
   </head>
-  <body>
-    <div class="related">
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -39,14 +39,14 @@
         <li class="right" >
           <a href="other.html" title="Additional Modules"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">Texcavator 0.9 documentation</a> &raquo;</li> 
+        <li><a href="../index.html">Texcavator 0.10.2 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="management-commands">
 <h1>Management Commands<a class="headerlink" href="#management-commands" title="Permalink to this headline">¶</a></h1>
@@ -65,10 +65,9 @@
 <p>Gather statistics of the total number of documents per day and put them in
 the database.</p>
 </div>
-<div class="section" id="module-query.management.commands.zipquerydata">
-<span id="zipquerydata"></span><h3>zipquerydata<a class="headerlink" href="#module-query.management.commands.zipquerydata" title="Permalink to this headline">¶</a></h3>
-<p>Management command for creating a zipfile of a set of documents (query
-export).</p>
+<div class="section" id="module-query.management.commands.add_stopwords">
+<span id="add-stopwords"></span><h3>add_stopwords<a class="headerlink" href="#module-query.management.commands.add_stopwords" title="Permalink to this headline">¶</a></h3>
+<p>Reads in a default set of stopwords from a text file for all current users and all queries.</p>
 </div>
 </div>
 <div class="section" id="services">
@@ -85,10 +84,15 @@ performance on term aggregations (command: esperformance).</p>
 The collection of terms is used for testing ElasticSearch performance on
 weighted queries (command: weighted_queries).</p>
 </div>
-<div class="section" id="esperformance">
-<h3>esperformance<a class="headerlink" href="#esperformance" title="Permalink to this headline">¶</a></h3>
-<hr class="docutils" />
-<span class="target" id="module-services.management.commands.tag_wordclouds"></span><p>Generate word clouds based on words added as tags for random sets of
+<div class="section" id="module-services.management.commands.esperformance">
+<span id="esperformance"></span><h3>esperformance<a class="headerlink" href="#module-services.management.commands.esperformance" title="Permalink to this headline">¶</a></h3>
+<p>Perform ElasticSearch term aggregations over random sets of documents.</p>
+<p>This command requires a set of document ids to be available in the database.
+To store these docids, run management command gatherdocids</p>
+</div>
+<div class="section" id="module-services.management.commands.tag_wordclouds">
+<span id="tag-wordclouds"></span><h3>tag_wordclouds<a class="headerlink" href="#module-services.management.commands.tag_wordclouds" title="Permalink to this headline">¶</a></h3>
+<p>Generate word clouds based on words added as tags for random sets of
 documents.</p>
 </div>
 <div class="section" id="module-services.management.commands.termvector_wordclouds">
@@ -110,7 +114,7 @@ documents.</p>
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
   <h3><a href="../index.html">Table Of Contents</a></h3>
   <ul>
@@ -119,13 +123,14 @@ documents.</p>
 <li><a class="reference internal" href="#module-query.management.commands.export_queries">export_queries</a></li>
 <li><a class="reference internal" href="#module-query.management.commands.export_stopwords">export_stopwords</a></li>
 <li><a class="reference internal" href="#module-query.management.commands.gatherstatistics">gatherstatistics</a></li>
-<li><a class="reference internal" href="#module-query.management.commands.zipquerydata">zipquerydata</a></li>
+<li><a class="reference internal" href="#module-query.management.commands.add_stopwords">add_stopwords</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#services">Services</a><ul>
 <li><a class="reference internal" href="#module-services.management.commands.gatherdocids">gatherdocids</a></li>
 <li><a class="reference internal" href="#module-services.management.commands.gatherqueryterms">gatherqueryterms</a></li>
-<li><a class="reference internal" href="#esperformance">esperformance</a></li>
+<li><a class="reference internal" href="#module-services.management.commands.esperformance">esperformance</a></li>
+<li><a class="reference internal" href="#module-services.management.commands.tag_wordclouds">tag_wordclouds</a></li>
 <li><a class="reference internal" href="#module-services.management.commands.termvector_wordclouds">termvector_wordclouds</a></li>
 <li><a class="reference internal" href="#module-services.management.commands.tv_wc_no_client">tv_wc_no_client</a></li>
 <li><a class="reference internal" href="#module-services.management.commands.weighted_queries">weighted_queries</a></li>
@@ -138,12 +143,14 @@ documents.</p>
   <h4>Previous topic</h4>
   <p class="topless"><a href="other.html"
                         title="previous chapter">Additional Modules</a></p>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="../_sources/modules/commands.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
-<div id="searchbox" style="display: none">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/modules/commands.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="../search.html" method="get">
       <input type="text" name="q" />
@@ -160,7 +167,7 @@ documents.</p>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -172,12 +179,12 @@ documents.</p>
         <li class="right" >
           <a href="other.html" title="Additional Modules"
              >previous</a> |</li>
-        <li><a href="../index.html">Texcavator 0.9 documentation</a> &raquo;</li> 
+        <li><a href="../index.html">Texcavator 0.10.2 documentation</a> &raquo;</li> 
       </ul>
     </div>
-    <div class="footer">
+    <div class="footer" role="contentinfo">
         &copy; Copyright 2015, Janneke van der Zwaan.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3b2.
     </div>
   </body>
 </html>

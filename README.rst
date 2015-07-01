@@ -219,3 +219,14 @@ For deployment, you could use Apache2 (we presume this installed) with mod_wsgi 
     sudo apt-get install libapache2-mod-wsgi
 
 Then, follow the instructions on https://docs.djangoproject.com/en/1.7/howto/deployment/wsgi/modwsgi/ closely.
+
+Documentation
+=============
+
+The documentation for Texcavator is in Sphinx_. You can generate the documentation by running::
+
+    make html
+
+in the /doc/ directory.
+
+.. _Sphinx: http://sphinx-doc.org/index.html
