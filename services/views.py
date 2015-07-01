@@ -20,7 +20,7 @@ from es import get_search_parameters, do_search, count_search_results, \
 from texcavator.utils import json_response_message
 
 from query.models import StopWord
-from query.utils import get_query_object, get_query
+from query.utils import get_query_object
 
 from services.export import export_csv
 from services.tasks import generate_tv_cloud
@@ -64,18 +64,17 @@ def search(request):
 @csrf_exempt
 @login_required
 def doc_count(request):
-    """Return the number of documents returned by a query"""
-
+    """Returns the number of documents returned by a query
+    """
     logger.info('services/doc_count/ - user: {}'.format(request.user.username))
 
     if settings.DEBUG:
         print >> stderr, "doc_count()"
 
-    queryID = request.REQUEST.get('queryID')
+    query_id = request.REQUEST.get('queryID')
 
-    if queryID:
-        # get the query string from the Django db
-        query, response = get_query_object(queryID)
+    if query_id:
+        query, response = get_query_object(query_id)
 
         if not query:
             return response
@@ -92,10 +91,10 @@ def doc_count(request):
                                   params['exclude_article_types'],
                                   params['selected_pillars'])
 
-    doc_count = result.get('count', 'error')
+    count = result.get('count', 'error')
 
-    if not doc_count == 'error':
-        params = {'doc_count': str(doc_count)}
+    if not count == 'error':
+        params = {'doc_count': str(count)}
         return json_response_message('ok', 'Retrieved document count.', params)
 
     return json_response_message('error', 'Unable to retrieve document count'
@@ -148,7 +147,7 @@ def cloud(request):
     query_id = request.REQUEST.get('queryID')
 
     if query_id:
-        query, response = get_query(query_id)
+        query, response = get_query_object(query_id)
 
         if not query:
             return response
@@ -160,7 +159,7 @@ def cloud(request):
 
         result = multiple_document_word_cloud(coll,
                                               settings.ES_DOCTYPE,
-                                              query,
+                                              query.query,
                                               params.get('dates'),
                                               params.get('distributions'),
                                               params.get('article_types'),
