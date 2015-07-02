@@ -20,7 +20,7 @@ from django.db.models import Q
 from django.db import IntegrityError
 
 from .models import Distribution, ArticleType, Query, DayStatistic, \
-    StopWord, Pillar
+    StopWord, Pillar, Newspaper
 from .utils import query2docidsdate
 from .burstsdetector import bursts
 from .download import create_zipname, execute
@@ -418,3 +418,22 @@ def retrieve_pillars(request):
     """
     pillars = Pillar.objects.all()
     return json_response_message('ok', '', {'result': [{'id': p.id, 'name': p.name} for p in pillars]})
+
+
+@login_required
+def export_newspapers(request):
+    """Exports all Newspapers to a .csv-file
+    """
+    newspapers = Newspaper.objects.all()
+
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="newspapers.csv"'
+
+    writer = csv.writer(response, delimiter=';')
+    writer.writerow(['id', 'title', 'start date', 'end date', 'editions', 'pillar'])
+
+    for n in newspapers:
+        pillar = n.pillar.name if n.pillar else ''
+        writer.writerow([n.id, n.title.encode('utf-8'), n.start_date, n.end_date, n.editions, pillar])
+
+    return response

@@ -19,6 +19,8 @@ urlpatterns = patterns(
 
     url(r'^pillars$', 'retrieve_pillars'),
 
+    url(r'^newspaper/export$', 'export_newspapers'),
+
     url(r'^download/prepare/$', 'download_prepare'),
     url(r'^download/(?P<zip_name>.*)$', 'download_data'),
 )

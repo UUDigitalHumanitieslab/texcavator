@@ -402,7 +402,7 @@ var createConfig = function()
 	var textPillar = dojo.create( "label", {
 		id: "text-pillar",
 		for: "div-pillar",
-		innerHTML: "Pillar<br/>"
+		innerHTML: "Pillar (<a href='query/newspaper/export'>download distribution as .csv</a>)<br/>"
 	}, cpSearch.domNode );
 
 	// Retrieves pillars (synchronously)
