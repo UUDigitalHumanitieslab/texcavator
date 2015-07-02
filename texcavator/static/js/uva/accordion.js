@@ -233,7 +233,6 @@ function createQueryLine( item )
 		btn.destroy();
 	}
 
-	// lexiconStore.remove() -> // HTTP DELETE
 	dojo.place(( new dijit.form.Button({
 		id: "btn-sq-delete-" + item.pk,
 		label: "Delete",
@@ -241,22 +240,26 @@ function createQueryLine( item )
 		title: "Delete",
 		iconClass: "dijitIconDelete",
 		pk: item.pk,
-		onClick: function() { 
-            require(["dojo/request/xhr"], function(xhr){
-                xhr.post("query/"+item.pk+"/delete", {
-                    handleAs: "json"
-                }).then(function(result){
-                    var buttons = { "OK": true };
-                    genDialog("Delete query", result.msg, buttons);
-
-                    createQueryList();
-                }, function(error){
-                    var buttons = { "OK": true };
-                    genDialog("Delete query", error.response.text, buttons);
-                });
-            });
-        }
-	})).domNode, buttonsNode );
+		onClick: function() {
+			genDialog(
+				"Delete query", 
+				"Are you sure you want to delete this query?", 
+				{ "OK": true, "Cancel": true }, 
+				function() { 
+		            require(["dojo/request/xhr"], function(xhr){
+		                xhr.post("query/" + item.pk + "/delete", {
+		                    handleAs: "json"
+		                }).then(function(result){
+		                    var buttons = { "OK": true };
+		                    genDialog("Delete query", result.msg, buttons);
+		                    createQueryList();
+		                }, function(error){
+		                    var buttons = { "OK": true };
+		                    genDialog("Delete query", error.response.text, buttons);
+		                });
+		            });
+		        });
+	}})).domNode, buttonsNode );
 } // createQueryLine()
 
 
