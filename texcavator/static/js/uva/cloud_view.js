@@ -277,8 +277,6 @@ var stopwordsSave = function( word, stopwords_cat )
 	else { stopwords_clean01 = 0; }
 
 	var content = {
-		username: glob_username,
-		password: glob_password,
 		stopword: word
 	};
 
