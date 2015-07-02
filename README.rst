@@ -86,6 +86,10 @@ If you want to display timelines, run the management command
 
     python manage.py gatherstatistics
 
+To add a default list of stopwords, run the management command ``add_stopwords``::
+
+    python manage.py add_stopwords stopwords/nl.txt
+
 Downloading of query data requires a running SMTP server; you can use Python's build in for that::
 
     python -m smtpd -n -c DebuggingServer localhost:1025
