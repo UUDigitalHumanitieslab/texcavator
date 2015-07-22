@@ -15,7 +15,7 @@ Distributed under the terms of the Apache2 license. See LICENSE for details.
 Dependencies
 ============
 Before installing Texcavator, make sure your packages are up-to-date and
-a MySQL and Redis server are present on the system.
+a relational database (we prefer MySQL) and Redis server are present on the system.
 In apt-based Linux distros like Ubuntu/Debian, do::
 
     sudo apt-get update
@@ -34,7 +34,8 @@ and the virtualenv package::
 
 Installation
 ============
-To install Texcavator, clone the repository and make a virtualenv, activate it, and install the requirements::
+To install Texcavator, clone the repository in your home directory
+and make a virtualenv, activate it, and install the requirements::
 
     cd ~
     git clone https://github.com/UUDigitalHumanitieslab/texcavator.git
@@ -43,9 +44,11 @@ To install Texcavator, clone the repository and make a virtualenv, activate it, 
     source .virtualenvs/texc/bin/activate
     pip install -r texcavator/requirements.txt
 
-Install Dojo::
+Then install the JavaScript toolkit Dojo_, on which the user interface is built::
 
     sh install-dojo.sh
+
+.. _Dojo: http://dojotoolkit.org/
 
 In ``texcavator/settings.py``, you can change the path to the log file, if you like.
 
@@ -70,30 +73,6 @@ Create a Django superuser::
 The username and password you pick will be the administrator account for
 Texcavator.
 
-Finally, start Celery and the webserver::
-
-    celery --app=texcavator.celery:app worker --loglevel=info
-    # In a separate terminal
-    python manage.py runserver
-
-(In production, use ``--loglevel=warn``.)
-
-Also make sure Elasticsearch is running.
-Texcavator is now ready for use at ``http://localhost:8000``.
-
-If you want to display timelines, run the management command
-``gatherstatistics``::
-
-    python manage.py gatherstatistics
-
-To add a default list of stopwords, run the management command ``add_stopwords``::
-
-    python manage.py add_stopwords stopwords/nl.txt
-
-Downloading of query data requires a running SMTP server; you can use Python's build in for that::
-
-    python -m smtpd -n -c DebuggingServer localhost:1025
-
 Preparing the data
 ==================
 
@@ -104,7 +83,7 @@ Elasticsearch, see the website_. To get started using Elasticsearch see the quic
 .. _quickstart: https://www.elastic.co/guide/en/elasticsearch/reference/current/getting-started.html
 
 Texcavator assumes the data is in an index called ``kb`` (tip: use it as an alias).
-
+In ``texcavator/settings_local.py``, you can specify the Elasticsearch host and port (typically localhost:9200).
 Texcavator requires that the documents are stored in a doc_type ``doc`` that has at least the following fields:
 
 * article_dc_subject
@@ -201,7 +180,7 @@ And mapping::
       }
     }'
 
-An example document::
+An example document would then be::
 
     curl -XPOST localhost:9200/kb/doc -d '{
         "article_dc_subject": "newspaper", 
@@ -213,6 +192,32 @@ An example document::
         "paper_dcterms_temporal": "daily", 
         "text_content": "This is a test to see whether Texcavator works!"
     }'
+
+Development server
+==================
+
+First, make sure Elasticsearch is still running at the specified port.
+Then, start Celery and the webserver::
+
+    celery --app=texcavator.celery:app worker --loglevel=info
+    # In a separate terminal
+    python manage.py runserver
+
+(In production, be sure to use ``--loglevel=warn``.)
+
+Texcavator is now ready for use at ``http://localhost:8000``.
+
+If you want to display timelines, run the management command ``gatherstatistics``::
+
+    python manage.py gatherstatistics
+
+To add a default list of stopwords, run the management command ``add_stopwords``::
+
+    python manage.py add_stopwords stopwords/nl.txt
+
+Downloading of query data requires a running SMTP server; you can use Python's build in for that::
+
+    python -m smtpd -n -c DebuggingServer localhost:1025
 
 Deployment
 ==========
