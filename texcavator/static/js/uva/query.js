@@ -532,6 +532,7 @@ function createQueryDlg()
 	var queryListStoreData = new dojo.store.Memory({ data: getQueryList() });
 
 	var queryNameData = "";
+	var queryID = -1;
 	dojo.create( "div", { id: "div-query-data" }, cpQData.domNode );
 
 	var cbQueryData = new dijit.form.ComboBox(
@@ -546,6 +547,7 @@ function createQueryDlg()
 			bOK.set( "disabled", false );
 			bValidate.set( "disabled", false );
 			queryNameData = cbQueryData.get( "value" );
+			queryID = cbQueryData.item.id;
 			console.log( "Query name: " + queryNameData );
 
 			dojo.forEach( glob_lexiconData, function( item )		// glob_lexiconData: index.html
@@ -603,7 +605,7 @@ function createQueryDlg()
 			else if( selectedTab.id === "cp-create" )
 			{ okCreate( queryNameCreate ); }
 			else if( selectedTab.id === "cp-data" )
-			{ okDownload( queryNameData ); }
+			{ okDownload( queryNameData, queryID ); }
 		}
 	});
 	actionBar.appendChild( bOK.domNode );
@@ -742,9 +744,9 @@ function okCreate( querySaveName )
 
 
 
-function okDownload( query_title )
+function okDownload( query_title, query_id )
 {
-	console.log( "okDownload() : " + query_title );
+	console.log( "okDownload() : " + query_id );
 
 	dijit.byId( "dlg-query" ).destroyRecursive();
 
@@ -761,29 +763,47 @@ function okDownload( query_title )
 	params[ "collection" ]  = ES_INDEX;
 	params[ "query_title" ] = query_title;
 	params[ "query" ]       = query_content;
-
-	config = getConfig();
-	params[ "format" ] = config[ "querydataexport" ][ "format" ]	// "json" or "xml"
+	params[ "queryID" ]  	= query_id;
 
 	dojo.xhrGet({
-		url: "query/download/prepare/",
-		content: params,
+		url: "services/doc_count/",
+		content : params,
 		handleAs: "json",
-		load: function( result ) {
-			var status = result[ "status" ];
-			if( status === "SUCCESS" )
-			{ var title = "Download finished"; }
-			else
-			{ var title = "Preparing download failed"; }
+		load: function( response ) {
+			if (response.status === "ok" && response.doc_count > 100000) { 
+				var message = "Your query has too much results to export: " + response.doc_count; 
+				message += " where 100000 are allowed. Please consider filtering your results before exporting.";
+				genDialog( "Too much results", message, { "OK": true } );
+			}
+			else {
+				config = getConfig();
+				params[ "format" ] = config[ "querydataexport" ][ "format" ]	// "json", "xml" or "csv"
 
-			var message = result[ "msg" ];
-			var buttons = { "OK": true, "Cancel": false };
-			answer = genDialog( title, message, buttons );
-		},
-		error: function( err ) { console.error( err ); return err; }
+				dojo.xhrGet({
+					url: "query/download/prepare/",
+					content: params,
+					handleAs: "json",
+					load: function( result ) {
+						var status = result[ "status" ];
+						if( status === "SUCCESS" )
+						{ var title = "Download finished"; }
+						else
+						{ var title = "Preparing download failed"; }
+
+						var message = result[ "msg" ];
+						var buttons = { "OK": true, "Cancel": false };
+						answer = genDialog( title, message, buttons );
+					},
+					error: function( err ) { console.error( err ); return err; }
+				});
+
+				genDialog( "Preparing download", 
+					"Your download is being prepared. This might take a while. When the download is finished, a message box will pop up.", 
+					{ "OK": true } );
+			}
+		}
 	});
 
-	genDialog( "Preparing download", "Your download is being prepared. This might take a while. When the download is finished, a message box will pop up.", { "OK": true } );
 }
 
 
