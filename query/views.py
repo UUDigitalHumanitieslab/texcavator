@@ -24,7 +24,7 @@ from .models import Distribution, ArticleType, Query, DayStatistic, \
 from .utils import query2docidsdate
 from .burstsdetector import bursts
 from .download import create_zipname, execute
-from services.es import get_search_parameters
+from services.es import get_search_parameters, count_search_results
 from texcavator.utils import json_response_message
 
 logger = logging.getLogger(__name__)
@@ -343,6 +343,22 @@ def download_prepare(request):
 
     user = request.user
     query = Query.objects.get(title=request.GET.get('query_title'), user=user)
+
+    params = query.get_query_dict()
+    result = count_search_results(settings.ES_INDEX,
+                                  settings.ES_DOCTYPE,
+                                  params['query'],
+                                  params['dates'],
+                                  params['exclude_distributions'],
+                                  params['exclude_article_types'],
+                                  params['selected_pillars'])
+    count = result.get('count')
+
+    if count > settings.QUERY_DATA_MAX_RESULTS:
+        msg = "Your query has too much results to export: " + str(count)
+        msg += " where " + str(settings.QUERY_DATA_MAX_RESULTS) + " are allowed. "
+        msg += "Please consider filtering your results before exporting."
+        return json_response_message('error', msg)
 
     if user.email == "":
         msg = "Preparing your download for query <br/><b>" + query.title + \

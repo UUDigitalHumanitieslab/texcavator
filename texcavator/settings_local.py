@@ -33,6 +33,7 @@ QUERY_DATA_DOWNLOAD_ALLOW = True
 QUERY_DATA_DOWNLOAD_PATH = os.path.join(PROJECT_GRANNY,
                                         "BILAND_download/query_data")
 
+QUERY_DATA_MAX_RESULTS = 100000     # max no. of documents to be exported
 QUERY_DATA_CHUNK_SIZE = 1000		# no. of documents from ES with 1 query
 QUERY_DATA_DELETE_DATA = True		# delete query download data
 QUERY_DATA_EXPIRE_DAYS = 1			# delete after one day
