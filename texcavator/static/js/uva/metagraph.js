@@ -1,6 +1,6 @@
 
 // create metadata graphics
-function metadataGraphics( query )
+function metadataGraphics(query)
 {
 	console.log( "metadataGraphics()" );
 
@@ -12,44 +12,14 @@ function metadataGraphics( query )
         handleAs: "json",
         content: params,
     }).then(function( response ) {
-        // Retrieve the data
-        data_articletype = response['articletype']['buckets'];
-        data_distribution = response['distribution']['buckets'];
-        data_newspapers = [{ "key": "Newspapers", "values": response['newspapers']['buckets'] }];
-
-        // Creates article_type pie chart
-        nv.addGraph(function() {
-            var chart = nv.models.pieChart()
-                .x(function(d) { return d.key })
-                .y(function(d) { return d.doc_count })
-                .valueFormat(d3.format(",d"))
-                .showLabels(true);
-
-            d3.select("#chart_articletype svg")
-                .datum(data_articletype)
-                .transition().duration(1200)
-                .call(chart);
-
-            return chart;
-        });
-
-        // Creates distribution pie chart
-        nv.addGraph(function() {
-            var chart = nv.models.pieChart()
-                .x(function(d) { return d.key })
-                .y(function(d) { return d.doc_count })
-                .valueFormat(d3.format(",d"))
-                .showLabels(true);
-
-            d3.select("#chart_distribution svg")
-                .datum(data_distribution)
-                .transition().duration(1200)
-                .call(chart);
-
-            return chart;
-        });
+        // Add pie charts
+        addPieChart(response['articletype']['buckets'], "#chart_articletype");
+        addPieChart(response['distribution']['buckets'], "#chart_distribution");
+        addPieChart(response['pillar'], "#chart_pillar");
 
         // Create newspapers bar chart
+        data_newspapers = [{ "key": "Newspapers", "values": response['newspapers']['buckets'] }];
+
         nv.addGraph(function() {
             var chart = nv.models.multiBarHorizontalChart()
                 .x(function(d) { return d.key })
@@ -74,4 +44,20 @@ function metadataGraphics( query )
 	);
 }
 
-// [eof]
+function addPieChart(data, id)
+{
+    nv.addGraph(function() {
+        var chart = nv.models.pieChart()
+            .x(function(d) { return d.key })
+            .y(function(d) { return d.doc_count })
+            .valueFormat(d3.format(",d"))
+            .showLabels(true);
+
+        d3.select(id + " svg")
+            .datum(data)
+            .transition().duration(1200)
+            .call(chart);
+
+        return chart;
+    });
+}

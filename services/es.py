@@ -641,6 +641,11 @@ def metadata_dict():
                 "field": "article_dc_subject"
             }
         },
+        "newspaper_ids": {
+            "terms": {
+                "field": "paper_dc_identifier"
+            }
+        },
         "newspapers": {
             "terms": {
                 "field": "paper_dc_title.raw",

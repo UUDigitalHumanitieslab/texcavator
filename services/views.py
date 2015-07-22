@@ -2,6 +2,7 @@
 """Views for the services app
 """
 from sys import stderr, exc_info
+from collections import Counter
 import requests
 import logging
 
@@ -19,7 +20,7 @@ from es import get_search_parameters, do_search, count_search_results, \
 
 from texcavator.utils import json_response_message
 
-from query.models import StopWord
+from query.models import StopWord, Newspaper, Pillar
 from query.utils import get_query_object
 
 from services.export import export_csv
@@ -407,4 +408,17 @@ def metadata(request):
                                   params['distributions'],
                                   params['article_types'],
                                   params['pillars'])
+
+    # Categorize newspaper_ids per Pillar
+    pillars = Counter()
+    for n in result['aggregations']['newspaper_ids']['buckets']:
+        pillar = 'None'
+        newspaper = Newspaper.objects.get(pk=n['key'])
+        if newspaper and newspaper.pillar:
+            pillar = newspaper.pillar.name
+        pillars[pillar] += n['doc_count']
+
+    # Mimic the result of the other aggregations
+    result['aggregations']['pillar'] = [{'key': k, 'doc_count': v} for (k, v) in pillars.iteritems()]
+
     return json_response_message('success', 'Complete', result['aggregations'])
