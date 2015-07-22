@@ -21,4 +21,6 @@ urlpatterns = patterns(
     url(r'logger/$', 'log'),
 
     url(r'metadata/$', 'metadata'),
+
+    url(r'stem/$', 'stemmed_form')
 )

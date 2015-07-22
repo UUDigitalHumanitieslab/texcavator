@@ -16,7 +16,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from es import get_search_parameters, do_search, count_search_results, \
     single_document_word_cloud, multiple_document_word_cloud, get_document, \
-    metadata_aggregation
+    metadata_aggregation, get_stemmed_form
 
 from texcavator.utils import json_response_message
 
@@ -422,3 +422,12 @@ def metadata(request):
     result['aggregations']['pillar'] = [{'key': k, 'doc_count': v} for (k, v) in pillars.iteritems()]
 
     return json_response_message('success', 'Complete', result['aggregations'])
+
+
+@csrf_exempt
+@login_required
+def stemmed_form(request):
+    """Returns the stemmed form of a POSTed word"""
+    word = request.POST.get('word')
+    stemmed = get_stemmed_form(settings.ES_INDEX, word)
+    return json_response_message('success', 'Complete', {'stemmed': stemmed})

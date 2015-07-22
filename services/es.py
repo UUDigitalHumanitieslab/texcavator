@@ -32,6 +32,7 @@ _KB_ARTICLE_TYPE_VALUES = {'st_article': 'artikel',
 _DOCUMENT_TEXT_FIELD = 'text_content'
 _DOCUMENT_TITLE_FIELD = 'article_dc_title'
 _AGG_FIELD = _DOCUMENT_TEXT_FIELD
+_STEMMING_ANALYZER = 'dutch_analyzer'
 
 
 def _es():
@@ -664,3 +665,17 @@ def get_cloud_fields(stems=False):
     if stems and settings.STEMMING_AVAILABLE:
         fields = [f + '.stemmed' for f in fields]
     return fields
+
+
+def get_stemmed_form(idx, word):
+    """
+    Returns the stemmed form of a word for this
+
+    Parameters:
+        idx : str
+            The name of the elasticsearch index
+        word : str
+            The input word
+    """
+    result = indices.IndicesClient(_es()).analyze(index=idx, text=word, analyzer=_STEMMING_ANALYZER)
+    return result['tokens'][0]['token']

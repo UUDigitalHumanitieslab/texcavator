@@ -48,11 +48,11 @@ var getCloudParameters = function( params )
 		params[ "stopwords_default" ] = cloudcfg[ "stopwords_default" ] ? 1 : 0;
 	}
 
-    if(cloudcfg["stoplimit"]){
-        params["min_length"] = cloudcfg["stoplimit"];
-    } else {
-        params["min_length"] = 2;
-    }
+	if(cloudcfg["stoplimit"]){
+		params["min_length"] = cloudcfg["stoplimit"];
+	} else {
+		params["min_length"] = 2;
+	}
 
 //	else { params[ "stopwords" ] = 0; }		// valid, but superfluous
 
@@ -285,7 +285,7 @@ var stopwordsSave = function( word, stopwords_cat )
 		content[ "query_id" ] = lexiconID;
 	}
 
-    console.log(content)
+	console.log(content)
 
 	dojo.xhrPost({
 		url: "query/stopword/add",
@@ -673,10 +673,31 @@ var d3CreateCloud = function( target, cloud_src, svg_width, svg_height, weightFa
 
 	var svgMouseover = function( word, count, nertype )
 	{
-		if( nertype == null )
-		{ divStatusline.innerHTML = "<center><u>word</u>: <b>" +  word.text + "</b>" + ", <u>count</u>: <b>" + count + "</b></center>"; }
+		if (nertype == null)
+		{
+			result = "<center><u>word</u>: <b>" +  word.text + "</b>";
+			result += ", <u>count</u>: <b>" + count + "</b>"; 
+
+			// Show stemmed form if we're not showing the stemmed cloud
+			if (!config[ "cloud" ][ "stems" ])
+			{
+				dojo.xhrPost({
+					url: "services/stem/",
+					handleAs: "json",
+					content: { "word": word.text },
+					sync: true
+				}).then(function(response) {
+					result += ", <u>stemmed</u>: <b>" + response.stemmed + "</b>"; 
+				});
+			}
+
+			result += "</center>";
+			divStatusline.innerHTML = result;
+		}
 		else
-		{ divStatusline.innerHTML = "<center>phrase: <b>" +  word.text + "</b>" + ", count: <b>" + count + "</b>, NER type: <b>" + nertype + "</b></center>"; }
+		{
+			divStatusline.innerHTML = "<center>phrase: <b>" +  word.text + "</b>" + ", count: <b>" + count + "</b>, NER type: <b>" + nertype + "</b></center>"; 
+		}
 	}
 
 	var svgMouseout = function( word )
