@@ -98,7 +98,7 @@ def getDate(i, resolution, mindate):
         m = mindate.month+i
         year = int(mindate.year + m/12)
         while m > 12:
-            m = m -12
+            m -= 12
 
         date = datetime.date(year, m, mindate.day)
     #	print >> stderr, mindate, date, i
@@ -119,9 +119,9 @@ def resolveDate(date, begindate, resolution):
     elif resolution == 'week':
         return resolveDate(date, begindate, 'day')/7.
     elif resolution == 'month':
-        return (date.month - begindate.month) + (date.year - begindate.year)*12 + (date.day - begindate.day)/30
+        return (date.month - begindate.month) + (date.year - begindate.year)*12 + (date.day - begindate.day)/30.
     elif resolution == 'year':
-        return (date.year - begindate.year) + (date.month - begindate.month)/12. + (date.day - begindate.day)/30
+        return (date.year - begindate.year) + (date.month - begindate.month)/12.
     elif resolution == 'hours':
         return diff.seconds/3600.0 + diff.days*24
     elif resolution == 'halfday':
@@ -146,7 +146,7 @@ def resolve(doc2date, doc2relevance, date2countC, resolution):
 
     # find minimum date:
     dates = set(doc2date.values() + date2countC.keys())
-    mindate = min(dates)
+    mindate = datetime.date(min(dates).year, 1, 1)  # Use the 1 January of the minimum date as starting point
     date2countC_new = collections.defaultdict(lambda: 0)
     date2count = collections.defaultdict(lambda: 0)
     date2docs = collections.defaultdict(lambda: [])
@@ -171,7 +171,7 @@ def dates2intervals(dates2counts, doc2date, resolution='day'):
     xes = []
     previous = min(dates2counts.iterkeys())
     date2docs = collections.defaultdict(lambda: [])
-    for doc,date in doc2date.iteritems():
+    for doc, date in doc2date.iteritems():
         date2docs[date].append(doc)
     interval2docs[0] = date2docs[0]
     datelist = sorted(dates2counts.keys())
@@ -320,8 +320,9 @@ def kleinberg(dates2counts, doc2date, levels, gamma, s, resolution):
     return burstr, {}
 
 
-def bursts(doc2date, doc2relevance = {}, date2countC={}, resolution='week', burstdetector='default', mov_avg=False, normalise=True, bg_smooth=True):
-    if settings.DEBUG == True:
+def bursts(doc2date, doc2relevance={}, date2countC={}, resolution='week', burstdetector='default',
+           mov_avg=False, normalise=True, bg_smooth=True):
+    if settings.DEBUG:
         print >> stderr, "lexicon/burstsdetector/bursts()"
 
     #1. resolution of doc2date and date2countC. Binning of dates, by relevance
@@ -335,11 +336,11 @@ def bursts(doc2date, doc2relevance = {}, date2countC={}, resolution='week', burs
 
     #3. smooth
     if bg_smooth:
-        if  len(doc2relevance) == 0:
+        if len(doc2relevance) == 0:
         #	print >> stderr, "smooth"
             index2count = __background_smoothing(index2count, index2countC)
         else:
-            if settings.DEBUG == True:
+            if settings.DEBUG:
                 print >> stderr, "Cannot do background smoothing."
 
     #4. Burst detector
@@ -358,7 +359,7 @@ def bursts(doc2date, doc2relevance = {}, date2countC={}, resolution='week', burs
     countsNbursts = {}
     # print >> stderr, burst.peakdates
     for i, c in index2count.iteritems():
-        date = getDate(i,resolution, mindate)
+        date = getDate(i, resolution, mindate)
         if i in bdays:
         #	if settings.DEBUG == True:
         #		print >> stderr, date
@@ -380,7 +381,7 @@ def defaultdetector(date2count, doc2date):
     burstsfound = {}
     values = []
 # >> FL 24-Jan-2013
-    try:	# handle ValueError exception: min() arg is an empty sequence
+    try:  # handle ValueError exception: min() arg is an empty sequence
         for d in range(min(date2count.iterkeys()), max(date2count.iterkeys())+1):
             values.append(date2count.get(float(d), 0))
     except ValueError:
@@ -489,7 +490,7 @@ def main():
             backgroundcounts[date] += 1
         #print >> stderr, backgroundcounts
         a, b = bursts(docs2date, date2countC=backgroundcounts, resolution='week', doc2relevance={},  burstdetector='default', normalise=True, bg_smooth=False)
-        if settings.DEBUG == True:
+        if settings.DEBUG:
             print >> stderr, a
         # vals = []
         # for k, v in a.iteritems():

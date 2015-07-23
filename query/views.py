@@ -174,13 +174,7 @@ def timeline(request, query_id, resolution):
         print >> stderr, "query/bursts() query_id:", query_id, \
                          "resolution:", resolution
 
-    collection = settings.ES_INDEX
-
-    if request.REQUEST.get('normalize') == 1:
-        normalize = True
-    else:
-        normalize = False
-
+    normalize = request.REQUEST.get('normalize') == 1
     bg_smooth = False
 
     begin = request.REQUEST.get('begindate')
@@ -194,24 +188,23 @@ def timeline(request, query_id, resolution):
     begindate = datetime.strptime(begin, '%Y%m%d').date()
     enddate = datetime.strptime(end, '%Y%m%d').date()
 
-    get_object_or_404(Query, pk=query_id)
+    query = get_object_or_404(Query, pk=query_id)
 
     # normalization and/or smoothing
     values = DayStatistic.objects.values('date', 'count').all()
     date2countC = {}
     for dc in values:
-        if dc['date'] <= enddate and dc['date'] >= begindate:
+        if enddate >= dc['date'] >= begindate:
             date2countC[dc['date']] = dc['count']
 
-    documents_raw = query2docidsdate(query_id,
-                                     collection,
+    documents_raw = query2docidsdate(query,
                                      str(begindate),
                                      str(enddate))
     documents = sorted(documents_raw, key=lambda k: k["date"])
     doc2date = {}
     for doc in documents:
         doc_date = doc["date"]
-        if doc_date <= enddate and doc_date >= begindate:
+        if enddate >= doc_date >= begindate:
             doc2date[doc["identifier"]] = doc_date
 
     if settings.DEBUG:
@@ -225,23 +218,23 @@ def timeline(request, query_id, resolution):
         print >> stderr, "bg_smooth:", False
         print >> stderr, "resolution:", resolution
 
-    burstsList = bursts.bursts(doc2date,
-                               {},
-                               date2countC=date2countC,
-                               normalise=normalize,
-                               bg_smooth=bg_smooth,
-                               resolution=resolution)[0]
+    bursts_list = bursts.bursts(doc2date,
+                                {},
+                                date2countC=date2countC,
+                                normalise=normalize,
+                                bg_smooth=bg_smooth,
+                                resolution=resolution)[0]
 
     date2count = {}
-    for date, tup in burstsList.iteritems():
-        doc_float, zero_one, index, limit, doc_count, doc_ids = tup
+    for date, tup in bursts_list.iteritems():
+        doc_float, zero_one, i, limit, doc_count, doc_ids = tup
         if doc_count != 0:
             doc_float = float("%.1f" % doc_float)  # less decimals
             if limit:                              # not None
                 limit = float("%.1f" % limit)      # less decimals
             date2count[str(date)] = (doc_float,
                                      zero_one,
-                                     index,
+                                     i,
                                      limit,
                                      doc_count,
                                      doc_ids)

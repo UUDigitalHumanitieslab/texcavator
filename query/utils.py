@@ -33,18 +33,16 @@ def get_query_object(query_id):
     return query, response
 
 
-def query2docidsdate(query_id, collection, date_begin, date_end):
+def query2docidsdate(query, date_begin, date_end):
     """Get the document ids plus their date for the query and date range.
     """
     # this is called multiple times by the timeline
     if settings.DEBUG:
-        print >> stderr, "query2docidsdate()", collection
-
-    query, response = get_query_object(query_id)
+        print >> stderr, "query2docidsdate()"
 
     date_range = {
         'lower': date_begin,
         'upper': date_end
     }
 
-    return get_document_ids(collection, 'doc', query.query, date_range)
+    return get_document_ids(settings.ES_INDEX, settings.ES_DOCTYPE, query.query, date_range)
