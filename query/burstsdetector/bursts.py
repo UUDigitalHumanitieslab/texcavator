@@ -104,8 +104,7 @@ def getDate(i, resolution, mindate):
     #	print >> stderr, mindate, date, i
         return date
     elif resolution == 'year':
-        date = datetime.date(mindate.year+i, mindate.month, mindate.day)
-        return date
+        return datetime.date(mindate.year+i, mindate.month, mindate.day)
     elif resolution == 'hours':
         return mindate + datetime.timedelta(hours=i)
     elif resolution == 'halfday':

@@ -193,11 +193,14 @@ function getData( lexiconId, interval, callback )
 
 function getEndOfInterval( date, interval ) 
 {
-	if( interval == "year" ) 
-	{ return new Date( date.getTime() + 365*24*3600000 - 1 ); }
+	if( interval == "year" ) { 
+		var d = new Date(date.getTime()); 
+		d.setFullYear(date.getFullYear() + 1);
+		return d;
+	}
 
 	if( interval == "month" ) 
-	{ return new Date( date.getFullYear(), date.getMonth()+1, date.getDate(), 
+	{ return new Date( date.getFullYear(), date.getMonth() + 1, date.getDate(), 
 		date.getHours(), date.getMinutes(), date.getSeconds(), date.getMilliseconds() ); }
 
 	if( interval == "week" ) 
