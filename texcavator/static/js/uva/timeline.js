@@ -12,7 +12,6 @@ function createGraph() {
 	function redraw() {
 		function nrOfBins( data )
 		function burstUpdateFunction( burst )
-		function pathUpdateFunction( path )
 	}
 }
 function burstSearch( lexicon_query, date_range, max_records )
@@ -60,16 +59,15 @@ function loadGraphData( lexiconId )
 	burstIntervalIndex = 0;
 	burstAnimation = false;
 
-	getDataForInterval( lexiconId, 0, function () 
-	{
+	getDataForInterval( lexiconId, 0, function() {
 		createGraph();
 
 		var intervalIndex = 0;
 
-		var continueFunction = function () 
-		{
-			if( ++intervalIndex < intervals.length ) 
-			{ getDataForInterval( lexiconId, intervalIndex, continueFunction ); }
+		var continueFunction = function() {
+			if( ++intervalIndex < intervals.length ) { 
+				getDataForInterval( lexiconId, intervalIndex, continueFunction ); 
+			}
 		};
 
 		continueFunction();
@@ -102,14 +100,6 @@ function getDataForInterval( lexiconId, intervalIndex, callback )
 			mean: mean,	stddev: stddev
 		};
 		console.log( "Loaded " + data.length + " data points for burst with interval " + interval + "." );
-			
-		// Add bogus data to fix last bar
-		var bogusStart = new Date( getEndOfInterval( new Date( data[ data.length-1 ].start ), intervals[ burstIntervalIndex ] ) + 1 );
-		burstData[ intervalIndex ].data.push( { 
-			start: bogusStart,
-			end: getEndOfInterval( bogusStart, intervals[ burstIntervalIndex ] ),
-			value: 0, burst: false,
-			index: -1 });
 
 		// Set data for animation
 		if( intervalIndex > 0 )
@@ -190,7 +180,7 @@ function getData( lexiconId, interval, callback )
 			});
 
 			data = data.sort( function( a, b ) { return a.start - b.start } );
-			callback( data );		// Add bogus data to fix last bar
+			callback( data );
 
 		}, 
 		error: function( xhr, message, error ) {
@@ -237,16 +227,18 @@ function createGraph()
 	// Create a place for the chart
 	var collection = retrieveCollectionUsed();
 	var dest = dojo.byId( "chartDiv" );
-	if( dest == null ) 
-	{ $( '#timeline' ).append( '<div id="chartDiv" style="width: 100%; height: 320px; float: center;"></div>' ); }
-	else
-	{ dest.innerHTML = ""; }			// Clear existing destination
+	if (dest == null) { 
+		$('#timeline').append('<div id="chartDiv" style="width: 100%; height: 320px; float: center;"></div>'); 
+	}
+	else { 
+		dest.innerHTML = "";			// Clear existing destination
+	}
 
 	var w = $( "#chartDiv" ).width() - 70, 
 		h = $( "#chartDiv" ).height(),
 		x = d3.time.scale().range( [ 50, w-20 ] ),
-		y = d3.scale.linear().range( [ h-20, h-20 ] ),	// start with zero height at X-axis (20px reserved for ticks & years)
-		y_label = d3.scale.linear().range( [ h-20, 0 ] ); // start with zero height at X-axis (20px reserved for ticks & years)
+		y = d3.scale.linear().range( [ h-20, 0 ] ),
+		y_label = d3.scale.linear().range( [ h-20, 0 ] );
 	console.log( "createGraph() w=" + w + ", h=" + h );	// debug: sometimes the graph is compressed to a small width
 
 	// Update the scale domains.
@@ -264,13 +256,6 @@ function createGraph()
 
 	var body = svg.append( "svg:g" );
 
-	var area = d3.svg.area()
-		.x( function( d ) { return x( d.start ); } )
-		.y0( 0 )
-		.y1( function( d ) { return y( d.value ); } )
-		.interpolate( "step-after" );
-
-
 	function filterFunction( d ) {
 		if( d.end.getTime() < x.domain()[ 0 ] )
 			return false;
@@ -278,7 +263,6 @@ function createGraph()
 			return false;
 		return true;
 	}
-
 
 	function redraw() 
 	{
@@ -342,7 +326,7 @@ function createGraph()
 
 		gx.exit().remove();
 
-		// Regenerate y-ticks…
+		// Regenerate y-ticks
 		var gy = svg.selectAll("g.y")
 			.data(y.ticks(10), String)
 			.attr("transform", ty);
@@ -413,49 +397,25 @@ function createGraph()
 
 		// Create new burst when needed
 		// 'd' is the data, 'i' is the bar index: 0, 1, ..., 'this' is a svg rect class
-		bursts.enter().append( "svg:rect" )
-			.attr( "class", "bursts" )
-			.attr( "height", h-20 )
-			.on( "mouseover", function( d, i ) 
-			{
-			//	console.log( "mouseover" );
-				d3.select( this ).transition().duration( 300 ).style( "opacity", 0.5 ); 
+		bursts.enter().append("svg:rect")
+			.attr("class", "bursts")
+			.attr("y", h - 20)
+			.on("mouseover", function(d, i) {
+				d3.select(this).transition().duration(300).style("opacity", 0.5); 
 			}) 
-			.on( "mouseout", function( d, i ) 
-			{ 
-			//	console.log( "mouseout" );
-				d3.select( this ).transition().duration( 300 ).style( "opacity", 1.0 ); 
+			.on("mouseout", function(d, i) { 
+				d3.select(this).transition().duration(300).style("opacity", 1.0); 
 			})
-			.on( "mouseup", function( d, i ) 
-			{ 
-			//	console.log( "mouseup" );
-				burstClicked( d, i, this ); 
-			});
-
-		// Set data for path
-		var paths = svg.selectAll( "path" )
-			.data( [ filteredData ] );
-
-		// Add new items to path if needed
-		paths.enter().append( "svg:path" )
-			.style( "fill", "white" );
-
-		// Function to transition exit, for consistent animation
-		/*function exitTransition(updateFunction, time) {
-			var exitTransitionFunction = function(selection) {
-				selection.exit()
-					.transition()
-						.duration(time)
-						.call(updateFunction)
-						.remove();				
-			};
-			return exitTransitionFunction;
-		}*/
+			.on("mouseup", function(d, i) {
+				burstClicked(d, i, this); 
+			})
+			.transition()
+			.duration(1000)
+			.attr("y", function(d) { return y(d.value);	})
+			.attr("height", function(d) { return h - 20 - y(d.value); });
 
 		// Delete unneeded bursts and path
 		bursts.exit().remove();		//call(exitTransition(burstUpdateFunction, 2500));
-		paths.exit().remove();		//.call(exitTransition(pathUpdateFunction, 2500));
-
 
 		function burstUpdateFunction( burst ) 
 		{
@@ -469,19 +429,11 @@ function createGraph()
 					{ return ( d.burst ) ? "red" : "steelblue"; }
 					else
 					{ return "steelblue"; }
-				})
-				.style( "visibility", function(d) { 
-					return d.index == -1 ? "hidden" : "visible";
-				}); // Render bogus data invisible. TODO: Yes, this is ugly as hell.
+				});
 		}
-
-		function pathUpdateFunction( path ) {
-			path.attr( "d", area );
-		}			
 
 		// Place bursts at right spot
 		bursts.call( burstUpdateFunction );
-		paths.call( pathUpdateFunction );
 
 		// Update tooltip document count
 		body.selectAll( "title" ).remove();
@@ -517,13 +469,6 @@ function createGraph()
 				.transition()
 					.duration( 2500 )
 					.call( burstUpdateFunction );
-
-			svg.selectAll( "path" )
-				.data( [ newData ] )
-				.transition()
-					.duration( 2500 )
-					.call( pathUpdateFunction )
-					.each( "end", function() { burstAnimation = false; redraw(); } );
 		}
 	}
 	redraw();
@@ -532,11 +477,6 @@ function createGraph()
 	// Raise the bars
 	y.range( [ h-20, 0 ] );
 	var collection = retrieveCollectionUsed();
-	d3.select( "#chartDiv" ).selectAll( "path" )
-		.transition()
-			.duration( 2500 )
-			.delay( 300 )
-			.attr( "d", area );
 
 	if( dijit.byId( 'sparksDialog' ) == undefined ) 
 	{
