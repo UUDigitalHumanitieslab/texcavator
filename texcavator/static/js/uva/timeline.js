@@ -228,7 +228,7 @@ function createGraph()
 	var collection = retrieveCollectionUsed();
 	var dest = dojo.byId( "chartDiv" );
 	if (dest == null) { 
-		$('#timeline').append('<div id="chartDiv" style="width: 100%; height: 320px; float: center;"></div>'); 
+		$('#timeline').append('<div id="chartDiv" style="width: 100%; height: 280px; float: center;"></div>'); 
 	}
 	else { 
 		dest.innerHTML = "";			// Clear existing destination
@@ -494,7 +494,7 @@ function createGraph()
 			label: "Tooltip",
 			dropDown: dialog,
 			dropDownPosition: ["below"],
-			style: 'position: absolute; left: 0; top: 320px; visibility: hidden;'
+			style: 'position: absolute; left: 0; top: 280px; visibility: hidden;'
 		});
 	}
 
