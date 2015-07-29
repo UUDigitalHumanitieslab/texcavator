@@ -1,30 +1,40 @@
+// Create metadata graphics for a query
+function metadataGraphics(query) {
+    console.log("metadataGraphics()");
 
-// create metadata graphics
-function metadataGraphics(query)
-{
-	console.log( "metadataGraphics()" );
+    var params = getSearchParameters();
+    params.query = query;
 
-	var params = getSearchParameters();
-	params["query"] = query;
-
-    dojo.xhrGet( {
+    dojo.xhrGet({
         url: "services/metadata/",
         handleAs: "json",
         content: params,
-    }).then(function( response ) {
+    }).then(function(response) {
         // Add pie charts
-        addPieChart(response['articletype']['buckets'], "#chart_articletype");
-        addPieChart(response['distribution']['buckets'], "#chart_distribution");
-        addPieChart(response['pillar'], "#chart_pillar");
+        addPieChart(response.articletype.buckets, "#chart_articletype");
+        addPieChart(response.distribution.buckets, "#chart_distribution");
+        addPieChart(response.pillar, "#chart_pillar");
 
         // Create newspapers bar chart
-        data_newspapers = [{ "key": "Newspapers", "values": response['newspapers']['buckets'] }];
+        data_newspapers = [{
+            "key": "Newspapers",
+            "values": response.newspapers.buckets
+        }];
 
         nv.addGraph(function() {
             var chart = nv.models.multiBarHorizontalChart()
-                .x(function(d) { return d.key })
-                .y(function(d) { return d.doc_count })
-                .margin({top: 30, right: 20, bottom: 50, left: 175})
+                .x(function(d) {
+                    return d.key;
+                })
+                .y(function(d) {
+                    return d.doc_count;
+                })
+                .margin({
+                    top: 30,
+                    right: 20,
+                    bottom: 50,
+                    left: 175
+                })
                 .valueFormat(d3.format(",d"))
                 .showValues(true)
                 .tooltips(true);
@@ -40,16 +50,21 @@ function metadataGraphics(query)
 
             return chart;
         });
-	}, function( err ) { console.error( err ); }
-	);
+    }, function(err) {
+        console.error(err);
+    });
 }
 
-function addPieChart(data, id)
-{
+// Create a pie chart for a set of data points
+function addPieChart(data, id) {
     nv.addGraph(function() {
         var chart = nv.models.pieChart()
-            .x(function(d) { return d.key })
-            .y(function(d) { return d.doc_count })
+            .x(function(d) {
+                return d.key;
+            })
+            .y(function(d) {
+                return d.doc_count;
+            })
             .valueFormat(d3.format(",d"))
             .showLabels(true);
 

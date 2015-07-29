@@ -6,15 +6,14 @@ var genDialog = function( title, message, buttons, callback )
 */
 
 // general purpose dialog
-var genDialog = function( title, message, buttons, callback )
-{
+var genDialog = function(title, message, buttons, callback) {
 	var answer = "";
 
 	var dialog = new dijit.Dialog({
 		title: title
 	});
 
-	dojo.style( dialog.closeButtonNode, "visibility", "hidden" ); // hide the ordinary close button
+	dojo.style(dialog.closeButtonNode, "visibility", "hidden"); // hide the ordinary close button
 
 	var container = dialog.containerNode;
 
@@ -22,50 +21,45 @@ var genDialog = function( title, message, buttons, callback )
 		title: "Dialog",
 		style: "width: 275px; height: 125px; text-align: left; line-height: 18px; margin: 5px;"
 	});
-	dialogContainer.placeAt( container );
+	dialogContainer.placeAt(container);
 
-	var msgNode = dojo.create( "div",
-	{
+	var msgNode = dojo.create("div", {
 		innerHTML: message,
 		style: "clear: both;"
-	}, dialogContainer.domNode );
+	}, dialogContainer.domNode);
 
-	var actionBar = dojo.create( "div", {
+	var actionBar = dojo.create("div", {
 		className: "dijitDialogPaneActionBar",
 		style: "height: 30px"
-	}, container );
+	}, container);
 
-	if( buttons[ "Cancel" ] )
-	{
+	if (buttons.Cancel) {
 		var bCancel = new dijit.form.Button({
 			label: "<img src='/static/image/icon/Tango/16/actions/dialog-cancel.png'/> Cancel",
 			showLabel: true,
 			role: "presentation",
 			onClick: function() {
 				answer = "Cancel";
-			//	dijit.byId( dialogId ).destroyRecursive();
 				dialog.destroyRecursive();
 			}
 		});
-		actionBar.appendChild( bCancel.domNode );
+		actionBar.appendChild(bCancel.domNode);
 	}
 
-	var bOK = new dijit.form.Button(
-	{
+	var bOK = new dijit.form.Button({
 		label: "<img src='/static/image/icon/Tango/16/actions/dialog-ok.png'/> OK",
 		showLabel: true,
 		role: "presentation",
 		onClick: function() {
 			answer = "OK";
-		//	dijit.byId( dialogId ).destroyRecursive();
 			dialog.destroyRecursive();
-			if( typeof(callback) == "function" ) { callback(); }
+			if (typeof(callback) == "function") {
+				callback();
+			}
 		}
 	});
-	actionBar.appendChild( bOK.domNode );
+	actionBar.appendChild(bOK.domNode);
 
 	dialog.show();
 	return answer;
-} // genDialog()
-
-// [eof]
+}; // genDialog()
