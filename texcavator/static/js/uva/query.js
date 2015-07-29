@@ -13,7 +13,6 @@ function retrieveCollectionUsed()
 function getQueryList()
 function updateQueryDlg()
 function createQueryDlg()
-function okCombine( comb_operator, query1Name, query2Name, querySaveName )
 function okEdit( querySaveName, querySaveQuery )
 function okCreate( querySaveName )
 function okDownload( query_title )
@@ -33,23 +32,11 @@ var lexiconTitle   = null;	// file global
 var lexiconQuey    = null;	// file global
 var collectionUsed = null;	// file global
 
-/*
-var cloud_data = [
-	{"count": 42, "term": "jaar"}, 
-	{"count": 34, "term": "alle"}, 
-	{"count": 30, "term": "onder"}, 
-	{"count": 29, "term": "jeugd"}, 
-	{"count": 25, "term": "daarvan"}, 
-	{"count": 24, "term": "wordt"}
-];
-*/
-
 var grid_3layout = [
 	{ field: "id",    width: "25%" },
 	{ field: "count", width: "25%" },
 	{ field: "term",  width: "50%" },
 ];
-
 
 
 function storeLexiconID( lexicon_id )
@@ -141,10 +128,6 @@ function updateQueryDlg()
 	// update the query list
 	var querylistStore = new dojo.store.Memory({ data: getQueryList() });
 
-	// update the Combine query lists
-	dijit.byId( "cb-que1" ).set( "store", querylistStore );
-	dijit.byId( "cb-que2" ).set( "store", querylistStore );
-
 	// update the Edit query list
 	dijit.byId( "cb-query-edit" ).set( "store", querylistStore );
 
@@ -174,149 +157,6 @@ function createQueryDlg()
 	}, "tc-div-query" );
 
 
-	// Combine 2 queries
-//	console.log( "cpQCombine" );
-	var cpQCombine = new dijit.layout.ContentPane({
-		id: "cp-combine",
-		title: "Combine",
-		content: "<b>Combine 2 saved queries</b>"
-	});
-	tabCont.addChild( cpQCombine );
-
-	var query1Name = "";
-	var query2Name = "";
-	var querySaveName = "";
-
-
-	dojo.create( "label", {
-		innerHTML: "<br/>Boolean CQL operator:<br/>"
-	}, cpQCombine.domNode );
-
-
-	var comb_operator = "AND";
-
-	var rbAND = new dijit.form.RadioButton({
-		id: "rb-AND",
-		checked: true,
-		onChange: function( btn ) { if( btn ) { comb_operator = "AND"; } }
-	});
-	rbAND.placeAt( cpQCombine.domNode );
-
-	var labelAND = dojo.create( "label", {
-		id: "label-AND",
-		for: "rb-AND",
-		innerHTML: "&nbsp;AND&nbsp;&nbsp;"
-	}, cpQCombine.domNode );
-
-
-	var rbOR = new dijit.form.RadioButton({
-		id: "rb-OR",
-		checked: false,
-		onChange: function( btn ) { if( btn ) { comb_operator = "OR" }; }
-	});
-	rbOR.placeAt( cpQCombine.domNode );
-
-	var labelOR = dojo.create( "label", {
-		id: "label-OR",
-		for: "rb-OR",
-		innerHTML: "&nbsp;OR&nbsp;&nbsp;"
-	}, cpQCombine.domNode );
-
-
-	var rbNOT = new dijit.form.RadioButton({
-		id: "rb-NOT",
-		checked: false,
-		onChange: function( btn ) { if( btn ) { comb_operator = "NOT" }; }
-	});
-	rbNOT.placeAt( cpQCombine.domNode );
-
-	var labelNOT = dojo.create( "label", {
-		id: "label-NOT",
-		for: "rb-NOT",
-		innerHTML: "&nbsp;NOT&nbsp;&nbsp;"
-	}, cpQCombine.domNode );
-
-	/*
-	// PROX probably not implemented
-	var rbPROX = new dijit.form.RadioButton({
-		id: "rb-PROX",
-		disabled: true,				// needs additional syntax
-		checked: false,
-		onChange: function( btn ) { if( btn ) { comb_operator = "PROX" }; }
-	}, dojo.byId( "div-op-prox" ) );
-
-	var labelPROX = dojo.create( "label", {
-		id: "label-PROX",
-		style: "color: DarkGrey",	// 'disabled'
-		for: "rb-PROX",
-		innerHTML: "&nbsp;PROX<br/><br/>"
-	});
-	rbPROX.placeAt( cpQCombine.domNode );
-
-	*/
-
-	// fill the query list
-	var stateStore = new dojo.store.Memory({ data: getQueryList() });
-
-	dojo.create( "div", { id: "div-query1" }, cpQCombine.domNode );
-	var cbQue1 = new dijit.form.ComboBox(
-	{
-		id: "cb-que1",
-		name: "cbQue1",
-		style: "width: 100%",
-		displayedValue: "Select query 1",
-		store: stateStore,
-		searchAttr: "name",
-		onChange: function() { combine_check(); }
-	});
-	cbQue1.placeAt( cpQCombine.domNode );
-
-	dojo.create( "div", { id: "div-query2" }, cpQCombine.domNode );
-	var cbQue2 = new dijit.form.ComboBox(
-	{
-		id: "cb-que2",
-		name: "cbQue2",
-		style: "width: 100%",
-		displayedValue: "Select query 2",
-		store: stateStore,
-		searchAttr: "name",
-		onChange: function() { combine_check(); }
-	});
-	cbQue2.placeAt( cpQCombine.domNode );
-
-	var combine_check = function()
-	{
-		query1Name = cbQue1.get( "value" );
-		query2Name = cbQue2.get( "value" );
-	//	console.log( "query 1: " + query1Name );
-	//	console.log( "query 2: " + query2Name );
-		if( query1Name !== "Select query 1" && query2Name !== "Select query 2" 
-			&&  query1Name !== query2Name )
-		{
-			querySaveName = query1Name + "_" + comb_operator + "_" + query2Name;
-			tbQueName.set( "value", querySaveName );
-			bOK.set( "disabled", false );
-		}
-		else
-		{
-			tbQueName.set( "value", "" );
-			bOK.set( "disabled", true );
-		}
-	}
-
-	dojo.create( "label", {
-		innerHTML: "<br/>Save result as:"
-	}, cpQCombine.domNode );
-
-	dojo.create( "div", { id: "div-query2" }, cpQCombine.domNode );
-	var divQueName = dojo.create( "div", { id: "div-quename" }, cpQCombine.domNode );
-	var tbQueName = new dijit.form.TextBox({
-		id: "tb-quename",
-		style: "width: 100%"
-	});
-	tbQueName.placeAt( divQueName );
-
-
 	// Edit a query
 //	console.log( "cpQEdit" );
 	var cpQEdit = new dijit.layout.ContentPane({
@@ -329,7 +169,7 @@ function createQueryDlg()
 	var queryListStoreEdit = new dojo.store.Memory({ data: getQueryList() });
 
 	var queryNameEdit = "";
-	dojo.create( "div", { id: "div-query-edit" }, cpQCombine.domNode );
+	dojo.create( "div", { id: "div-query-edit" }, cpQEdit.domNode );
 	var cbQueryEdit = new dijit.form.ComboBox(
 	{
 		id: "cb-query-edit",
@@ -361,84 +201,6 @@ function createQueryDlg()
 		style: "width: 100%; height: 100%;"
 	});
 	taQuery.placeAt( cpQEdit.domNode );
-
-
-	// Create a new query
-//	console.log( "cpQCreate" );
-	/*
-	var cpQCreate = new dijit.layout.ContentPane({
-		id: "cp-create",
-		title: "Create",
-		content: "<b>Create a query</b>"
-	});
-	*/
-
-	/*
-	dojo.create( "div", { id: "div-grid" }, cpQCreate.domNode );
-
-	// set up data store
-	var data = {
-		identifier: 'id',
-		items: []
-	};
-
-	var data_list = [
-		{ col1: "normal",    col2: false, col3: 'But are not followed by two hexadecimal', col4: 29.91},
-		{ col1: "important", col2: false, col3: 'Because a % sign always indicates',       col4: 9.33},
-		{ col1: "important", col2: false, col3: 'Signs can be selectively',                col4: 19.34}
-	];
-
-//	var rows = 60;
-	var rows = 3;
-	for( var i = 0, l = data_list.length; i <rows; i++ ) {
-		data.items.push( dojo.mixin( { id: i+1 }, data_list[ i%l ] ) );
-	}
-	var store = new dojo.data.ItemFileWriteStore( { data: data } );
-
-	// grid layout
-	var layout = [[
-		{'name': 'Column 1', 'field': 'id'},
-		{'name': 'Column 2', 'field': 'col2'},
-		{'name': 'Column 3', 'field': 'col3', 'width': '230px'},
-		{'name': 'Column 4', 'field': 'col4', 'width': '230px'}
-	]];
-
-	// create a new grid
-//	var grid = new dojox.grid.EnhancedGrid({
-	var grid = new dojox.grid.DataGrid({
-		id: 'grid',
-	//	style: "width: 45em; height: 20em;",
-		style: "width: 100%; height: 100%;",
-		store: store,
-		structure: layout,
-		rowSelector: '20px'
-	}, dojo.byId( "div-grid" ) );
-//	}, document.createElement( 'div' ) );
-
-	// append the new grid to the div
-//	dojo.byId( "div-grid" ).appendChild( grid.domNode );
-
-	// Grid need a explicit width/height by default
-//	#grid { width: 45em; height: 20em; }
-	*/
-
-	/*
-	var layout = [
-		{name : "MyFirstColumnHeader", field : 'someColumnNameInMyData', width : "180px;"}, 
-		{name : "MySecondColumnHeader", field : 'someOtherColumnName', width : "180px;"}
-	];
-
-	var emptyData = { identifier : 'uniqueIdOfEachItem', label : 'displayName', items : [] };
-	var store = new dojo.data.ItemFileWriteStore( { data : emptyData } );
-	var grid = new dojox.grid.DataGrid({
-		id : 'grid',
-		query : { uniqueIdOfEachItem: '*' },
-		store : store,
-		structure : layout
-	},  dojo.byId( "div-grid" ) );
-
-	// grid.startup();
-	*/
 
 
 	// Download query data
@@ -597,9 +359,7 @@ function createQueryDlg()
 			var selectedTab = dijit.byId( "tc-query" ).get( "selectedChildWidget" );
 		//	console.log( selectedTab.title );
 
-			if( selectedTab.id === "cp-combine" )
-			{ okCombine( comb_operator, query1Name, query2Name, querySaveName ); }
-			else if( selectedTab.id === "cp-edit" )
+			if( selectedTab.id === "cp-edit" )
 			{ okEdit( queryNameEdit, taQuery.get( "value" ) ); }
 			else if( selectedTab.id === "cp-create" )
 			{ okCreate( queryNameCreate ); }
@@ -611,72 +371,12 @@ function createQueryDlg()
 
 
 	// choose the order in which the tabs appear
-	tabCont.addChild( cpQCombine );
 	tabCont.addChild( cpQEdit );
 //	tabCont.addChild( cpQCreate );
 
 	if( glob_username != "guest" && QUERY_DATA_DOWNLOAD == true ) 
 	{ tabCont.addChild( cpQData ); }		// guest has no email
 };
-
-
-
-function okCombine( comb_operator, query1Name, query2Name, querySaveName )
-{
-	console.log( "okCombine" );
-//	console.log( "Query 1 name: " + query1Name );
-//	console.log( "Query 2 name: " + query2Name );
-
-	dijit.byId( "dlg-query" ).destroyRecursive();
-
-	var query1Query = "";
-	var query2Query = "";
-	dojo.forEach( glob_lexiconData, function( item )		// lexiconData: global {} in index.html
-	{
-		var query_title = item[ "fields" ][ "title" ];
-		if( query_title === query1Name )
-		{ query1Query = item[ "fields" ][ "query" ]; }
-		if( query_title === query2Name )
-		{ query2Query = item[ "fields" ][ "query" ]; }
-	});
-
-	querySaveQuery = "(" + query1Query + " " + comb_operator + " " + query2Query + ")";
-
-//	console.log( "Query: " + querySaveQuery );
-//	console.log( "Saving as " + querySaveName );
-
-	// lexicon is the django app name; lexiconitem could be renamed to query
-	var data = { 
-		"model": "lexicon.lexiconitem",
-		"fields": {
-			"overwrite": false,
-			"user": glob_username,
-			"title": querySaveName,
-			"query": querySaveQuery
-		} 
-	};
-
-	lexiconStore.put( data ).then( function( result )			// HTTP POST
-	{
-		var status = result[ "status" ];
-		if( status === "SUCCESS" )
-		{
-			console.log( "Query was saved" );
-			dijit.byId( "leftAccordion" ).selectChild( "lexicon" );
-			createQueryList();		// fill the Saved queries panel (in index.html)
-		}
-		else
-		{
-			var msg = "The query could not be saved:<br/>" + result[ "msg" ];
-			var dialog = new dijit.Dialog({
-				title: "Save query",
-				style: "width: 300px",
-				content: msg
-			});
-			dialog.show();
-		}
-	});
-}
 
 
 function okEdit( querySaveName, querySaveQuery )
