@@ -4,6 +4,7 @@ dojo.require("dijit.popup");
 /*
 var showTimeline = function( lexiconId, lexiconTitle )
 function loadGraphData( lexiconId )
+function findValue(start, end, data, startIndex)
 function getDataForInterval( lexiconId, intervalIndex, callback )
 function getData( lexiconId, field, interval, callback )
 function getEndOfInterval( date, interval )
@@ -30,8 +31,8 @@ var detectBursts = true;
 
 var showTimeline = function(item, collection) {
 	lexiconId = item.pk;
-	lexiconTitle = item["fields"]["title"];
-	query_string = item["fields"]["query"];
+	lexiconTitle = item.fields.title;
+	query_string = item.fields.query;
 	console.log("showTimeline() lexiconId: " + lexiconId + ", lexiconTitle: " + lexiconTitle + ", collection: " + collection);
 
 	setQueryMetadata(item);
@@ -42,7 +43,7 @@ var showTimeline = function(item, collection) {
 	storeCollectionUsed(collection); // query.js
 
 	var sparksDD = dijit.byId('sparksDropDownButton');
-	if (sparksDD != undefined) {
+	if (sparksDD !== undefined) {
 		sparksDD.closeDropDown();
 	}
 
@@ -51,7 +52,7 @@ var showTimeline = function(item, collection) {
 	tc.selectChild(dijit.byId("timeline"));
 
 	loadGraphData(lexiconId);
-}
+};
 
 
 function loadGraphData(lexiconId) {
@@ -75,10 +76,22 @@ function loadGraphData(lexiconId) {
 }
 
 
+function findValue(start, end, data, startIndex) {
+	if (data[0].start > end) return [0, 0];
+	if (data[data.length - 1].end < start) return [0, data.length];
+	for (indx = startIndex; indx < data.length; indx++) {
+		if (data[indx].end < start) continue;
+		return [data[indx].value, indx];
+	}
+	return [0, data.length];
+}
+
+
 function getDataForInterval(lexiconId, intervalIndex, callback) {
 	var interval = intervals[intervalIndex];
 
 	getData(lexiconId, interval, function(data) {
+		// Detect bursts (mean + 2 * stddev)
 		var mean = d3.mean(data, function(d) {
 			return d.value;
 		});
@@ -92,6 +105,7 @@ function getDataForInterval(lexiconId, intervalIndex, callback) {
 			entry.burst = entry.value > burstLimit;
 		});
 
+		// Set the data, range and statistics
 		burstData[intervalIndex] = {
 			data: data,
 			range: [0, d3.max(data, function(d) {
@@ -115,16 +129,6 @@ function getDataForInterval(lexiconId, intervalIndex, callback) {
 		if (intervalIndex > 0) {
 			var originalData = burstData[intervalIndex - 1].data;
 
-			function findValue(start, end, data, startIndex) {
-				if (data[0].start > end) return [0, 0];
-				if (data[data.length - 1].end < start) return [0, data.length];
-				for (indx = startIndex; indx < data.length; indx++) {
-					if (data[indx].end < start) continue;
-					return [data[indx].value, indx];
-				}
-				return [0, data.length];
-			}
-
 			burstData[intervalIndex].animationData = [];
 			var startIndex = 0;
 			for (index = 0; index < burstData[intervalIndex].data.length; index++) {
@@ -139,6 +143,7 @@ function getDataForInterval(lexiconId, intervalIndex, callback) {
 			}
 		}
 
+		// Retrieve the data for the next interval
 		callback(burstData[interval]);
 	});
 }
@@ -151,7 +156,7 @@ function getData(lexiconId, interval, callback) {
 	var collection = retrieveCollectionUsed();
 	timeline_url = timeline_url + "?collection=" + collection;
 
-	if (config["timeline"]["normalize"] == true) {
+	if (config.timeline.normalize) {
 		timeline_url += "&normalize=1";
 	} else {
 		timeline_url += "&normalize=0";
@@ -160,7 +165,7 @@ function getData(lexiconId, interval, callback) {
 	var dateBeginStr = getDateBeginStr();
 	var dateEndStr = getDateEndStr();
 	console.log("daterange: from " + dateBeginStr + " till " + dateEndStr);
-	timeline_url = timeline_url + "&begindate=" + dateBeginStr + "&enddate=" + dateEndStr;
+	timeline_url += "&begindate=" + dateBeginStr + "&enddate=" + dateEndStr;
 	console.log("timeline_url: " + timeline_url);
 
 	$.ajax({
@@ -184,7 +189,7 @@ function getData(lexiconId, interval, callback) {
 			});
 
 			data = data.sort(function(a, b) {
-				return a.start - b.start
+				return a.start - b.start;
 			});
 			callback(data);
 
@@ -241,7 +246,7 @@ function createGraph() {
 	// Create a place for the chart
 	var collection = retrieveCollectionUsed();
 	var dest = dojo.byId("chartDiv");
-	if (dest == null) {
+	if (dest === null) {
 		$('#timeline').append('<div id="chartDiv" style="width: 100%; height: 280px; float: center;"></div>');
 	} else {
 		dest.innerHTML = ""; // Clear existing destination
@@ -250,14 +255,12 @@ function createGraph() {
 	var w = $("#chartDiv").width() - 70,
 		h = $("#chartDiv").height(),
 		x = d3.time.scale().range([50, w - 20]),
-		y = d3.scale.linear().range([h - 20, 0]),
-		y_label = d3.scale.linear().range([h - 20, 0]);
+		y = d3.scale.linear().range([h - 20, 0]);
 	console.log("createGraph() w=" + w + ", h=" + h); // debug: sometimes the graph is compressed to a small width
 
 	// Update the scale domains.
 	x.domain(burstData[burstIntervalIndex].dateRange);
 	y.domain(burstData[burstIntervalIndex].range);
-	y_label.domain(burstData[burstIntervalIndex].range);
 
 	// An SVG element
 	var svg = d3.select("#chartDiv").append("svg:svg")
@@ -313,7 +316,7 @@ function createGraph() {
 		// Close popup on zooming or panning
 		if ((previousXdomain[0].getTime() != x.domain()[0].getTime() ||
 				previousXdomain[1].getTime() != x.domain()[1].getTime())) {
-			closePopup;
+			closePopup();
 		}
 
 		var ticksX = x.ticks(10);
@@ -333,7 +336,7 @@ function createGraph() {
 				return "translate(" + x(d) + ",0)";
 			},
 			ty = function(d) {
-				return "translate(0," + y_label(d) + ")";
+				return "translate(0," + y(d) + ")";
 			};
 
 		// Regenerate x-ticks
@@ -388,26 +391,26 @@ function createGraph() {
 
 
 		function nrOfBins(data) {
-			var nrOfBins = data.length;
-			if (nrOfBins > 1) {
+			var bins = data.length;
+			if (bins > 1) {
 				var binSize = data[0].end - data[0].start;
 				if (binSize > 0) {
-					nrOfBins = (data[data.length - 1].end - data[0].start) / binSize;
+					bins = (data[data.length - 1].end - data[0].start) / binSize;
 				}
 				// else return the data.length
 			}
-			return nrOfBins;
+			return bins;
 		}
 
 		if (nrOfBins(filteredData) < 10 && burstIntervalIndex < (intervals.length - 1) &&
-			burstData[burstIntervalIndex + 1] != undefined) {
+			burstData[burstIntervalIndex + 1] !== undefined) {
 			// Zoom in
 			burstIntervalIndex += 1;
 			console.log("Zooming in to interval " + intervals[burstIntervalIndex]);
 			newData = burstData[burstIntervalIndex].data.filter(filterFunction);
 			filteredData = burstData[burstIntervalIndex].animationData.filter(filterFunction);
 		} else if (nrOfBins(filteredData) > 20 && burstIntervalIndex > 0 &&
-			burstData[burstIntervalIndex - 1] != undefined) {
+			burstData[burstIntervalIndex - 1] !== undefined) {
 			// Zoom out
 			var zoomOutData = burstData[burstIntervalIndex - 1].data.filter(filterFunction);
 			if (nrOfBins(zoomOutData) > 10) {
@@ -458,7 +461,7 @@ function createGraph() {
 				})
 				.style("opacity", 1)
 				.style("fill", function(d) {
-					if (config["timeline"]["burst_detect"] == true) {
+					if (config.timeline.burst_detect) {
 						return (d.burst) ? "red" : "steelblue";
 					} else {
 						return "steelblue";
@@ -494,7 +497,7 @@ function createGraph() {
 			.text("Period: " + getDateBeginStr() + " - " + getDateEndStr() + " , Query title: " + lexiconTitle);
 
 		// If we have newData, set up animation
-		if (newData != undefined) {
+		if (newData !== undefined) {
 			burstAnimation = true;
 
 			y.domain(burstData[burstIntervalIndex].range);
@@ -511,9 +514,8 @@ function createGraph() {
 
 	// Raise the bars
 	y.range([h - 20, 0]);
-	var collection = retrieveCollectionUsed();
 
-	if (dijit.byId('sparksDialog') == undefined) {
+	if (dijit.byId('sparksDialog') === undefined) {
 		var dialog = new dijit.TooltipDialog({
 			id: 'sparksDialog',
 			style: 'width: ' + dojo.position('chartDiv').w + 'px'
@@ -521,7 +523,7 @@ function createGraph() {
 	}
 
 	var button = dijit.byId('sparksDropDownButton');
-	if (button == undefined) {
+	if (button === undefined) {
 		button = new dijit.form.DropDownButton({
 			id: 'sparksDropDownButton',
 			label: "Tooltip",
@@ -532,9 +534,7 @@ function createGraph() {
 	}
 
 	dojo.place(button.domNode, 'chartDiv');
-
 } // createGraph() 
-
 
 
 function burstSearch(lexicon_query, date_range, max_records) {
@@ -593,14 +593,14 @@ function burstClicked(data, index, element) {
 	dijit.byId('sparksDropDownButton').openDropDown();
 
 	var template = '<b>{burst}{start} - {end}: {count} documents.</b><br /><br /><div id="cloud"></div>';
-	var data = {
+	var content = {
 		burst: (d.burst) ? "Burst " : "",
 		start: d.start.toString().substr(4, 11),
 		end: d.end.toString().substr(4, 11),
 		count: d.count
 	};
 
-	dijit.byId("sparksDialog").set("content", dojo.replace(template, data));
+	dijit.byId("sparksDialog").set("content", dojo.replace(template, content));
 
 	// Load burst cloud here
 	dojo.place(new dijit.ProgressBar({
@@ -664,7 +664,7 @@ function burstCloud(params) {
 
 function closePopup() {
 	var sparksDD = dijit.byId('sparksDropDownButton');
-	if (sparksDD != undefined) {
+	if (sparksDD !== undefined) {
 		sparksDD.closeDropDown();
 	}
 } // closePopup()
