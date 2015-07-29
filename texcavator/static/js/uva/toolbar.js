@@ -156,7 +156,6 @@ var createToolbar = function() {
 		showLabel: true,
 		disabled: true
 	});
-	toolbar.addChild(btnDateFilterBegin);
 
 	var beginDateTB = new dijit.form.DateTextBox({
 		id: "begindate",
@@ -167,31 +166,24 @@ var createToolbar = function() {
 			max: beginDateMax
 		},
 		onChange: function() {
-			beginDate = beginDateTB.get("value");
+			// Set the beginDate variable
+			beginDate = beginDateTB.value;
 
 			// set new min constraint for endDate
-			var constraints = endDateTB.get("constraints");
-			var min = constraints.min;
-			var max = constraints.max;
 			require(["dojo/date"], function(date) {
-				var value = beginDateTB.get("value");
-				min = date.add(value, "day", 1);
+				endDateTB.constraints.min = date.add(beginDateTB.value, "day", 1);
 			});
-			constraints.min = min; // update
-			endDateTB.set("constraints", constraints);
 
-			updateYearSlider(dijit.byId("begindate").get("value"), dijit.byId("enddate").get("value"));
+			// Update the slider
+			updateYearSlider(beginDateTB.value, endDateTB.value);
 		}
 	});
-	toolbar.addChild(beginDateTB);
 
 	var btnDateFilterEnd = new dijit.form.Button({
 		label: "to",
 		showLabel: true,
 		disabled: true
 	});
-	toolbar.addChild(btnDateFilterEnd);
-
 
 	var endDateTB = new dijit.form.DateTextBox({
 		id: "enddate",
@@ -202,24 +194,23 @@ var createToolbar = function() {
 			max: maxDate
 		},
 		onChange: function() {
-			endDate = endDateTB.get("value");
+			// Set the endDate variable
+			endDate = endDateTB.value;
 
-			// set new max constraint for beginDate
-			var constraints = beginDateTB.get("constraints");
-			var min = constraints.min;
-			var max = constraints.max;
+			// Set new max constraint for beginDateTB
 			require(["dojo/date"], function(date) {
-				var value = endDateTB.get("value");
-				max = date.add(value, "day", -1);
+				beginDateTB.constraints.max = date.add(endDateTB.value, "day", -1);
 			});
-			constraints.max = max; // update
-			beginDateTB.set("constraints", constraints);
 
-			updateYearSlider(dijit.byId("begindate").get("value"), dijit.byId("enddate").get("value"));
+			// Update the slider
+			updateYearSlider(beginDateTB.value, endDateTB.value);
 		}
 	});
-	toolbar.addChild(endDateTB);
 
+	toolbar.addChild(btnDateFilterBegin);
+	toolbar.addChild(beginDateTB);
+	toolbar.addChild(btnDateFilterEnd);
+	toolbar.addChild(endDateTB);
 	toolbar.addChild(new dijit.ToolbarSeparator());
 
 	var btnQuery = new dijit.form.Button({
