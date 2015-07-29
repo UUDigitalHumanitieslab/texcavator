@@ -25,7 +25,7 @@ dojo.require("dijit.layout.TabContainer");
 dojo.require("dojox.widget.Dialog");
 
 /*
-var storeDateLimits = function( SRU_DATE_LIMITS )
+var storeDateLimits = function( min, max )
 var toDateString = function( date )
 var getDateBeginStr = function()
 var getDateEndStr   = function()
@@ -40,38 +40,23 @@ var showAbout = function()
 var createAbout = function()
 */
 
-var minDate; // fixed for project
-var maxDate; // fixed for project
-var beginDateMax; // changeable
-var endDateMin; // changeable
-var beginDate = minDate;
-var endDate = maxDate;
+var minDate; // fixed minDate for project
+var maxDate; // fixed maxDate for project
+var beginDate; // changable beginDate (via filters/slider)
+var endDate; // changable endDate (via filters/slider)
+var beginDate2; // changable, optional beginDate2 (via filters/slider)
+var endDate2; // changable, optional endDate2 (via filters/slider)
 
 
-var storeDateLimits = function(SRU_DATE_LIMITS) {
-	//	console.log( "storeDateLimits()" );
-	//	console.log( "SRU_DATE_LIMITS: " + SRU_DATE_LIMITS );
-
-	var min_date = SRU_DATE_LIMITS[0].toString();
-	var max_date = SRU_DATE_LIMITS[1].toString();
-
-	// parseInt with radix 10 to prevent trouble with leading 0's (octal, hex)
-	// substring: from index is included, to index is not included
-	var min_year = parseInt(min_date.substring(0, 4), 10);
-	var max_year = parseInt(max_date.substring(0, 4), 10);
-
-	var min_month = parseInt(min_date.substring(4, 6), 10) - 1; // month 0...11
-	var max_month = parseInt(max_date.substring(4, 6), 10) - 1; // month 0...11
-
-	var min_day = parseInt(min_date.substring(6, 8), 10);
-	var max_day = parseInt(max_date.substring(6, 8), 10);
-
-	minDate = new Date(min_year, min_month, min_day);
-	maxDate = new Date(max_year, max_month, max_day);
+// Stores project min/max date in global variables, sets constraints/defaults on filters
+var storeDateLimits = function(min, max) {
+	// Set global variables
+	minDate = new Date(min);
+	maxDate = new Date(max);
 	beginDate = minDate;
 	endDate = maxDate;
 
-	// update widget contents
+	// Update filter constraints/defaults
 	dijit.byId("begindate").set("constraints", {
 		min: minDate,
 		max: maxDate
@@ -80,11 +65,18 @@ var storeDateLimits = function(SRU_DATE_LIMITS) {
 		min: minDate,
 		max: maxDate
 	});
+	dijit.byId("begindate2").set("constraints", {
+		min: minDate,
+		max: maxDate
+	});
+	dijit.byId("enddate2").set("constraints", {
+		min: minDate,
+		max: maxDate
+	});
 	dijit.byId("begindate").set("value", minDate);
 	dijit.byId("enddate").set("value", maxDate);
-
-	var min_date = dijit.byId("begindate").get("value");
-	var max_date = dijit.byId("enddate").get("value");
+	dijit.byId("begindate2").set("value", minDate);
+	dijit.byId("enddate2").set("value", maxDate);
 }; // storeDateLimits()
 
 
@@ -146,11 +138,7 @@ var createToolbar = function() {
 		style: "height: 26px;"
 	}, "span-toolbar"); // id="span-toolbar" in base.html
 
-	require(["dojo/date"], function(date) {
-		beginDateMax = date.add(maxDate, "day", -1);
-		endDateMin = date.add(minDate, "day", 1);
-	});
-
+	// Search dates
 	var btnDateFilterBegin = new dijit.form.Button({
 		label: "<img src = '/static/image/icon/Tango/22/apps/office-calendar.png')/>Search period: from",
 		showLabel: true,
@@ -160,16 +148,11 @@ var createToolbar = function() {
 	var beginDateTB = new dijit.form.DateTextBox({
 		id: "begindate",
 		style: "width: 90px;",
-		value: minDate,
-		constraints: {
-			min: minDate,
-			max: beginDateMax
-		},
 		onChange: function() {
-			// Set the beginDate variable
+			// Set the global beginDate variable
 			beginDate = beginDateTB.value;
 
-			// set new min constraint for endDate
+			// set new min constraint for endDateTB
 			require(["dojo/date"], function(date) {
 				endDateTB.constraints.min = date.add(beginDateTB.value, "day", 1);
 			});
@@ -188,13 +171,8 @@ var createToolbar = function() {
 	var endDateTB = new dijit.form.DateTextBox({
 		id: "enddate",
 		style: "width: 90px;",
-		value: maxDate,
-		constraints: {
-			min: endDateMin,
-			max: maxDate
-		},
 		onChange: function() {
-			// Set the endDate variable
+			// Set the global endDate variable
 			endDate = endDateTB.value;
 
 			// Set new max constraint for beginDateTB
@@ -207,10 +185,63 @@ var createToolbar = function() {
 		}
 	});
 
+	// Optional second search date
+	var btnDateFilterBegin2 = new dijit.form.Button({
+		label: "and from",
+		showLabel: true,
+		disabled: true
+	});
+
+	var beginDateTB2 = new dijit.form.DateTextBox({
+		id: "begindate2",
+		style: "width: 90px;",
+		onChange: function() {
+			// Set the global beginDate2 variable
+			beginDate2 = beginDateTB2.value;
+
+			// set new min constraint for endDateTB2
+			require(["dojo/date"], function(date) {
+				endDateTB2.constraints.min = date.add(beginDateTB2.value, "day", 1);
+			});
+
+			// Update the slider
+			//updateYearSlider(beginDateTB2.value, endDateTB2.value);
+		}
+	});
+
+	var btnDateFilterEnd2 = new dijit.form.Button({
+		label: "to",
+		showLabel: true,
+		disabled: true
+	});
+
+	var endDateTB2 = new dijit.form.DateTextBox({
+		id: "enddate2",
+		style: "width: 90px;",
+		onChange: function() {
+			// Set the global endDate2 variable
+			endDate2 = endDateTB2.value;
+
+			// Set new max constraint for beginDateTB2
+			require(["dojo/date"], function(date) {
+				beginDateTB2.constraints.max = date.add(endDateTB2.value, "day", -1);
+			});
+
+			// Update the slider
+			//updateYearSlider(beginDateTB2.value, endDateTB2.value);
+		}
+	});
+
 	toolbar.addChild(btnDateFilterBegin);
 	toolbar.addChild(beginDateTB);
 	toolbar.addChild(btnDateFilterEnd);
 	toolbar.addChild(endDateTB);
+
+	toolbar.addChild(btnDateFilterBegin2);
+	toolbar.addChild(beginDateTB2);
+	toolbar.addChild(btnDateFilterEnd2);
+	toolbar.addChild(endDateTB2);
+
 	toolbar.addChild(new dijit.ToolbarSeparator());
 
 	var btnQuery = new dijit.form.Button({
@@ -389,5 +420,3 @@ var createAbout = function() {
 	});
 	actionBar.appendChild(bClose.domNode);
 }; // createAbout
-
-// [eof]

@@ -14,12 +14,11 @@ from texcavator.timestamp import TIMESTAMP
 def index(request):
     """Render main page."""
     date_limits = daterange2dates('')
-    dates = [date_limits['lower'], date_limits['upper']]
-    daterange = [int(d.replace('-', '')) for d in dates]
 
     data = {
         "PROJECT_NAME": settings.PROJECT_NAME,
-        "SRU_DATE_LIMITS": daterange,
+        "PROJECT_MIN_DATE": date_limits['lower'],
+        "PROJECT_MAX_DATE": date_limits['upper'],
         "QUERY_DATA_DOWNLOAD_ALLOW": settings.QUERY_DATA_DOWNLOAD_ALLOW,
         "ES_INDEX": settings.ES_INDEX,
         "ILPS_LOGGING": settings.ILPS_LOGGING
@@ -40,15 +39,9 @@ def user_login(request):
         if user.is_active:
             login(request, user)
 
-            # TODO: are these date_limits really necessary?
-            date_limits = daterange2dates('')
-            dates = [date_limits['lower'], date_limits['upper']]
-            daterange = [int(d.replace('-', '')) for d in dates]
-
             params = {
                 "user_id": user.id,
                 "user_name": user.username,
-                "daterange": daterange,
                 # TODO: what is timestamp used for? Is it really necessary
                 "timestamp": TIMESTAMP,
                 "next_url": next_url

@@ -254,8 +254,8 @@ dojo.ready( function() {
 } );
 
 dojo.ready( function() { celeryCheckFailure( "None" ); } );	// celery.js
-dojo.ready( function() { storeDateLimits(     {{ SRU_DATE_LIMITS }} ); } );	// toolbar.js
-dojo.ready( function() { createYearSlider(    {{ SRU_DATE_LIMITS }}); } );	// accordion.js, uses the stored SRU_DATE_LIMITS
+dojo.ready( function() { storeDateLimits( "{{ PROJECT_MIN_DATE }}", "{{ PROJECT_MAX_DATE }}" ); } );	// toolbar.js
+dojo.ready( function() { createYearSlider( "{{ PROJECT_MIN_DATE }}", "{{ PROJECT_MAX_DATE }}" ); } );	// accordion.js
 
 
 dojo.ready( function() {
@@ -798,15 +798,9 @@ function onClickLoadData( lexiconID, datastore )
 		});
 	};
 
-//	var begindate = getDateBeginStr();		// Search period: changeable by user 
-//	var enddate   = getDateEndStr();		// Search period: changeable by user 
-	console.log( "from-to: " + glob_begindate + "-" + glob_enddate );
-
 	var params = {
 		datastore  : datastore,
 		collection : ES_INDEX,		// default collection
-		begindate  : glob_begindate,
-		enddate    : glob_enddate
 	};
 
 	dojo.xhrGet({
@@ -998,7 +992,6 @@ function onClickExecuteCloud( queryID )
 	var dateBeginStr = getDateBeginStr();
 	var dateEndStr   = getDateEndStr();
 	console.log( "cloud period:   from: " + dateBeginStr   + ", till: " + dateEndStr );		// current date widget contents
-	console.log( "project period: from: " + glob_begindate + ", till: " + glob_enddate );	// project daterange
 
 	var config = getConfig();
 	var datastore = config[ "datastore" ];

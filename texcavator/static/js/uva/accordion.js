@@ -31,10 +31,9 @@ function accordionSelectChild(id) {
 } // accordionSelectChild()
 
 
-function createYearSlider(SRU_DATE_LIMITS) {
+function createYearSlider(min, max) {
 	//	console.log( "createYearSlider()" );
-
-	storeDateLimits(SRU_DATE_LIMITS);
+	storeDateLimits(min, max);
 
 	var min_date = getBeginDate();
 	var max_date = getEndDate();
@@ -88,8 +87,8 @@ function createYearSlider(SRU_DATE_LIMITS) {
 	// create legend for year slider range
 	// parseInt with radix 10 to prevent trouble with leading 0's (octal, hex)
 	// substring: from index is included, to index is not included
-	var min_y = parseInt(SRU_DATE_LIMITS[0].toString().substring(0, 4), 10);
-	var max_y = parseInt(SRU_DATE_LIMITS[1].toString().substring(0, 4), 10);
+	var min_y = parseInt(min.substring(0, 4), 10);
+	var max_y = parseInt(max.substring(0, 4), 10);
 
 	var legend = '<span style="float:left">' + min_y + '</span>';
 	legend += '<span style="float:center">' + "search period" + '</span>';
@@ -131,7 +130,6 @@ function createQueryLine(item) {
 
 	//	console.log( "Button re-search" );
 	btn = dijit.byId("btn-sq-fetch-" + item.pk);
-	console.log(btn);
 	if (btn !== undefined) {
 		if (debug_destroy) {
 			console.error("btn-sq-fetch button already exists");

@@ -29,9 +29,6 @@ glob_username  = "";		// global
 glob_password  = "";		// global
 glob_userid    = null;		// global
 
-glob_begindate = "";		// global: project related
-glob_enddate   = "";		// global: project related
-
 glob_sessionId = "";		// global
 
 
@@ -195,10 +192,6 @@ var createLogin = function( projectname )
 					else
 					{ console.warn( "server: " + glob_server_timestamp + ", client: " + client_timestamp ); }
 
-					var daterange = response[ "daterange" ];
-					glob_begindate = daterange[ 0 ].toString();		// store as string (could contain '-')
-					glob_enddate   = daterange[ 1 ].toString();		// store as string (could contain '-')
-					storeDateLimits( daterange );					// set date widgets on toolbar
 					sessionId = response[ "session_id" ];
 					var btnUser = dijit.byId( "toolbar-user" );
 					var label = "<img src = '/static/image/icon/Tango/22/apps/preferences-users.png')/>" + glob_username;
