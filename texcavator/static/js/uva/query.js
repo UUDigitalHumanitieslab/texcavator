@@ -489,29 +489,14 @@ function saveQuery(title, comment, query, url) {
 
 	// get user-changeable parameters from config
 	var params = getSearchParameters();
+	params.query = query;
+	params.title = title;
+	params.comment = comment;
 
 	dojo.xhrPost({
 		url: url,
 		handleAs: "json",
-		content: {
-			query: query,
-			title: title,
-			comment: comment,
-			username: glob_username,
-			password: glob_password,
-			// query metadata
-			dateRange: params.dateRange,
-			sd_antilles: params.sd_antilles,
-			sd_indonesia: params.sd_indonesia,
-			sd_national: params.sd_national,
-			sd_regional: params.sd_regional,
-			sd_surinam: params.sd_surinam,
-			st_advert: params.st_advert,
-			st_article: params.st_article,
-			st_family: params.st_family,
-			st_illust: params.st_illust,
-			pillars: params.pillars
-		},
+		content: params,
 		load: function(result) {
 			if (result.status !== "SUCCESS") {
 				var msg = "The query could not be saved:<br/>" + result.msg;

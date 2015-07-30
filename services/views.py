@@ -400,6 +400,8 @@ def retrieve_kb_resolver(request):
 @login_required
 def metadata(request):
     """This view will show metadata aggregations"""
+    # TODO: the current implementation depends upon correct settings in UI.
+    # TODO: (cont) it's better to retrieve values from the saved query directly.
     params = get_search_parameters(request.REQUEST)
     result = metadata_aggregation(settings.ES_INDEX,
                                   settings.ES_DOCTYPE,
