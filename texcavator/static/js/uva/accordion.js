@@ -56,7 +56,7 @@ function createYearSlider(min, max, n) {
 		maximum: max_year,
 		intermediateChanges: false,
 		discreteValues: discrete_values,
-		style: (n ? "display: none;": ""),
+		style: (n ? "display: none;" : ""),
 		onChange: function(value) {
 			//	console.log( "value:" + value );
 
@@ -343,22 +343,17 @@ function refreshQueriesDocCounts() {
 } // refreshQueriesDocCounts()
 
 
+// Retrives document counts from ElasticSearch
 function updateQueryDocCountsElasticSearch(item, collection) {
-	// documents counts (identical for ocr & metadata) from ElasticSearch
-
 	var lexiconTitle = item.fields.title;
 	// do not show lexicons with *_daterange names TODO: magic string
 	if (!lexiconTitle.endsWith("_daterange")) {
 		var pk = item.pk;
-		//	console.log( "updateQueryDocCountsElasticSearch() " + pk );
-
 		var url = "services/doc_count/";
-
-		var params = getSearchParameters(); // from config
-
-		params.queryID = pk;
-		params.collection = collection;
-		params.datastore = "DSTORE_ELASTICSEARCH";
+		var params = {
+			queryID: pk,
+			collection: collection
+		};
 
 		dojo.xhrGet({
 			url: url,
@@ -374,7 +369,7 @@ function updateQueryDocCountsElasticSearch(item, collection) {
 
 					var cspan = dojo.byId("query-string-" + pk);
 					if (cspan !== null) {
-						var html = "<span id=query-string-" + item.pk + " />" + lexiconTitle + counts_str + "<em> " + item.fields.date_created + " </em> </span>";
+						var html = "<span id=query-string-" + pk + " />" + lexiconTitle + counts_str + "<em> " + item.fields.date_created + " </em> </span>";
 						cspan.innerHTML = html;
 
 						var btn_sq_cloud = dijit.byId("btn-sq-cloud-" + pk);

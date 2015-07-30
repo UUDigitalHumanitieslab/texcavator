@@ -127,13 +127,18 @@ function getSearchParameters() {
 		dateRange: getDateRangeString()
 	};
 
+	// If second search filter is set, add this to the parameters
+	if (beginDate2) {
+		params.dateRange += "," + toDateString(beginDate2) + "," + toDateString(endDate2);
+	}
+
 	return params;
 }
 
 
 var getSelectedPillars = function() {
 	var selected_pillars = [];
-	$('.pillar input:checked').each(function(i) {
+	$(".pillar input:checked").each(function(i) {
 		selected_pillars.push($(this).val());
 	});
 	return selected_pillars;

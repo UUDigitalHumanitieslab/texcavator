@@ -75,8 +75,6 @@ var storeDateLimits = function(min, max) {
 	});
 	dijit.byId("begindate").set("value", minDate);
 	dijit.byId("enddate").set("value", maxDate);
-	dijit.byId("begindate-2").set("value", minDate);
-	dijit.byId("enddate-2").set("value", maxDate);
 }; // storeDateLimits()
 
 
@@ -238,10 +236,21 @@ var createToolbar = function() {
 		id: "toggleBtn",
 		label: "<img src='/static/image/icon/Tango/22/actions/list-add.png')/>",
 		onClick: function() {
-			// Toggle the second date selection filters
+			// On click, toggle the second date selection filters and the slider
 			var toggleDiv = $("#toggleBtn").parent().parent();
 			toggleDiv.nextUntil($("#sep")).toggle();
 			$("#year-range-slider-2").toggle();
+
+			// If toggled hidden, set variables to null  
+			if (beginDate2) {
+				beginDate2 = null;
+				endDate2 = null;
+			}
+			// If toggled visible, set default min/max values
+			else {
+				dijit.byId("begindate-2").set("value", minDate);
+				dijit.byId("enddate-2").set("value", maxDate);
+			}
 		}
 	});
 

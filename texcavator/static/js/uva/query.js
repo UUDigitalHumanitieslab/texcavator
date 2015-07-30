@@ -432,6 +432,7 @@ function okEdit(querySaveName, querySaveQuery) {
 }
 
 
+// TODO: remove, deprecated functionality
 function okCreate(querySaveName) {
 	console.log("okCreate");
 	console.log("Query name: " + querySaveName);
@@ -440,46 +441,34 @@ function okCreate(querySaveName) {
 }
 
 
-
+// Starts the download of a query
 function okDownload(query_title) {
 	console.log("okDownload() : " + query_title);
 
 	dijit.byId("dlg-query").destroyRecursive();
 
-	// 'raw' query, without extras
-	var query_content = queryFromName(query_title);
-	console.log("query_content: " + query_content);
-
-	// add date range to the query
-	var min_date_str = getDate_Begin_Str();
-	var max_date_str = getDate_End_Str();
-	console.log("date range: [" + min_date_str + ',' + max_date_str + ']');
-
-	var params = getSearchParameters(); // from config
-	params.collection = ES_INDEX;
-	params.query_title = query_title;
-	params.query = query_content;
-
-	config = getConfig();
-	params.format = config.querydataexport.format; // "json", "xml" or "csv"
+	var config = getConfig();
+	var params = {
+		collection: ES_INDEX,
+		query_title: query_title,
+		format: config.querydataexport.format // "json", "xml" or "csv"
+	};
 
 	dojo.xhrGet({
 		url: "query/download/prepare/",
 		content: params,
 		handleAs: "json",
 		load: function(result) {
-			var status = result.status;
 			var title = "Preparing download failed";
-			if (status === "SUCCESS") {
+			if (result.status === "SUCCESS") {
 				title = "Download finished";
 			}
 
-			var message = result.msg;
 			var buttons = {
 				"OK": true,
 				"Cancel": false
 			};
-			answer = genDialog(title, message, buttons);
+			answer = genDialog(title, result.msg, buttons);
 		},
 		error: function(err) {
 			console.error(err);
@@ -541,5 +530,3 @@ function saveQuery(title, comment, query, url) {
 		}
 	});
 }
-
-// [eof]
