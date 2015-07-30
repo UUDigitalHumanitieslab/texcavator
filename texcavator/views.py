@@ -5,20 +5,18 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.views.decorators.csrf import csrf_exempt
 
-from texcavator.utils import json_response_message
-from services.es import daterange2dates
-
+from texcavator.utils import json_response_message, daterange2dates
 from texcavator.timestamp import TIMESTAMP
 
 
 def index(request):
     """Render main page."""
-    date_limits = daterange2dates('')
+    date_limits = daterange2dates(settings.TEXCAVATOR_DATE_RANGE)
 
     data = {
         "PROJECT_NAME": settings.PROJECT_NAME,
-        "PROJECT_MIN_DATE": date_limits['lower'],
-        "PROJECT_MAX_DATE": date_limits['upper'],
+        "PROJECT_MIN_DATE": date_limits[0]['lower'],
+        "PROJECT_MAX_DATE": date_limits[0]['upper'],
         "QUERY_DATA_DOWNLOAD_ALLOW": settings.QUERY_DATA_DOWNLOAD_ALLOW,
         "ES_INDEX": settings.ES_INDEX,
         "ILPS_LOGGING": settings.ILPS_LOGGING

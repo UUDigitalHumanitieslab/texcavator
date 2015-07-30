@@ -10,7 +10,8 @@ import sys
 from django.core.management.base import BaseCommand
 from django.conf import settings
 
-from services.es import do_search, daterange2dates
+from texcavator.utils import daterange2dates
+from services.es import do_search
 from services.models import QueryTerm
 
 logger = logging.getLogger(__name__)
@@ -48,8 +49,9 @@ class Command(BaseCommand):
             q = ' OR '.join(query_list)
 
             t1 = time.time()
+            dates = daterange2dates(settings.TEXCAVATOR_DATE_RANGE)
             valid_q, result = do_search(settings.ES_INDEX, settings.ES_DOCTYPE,
-                                        q, 0, 20, daterange2dates(''), [], [])
+                                        q, 0, 20, dates[0], [], [])
             t2 = time.time()
 
             if not valid_q:

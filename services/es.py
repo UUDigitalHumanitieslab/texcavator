@@ -11,6 +11,7 @@ from elasticsearch.client import indices
 from django.conf import settings
 
 from query.models import Newspaper
+from texcavator.utils import daterange2dates
 
 _ES_RETURN_FIELDS = ('article_dc_title',
                      'paper_dcterms_temporal',
@@ -152,16 +153,21 @@ def create_query(query_str, date_range, exclude_distributions,
     Returns a dict that represents the query in the elasticsearch query DSL.
     """
 
-    filter_must = [
-        {
-            'range': {
-                'paper_dc_date': {
-                    'gte': date_range['lower'],
-                    'lte': date_range['upper']
+    filter_must = []
+    filter_should = []
+    filter_must_not = []
+
+    for d in date_range:
+        filter_should.append(
+            {
+                'range': {
+                    'paper_dc_date': {
+                        'gte': d['lower'],
+                        'lte': d['upper']
+                    }
                 }
             }
-        }
-    ]
+        )
 
     newspaper_ids = []
     if selected_pillars:
@@ -171,7 +177,6 @@ def create_query(query_str, date_range, exclude_distributions,
     if newspaper_ids:
         filter_must.append({'terms': {'paper_dc_identifier': newspaper_ids}})
 
-    filter_must_not = []
     for ds in exclude_distributions:
         filter_must_not.append(
             {"term": {"paper_dcterms_spatial": _KB_DISTRIBUTION_VALUES[ds]}})
@@ -191,6 +196,7 @@ def create_query(query_str, date_range, exclude_distributions,
                 'filter': {
                     'bool': {
                         'must': filter_must,
+                        'should': filter_should,
                         'must_not': filter_must_not
                     }
                 }
@@ -534,21 +540,6 @@ def get_search_parameters(req_dict):
         'collection': collection,
         'sort_order': sort_order
     }
-
-
-def daterange2dates(date_range_str):
-    """Return a dictionary containing the date boundaries specified.
-
-    If the input string does not specify two dates, the maximum date range is
-    retrieved from the settings.
-    """
-    dates_str = date_range_str.split(',')
-    if not len(dates_str) == 2:
-        return daterange2dates(settings.TEXCAVATOR_DATE_RANGE)
-
-    dates = [str(datetime.strptime(date, '%Y%m%d').date())
-             for date in dates_str]
-    return {'lower': min(dates), 'upper': max(dates)}
 
 
 def get_document_ids(idx, typ, query, date_range, exclude_distributions=[],
