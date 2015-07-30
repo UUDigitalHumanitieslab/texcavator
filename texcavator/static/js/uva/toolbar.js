@@ -65,18 +65,18 @@ var storeDateLimits = function(min, max) {
 		min: minDate,
 		max: maxDate
 	});
-	dijit.byId("begindate2").set("constraints", {
+	dijit.byId("begindate-2").set("constraints", {
 		min: minDate,
 		max: maxDate
 	});
-	dijit.byId("enddate2").set("constraints", {
+	dijit.byId("enddate-2").set("constraints", {
 		min: minDate,
 		max: maxDate
 	});
 	dijit.byId("begindate").set("value", minDate);
 	dijit.byId("enddate").set("value", maxDate);
-	dijit.byId("begindate2").set("value", minDate);
-	dijit.byId("enddate2").set("value", maxDate);
+	dijit.byId("begindate-2").set("value", minDate);
+	dijit.byId("enddate-2").set("value", maxDate);
 }; // storeDateLimits()
 
 
@@ -194,7 +194,7 @@ var createToolbar = function() {
 	});
 
 	var beginDateTB2 = new dijit.form.DateTextBox({
-		id: "begindate2",
+		id: "begindate-2",
 		style: "width: 90px; display: none;",
 		onChange: function() {
 			// Set the global beginDate2 variable
@@ -206,7 +206,7 @@ var createToolbar = function() {
 			});
 
 			// Update the slider
-			//updateYearSlider(beginDateTB2.value, endDateTB2.value);
+			updateYearSlider(beginDateTB2.value, endDateTB2.value, "-2");
 		}
 	});
 
@@ -218,7 +218,7 @@ var createToolbar = function() {
 	});
 
 	var endDateTB2 = new dijit.form.DateTextBox({
-		id: "enddate2",
+		id: "enddate-2",
 		style: "width: 90px; display: none;",
 		onChange: function() {
 			// Set the global endDate2 variable
@@ -230,7 +230,7 @@ var createToolbar = function() {
 			});
 
 			// Update the slider
-			//updateYearSlider(beginDateTB2.value, endDateTB2.value);
+			updateYearSlider(beginDateTB2.value, endDateTB2.value, "-2");
 		}
 	});
 
@@ -241,6 +241,7 @@ var createToolbar = function() {
 			// Toggle the second date selection filters
 			var toggleDiv = $("#toggleBtn").parent().parent();
 			toggleDiv.nextUntil($("#sep")).toggle();
+			$("#year-range-slider-2").toggle();
 		}
 	});
 

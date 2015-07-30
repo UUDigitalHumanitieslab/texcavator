@@ -31,7 +31,10 @@ function accordionSelectChild(id) {
 } // accordionSelectChild()
 
 
-function createYearSlider(min, max) {
+function createYearSlider(min, max, n) {
+	// default value for n
+	n = typeof n !== 'undefined' ? n : "";
+
 	//	console.log( "createYearSlider()" );
 	storeDateLimits(min, max);
 
@@ -47,12 +50,13 @@ function createYearSlider(min, max) {
 	//	console.log( "discrete_values: " + discrete_values );
 
 	var rangeSlider = new dojox.form.HorizontalRangeSlider({
-		id: "year-range-slider",
+		id: "year-range-slider" + n,
 		value: [min_year, max_year],
 		minimum: min_year,
 		maximum: max_year,
 		intermediateChanges: false,
 		discreteValues: discrete_values,
+		style: (n ? "display: none;": ""),
 		onChange: function(value) {
 			//	console.log( "value:" + value );
 
@@ -79,10 +83,10 @@ function createYearSlider(min, max) {
 			var new_max_date = new Date(new_max_year, max_month, max_day);
 
 			// update date widgets in toolbar
-			dijit.byId("begindate").set("value", new_min_date);
-			dijit.byId("enddate").set("value", new_max_date);
+			dijit.byId("begindate" + n).set("value", new_min_date);
+			dijit.byId("enddate" + n).set("value", new_max_date);
 		}
-	}, "div-year-range-slider");
+	}, "div-year-range-slider" + n);
 
 	// create legend for year slider range
 	// parseInt with radix 10 to prevent trouble with leading 0's (octal, hex)
@@ -96,17 +100,18 @@ function createYearSlider(min, max) {
 
 	dojo.create("label", {
 		innerHTML: legend
-	}, "div-year-range-legend");
+	}, "div-year-range-legend" + n);
 } // createYearSlider()
 
 
-function updateYearSlider(min_date, max_date) {
-	//	console.log( "updateYearSlider()" );
+function updateYearSlider(min_date, max_date, n) {
+	// default value for n
+	n = typeof n !== 'undefined' ? n : "";
 	// we get here from the toolbar date widgets
 	var min_year = min_date.getFullYear();
 	var max_year = max_date.getFullYear();
 	//	console.log( "from: " + min_year  + " to: " + max_year );
-	dijit.byId("year-range-slider").set("value", [min_year, max_year]);
+	dijit.byId("year-range-slider" + n).set("value", [min_year, max_year]);
 }
 
 

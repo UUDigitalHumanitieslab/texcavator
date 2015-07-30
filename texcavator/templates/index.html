@@ -101,10 +101,9 @@
 				<div id="div-year-range-slider">
 					<div id="div-year-range-legend"></div>
 				</div>
-				<!-- 
-				<div id="dateRangeSlider" data-dojo-type="dojox.form.HorizontalRangeSlider" 
-					 data-dojo-props="value:[1900,1945], minimum:1900, maximum:1945, showButtons:false, discreteValues: 46">
-				-->
+               	<div id="div-year-range-slider-2">
+					<div id="div-year-range-legend-2"></div>
+				</div>
 
 				<span id="cql"></span><div id="cqlAdd"></div>
 			</form>
@@ -256,6 +255,7 @@ dojo.ready( function() {
 dojo.ready( function() { celeryCheckFailure( "None" ); } );	// celery.js
 dojo.ready( function() { storeDateLimits( "{{ PROJECT_MIN_DATE }}", "{{ PROJECT_MAX_DATE }}" ); } );	// toolbar.js
 dojo.ready( function() { createYearSlider( "{{ PROJECT_MIN_DATE }}", "{{ PROJECT_MAX_DATE }}" ); } );	// accordion.js
+dojo.ready( function() { createYearSlider( "{{ PROJECT_MIN_DATE }}", "{{ PROJECT_MAX_DATE }}", "-2" ); } );	// accordion.js
 
 
 dojo.ready( function() {
