@@ -188,13 +188,14 @@ var createToolbar = function() {
 	// Optional second search date
 	var btnDateFilterBegin2 = new dijit.form.Button({
 		label: "and from",
+		style: "display: none;",
 		showLabel: true,
 		disabled: true
 	});
 
 	var beginDateTB2 = new dijit.form.DateTextBox({
 		id: "begindate2",
-		style: "width: 90px;",
+		style: "width: 90px; display: none;",
 		onChange: function() {
 			// Set the global beginDate2 variable
 			beginDate2 = beginDateTB2.value;
@@ -211,13 +212,14 @@ var createToolbar = function() {
 
 	var btnDateFilterEnd2 = new dijit.form.Button({
 		label: "to",
+		style: "display: none;",
 		showLabel: true,
 		disabled: true
 	});
 
 	var endDateTB2 = new dijit.form.DateTextBox({
 		id: "enddate2",
-		style: "width: 90px;",
+		style: "width: 90px; display: none;",
 		onChange: function() {
 			// Set the global endDate2 variable
 			endDate2 = endDateTB2.value;
@@ -232,17 +234,30 @@ var createToolbar = function() {
 		}
 	});
 
+	var toggleBtn = new dijit.form.Button({
+		id: "toggleBtn",
+		label: "<img src='/static/image/icon/Tango/22/actions/list-add.png')/>",
+		onClick: function() {
+			// Toggle the second date selection filters
+			var toggleDiv = $("#toggleBtn").parent().parent();
+			toggleDiv.nextUntil($("#sep")).toggle();
+		}
+	});
+
 	toolbar.addChild(btnDateFilterBegin);
 	toolbar.addChild(beginDateTB);
 	toolbar.addChild(btnDateFilterEnd);
 	toolbar.addChild(endDateTB);
 
+	toolbar.addChild(toggleBtn);
 	toolbar.addChild(btnDateFilterBegin2);
 	toolbar.addChild(beginDateTB2);
 	toolbar.addChild(btnDateFilterEnd2);
 	toolbar.addChild(endDateTB2);
 
-	toolbar.addChild(new dijit.ToolbarSeparator());
+	toolbar.addChild(new dijit.ToolbarSeparator({
+		id: "sep"
+	}));
 
 	var btnQuery = new dijit.form.Button({
 		label: "<img src = '/static/image/icon/Tango/22/apps/utilities-dictionary.png')/>Query",
