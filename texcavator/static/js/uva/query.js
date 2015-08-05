@@ -510,7 +510,7 @@ function saveQuery(title, comment, query, url) {
 
 			createQueryList();
 		},
-		error: function(error) {
+		error: function(err) {
 			console.error(err);
 		}
 	});
