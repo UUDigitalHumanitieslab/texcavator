@@ -55,8 +55,6 @@ class Query(models.Model):
     title = models.CharField(max_length=100)
     comment = models.TextField(blank=True)
     query = models.TextField()
-    date_lower = models.DateField()
-    date_upper = models.DateField()
 
     exclude_article_types = models.ManyToManyField(ArticleType, blank=True)
     exclude_distributions = models.ManyToManyField(Distribution, blank=True)
@@ -97,6 +95,13 @@ class Query(models.Model):
 
     def __unicode__(self):
         return self.query
+
+
+class Period(models.Model):
+    """Model to store the Periods for a Query"""
+    date_lower = models.DateField()
+    date_upper = models.DateField()
+    query = models.ForeignKey(Query)
 
 
 class DayStatistic(models.Model):
