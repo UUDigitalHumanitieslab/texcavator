@@ -436,8 +436,8 @@ function createGraph() {
 			.on("mouseout", function(d, i) {
 				d3.select(this).transition().duration(300).style("opacity", 1.0);
 			})
-			.on("mouseup", function(d, i) {
-				burstClicked(d, i, this);
+			.on("mouseup", function(d) {
+				burstClicked(d);
 			})
 			.transition()
 			.duration(1000)
@@ -537,59 +537,22 @@ function createGraph() {
 } // createGraph() 
 
 
-function burstSearch(lexicon_query, date_range, max_records) {
-	console.log("burstSearch()");
-
-	accordionSelectChild("searchPane");
-
-	var params = getSearchParameters(); // get user-changeable parameters from config
-	params.query = lexicon_query; // insert the query string
-	params.dateRange = date_range; // replace dateRange from the date widgets with the timeline bar dateRange
-	params.maximumRecords = max_records;
-
-	var url = "services/search/";
-	dojo.xhrGet({
-		url: url,
-		content: params, // key:value pairs
-		handleAs: "json", // HTML data returned from the server
-		load: function(data) {
-			console.log(data);
-			dojo.byId("search-result").innerHTML = data.html; // put html text in panel
-		},
-		error: function(err) {
-			console.error(err); // display the error
-		}
-	});
-} // burstSearch()
-
-
-function burstClicked(data, index, element) {
+function burstClicked(data) {
 	console.log("burstClicked(): " + data.docs.length + " records");
 
-	var i = index;
-	var e = element;
 	var d = data;
 
-	var lexicon_id = retrieveLexiconID();
-	var lexicon_title = retrieveLexiconTitle();
+	// Show burst articles in accordion; set timeline values in filters
 	var lexicon_query = retrieveLexiconQuery();
-	console.log("id: " + lexicon_id + ", title: " + lexicon_title + ", query: " + lexicon_query);
+	beginDate = d.start;
+	endDate = d.end;
+	dijit.byId("query").set("value", lexicon_query); 
+	dijit.byId("begindate").set("value", beginDate);
+	dijit.byId("enddate").set("value", endDate);
+	accordionSelectChild("searchPane");
+	searchSubmit();
 
-	dijit.byId("query").set("value", lexicon_query); // show query in TextBox
-
-	// show burst articles in accordion
-	var start_date = toDateString(d.start); // toDateString() : toolbar.js
-	var stop_date = toDateString(d.end); // toDateString() : toolbar.js
-	var date_range = start_date + "," + stop_date;
-
-	// retrieve all timeline bar records, not just the KB default 20
-	// the timeline bar sometimes has a few less than found by search: the lexicon_daystatistic 
-	// table may not exactly match the documents present in the db: just ask for the double count
-	var max_records = 2 * data.docs.length;
-	console.log("max_records: " + max_records);
-
-	burstSearch(lexicon_query, date_range, max_records);
-
+	// Display burst cloud
 	dijit.byId('sparksDropDownButton').openDropDown();
 
 	var template = '<b>{burst}{start} - {end}: {count} documents.</b><br /><br /><div id="cloud"></div>';

@@ -298,9 +298,6 @@ function searchSubmit()
 	dojo.place( new dijit.ProgressBar( { indeterminate: true } ).domNode, dojo.byId( "search-result" ), "only" );
 
 	var params = getSearchParameters();		// get user-changeable parameters from config
-//	params[ "maximumRecords" ] = 20;		// the KBdefault is 20
-
-//	console.log( params );
 
 	// url from form: "services/search/"
 	dojo.xhrGet({
