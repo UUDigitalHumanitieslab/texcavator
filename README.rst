@@ -222,11 +222,20 @@ Downloading of query data requires a running SMTP server; you can use Python's b
 Deployment
 ==========
 
-For deployment, you could use Apache2 (we presume this installed) with mod_wsgi enabled ::
+For deployment, you could use Apache2 (we presume this installed) with mod_wsgi enabled::
 
     sudo apt-get install libapache2-mod-wsgi
 
-Then, follow the instructions on https://docs.djangoproject.com/en/1.7/howto/deployment/wsgi/modwsgi/ closely.
+Then, follow the instructions on https://docs.djangoproject.com/en/1.7/howto/deployment/wsgi/modwsgi/ closely,
+and be sure to update settings.py and settings_local.py according to your server settings.
+
+If you have deployed your server, updating can be done via the following commands::
+
+    git stash
+    git fetch --tags & git checkout <tag> OR git pull origin <branch>
+    git stash apply
+    python manage.py collectstatic
+    sudo service apache2 restart
 
 Documentation
 =============
