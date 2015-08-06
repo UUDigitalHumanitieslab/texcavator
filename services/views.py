@@ -20,7 +20,7 @@ from es import get_search_parameters, do_search, count_search_results, \
 
 from texcavator.utils import json_response_message
 
-from query.models import StopWord, Newspaper, Pillar
+from query.models import StopWord, Newspaper
 from query.utils import get_query_object
 
 from services.export import export_csv
@@ -413,7 +413,11 @@ def metadata(request):
     pillars = Counter()
     for n in result['aggregations']['newspaper_ids']['buckets']:
         pillar = 'None'
-        newspaper = Newspaper.objects.get(pk=n['key'])
+        try:
+            newspaper = Newspaper.objects.get(pk=n['key'])
+        except Newspaper.DoesNotExist:
+            # TODO: this means there's a paper_dc_identifier in ElasticSearch without a corresponding Newspaper.
+            newspaper = None
         if newspaper and newspaper.pillar:
             pillar = newspaper.pillar.name
         pillars[pillar] += n['doc_count']
