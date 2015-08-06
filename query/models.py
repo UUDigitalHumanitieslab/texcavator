@@ -71,6 +71,8 @@ class Query(models.Model):
         """Returns a JSON serializable representation of the query object, that
         contains all relevant data and metadata.
         """
+        periods = Period.objects.filter(query=self)
+        selected_dateranges = [{'lower': p.date_lower, 'upper': p.date_upper} for p in periods]
         excl_art_types = [a.id for a in self.exclude_article_types.all()]
         excl_distr = [d.id for d in self.exclude_distributions.all()]
         selected_pillars = [d.id for d in self.selected_pillars.all()]
@@ -79,12 +81,7 @@ class Query(models.Model):
         return {
             'query_id': self.id,
             'query': self.query,
-            'date_lower': str(self.date_lower),
-            'date_upper': str(self.date_upper),
-            'dates': {
-                'lower': str(self.date_lower),
-                'upper': str(self.date_upper)
-            },
+            'dates': selected_dateranges,
             'exclude_article_types': excl_art_types,
             'exclude_distributions': excl_distr,
             'selected_pillars': selected_pillars,

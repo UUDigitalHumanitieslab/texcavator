@@ -20,7 +20,7 @@ from django.db.models import Q
 from django.db import IntegrityError
 
 from .models import Distribution, ArticleType, Query, DayStatistic, \
-    StopWord, Pillar, Newspaper
+    StopWord, Pillar, Newspaper, Period
 from .utils import query2docidsdate
 from .burstsdetector import bursts
 from .download import create_zipname, execute
@@ -33,51 +33,40 @@ logger = logging.getLogger(__name__)
 @login_required
 def index(request):
     """Returns a list of queries for a given user."""
-    lexicon_items = Query.objects.filter(user=request.user) \
-                                 .order_by('-date_created')
-
-    params = {
-        'lexicon_items': serializers.serialize('json', lexicon_items)
-    }
-
-    return json_response_message('OK', '', params)
+    queries = Query.objects.filter(user=request.user).prefetch_related('period_set').order_by('-date_created')
+    queries_json = serializers.serialize('json', queries)
+    return json_response_message('OK', '', {'lexicon_items': queries_json})
 
 
 @login_required
 def query(request, query_id):
-    """Returns a query.
-    """
+    """Returns a query."""
     query = get_object_or_404(Query, pk=query_id)
     if not request.user == query.user:
         return json_response_message('ERROR', 'Query does not belong to user.')
-
-    params = {
-        'query': query.get_query_dict()
-    }
-
-    return json_response_message('OK', '', params)
+    return json_response_message('OK', '', {'query': query.get_query_dict()})
 
 
 @csrf_exempt
 @login_required
 def create_query(request):
-    """Creates a new query.
-    """
+    """Creates a new query."""
     params = get_search_parameters(request.POST)
     title = request.POST.get('title')
     comment = request.POST.get('comment')
-
-    date_lower = datetime.strptime(params['dates']['lower'], '%Y-%m-%d')
-    date_upper = datetime.strptime(params['dates']['upper'], '%Y-%m-%d')
 
     try:
         q = Query(query=params['query'],
                   title=title,
                   comment=comment,
-                  user=request.user,
-                  date_lower=date_lower,
-                  date_upper=date_upper)
+                  user=request.user)
         q.save()
+
+        for date_range in params['dates']:
+            date_lower = datetime.strptime(date_range['lower'], '%Y-%m-%d')
+            date_upper = datetime.strptime(date_range['upper'], '%Y-%m-%d')
+            p = Period(query=q, date_lower=date_lower, date_upper=date_upper)
+            p.save()
 
         for distr in Distribution.objects.all():
             if distr.id in params['distributions']:
@@ -133,15 +122,17 @@ def update(request, query_id):
     title = request.POST.get('title')
     comment = request.POST.get('comment')
 
-    date_lower = datetime.strptime(params['dates']['lower'], '%Y-%m-%d')
-    date_upper = datetime.strptime(params['dates']['upper'], '%Y-%m-%d')
-
     try:
         Query.objects.filter(pk=query_id).update(query=params['query'],
                                                  title=title,
-                                                 comment=comment,
-                                                 date_lower=date_lower,
-                                                 date_upper=date_upper)
+                                                 comment=comment)
+
+        Period.objects.filter(query__pk=query_id).delete()
+        for date_range in params['dates']:
+            date_lower = datetime.strptime(date_range['lower'], '%Y-%m-%d')
+            date_upper = datetime.strptime(date_range['upper'], '%Y-%m-%d')
+            p = Period(query=query, date_lower=date_lower, date_upper=date_upper)
+            p.save()
 
         query.exclude_distributions.clear()
         for distr in Distribution.objects.all():
