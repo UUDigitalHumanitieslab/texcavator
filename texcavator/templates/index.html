@@ -19,8 +19,8 @@
 			<form action="services/search/" id="search" onsubmit="searchSubmit(); return false;">
 				<input type="hidden" name="startRecord" id="startRecord" value="1" />
 
-				<input id="query" type="text" onchange="dojo.byId('startRecord').value = 1;" 
-						data-dojo-type="dijit.form.TextBox" 
+				<input id="query" type="text"
+						data-dojo-type="dijit.form.TextBox"
 						data-dojo-props="name:'query', style:'width: 290px; font-size: 155%;'" 
 						value=""
 				>
@@ -286,8 +286,12 @@ dojo.ready( function() {
 
 
 // HTML search result in Search panel of accordion
-function searchSubmit()
+function searchSubmit(newStartRecord)
 {
+    // Set the new start record, if set
+    newStartRecord = typeof newStartRecord !== 'undefined' ? newStartRecord : 1;
+	dojo.byId('startRecord').value = newStartRecord;
+
 	if( dojo.byId( "query" ).value == "" )
 	{
 		console.log( "searchSubmit(): empty query: nothing to do." );
@@ -472,51 +476,14 @@ function setQueryMetadata(item){
 
 function nextResults( amount )
 {
-//	console.log( "nextResults() amount: " + amount );
 	if( dojo.byId( "query" ).value == "" ) { return; }		// nothing to do
 	var oldStartRecord = parseInt( dojo.byId( 'startRecord' ).value );
 	var newStartRecord = oldStartRecord + amount;
 	if( newStartRecord < 1 ) { newStartRecord = 1; }
-	dojo.byId( 'startRecord' ).value = newStartRecord;
-//	console.log( "nextResults() startRecord: " + dojo.byId( 'startRecord' ).value );
 
-	searchSubmit();				// HTML search result in Search panel of accordion
+	searchSubmit(newStartRecord);				// HTML search result in Search panel of accordion
 }
 </script>
-
-
-<script type="text/javascript" src="{{ STATIC_URL }}js/biland.js"></script>
-
-<script type="text/javascript">
-	dojo.require( "dojo.domReady!" );
-	dojo.require( "dojo.fx" );
-	dojo.require( "dojo.html" );
-
-	dojo.require( "dijit.Dialog" );
-	dojo.require( "dijit.Menu" );
-	dojo.require( "dijit.ProgressBar" );
-	dojo.require( "dijit.form.TextBox" );
-	dojo.require( "dijit.form.Button" );
-	dojo.require( "dijit.form.ToggleButton" );
-	dojo.require( "dijit.form.HorizontalRule" );
-	dojo.require( "dijit.form.HorizontalRuleLabels" );
-
-	dojo.require( "dojox.form.RangeSlider" );
-
-function nextResults( amount )
-{
-//	console.log( "nextResults() amount: " + amount );
-	if( dojo.byId( "query" ).value == "" ) { return; }		// nothing to do
-	var oldStartRecord = parseInt( dojo.byId( 'startRecord' ).value );
-	var newStartRecord = oldStartRecord + amount;
-	if( newStartRecord < 1 ) { newStartRecord = 1; }
-	dojo.byId( 'startRecord' ).value = newStartRecord;
-//	console.log( "nextResults() startRecord: " + dojo.byId( 'startRecord' ).value );
-
-	searchSubmit();				// HTML search result in Search panel of accordion
-}
-</script>
-
 
 <script type="text/javascript" src="{{ STATIC_URL }}js/biland.js"></script>
 
