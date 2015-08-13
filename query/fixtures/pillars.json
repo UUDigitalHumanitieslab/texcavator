@@ -29,7 +29,7 @@
 },
 {
     "fields": {
-        "name": "Liberal"
+        "name": "Conservative"
     },
     "model": "query.pillar",
     "pk": 5
