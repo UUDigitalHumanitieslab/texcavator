@@ -79,15 +79,16 @@ class Query(models.Model):
         selected_pillar_names = [d.name for d in self.selected_pillars.all()]
 
         return {
-            'query_id': self.id,
+            'pk': self.pk,
+            'title': self.title,
             'query': self.query,
+            'comment': self.comment,
+            'date_created': str(self.date_created),
             'dates': selected_dateranges,
             'exclude_article_types': excl_art_types,
             'exclude_distributions': excl_distr,
             'selected_pillars': selected_pillars,
-            'selected_pillar_names': selected_pillar_names,
-            'comment': self.comment,
-            'date_created': str(self.date_created)
+            'selected_pillar_names': selected_pillar_names
         }
 
     def __unicode__(self):

@@ -235,23 +235,8 @@ var createToolbar = function() {
 	var toggleBtn = new dijit.form.Button({
 		id: "toggleBtn",
 		label: "<img src='/static/image/icon/Tango/22/actions/list-add.png')/>",
-		onClick: function() {
-			// On click, toggle the second date selection filters and the slider
-			var toggleDiv = $("#toggleBtn").parent().parent();
-			toggleDiv.nextUntil($("#sep")).toggle();
-			$("#year-range-slider-2").toggle();
-
-			// If toggled hidden, set variables to null  
-			if (beginDate2) {
-				beginDate2 = null;
-				endDate2 = null;
-			}
-			// If toggled visible, set default min/max values
-			else {
-				dijit.byId("begindate-2").set("value", minDate);
-				dijit.byId("enddate-2").set("value", maxDate);
-			}
-		}
+		// On click, toggle the second date selection filters and the slider
+		onClick: toggleSecondDateFilter
 	});
 
 	toolbar.addChild(btnDateFilterBegin);
@@ -320,6 +305,26 @@ var createToolbar = function() {
 }; // createToolbar()
 
 dojo.addOnLoad(createToolbar);
+
+
+var toggleSecondDateFilter = function() {
+	// On click, toggle the second date selection filters and the slider
+	// TODO: This uses jQuery... as that's far more easy.
+	var toggleDiv = $("#toggleBtn").parent().parent();
+	toggleDiv.nextUntil($("#sep")).toggle();
+	$("#year-range-slider-2").toggle();
+
+	// If toggled hidden, set variables to null  
+	if (beginDate2) {
+		beginDate2 = null;
+		endDate2 = null;
+	}
+	// If toggled visible, set default min/max values
+	else {
+		dijit.byId("begindate-2").set("value", minDate);
+		dijit.byId("enddate-2").set("value", maxDate);
+	}
+}
 
 
 var toolbarQuery = function() {

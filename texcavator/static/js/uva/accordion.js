@@ -6,7 +6,7 @@
 	function accordionSelectChild( id )
 	function createQueryLine( item )
 	function createQueryList()
-	function refreshQueriesDocCounts()
+	function refreshQueriesDocCounts( items )
 	function updateQueryDocCounts( item )
 	function updateQueryDocCountsElasticSearch( item )
 	function updateQueryDocCountsMongoDB( item )
@@ -118,10 +118,10 @@ function updateYearSlider(min_date, max_date, n) {
 // the "btn-sq-fetch-" button becomes dead with Dojo-1.9.0
 // strangely, the other queryline buttons do work with Dojo-1.9.0
 function createQueryLine(item) {
-	var title = item.fields.query;
+	var title = item.query;
 	var pk = item.pk;
 	var itemNode = dojo.byId("query-" + item.pk);
-	var string = "<span id=query-string-" + item.pk + " />" + title + " <em> " + item.fields.date_created + " </em> </span>";
+	var string = "<span id=query-string-" + item.pk + " />" + title + " <em> " + item.date_created + " </em> </span>";
 	var params = {
 		style: 'clear: both;'
 	};
@@ -170,8 +170,8 @@ function createQueryLine(item) {
 		disabled: false,
 		label: "Apply",
 		showLabel: false,
-		title: "Apply query: " + item.fields.query,
-		query: item.fields.query,
+		title: "Apply query: " + item.query,
+		query: item.query,
 		pk: item.pk,
 		iconClass: "dijitIconSearch",
 		onClick: function() {
@@ -298,7 +298,8 @@ function createQueryList() {
 				dojo.empty(dojo.byId("lexiconItems")); // this does not delete the buttons!, memory leak: 
 				// see: http://higginsforpresident.net/2010/01/widgets-within-widgets/
 
-				var items = JSON.parse(response.lexicon_items);
+				var items = response.queries;
+				// TODO: delete this global variable
 				glob_lexiconData = items;
 
 				dojo.forEach(items, function(item) {
@@ -314,7 +315,7 @@ function createQueryList() {
 					createQueryLine(item); // add title, date, buttons
 				});
 
-				refreshQueriesDocCounts(); // refresh doc counts, enable/disable buttons
+				refreshQueriesDocCounts(items); // refresh doc counts, enable/disable buttons
 			}
 		},
 		error: function(err) {
@@ -330,12 +331,12 @@ function createQueryList() {
 } // createQueryList()
 
 
-function refreshQueriesDocCounts() {
+function refreshQueriesDocCounts(items) {
 	// get collection setting from radio buttons
+	// TODO: no, you should get that from the settings or the database (though currently it has no function)
 	var collection = collection_fromradio();
 
 	console.log("refreshQueriesDocCounts() " + collection);
-	items = glob_lexiconData;
 
 	dojo.forEach(items, function(item) {
 		updateQueryDocCountsElasticSearch(item, collection);
@@ -345,7 +346,7 @@ function refreshQueriesDocCounts() {
 
 // Retrives document counts from ElasticSearch
 function updateQueryDocCountsElasticSearch(item, collection) {
-	var lexiconTitle = item.fields.title;
+	var lexiconTitle = item.title;
 	// do not show lexicons with *_daterange names TODO: magic string
 	if (!lexiconTitle.endsWith("_daterange")) {
 		var pk = item.pk;
@@ -369,7 +370,7 @@ function updateQueryDocCountsElasticSearch(item, collection) {
 
 					var cspan = dojo.byId("query-string-" + pk);
 					if (cspan !== null) {
-						var html = "<span id=query-string-" + pk + " />" + lexiconTitle + counts_str + "<em> " + item.fields.date_created + " </em> </span>";
+						var html = "<span id=query-string-" + pk + " />" + lexiconTitle + counts_str + "<em> " + item.date_created + " </em> </span>";
 						cspan.innerHTML = html;
 
 						var btn_sq_cloud = dijit.byId("btn-sq-cloud-" + pk);

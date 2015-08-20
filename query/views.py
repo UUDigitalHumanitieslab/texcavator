@@ -32,15 +32,15 @@ logger = logging.getLogger(__name__)
 
 @login_required
 def index(request):
-    """Returns a list of queries for a given user."""
-    queries = Query.objects.filter(user=request.user).prefetch_related('period_set').order_by('-date_created')
-    queries_json = serializers.serialize('json', queries)
-    return json_response_message('OK', '', {'lexicon_items': queries_json})
+    """Returns the list of Queries for the current User."""
+    queries = Query.objects.filter(user=request.user).order_by('-date_created')
+    queries_json = [q.get_query_dict() for q in queries]
+    return json_response_message('OK', '', {'queries': queries_json})
 
 
 @login_required
 def query(request, query_id):
-    """Returns a query."""
+    """Returns a single Query, checks if Query belongs to User."""
     query = get_object_or_404(Query, pk=query_id)
     if not request.user == query.user:
         return json_response_message('ERROR', 'Query does not belong to user.')

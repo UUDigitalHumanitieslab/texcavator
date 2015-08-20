@@ -31,8 +31,8 @@ var detectBursts = true;
 
 var showTimeline = function(item, collection) {
 	lexiconId = item.pk;
-	lexiconTitle = item.fields.title;
-	query_string = item.fields.query;
+	lexiconTitle = item.title;
+	query_string = item.query;
 	console.log("showTimeline() lexiconId: " + lexiconId + ", lexiconTitle: " + lexiconTitle + ", collection: " + collection);
 
 	setQueryMetadata(item);

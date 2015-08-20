@@ -343,27 +343,43 @@ function researchSubmit( item )
 } // researchSubmit()
 
 function setQueryMetadata(item){
-	var query = item[ "fields" ][ "query" ];
+	var query = item.query;
 	console.log( "query: " + query );
 	dojo.byId( "query" ).value = query;		// display query in Search textBox
 
     // set query meta data
     // set query title and comment
-    dojo.byId("lexiconItemTitle").value = item["fields"]["title"];
-    dojo.byId("queryComment").value = item["fields"]["comment"];
+    dojo.byId("lexiconItemTitle").value = item.title;
+    dojo.byId("queryComment").value = item.comment;
 
     // Daterange
-    beginDate = stringToDate(item["fields"]["date_lower"]);
-    endDate = stringToDate(item["fields"]["date_upper"]);
-    console.log("Date range: "+beginDate+" - "+endDate);
+    beginDate = stringToDate(item.dates[0].lower);
+    endDate = stringToDate(item.dates[0].upper);
+    console.log("Date range: " + beginDate + " - " + endDate);
 
     dijit.byId( "begindate" ).set( "value", beginDate );
     dijit.byId( "enddate"   ).set( "value", endDate );
     updateYearSlider(beginDate, endDate);
+
+    // Set the second search date
+    if (item.dates[1]) {
+        beginDate2 = stringToDate(item.dates[1].lower);
+        endDate2 = stringToDate(item.dates[1].upper);
+        console.log("Date range 2: " + beginDate2 + " - " + endDate2);
+
+        dijit.byId( "begindate-2" ).set( "value", beginDate2 );
+        dijit.byId( "enddate-2"   ).set( "value", endDate2 );
+        updateYearSlider(beginDate2, endDate2, "-2");
+        toggleSecondDateFilter();
+    }
+    // Or set it to null
+    else if (beginDate2 !== null) {
+        toggleSecondDateFilter();
+    }
     
     require(["dojo/_base/array"], function(arrayUtil) {
         // Distributions
-        var excl_dist = item["fields"]["exclude_distributions"];
+        var excl_dist = item.exclude_distributions;
         console.log("Exclude distributions: "+excl_dist);
 
         var val_sd_national = true;
@@ -418,7 +434,7 @@ function setQueryMetadata(item){
         config["search"]["distrib"]["indonesia"] = val_sd_indonesia;
 
         // article types
-        var excl_art_types = item["fields"]["exclude_article_types"];
+        var excl_art_types = item.exclude_article_types;
         console.log("Exclude article types: "+excl_art_types);
 
         var val_st_article = true;
@@ -464,7 +480,7 @@ function setQueryMetadata(item){
     });
 
     // Set pillars as selected
-    var selected_pillars = item["fields"]["selected_pillars"];
+    var selected_pillars = item.selected_pillars;
     $('.pillar input').each(function(i) {
         var checked = selected_pillars.indexOf(parseInt($(this).val())) != -1;
         dijit.byId($(this).attr('id')).set("checked", checked);
@@ -873,7 +889,7 @@ function onClickExecuteCloudStopwords( lexiconID )
 function onClickExecute(item)
 {
     queryID = item.pk;
-	query = item["fields"]["query"];
+	query = item.query;
 
     console.log( "onClickExecute() queryID: " + queryID + " : " + query );
     console.log(item);

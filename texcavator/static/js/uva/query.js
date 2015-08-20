@@ -417,7 +417,9 @@ function okEdit(querySaveName, querySaveQuery) {
 				if (status === "SUCCESS") {
 					console.log("Query was saved");
 					dijit.byId("leftAccordion").selectChild("lexicon");
-					refreshQueriesDocCounts()(); // update the lexicon container (in index.html)
+					// update the lexicon container (in index.html)
+					// TODO: we should only update the count of the edited Query.
+					refreshQueriesDocCounts(glob_lexiconData); 
 				} else {
 					var title = "Save query";
 					var msg = "The query could not be saved:<br/>" + result.msg;
