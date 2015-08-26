@@ -194,17 +194,18 @@ var createToolbar = function() {
 	var beginDateTB2 = new dijit.form.DateTextBox({
 		id: "begindate-2",
 		style: "width: 90px; display: none;",
-		onChange: function() {
+		onChange: function(value) {
 			// Set the global beginDate2 variable
-			beginDate2 = beginDateTB2.value;
+			beginDate2 = value;
+			console.log(beginDate2);
 
 			// set new min constraint for endDateTB2
 			require(["dojo/date"], function(date) {
-				endDateTB2.constraints.min = date.add(beginDateTB2.value, "day", 1);
+				endDateTB2.constraints.min = date.add(value, "day", 1);
 			});
 
 			// Update the slider
-			updateYearSlider(beginDateTB2.value, endDateTB2.value, "-2");
+			updateYearSlider(value, endDateTB2.value, "-2");
 		}
 	});
 
@@ -218,17 +219,17 @@ var createToolbar = function() {
 	var endDateTB2 = new dijit.form.DateTextBox({
 		id: "enddate-2",
 		style: "width: 90px; display: none;",
-		onChange: function() {
+		onChange: function(value) {
 			// Set the global endDate2 variable
-			endDate2 = endDateTB2.value;
+			endDate2 = value;
 
 			// Set new max constraint for beginDateTB2
 			require(["dojo/date"], function(date) {
-				beginDateTB2.constraints.max = date.add(endDateTB2.value, "day", -1);
+				beginDateTB2.constraints.max = date.add(value, "day", -1);
 			});
 
 			// Update the slider
-			updateYearSlider(beginDateTB2.value, endDateTB2.value, "-2");
+			updateYearSlider(beginDateTB2.value, value, "-2");
 		}
 	});
 
@@ -314,15 +315,21 @@ var toggleSecondDateFilter = function() {
 	toggleDiv.nextUntil($("#sep")).toggle();
 	$("#year-range-slider-2").toggle();
 
-	// If toggled hidden, set variables to null  
+	console.log(beginDate2);
+
+	// If toggled hidden, set variables to undefined  
 	if (beginDate2) {
-		beginDate2 = null;
-		endDate2 = null;
+		beginDate2 = undefined;
+		endDate2 = undefined;
+		dijit.byId("toggleBtn").set("label", "<img src='/static/image/icon/Tango/22/actions/list-add.png')/>");
 	}
 	// If toggled visible, set default min/max values
 	else {
+		beginDate2 = minDate;
+		endDate2 = maxDate;
 		dijit.byId("begindate-2").set("value", minDate);
 		dijit.byId("enddate-2").set("value", maxDate);
+		dijit.byId("toggleBtn").set("label", "<img src='/static/image/icon/Tango/22/actions/list-remove.png')/>");
 	}
 }
 

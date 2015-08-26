@@ -38,12 +38,8 @@ function createYearSlider(min, max, n) {
 	//	console.log( "createYearSlider()" );
 	storeDateLimits(min, max);
 
-	var min_date = getBeginDate();
-	var max_date = getEndDate();
-	//	console.log( "from: " + min_date  + " to: " + max_date );
-
-	var min_year = min_date.getFullYear();
-	var max_year = max_date.getFullYear();
+	var min_year = beginDate.getFullYear();
+	var max_year = endDate.getFullYear();
 	//	console.log( "from: " + min_year  + " to: " + max_year );
 
 	var discrete_values = max_year - min_year + 1;
@@ -64,11 +60,10 @@ function createYearSlider(min, max, n) {
 			var new_max_year = Math.floor(value[1]);
 			//	console.log( "from: " + new_min_year  + " to: " + new_max_year );
 
-			var old_min_date = getBeginDate();
-			var old_max_date = getEndDate();
+			var old_min_date = n ? beginDate2 : beginDate;
+			var old_max_date = n ? endDate2 : endDate;
+			console.log(old_min_date);
 			//	console.log( "old from: " + old_min_date + ", to: " + old_max_date );
-			var old_min_year = old_min_date.getFullYear();
-			var old_max_year = old_max_date.getFullYear();
 
 			var min_month = old_min_date.getMonth();
 			var max_month = old_max_date.getMonth();

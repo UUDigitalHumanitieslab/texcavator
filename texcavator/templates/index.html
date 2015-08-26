@@ -363,6 +363,7 @@ function setQueryMetadata(item){
 
     // Set the second search date
     if (item.dates[1]) {
+        toggleSecondDateFilter();
         beginDate2 = stringToDate(item.dates[1].lower);
         endDate2 = stringToDate(item.dates[1].upper);
         console.log("Date range 2: " + beginDate2 + " - " + endDate2);
@@ -370,7 +371,6 @@ function setQueryMetadata(item){
         dijit.byId( "begindate-2" ).set( "value", beginDate2 );
         dijit.byId( "enddate-2"   ).set( "value", endDate2 );
         updateYearSlider(beginDate2, endDate2, "-2");
-        toggleSecondDateFilter();
     }
     // Or set it to null
     else if (beginDate2 !== null) {
