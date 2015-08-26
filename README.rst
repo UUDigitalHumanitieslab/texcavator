@@ -237,6 +237,10 @@ If you have deployed your server, updating can be done via the following command
     python manage.py collectstatic
     sudo service apache2 restart
 
+For Celery, follow the instructions on http://celery.readthedocs.org/en/latest/tutorials/daemonizing.html#example-django-configuration
+
+For Postfix, follow the instructions on https://www.digitalocean.com/community/tutorials/how-to-install-and-setup-postfix-on-ubuntu-14-04
+
 Documentation
 =============
 
