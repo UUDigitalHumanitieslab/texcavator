@@ -37,8 +37,12 @@ _STEMMING_ANALYZER = 'dutch_analyzer'
 
 def _es():
     """Returns ElasticSearch instance."""
-    return Elasticsearch(settings.ELASTICSEARCH_HOST + ":" +
-                         str(settings.ELASTICSEARCH_PORT))
+    node = {'host': settings.ELASTICSEARCH_HOST,
+            'port': settings.ELASTICSEARCH_PORT}
+    if settings.ELASTICSEARCH_USERNAME:
+        node['http_auth'] = (settings.ELASTICSEARCH_USERNAME, settings.ELASTICSEARCH_PASSWORD)
+        node['use_ssl'] = settings.ELASTICSEARCH_USE_SSL
+    return Elasticsearch([node])
 
 
 def do_search(idx, typ, query, start, num, date_range, exclude_distributions,
