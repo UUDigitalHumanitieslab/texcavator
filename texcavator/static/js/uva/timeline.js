@@ -162,10 +162,6 @@ function getData(lexiconId, interval, callback) {
 		timeline_url += "&normalize=0";
 	}
 
-	var dateBeginStr = getDateBeginStr();
-	var dateEndStr = getDateEndStr();
-	console.log("daterange: from " + dateBeginStr + " till " + dateEndStr);
-	timeline_url += "&begindate=" + dateBeginStr + "&enddate=" + dateEndStr;
 	console.log("timeline_url: " + timeline_url);
 
 	$.ajax({
@@ -490,11 +486,13 @@ function createGraph() {
 			.attr("dy", "1em")
 			.attr("text-anchor", "left");
 
-		var xDomain = x.domain()[1].getTime() - x.domain()[0].getTime();
-		var lexiconTitle = retrieveLexiconTitle();
+		var title = "Period: " + toDateString(beginDate) + " - " + toDateString(endDate); 
+		if (beginDate2) {
+			title += " & " + toDateString(beginDate2) + " - " + toDateString(endDate2);
+		}
+		title += ", Query title: " + retrieveLexiconTitle(); 
 
-		svg.selectAll("text.period")
-			.text("Period: " + getDateBeginStr() + " - " + getDateEndStr() + " , Query title: " + lexiconTitle);
+		svg.selectAll("text.period").text(title);
 
 		// If we have newData, set up animation
 		if (newData !== undefined) {

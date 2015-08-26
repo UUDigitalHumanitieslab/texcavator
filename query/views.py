@@ -10,13 +10,12 @@ from urlparse import urljoin
 
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
-from django.core import serializers
 from django.core.validators import validate_email
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 from django.core.servers.basehttp import FileWrapper
 from django.conf import settings
-from django.db.models import Q
+from django.db.models import Q, Min, Max
 from django.db import IntegrityError
 
 from .models import Distribution, ArticleType, Query, DayStatistic, \
@@ -156,11 +155,12 @@ def update(request, query_id):
 
 @login_required
 def timeline(request, query_id, resolution):
-    """Generates a timeline for a query.
+    """
+    Generates a timeline for a query.
+    TODO: the timeline view should be moved to a separate app
     """
     logger.info('query/timeline/ - user: {}'.format(request.user.username))
 
-    # TODO: the timeline view should be moved to the services app
     if settings.DEBUG:
         print >> stderr, "query/bursts() query_id:", query_id, \
                          "resolution:", resolution
@@ -168,18 +168,12 @@ def timeline(request, query_id, resolution):
     normalize = request.REQUEST.get('normalize') == 1
     bg_smooth = False
 
-    begin = request.REQUEST.get('begindate')
-    if not begin:
-        return json_response_message('ERROR', 'No begin date specified.')
-
-    end = request.REQUEST.get('enddate')
-    if not end:
-        return json_response_message('ERROR', 'No end date specified.')
-
-    begindate = datetime.strptime(begin, '%Y%m%d').date()
-    enddate = datetime.strptime(end, '%Y%m%d').date()
-
     query = get_object_or_404(Query, pk=query_id)
+
+    # Retrieve the min/max date
+    periods = Period.objects.filter(query=query)
+    _, begindate = periods.aggregate(Min('date_lower')).popitem()
+    _, enddate = periods.aggregate(Max('date_upper')).popitem()
 
     # normalization and/or smoothing
     values = DayStatistic.objects.values('date', 'count').all()
