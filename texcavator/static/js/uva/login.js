@@ -19,16 +19,10 @@ var showResponse = function()
 
 var default_username = "";
 var default_password = "";
-// FL-24-Oct-2013 the KB forbids the use of a guest account
-//var default_username = "guest";		// for auto-login
-//var default_password = "guest";		// for auto-login
-
 var default_projectn = "";	// WAHSP, BiLand, Horizon
 
 glob_username  = "";		// global
-glob_password  = "";		// global
 glob_userid    = null;		// global
-
 glob_sessionId = "";		// global
 
 
@@ -162,7 +156,7 @@ var createLogin = function( projectname )
 		dijit.byId( "dlg-login" ).hide();
 
 		glob_username = dijit.byId( "tb-username" ).get( "value" );
-		glob_password = dijit.byId( "tb-password" ).get( "value" );
+		var password = dijit.byId( "tb-password" ).get( "value" );
 		var next = location.search.split('next=')[1]; // TODO: dirty way to retrieve next url
 
 		dijit.byId( "tb-username" ).set( "value", default_username );
@@ -173,7 +167,7 @@ var createLogin = function( projectname )
 			handleAs: "json",
 			content: {
 				"username" : glob_username,
-				"password" : glob_password,
+				"password" : password,
 				"next_url" : next
 			},
 			load: function(response)
@@ -211,13 +205,6 @@ var createLogin = function( projectname )
 						// when login_event = false, only the user_id is logged, but not the user_info
 						console.log( "ILPSLogging.userLogin()" );
 						ILPSLogging.userLogin( glob_userid, user_info, login_event );
-					}
-
-					if( glob_username === "guest" && glob_password === "guest" )
-					{
-						var retry = false;
-						createResponse( msg, retry );
-						showResponse();
 					}
 				}
 				else
@@ -322,8 +309,7 @@ var createLogout = function()
 			    url: "logout",
 			    handleAs: "json",
 			    content: {
-				    "username" : glob_username,
-				    "password" : glob_password
+				    "username" : glob_username
 			    },
 			    load: function(response)
 			    {

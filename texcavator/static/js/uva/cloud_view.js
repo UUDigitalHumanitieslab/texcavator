@@ -87,7 +87,6 @@ var stopwordsGetString = function( lexiconID, call_func, boundFunction )
 		handleAs: "text",
 		content: {
 			username:  glob_username,
-			password:  glob_password,
 			lexiconID: lexiconID
 		},
 		load: function( data )
@@ -125,8 +124,7 @@ var stopwordsGetTable = function( target )
 		url: "query/stopwords",	// POST url must end with `/'
 		handleAs: "json",
 		content: {
-			username:  glob_username,
-			password:  glob_password
+			username:  glob_username
 		},
 		load: function(response)
 		{
@@ -204,11 +202,10 @@ function stopwordsFillTable( stopwordsList, editglob, target )
 				console.log( "id " + pk + " (" + word + ") to be deleted" );
 
 				dojo.xhrPost({
-					url: "query/stopword/"+pk+"/delete",
+					url: "query/stopword/" + pk + "/delete",
 					handleAs: "json",
 					content: {
-						username:  glob_username,
-						password:  glob_password,
+						username: glob_username,
 						pk: pk
 					},
 					load: function(response)
