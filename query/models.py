@@ -55,8 +55,6 @@ class Query(models.Model):
     title = models.CharField(max_length=100)
     comment = models.TextField(blank=True)
     query = models.TextField()
-    date_lower = models.DateField()
-    date_upper = models.DateField()
 
     exclude_article_types = models.ManyToManyField(ArticleType, blank=True)
     exclude_distributions = models.ManyToManyField(Distribution, blank=True)
@@ -73,30 +71,35 @@ class Query(models.Model):
         """Returns a JSON serializable representation of the query object, that
         contains all relevant data and metadata.
         """
+        periods = Period.objects.filter(query=self)
+        selected_dateranges = [{'lower': str(p.date_lower), 'upper': str(p.date_upper)} for p in periods]
         excl_art_types = [a.id for a in self.exclude_article_types.all()]
         excl_distr = [d.id for d in self.exclude_distributions.all()]
         selected_pillars = [d.id for d in self.selected_pillars.all()]
         selected_pillar_names = [d.name for d in self.selected_pillars.all()]
 
         return {
-            'query_id': self.id,
+            'pk': self.pk,
+            'title': self.title,
             'query': self.query,
-            'date_lower': str(self.date_lower),
-            'date_upper': str(self.date_upper),
-            'dates': {
-                'lower': str(self.date_lower),
-                'upper': str(self.date_upper)
-            },
+            'comment': self.comment,
+            'date_created': str(self.date_created),
+            'dates': selected_dateranges,
             'exclude_article_types': excl_art_types,
             'exclude_distributions': excl_distr,
             'selected_pillars': selected_pillars,
-            'selected_pillar_names': selected_pillar_names,
-            'comment': self.comment,
-            'date_created': str(self.date_created)
+            'selected_pillar_names': selected_pillar_names
         }
 
     def __unicode__(self):
         return self.query
+
+
+class Period(models.Model):
+    """Model to store the Periods for a Query"""
+    date_lower = models.DateField()
+    date_upper = models.DateField()
+    query = models.ForeignKey(Query)
 
 
 class DayStatistic(models.Model):

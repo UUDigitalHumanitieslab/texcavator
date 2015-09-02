@@ -1,7 +1,8 @@
 """Tests for the Texcavator utility functions"""
 import os
-
 from nose.tools import assert_equals
+
+from django.conf import settings
 
 import texcavator.utils as utils
 
@@ -31,3 +32,16 @@ def test_chunks():
 
     results = [chunk for chunk in utils.chunks(range(5), 2)]
     assert_equals(results, [[0, 1], [2, 3], [4]])
+
+
+def test_daterange2dates():
+    assert_equals(utils.daterange2dates(settings.TEXCAVATOR_DATE_RANGE),
+                  [{'lower': '1850-01-01', 'upper': '1990-12-31'}])
+
+    # Input single date
+    assert_equals(utils.daterange2dates("19901231"),
+                  [{'lower': '1850-01-01', 'upper': '1990-12-31'}])
+
+    # Empty input
+    assert_equals(utils.daterange2dates(""),
+                  [{'lower': '1850-01-01', 'upper': '1990-12-31'}])

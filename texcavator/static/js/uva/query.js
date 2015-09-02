@@ -92,9 +92,10 @@ function queryFromName(queryName) {
 	var query_content = "";
 
 	dojo.forEach(glob_lexiconData, function(item) {
-		var query_title = item.fields.title;
+		var query_title = item.title;
+		// TODO: magic string "_daterange"
 		if (query_title === queryName && !query_title.endsWith("_daterange")) {
-			query_content = item.fields.query;
+			query_content = item.query;
 		}
 	});
 
@@ -105,7 +106,7 @@ function queryFromName(queryName) {
 function getQueryList() {
 	var queryList = [];
 	dojo.forEach(glob_lexiconData, function(item) {
-		var query_title = item.fields.title;
+		var query_title = item.title;
 		var id = item.pk;
 		// do not show queries with *_daterange names TODO: magic string
 		if (!query_title.endsWith("_daterange")) {
@@ -189,10 +190,10 @@ function createQueryDlg() {
 			console.log("Query name: " + queryNameEdit);
 
 			dojo.forEach(glob_lexiconData, function(item) {
-				var query_title = item.fields.title;
+				var query_title = item.title;
 				if (query_title === queryNameEdit && !query_title.endsWith("_daterange")) // do not show queries with *_daterange names
 				{
-					taQuery.set("value", item.fields.query);
+					taQuery.set("value", item.query);
 				}
 			});
 		}
@@ -311,7 +312,7 @@ function createQueryDlg() {
 			console.log("Query name: " + queryNameData);
 
 			dojo.forEach(glob_lexiconData, function(item) {
-				var query_title = item.fields.title;
+				var query_title = item.title;
 				if (query_title === queryNameEdit && !query_title.endsWith("_daterange")) // do not show queries with *_daterange names
 				{
 					downloadQueryData(query_title);
@@ -390,9 +391,9 @@ function okEdit(querySaveName, querySaveQuery) {
 
 	dojo.forEach(glob_lexiconData, function(item) // lexiconData: global {} in index.html
 		{
-			var query_title = item.fields.title;
+			var query_title = item.title;
 			if (query_title === querySaveName) {
-				item.fields.query = querySaveQuery;
+				item.query = querySaveQuery;
 			}
 		});
 
@@ -417,7 +418,9 @@ function okEdit(querySaveName, querySaveQuery) {
 				if (status === "SUCCESS") {
 					console.log("Query was saved");
 					dijit.byId("leftAccordion").selectChild("lexicon");
-					refreshQueriesDocCounts()(); // update the lexicon container (in index.html)
+					// update the lexicon container (in index.html)
+					// TODO: we should only update the count of the edited Query.
+					refreshQueriesDocCounts(glob_lexiconData); 
 				} else {
 					var title = "Save query";
 					var msg = "The query could not be saved:<br/>" + result.msg;
@@ -432,6 +435,7 @@ function okEdit(querySaveName, querySaveQuery) {
 }
 
 
+// TODO: remove, deprecated functionality
 function okCreate(querySaveName) {
 	console.log("okCreate");
 	console.log("Query name: " + querySaveName);
@@ -440,46 +444,34 @@ function okCreate(querySaveName) {
 }
 
 
-
+// Starts the download of a query
 function okDownload(query_title) {
 	console.log("okDownload() : " + query_title);
 
 	dijit.byId("dlg-query").destroyRecursive();
 
-	// 'raw' query, without extras
-	var query_content = queryFromName(query_title);
-	console.log("query_content: " + query_content);
-
-	// add date range to the query
-	var min_date_str = getDate_Begin_Str();
-	var max_date_str = getDate_End_Str();
-	console.log("date range: [" + min_date_str + ',' + max_date_str + ']');
-
-	var params = getSearchParameters(); // from config
-	params.collection = ES_INDEX;
-	params.query_title = query_title;
-	params.query = query_content;
-
-	config = getConfig();
-	params.format = config.querydataexport.format; // "json", "xml" or "csv"
+	var config = getConfig();
+	var params = {
+		collection: ES_INDEX,
+		query_title: query_title,
+		format: config.querydataexport.format // "json", "xml" or "csv"
+	};
 
 	dojo.xhrGet({
 		url: "query/download/prepare/",
 		content: params,
 		handleAs: "json",
 		load: function(result) {
-			var status = result.status;
 			var title = "Preparing download failed";
-			if (status === "SUCCESS") {
+			if (result.status === "SUCCESS") {
 				title = "Download finished";
 			}
 
-			var message = result.msg;
 			var buttons = {
 				"OK": true,
 				"Cancel": false
 			};
-			answer = genDialog(title, message, buttons);
+			answer = genDialog(title, result.msg, buttons);
 		},
 		error: function(err) {
 			console.error(err);
@@ -500,29 +492,14 @@ function saveQuery(title, comment, query, url) {
 
 	// get user-changeable parameters from config
 	var params = getSearchParameters();
+	params.query = query;
+	params.title = title;
+	params.comment = comment;
 
 	dojo.xhrPost({
 		url: url,
 		handleAs: "json",
-		content: {
-			query: query,
-			title: title,
-			comment: comment,
-			username: glob_username,
-			password: glob_password,
-			// query metadata
-			dateRange: params.dateRange,
-			sd_antilles: params.sd_antilles,
-			sd_indonesia: params.sd_indonesia,
-			sd_national: params.sd_national,
-			sd_regional: params.sd_regional,
-			sd_surinam: params.sd_surinam,
-			st_advert: params.st_advert,
-			st_article: params.st_article,
-			st_family: params.st_family,
-			st_illust: params.st_illust,
-			pillars: params.pillars
-		},
+		content: params,
 		load: function(result) {
 			if (result.status !== "SUCCESS") {
 				var msg = "The query could not be saved:<br/>" + result.msg;
@@ -536,10 +513,8 @@ function saveQuery(title, comment, query, url) {
 
 			createQueryList();
 		},
-		error: function(error) {
+		error: function(err) {
 			console.error(err);
 		}
 	});
 }
-
-// [eof]

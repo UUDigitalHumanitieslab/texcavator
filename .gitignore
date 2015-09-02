@@ -9,6 +9,8 @@ celeryev.pid
 
 *.tar.gz
 
+Thumbs.db
+
 # IDE stuff
 .*.sw[op]
 .idea

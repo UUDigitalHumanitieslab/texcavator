@@ -40,9 +40,9 @@ def query2docidsdate(query, date_begin, date_end):
     if settings.DEBUG:
         print >> stderr, "query2docidsdate()"
 
-    date_range = {
+    date_ranges = [{
         'lower': date_begin,
         'upper': date_end
-    }
+    }]
 
-    return get_document_ids(settings.ES_INDEX, settings.ES_DOCTYPE, query.query, date_range)
+    return get_document_ids(settings.ES_INDEX, settings.ES_DOCTYPE, query.query, date_ranges)

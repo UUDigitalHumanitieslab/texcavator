@@ -10,17 +10,16 @@ from urlparse import urljoin
 
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
-from django.core import serializers
 from django.core.validators import validate_email
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 from django.core.servers.basehttp import FileWrapper
 from django.conf import settings
-from django.db.models import Q
+from django.db.models import Q, Min, Max
 from django.db import IntegrityError
 
 from .models import Distribution, ArticleType, Query, DayStatistic, \
-    StopWord, Pillar, Newspaper
+    StopWord, Pillar, Newspaper, Period
 from .utils import query2docidsdate
 from .burstsdetector import bursts
 from .download import create_zipname, execute
@@ -32,52 +31,41 @@ logger = logging.getLogger(__name__)
 
 @login_required
 def index(request):
-    """Returns a list of queries for a given user."""
-    lexicon_items = Query.objects.filter(user=request.user) \
-                                 .order_by('-date_created')
-
-    params = {
-        'lexicon_items': serializers.serialize('json', lexicon_items)
-    }
-
-    return json_response_message('OK', '', params)
+    """Returns the list of Queries for the current User."""
+    queries = Query.objects.filter(user=request.user).order_by('-date_created')
+    queries_json = [q.get_query_dict() for q in queries]
+    return json_response_message('OK', '', {'queries': queries_json})
 
 
 @login_required
 def query(request, query_id):
-    """Returns a query.
-    """
+    """Returns a single Query, checks if Query belongs to User."""
     query = get_object_or_404(Query, pk=query_id)
     if not request.user == query.user:
         return json_response_message('ERROR', 'Query does not belong to user.')
-
-    params = {
-        'query': query.get_query_dict()
-    }
-
-    return json_response_message('OK', '', params)
+    return json_response_message('OK', '', {'query': query.get_query_dict()})
 
 
 @csrf_exempt
 @login_required
 def create_query(request):
-    """Creates a new query.
-    """
+    """Creates a new query."""
     params = get_search_parameters(request.POST)
     title = request.POST.get('title')
     comment = request.POST.get('comment')
-
-    date_lower = datetime.strptime(params['dates']['lower'], '%Y-%m-%d')
-    date_upper = datetime.strptime(params['dates']['upper'], '%Y-%m-%d')
 
     try:
         q = Query(query=params['query'],
                   title=title,
                   comment=comment,
-                  user=request.user,
-                  date_lower=date_lower,
-                  date_upper=date_upper)
+                  user=request.user)
         q.save()
+
+        for date_range in params['dates']:
+            date_lower = datetime.strptime(date_range['lower'], '%Y-%m-%d')
+            date_upper = datetime.strptime(date_range['upper'], '%Y-%m-%d')
+            p = Period(query=q, date_lower=date_lower, date_upper=date_upper)
+            p.save()
 
         for distr in Distribution.objects.all():
             if distr.id in params['distributions']:
@@ -133,15 +121,17 @@ def update(request, query_id):
     title = request.POST.get('title')
     comment = request.POST.get('comment')
 
-    date_lower = datetime.strptime(params['dates']['lower'], '%Y-%m-%d')
-    date_upper = datetime.strptime(params['dates']['upper'], '%Y-%m-%d')
-
     try:
         Query.objects.filter(pk=query_id).update(query=params['query'],
                                                  title=title,
-                                                 comment=comment,
-                                                 date_lower=date_lower,
-                                                 date_upper=date_upper)
+                                                 comment=comment)
+
+        Period.objects.filter(query__pk=query_id).delete()
+        for date_range in params['dates']:
+            date_lower = datetime.strptime(date_range['lower'], '%Y-%m-%d')
+            date_upper = datetime.strptime(date_range['upper'], '%Y-%m-%d')
+            p = Period(query=query, date_lower=date_lower, date_upper=date_upper)
+            p.save()
 
         query.exclude_distributions.clear()
         for distr in Distribution.objects.all():
@@ -165,11 +155,12 @@ def update(request, query_id):
 
 @login_required
 def timeline(request, query_id, resolution):
-    """Generates a timeline for a query.
+    """
+    Generates a timeline for a query.
+    TODO: the timeline view should be moved to a separate app
     """
     logger.info('query/timeline/ - user: {}'.format(request.user.username))
 
-    # TODO: the timeline view should be moved to the services app
     if settings.DEBUG:
         print >> stderr, "query/bursts() query_id:", query_id, \
                          "resolution:", resolution
@@ -177,18 +168,12 @@ def timeline(request, query_id, resolution):
     normalize = request.REQUEST.get('normalize') == 1
     bg_smooth = False
 
-    begin = request.REQUEST.get('begindate')
-    if not begin:
-        return json_response_message('ERROR', 'No begin date specified.')
-
-    end = request.REQUEST.get('enddate')
-    if not end:
-        return json_response_message('ERROR', 'No end date specified.')
-
-    begindate = datetime.strptime(begin, '%Y%m%d').date()
-    enddate = datetime.strptime(end, '%Y%m%d').date()
-
     query = get_object_or_404(Query, pk=query_id)
+
+    # Retrieve the min/max date
+    periods = Period.objects.filter(query=query)
+    _, begindate = periods.aggregate(Min('date_lower')).popitem()
+    _, enddate = periods.aggregate(Max('date_upper')).popitem()
 
     # normalization and/or smoothing
     values = DayStatistic.objects.values('date', 'count').all()

@@ -10,7 +10,8 @@ from django.db import DatabaseError
 from django.conf import settings
 
 from query.models import DayStatistic
-from services.es import daterange2dates, day_statistics
+from services.es import day_statistics
+from texcavator.utils import daterange2dates
 
 
 class Command(BaseCommand):
@@ -22,11 +23,10 @@ class Command(BaseCommand):
         print 'Emptying table...'
         DayStatistic.objects.all().delete()
 
-        date_range_str = settings.TEXCAVATOR_DATE_RANGE
-        dates = daterange2dates(date_range_str)
+        dates = daterange2dates(settings.TEXCAVATOR_DATE_RANGE)
 
-        year_lower = datetime.strptime(dates['lower'], '%Y-%m-%d').date().year
-        year_upper = datetime.strptime(dates['upper'], '%Y-%m-%d').date().year
+        year_lower = datetime.strptime(dates[0]['lower'], '%Y-%m-%d').date().year
+        year_upper = datetime.strptime(dates[0]['upper'], '%Y-%m-%d').date().year
 
         if len(args) > 0:
             year_lower = int(args[0])

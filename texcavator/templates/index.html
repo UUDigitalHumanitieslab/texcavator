@@ -101,10 +101,9 @@
 				<div id="div-year-range-slider">
 					<div id="div-year-range-legend"></div>
 				</div>
-				<!-- 
-				<div id="dateRangeSlider" data-dojo-type="dojox.form.HorizontalRangeSlider" 
-					 data-dojo-props="value:[1900,1945], minimum:1900, maximum:1945, showButtons:false, discreteValues: 46">
-				-->
+               	<div id="div-year-range-slider-2">
+					<div id="div-year-range-legend-2"></div>
+				</div>
 
 				<span id="cql"></span><div id="cqlAdd"></div>
 			</form>
@@ -254,8 +253,9 @@ dojo.ready( function() {
 } );
 
 dojo.ready( function() { celeryCheckFailure( "None" ); } );	// celery.js
-dojo.ready( function() { storeDateLimits(     {{ SRU_DATE_LIMITS }} ); } );	// toolbar.js
-dojo.ready( function() { createYearSlider(    {{ SRU_DATE_LIMITS }}); } );	// accordion.js, uses the stored SRU_DATE_LIMITS
+dojo.ready( function() { storeDateLimits( "{{ PROJECT_MIN_DATE }}", "{{ PROJECT_MAX_DATE }}" ); } );	// toolbar.js
+dojo.ready( function() { createYearSlider( "{{ PROJECT_MIN_DATE }}", "{{ PROJECT_MAX_DATE }}" ); } );	// accordion.js
+dojo.ready( function() { createYearSlider( "{{ PROJECT_MIN_DATE }}", "{{ PROJECT_MAX_DATE }}", "-2" ); } );	// accordion.js
 
 
 dojo.ready( function() {
@@ -343,28 +343,47 @@ function researchSubmit( item )
 
 } // researchSubmit()
 
-function setQueryMetadata(item){
-	var query = item[ "fields" ][ "query" ];
+function setQueryMetadata(item) {
+	var query = item.query;
 	console.log( "query: " + query );
 	dojo.byId( "query" ).value = query;		// display query in Search textBox
 
     // set query meta data
     // set query title and comment
-    dojo.byId("lexiconItemTitle").value = item["fields"]["title"];
-    dojo.byId("queryComment").value = item["fields"]["comment"];
+    dojo.byId("lexiconItemTitle").value = item.title;
+    dojo.byId("queryComment").value = item.comment;
 
     // Daterange
-    beginDate = stringToDate(item["fields"]["date_lower"]);
-    endDate = stringToDate(item["fields"]["date_upper"]);
-    console.log("Date range: "+beginDate+" - "+endDate);
+    beginDate = stringToDate(item.dates[0].lower);
+    endDate = stringToDate(item.dates[0].upper);
+    console.log("Date range: " + beginDate + " - " + endDate);
 
     dijit.byId( "begindate" ).set( "value", beginDate );
     dijit.byId( "enddate"   ).set( "value", endDate );
     updateYearSlider(beginDate, endDate);
+
+    // Set the second search date
+    if (item.dates[1]) {
+        if (beginDate2 == undefined) {
+            toggleSecondDateFilter();
+        }
+
+        beginDate2 = stringToDate(item.dates[1].lower);
+        endDate2 = stringToDate(item.dates[1].upper);
+        console.log("Date range 2: " + beginDate2 + " - " + endDate2);
+
+        dijit.byId( "begindate-2" ).set( "value", beginDate2 );
+        dijit.byId( "enddate-2"   ).set( "value", endDate2 );
+        updateYearSlider(beginDate2, endDate2, "-2");
+    }
+    // Or set it to null
+    else if (beginDate2 !== undefined) {
+        toggleSecondDateFilter();
+    }
     
     require(["dojo/_base/array"], function(arrayUtil) {
         // Distributions
-        var excl_dist = item["fields"]["exclude_distributions"];
+        var excl_dist = item.exclude_distributions;
         console.log("Exclude distributions: "+excl_dist);
 
         var val_sd_national = true;
@@ -419,7 +438,7 @@ function setQueryMetadata(item){
         config["search"]["distrib"]["indonesia"] = val_sd_indonesia;
 
         // article types
-        var excl_art_types = item["fields"]["exclude_article_types"];
+        var excl_art_types = item.exclude_article_types;
         console.log("Exclude article types: "+excl_art_types);
 
         var val_st_article = true;
@@ -465,7 +484,7 @@ function setQueryMetadata(item){
     });
 
     // Set pillars as selected
-    var selected_pillars = item["fields"]["selected_pillars"];
+    var selected_pillars = item.selected_pillars;
     $('.pillar input').each(function(i) {
         var checked = selected_pillars.indexOf(parseInt($(this).val())) != -1;
         dijit.byId($(this).attr('id')).set("checked", checked);
@@ -762,15 +781,9 @@ function onClickLoadData( lexiconID, datastore )
 		});
 	};
 
-//	var begindate = getDateBeginStr();		// Search period: changeable by user 
-//	var enddate   = getDateEndStr();		// Search period: changeable by user 
-	console.log( "from-to: " + glob_begindate + "-" + glob_enddate );
-
 	var params = {
 		datastore  : datastore,
 		collection : ES_INDEX,		// default collection
-		begindate  : glob_begindate,
-		enddate    : glob_enddate
 	};
 
 	dojo.xhrGet({
@@ -843,7 +856,7 @@ function onClickExecuteCloudStopwords( lexiconID )
 function onClickExecute(item)
 {
     queryID = item.pk;
-	query = item["fields"]["query"];
+	query = item.query;
 
     console.log( "onClickExecute() queryID: " + queryID + " : " + query );
     console.log(item);
@@ -962,7 +975,6 @@ function onClickExecuteCloud( queryID )
 	var dateBeginStr = getDateBeginStr();
 	var dateEndStr   = getDateEndStr();
 	console.log( "cloud period:   from: " + dateBeginStr   + ", till: " + dateEndStr );		// current date widget contents
-	console.log( "project period: from: " + glob_begindate + ", till: " + glob_enddate );	// project daterange
 
 	var config = getConfig();
 	var datastore = config[ "datastore" ];

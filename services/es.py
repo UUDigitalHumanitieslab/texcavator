@@ -11,6 +11,7 @@ from elasticsearch.client import indices
 from django.conf import settings
 
 from query.models import Newspaper
+from texcavator.utils import daterange2dates
 
 _ES_RETURN_FIELDS = ('article_dc_title',
                      'paper_dcterms_temporal',
@@ -45,7 +46,7 @@ def _es():
     return Elasticsearch([node])
 
 
-def do_search(idx, typ, query, start, num, date_range, exclude_distributions,
+def do_search(idx, typ, query, start, num, date_ranges, exclude_distributions,
               exclude_article_types, selected_pillars, return_source=False, sort_order='_score'):
     """Returns ElasticSearch search results.
 
@@ -67,9 +68,9 @@ def do_search(idx, typ, query, start, num, date_range, exclude_distributions,
             retrieved
         num : int
             The total number of results to be retrieved
-        date_range : dict
-            A dictionary containg the upper and lower dates of the
-            requested date range
+        date_ranges : list(dict)
+            A list of dictionaries containg the upper and lower dates of the
+            requested date ranges
         exclude_distributions : list
             A list of strings respresenting distributions that should be
             excluded from the search
@@ -95,7 +96,7 @@ def do_search(idx, typ, query, start, num, date_range, exclude_distributions,
             A list of elasticsearch results or a message explaining why the
             input query string is invalid.
     """
-    q = create_query(query, date_range, exclude_distributions,
+    q = create_query(query, date_ranges, exclude_distributions,
                      exclude_article_types, selected_pillars)
 
     valid_q = indices.IndicesClient(_es()).validate_query(index=idx,
@@ -146,7 +147,7 @@ def get_document(idx, typ, doc_id):
     return result['_source']
 
 
-def create_query(query_str, date_range, exclude_distributions,
+def create_query(query_str, date_ranges, exclude_distributions,
                  exclude_article_types, selected_pillars):
     """Create elasticsearch query from input string.
 
@@ -156,16 +157,21 @@ def create_query(query_str, date_range, exclude_distributions,
     Returns a dict that represents the query in the elasticsearch query DSL.
     """
 
-    filter_must = [
-        {
-            'range': {
-                'paper_dc_date': {
-                    'gte': date_range['lower'],
-                    'lte': date_range['upper']
+    filter_must = []
+    filter_should = []
+    filter_must_not = []
+
+    for date_range in date_ranges:
+        filter_should.append(
+            {
+                'range': {
+                    'paper_dc_date': {
+                        'gte': date_range['lower'],
+                        'lte': date_range['upper']
+                    }
                 }
             }
-        }
-    ]
+        )
 
     newspaper_ids = []
     if selected_pillars:
@@ -175,7 +181,6 @@ def create_query(query_str, date_range, exclude_distributions,
     if newspaper_ids:
         filter_must.append({'terms': {'paper_dc_identifier': newspaper_ids}})
 
-    filter_must_not = []
     for ds in exclude_distributions:
         filter_must_not.append(
             {"term": {"paper_dcterms_spatial": _KB_DISTRIBUTION_VALUES[ds]}})
@@ -195,6 +200,7 @@ def create_query(query_str, date_range, exclude_distributions,
                 'filter': {
                     'bool': {
                         'must': filter_must,
+                        'should': filter_should,
                         'must_not': filter_must_not
                     }
                 }
@@ -369,7 +375,7 @@ def single_document_word_cloud(idx, typ, doc_id, min_length=0, stopwords=None, s
     }
 
 
-def multiple_document_word_cloud(idx, typ, query, date_range, dist, art_types, pillars,
+def multiple_document_word_cloud(idx, typ, query, date_ranges, dist, art_types, pillars,
                                  ids=None):
     """Return data required to draw a word cloud for multiple documents
 
@@ -392,7 +398,7 @@ def multiple_document_word_cloud(idx, typ, query, date_range, dist, art_types, p
 
     # word cloud based on query
     if query:
-        q = create_query(query, date_range, dist, art_types, pillars)
+        q = create_query(query, date_ranges, dist, art_types, pillars)
         q['aggs'] = word_cloud_aggregation(agg_name)
     # word cloud based on document ids
     elif not query and len(ids) > 0:
@@ -540,28 +546,13 @@ def get_search_parameters(req_dict):
     }
 
 
-def daterange2dates(date_range_str):
-    """Return a dictionary containing the date boundaries specified.
-
-    If the input string does not specify two dates, the maximum date range is
-    retrieved from the settings.
-    """
-    dates_str = date_range_str.split(',')
-    if not len(dates_str) == 2:
-        return daterange2dates(settings.TEXCAVATOR_DATE_RANGE)
-
-    dates = [str(datetime.strptime(date, '%Y%m%d').date())
-             for date in dates_str]
-    return {'lower': min(dates), 'upper': max(dates)}
-
-
-def get_document_ids(idx, typ, query, date_range, exclude_distributions=[],
+def get_document_ids(idx, typ, query, date_ranges, exclude_distributions=[],
                      exclude_article_types=[], selected_pillars=[]):
     """Return a list of document ids and dates for a query
     """
     doc_ids = []
 
-    q = create_query(query, date_range, exclude_distributions,
+    q = create_query(query, date_ranges, exclude_distributions,
                      exclude_article_types, selected_pillars)
 
     date_field = 'paper_dc_date'
@@ -589,13 +580,13 @@ def get_document_ids(idx, typ, query, date_range, exclude_distributions=[],
     return doc_ids
 
 
-def document_id_chunks(chunk_size, idx, typ, query, date_range, dist=[],
+def document_id_chunks(chunk_size, idx, typ, query, date_ranges, dist=[],
                        art_types=[], selected_pillars=[]):
     """Generator for retrieving document ids for all results of a query.
 
     Used by the generate_tv_cloud task.
     """
-    q = create_query(query, date_range, dist, art_types, selected_pillars)
+    q = create_query(query, date_ranges, dist, art_types, selected_pillars)
 
     get_more_docs = True
     start = 0
@@ -626,9 +617,9 @@ def day_statistics(idx, typ, date_range, agg_name):
     return None
 
 
-def metadata_aggregation(idx, typ, query, date_range,
+def metadata_aggregation(idx, typ, query, date_ranges,
                          exclude_distributions, exclude_article_types, selected_pillars):
-    body = create_query(query, date_range,
+    body = create_query(query, date_ranges,
                         exclude_distributions, exclude_article_types, selected_pillars)
     body['aggs'] = metadata_dict()
     return _es().search(index=idx, doc_type=typ, body=body, search_type='count')

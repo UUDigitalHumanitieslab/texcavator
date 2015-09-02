@@ -10,7 +10,8 @@ import logging
 from django.core.management.base import BaseCommand
 from django.conf import settings
 
-from services.es import multiple_document_word_cloud, daterange2dates
+from texcavator.utils import daterange2dates
+from services.es import multiple_document_word_cloud
 from services.models import DocID
 
 
@@ -40,10 +41,11 @@ class Command(BaseCommand):
             document_set = DocID.objects.order_by('?')[0:query_size]
             doc_ids = [doc.doc_id for doc in document_set]
 
+            dates = daterange2dates(settings.TEXCAVATOR_DATE_RANGE)
             aggr_resp = multiple_document_word_cloud(settings.ES_INDEX,
                                                      settings.ES_DOCTYPE,
                                                      None,
-                                                     daterange2dates(''),
+                                                     dates[0],
                                                      [],
                                                      [],
                                                      doc_ids)

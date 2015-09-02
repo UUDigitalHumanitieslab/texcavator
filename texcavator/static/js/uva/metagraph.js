@@ -2,6 +2,7 @@
 function metadataGraphics(query) {
     console.log("metadataGraphics()");
 
+    // TODO: it's better not to pass the search parameters here. See also TODO in backend.
     var params = getSearchParameters();
     params.query = query;
 
