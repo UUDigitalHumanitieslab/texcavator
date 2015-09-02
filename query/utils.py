@@ -45,4 +45,12 @@ def query2docidsdate(query, date_begin, date_end):
         'upper': date_end
     }]
 
-    return get_document_ids(settings.ES_INDEX, settings.ES_DOCTYPE, query.query, date_ranges)
+    query_dict = query.get_query_dict()
+
+    return get_document_ids(settings.ES_INDEX,
+                            settings.ES_DOCTYPE,
+                            query_dict['query'],
+                            date_ranges,
+                            query_dict['exclude_distributions'],
+                            query_dict['exclude_article_types'],
+                            query_dict['selected_pillars'])
