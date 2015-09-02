@@ -342,7 +342,7 @@ function researchSubmit( item )
 
 } // researchSubmit()
 
-function setQueryMetadata(item){
+function setQueryMetadata(item) {
 	var query = item.query;
 	console.log( "query: " + query );
 	dojo.byId( "query" ).value = query;		// display query in Search textBox
@@ -363,7 +363,10 @@ function setQueryMetadata(item){
 
     // Set the second search date
     if (item.dates[1]) {
-        toggleSecondDateFilter();
+        if (beginDate2 == undefined) {
+            toggleSecondDateFilter();
+        }
+
         beginDate2 = stringToDate(item.dates[1].lower);
         endDate2 = stringToDate(item.dates[1].upper);
         console.log("Date range 2: " + beginDate2 + " - " + endDate2);
@@ -373,7 +376,7 @@ function setQueryMetadata(item){
         updateYearSlider(beginDate2, endDate2, "-2");
     }
     // Or set it to null
-    else if (beginDate2 !== null) {
+    else if (beginDate2 !== undefined) {
         toggleSecondDateFilter();
     }
     
