@@ -304,17 +304,17 @@ def hit2csv_metadata(csv_writer, req_dict):
                  'date executed',
                  'excluded article types',
                  'excluded distributions',
-                 'selected pillars',
-                 'date lower',
-                 'date upper']
+                 'selected pillars']
     md_row = [req_dict['comment'],
               req_dict['query'],
               req_dict['date_created'],
               req_dict['exclude_article_types'],
               req_dict['exclude_distributions'],
-              req_dict['selected_pillar_names'],
-              req_dict['date_lower'],
-              req_dict['date_upper']]
+              req_dict['selected_pillar_names']]
+    for d in req_dict['dates']:
+        md_header.extend(['date_lower', 'date_upper'])
+        md_row.extend([d['lower'], d['upper']])
+
     csv_writer.writerow(md_header)
     csv_writer.writerow(md_row)
 

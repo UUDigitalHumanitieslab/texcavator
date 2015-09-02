@@ -72,7 +72,7 @@ class Query(models.Model):
         contains all relevant data and metadata.
         """
         periods = Period.objects.filter(query=self)
-        selected_dateranges = [{'lower': p.date_lower, 'upper': p.date_upper} for p in periods]
+        selected_dateranges = [{'lower': str(p.date_lower), 'upper': str(p.date_upper)} for p in periods]
         excl_art_types = [a.id for a in self.exclude_article_types.all()]
         excl_distr = [d.id for d in self.exclude_distributions.all()]
         selected_pillars = [d.id for d in self.selected_pillars.all()]

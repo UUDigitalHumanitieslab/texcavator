@@ -92,9 +92,10 @@ function queryFromName(queryName) {
 	var query_content = "";
 
 	dojo.forEach(glob_lexiconData, function(item) {
-		var query_title = item.fields.title;
+		var query_title = item.title;
+		// TODO: magic string "_daterange"
 		if (query_title === queryName && !query_title.endsWith("_daterange")) {
-			query_content = item.fields.query;
+			query_content = item.query;
 		}
 	});
 
@@ -105,7 +106,7 @@ function queryFromName(queryName) {
 function getQueryList() {
 	var queryList = [];
 	dojo.forEach(glob_lexiconData, function(item) {
-		var query_title = item.fields.title;
+		var query_title = item.title;
 		var id = item.pk;
 		// do not show queries with *_daterange names TODO: magic string
 		if (!query_title.endsWith("_daterange")) {
@@ -189,10 +190,10 @@ function createQueryDlg() {
 			console.log("Query name: " + queryNameEdit);
 
 			dojo.forEach(glob_lexiconData, function(item) {
-				var query_title = item.fields.title;
+				var query_title = item.title;
 				if (query_title === queryNameEdit && !query_title.endsWith("_daterange")) // do not show queries with *_daterange names
 				{
-					taQuery.set("value", item.fields.query);
+					taQuery.set("value", item.query);
 				}
 			});
 		}
@@ -311,7 +312,7 @@ function createQueryDlg() {
 			console.log("Query name: " + queryNameData);
 
 			dojo.forEach(glob_lexiconData, function(item) {
-				var query_title = item.fields.title;
+				var query_title = item.title;
 				if (query_title === queryNameEdit && !query_title.endsWith("_daterange")) // do not show queries with *_daterange names
 				{
 					downloadQueryData(query_title);
@@ -390,9 +391,9 @@ function okEdit(querySaveName, querySaveQuery) {
 
 	dojo.forEach(glob_lexiconData, function(item) // lexiconData: global {} in index.html
 		{
-			var query_title = item.fields.title;
+			var query_title = item.title;
 			if (query_title === querySaveName) {
-				item.fields.query = querySaveQuery;
+				item.query = querySaveQuery;
 			}
 		});
 
