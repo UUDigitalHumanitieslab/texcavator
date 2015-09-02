@@ -40,5 +40,54 @@
     },
     "model": "query.pillar",
     "pk": 6
+},
+{
+    "fields": {
+        "name": "American"
+    },
+    "model": "query.pillar",
+    "pk": 7
+},
+{
+    "fields": {
+        "name": "Colonial"
+    },
+    "model": "query.pillar",
+    "pk": 8
+},
+{
+    "fields": {
+        "name": "Miscellaneous"
+    },
+    "model": "query.pillar",
+    "pk": 9
+},
+{
+    "fields": {
+        "name": "NSB"
+    },
+    "model": "query.pillar",
+    "pk": 10
+},
+{
+    "fields": {
+        "name": "Pre-1900"
+    },
+    "model": "query.pillar",
+    "pk": 11
+},
+{
+    "fields": {
+        "name": "World War II"
+    },
+    "model": "query.pillar",
+    "pk": 12
+},
+{
+    "fields": {
+        "name": "No title"
+    },
+    "model": "query.pillar",
+    "pk": 13
 }
 ]
