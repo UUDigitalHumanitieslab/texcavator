@@ -62,7 +62,6 @@ function createYearSlider(min, max, n) {
 
 			var old_min_date = n ? beginDate2 : beginDate;
 			var old_max_date = n ? endDate2 : endDate;
-			console.log(old_min_date);
 			//	console.log( "old from: " + old_min_date + ", to: " + old_max_date );
 
 			var min_month = old_min_date.getMonth();
