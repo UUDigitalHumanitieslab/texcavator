@@ -547,6 +547,9 @@ function burstClicked(data) {
 	dijit.byId("query").set("value", lexicon_query); 
 	dijit.byId("begindate").set("value", beginDate);
 	dijit.byId("enddate").set("value", endDate);
+	if (beginDate2 !== undefined) {
+        toggleSecondDateFilter();
+    }
 	accordionSelectChild("searchPane");
 	searchSubmit();
 
