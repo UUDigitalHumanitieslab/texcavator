@@ -571,11 +571,10 @@ function burstClicked(data) {
 		indeterminate: true
 	}).domNode, dojo.byId("cloud"), "only");
 
-	var collection = retrieveCollectionUsed();
-	console.log("burst from: " + collection);
 	var params = {
-		collections: collection, // 	can be more than 1
-		ids: d.docs.join(',') // cloud not by tag name, but by comma separated ids string
+		queryID: retrieveLexiconID(),
+		is_timeline: true,
+		date_range: getDateRangeString()
 	};
 
 	burstCloud(params);

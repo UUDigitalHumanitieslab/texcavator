@@ -630,10 +630,11 @@ function nextResults( amount )
 		console.log( "retrieveRecordCloudData: " + record_id );
 
 		// create single article cloud
-		var params = { ids: record_id };
+		var params = {
+		    "collections": ES_INDEX,		// 	can be more than 1
+		    "record_id": record_id
+		}
 	    params = getCloudParameters( params );
-
-		params[ "collections" ] = ES_INDEX;		// 	can be more than 1
 		
         var cloud_pane = "cloudPane";
 
@@ -972,22 +973,10 @@ function onClickExecuteCloud( queryID )
 		if( context ) { context.clearRect ( 0, 0, canvas.width, canvas.height ); }
 	}
 
-	var dateBeginStr = getDateBeginStr();
-	var dateEndStr   = getDateEndStr();
-	console.log( "cloud period:   from: " + dateBeginStr   + ", till: " + dateEndStr );		// current date widget contents
-
-	var config = getConfig();
-	var datastore = config[ "datastore" ];
-		
-    params = getSearchParameters();
-
-	params = getCloudParameters( params );					// add user-changeable parameters
-
-    params["queryID"] = queryID;
-    params["query"] = dojo.byId("query").value;
-
-    console.log( "generating doc_id list cloud..." );
-    console.log(params);
+	var params = {
+		queryID: queryID
+	};
+	params = getCloudParameters(params);					// add user-changeable parameters
 
 	dojo.xhrGet({
         url: "services/cloud",
@@ -1015,10 +1004,10 @@ function onClickExecuteCloud( queryID )
                 return json_data.task;
 			}
 		}, function( err ) { console.error( err ); }
-    ).then(function(task_id){
-        console.log("Start polling!")
-        console.log("task_id: "+task_id)
-        if(task_id){
+    ).then(function(task_id) {
+        console.log("Start polling!");
+        console.log("task_id: " + task_id);
+        if(task_id) {
             // check every second
             check_status(task_id);
             // create cancel button

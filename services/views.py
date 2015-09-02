@@ -13,14 +13,15 @@ from django.http import HttpResponse
 from django.utils.html import escape
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
+from django.shortcuts import get_object_or_404
 
 from es import get_search_parameters, do_search, count_search_results, \
-    single_document_word_cloud, multiple_document_word_cloud, get_document, \
+    single_document_word_cloud, get_document, \
     metadata_aggregation, get_stemmed_form
 
-from texcavator.utils import json_response_message
+from texcavator.utils import json_response_message, daterange2dates
 
-from query.models import StopWord, Newspaper
+from query.models import Query, StopWord, Newspaper
 from query.utils import get_query_object
 
 from services.export import export_csv
@@ -104,76 +105,6 @@ def doc_count(request):
 
 @csrf_exempt
 @login_required
-def cloud(request):
-    """Return word cloud data using the terms aggregation approach
-
-    This view is currently not used, because it uses the terms aggregation
-    approach to generate word clouds, and this is not feasible in ES.
-
-    Returns word cloud data for a single document word cloud (based on a single
-    document id) and multiple document word clouds (either based on a list of
-    document ids (i.e., timeline burst cloud) or a query with metadata).
-    """
-    if settings.DEBUG:
-        print >> stderr, "cloud()"
-
-    result = None
-
-    params = get_search_parameters(request.REQUEST)
-
-    ids = request.REQUEST.get('ids')
-
-    # Cloud by ids
-    if ids:
-        ids = ids.split(',')
-
-        if len(ids) == 1:
-            # Word cloud for single document
-            t_vector = single_document_word_cloud(settings.ES_INDEX,
-                                                  settings.ES_DOCTYPE,
-                                                  ids[0])
-            return json_response_message('ok', 'Word cloud generated', t_vector)
-        else:
-            # Word cloud for multiple ids
-            result = multiple_document_word_cloud(params.get('collection'),
-                                                  settings.ES_DOCTYPE,
-                                                  params.get('query'),
-                                                  params.get('dates'),
-                                                  params.get('distributions'),
-                                                  params.get('article_types'),
-                                                  params.get('pillars'),
-                                                  ids)
-
-    # Cloud by queryID
-    query_id = request.REQUEST.get('queryID')
-
-    if query_id:
-        query, response = get_query_object(query_id)
-
-        if not query:
-            return response
-
-        # for some reason, the collection to be searched is stored in parameter
-        # 'collections' (with s added) instead of 'collection' as expected by
-        # get_search_parameters.
-        coll = request.REQUEST.get('collections', settings.ES_INDEX)
-
-        result = multiple_document_word_cloud(coll,
-                                              settings.ES_DOCTYPE,
-                                              query.query,
-                                              params.get('dates'),
-                                              params.get('distributions'),
-                                              params.get('article_types'),
-                                              params.get('pillars'))
-
-    if not result:
-        return json_response_message('error', 'No word cloud generated.')
-
-    return json_response_message('success', 'Word cloud generated', result)
-
-
-@csrf_exempt
-@login_required
 def tv_cloud(request):
     """Generate termvector word cloud using the termvector approach.
 
@@ -188,9 +119,7 @@ def tv_cloud(request):
     logger.info('services/cloud/ - termvector word cloud')
     logger.info('services/cloud/ - user: {}'.format(request.user.username))
 
-    params = get_search_parameters(request.REQUEST)
-
-    ids = request.REQUEST.get('ids')
+    # Retrieve the cloud settings
     query_id = request.GET.get('queryID')
     min_length = int(request.GET.get('min_length', 2))
     use_stopwords = request.GET.get('stopwords') == "1"
@@ -221,28 +150,32 @@ def tv_cloud(request):
 
         stopwords = stopwords_user + stopwords_query + stopwords_default
 
-    # Cloud by ids
-    if ids:
-        ids = ids.split(',')
+    record_id = request.GET.get('record_id')
+    if record_id:
+        # Cloud for a single document
+        t_vector = single_document_word_cloud(settings.ES_INDEX,
+                                              settings.ES_DOCTYPE,
+                                              record_id,
+                                              min_length,
+                                              stopwords,
+                                              stems)
+        return json_response_message('ok', 'Word cloud generated', t_vector)
+    else:
+        # Cloud for a query
+        logger.info('services/cloud/ - multiple document word cloud')
 
-        if len(ids) == 1:
-            # Word cloud for single document
-            logger.info('services/cloud/ - single document word cloud')
-            t_vector = single_document_word_cloud(settings.ES_INDEX,
-                                                  settings.ES_DOCTYPE,
-                                                  ids[0],
-                                                  min_length,
-                                                  stopwords,
-                                                  stems)
-            return json_response_message('ok', 'Word cloud generated', t_vector)
+        query = get_object_or_404(Query, pk=query_id)
+        params = query.get_query_dict()
 
-    # Cloud by queryID or multiple ids
-    logger.info('services/cloud/ - multiple document word cloud')
+        # If we're creating a timeline cloud, set the min/max dates
+        date_range = None
+        if request.GET.get('is_timeline'):
+            date_range = daterange2dates(request.GET.get('date_range'))
 
-    task = generate_tv_cloud.delay(params, min_length, stopwords, ids, stems)
-    logger.info('services/cloud/ - Celery task id: {}'.format(task.id))
+        task = generate_tv_cloud.delay(params, min_length, stopwords, date_range, stems)
+        logger.info('services/cloud/ - Celery task id: {}'.format(task.id))
 
-    return json_response_message('ok', '', {'task': task.id})
+        return json_response_message('ok', '', {'task': task.id})
 
 
 @login_required
