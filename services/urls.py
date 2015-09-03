@@ -14,7 +14,7 @@ urlpatterns = patterns(
     url(r'cancel_task/(?P<task_id>[\w-]+)$', 'cancel_by_task_id'),
 
     url(r'kb/resolver/$', 'retrieve_kb_resolver'),
-    url(r'retrieve/(?P<doc_id>[\w:]+)', 'retrieve_document'),
+    url(r'retrieve/(?P<doc_id>[-\w:]+)', 'retrieve_document'),
     url(r'search/$', 'search'),
 
     url(r'scan/$', 'download_scan_image'),
