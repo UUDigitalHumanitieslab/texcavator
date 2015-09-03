@@ -3,6 +3,7 @@
 *.old
 *~
 texcavator/static/js/dojo-*
+texcavator/settings_local.py
 celeryev.pid
 .exvim.*
 *.exvim

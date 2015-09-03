@@ -52,6 +52,8 @@ Then install the JavaScript toolkit Dojo_, on which the user interface is built:
 
 In ``texcavator/settings.py``, you can change the path to the log file, if you like.
 
+Copy ``texcavator/settings_local_default.py`` to ``texcavator/settings_local.py``. The latter file is not kept under version control.
+
 In ``texcavator/settings_local.py``, set up the database; for a quick test, set::
 
     DATABASES = {
