@@ -68,3 +68,13 @@ def json_response_message(status, message, params=None):
         response[param] = value
 
     return JsonResponse(response)
+
+
+def flip_dict(dictionary):
+    """
+    Returns a new dict in which the keys and values have switched roles.
+    
+    The keys of the input `dictionary` become the values of the return value
+    and vice versa.
+    """
+    return dict(izip(dictionary.itervalues(), dictionary.iterkeys()))

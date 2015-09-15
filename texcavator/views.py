@@ -1,16 +1,25 @@
 # -*- coding: utf-8 -*-
+import json
+
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.views.decorators.csrf import csrf_exempt
 
-from texcavator.utils import json_response_message, daterange2dates
+from texcavator.utils import json_response_message, daterange2dates, flip_dict
 from texcavator.timestamp import TIMESTAMP
 
 
 def index(request):
     """Render main page."""
+
+    from services.es import _KB_DISTRIBUTION_VALUES, _KB_ARTICLE_TYPE_VALUES
+    config_reverse_mapping = {
+        'sd': flip_dict(_KB_DISTRIBUTION_VALUES),
+        'st': flip_dict(_KB_ARTICLE_TYPE_VALUES),
+    }
+
     date_limits = daterange2dates(settings.TEXCAVATOR_DATE_RANGE)
 
     data = {
@@ -19,6 +28,7 @@ def index(request):
         "PROJECT_MAX_DATE": date_limits[0]['upper'],
         "QUERY_DATA_DOWNLOAD_ALLOW": settings.QUERY_DATA_DOWNLOAD_ALLOW,
         "ES_INDEX": settings.ES_INDEX,
+        "ES_REVERSE_MAPPING": json.dumps(config_reverse_mapping),
         "ILPS_LOGGING": settings.ILPS_LOGGING
     }
 

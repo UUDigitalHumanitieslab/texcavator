@@ -68,6 +68,8 @@ function addPieChart(data, id) {
             })
             .valueFormat(d3.format(",d"))
             .showLabels(true);
+            
+        chart.pie.dispatch.on('elementClick', filterSearch(id));
 
         d3.select(id + " svg")
             .datum(data)
@@ -76,4 +78,40 @@ function addPieChart(data, id) {
 
         return chart;
     });
+}
+
+// Issue a new search when a pie segment is clicked, filtered by the segment
+function filterSearch(id) {
+    if (id === "#chart_articletype") return function(segmentData) {
+        var selected = ES_REVERSE_MAPPING.st[segmentData.label].slice(3);
+        for (key in config.search.type) {
+            if (key === selected) {
+                config.search.type[key] = true;
+            } else {
+                config.search.type[key] = false;
+            }
+        }
+        searchSubmit();
+    }; else if (id === "#chart_distribution") return function(segmentData) {
+        var selected = ES_REVERSE_MAPPING.sd[segmentData.label].slice(3);
+        for (key in config.search.distrib) {
+            if (key === selected) {
+                config.search.distrib[key] = true;
+            } else {
+                config.search.distrib[key] = false;
+            }
+        }
+        searchSubmit();
+    }; else /* id === "#chart_pillar" */ return function(segmentData) {
+        var selected = segmentData.label;
+        $('.pillars input').each(function(i) {
+            var elem = $(this);
+            if (elem.attr('id') === 'cb-pillar-' + selected) {
+                elem.prop('checked') = true;
+            } else {
+                elem.prop('checked') = false;
+            }
+        });
+        searchSubmit();
+    }
 }
