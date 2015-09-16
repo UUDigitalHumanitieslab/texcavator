@@ -248,25 +248,39 @@ function createGraph() {
 		dest.innerHTML = ""; // Clear existing destination
 	}
 
-	var w = $("#chartDiv").width() - 70,
-		h = $("#chartDiv").height(),
-		x = d3.time.scale().range([50, w - 20]),
-		y = d3.scale.linear().range([h - 20, 0]);
+	// This follows the margin convention (http://bl.ocks.org/mbostock/3019563)
+	var margin = {top: 30, right: 30, bottom: 30, left: 50},
+		w = $("#chartDiv").width() - margin.left - margin.right,
+		h = $("#chartDiv").height() - margin.top - margin.bottom;
+
+	var x = d3.time.scale().range([0, w]);
+	var y = d3.scale.linear().range([h, 0]);
+
 	console.log("createGraph() w=" + w + ", h=" + h); // debug: sometimes the graph is compressed to a small width
 
-	// Update the scale domains.
+	var xAxis = d3.svg.axis()
+		.scale(x)
+		.orient("bottom")
+		.ticks(d3.time.years, 10);
+
+	var yAxis = d3.svg.axis()
+		.scale(y)
+		.orient("left")
+		.ticks(10);
+
+	// Update the scale domains
 	x.domain(burstData[burstIntervalIndex].dateRange);
 	y.domain(burstData[burstIntervalIndex].range);
 
-	// An SVG element
+	// Create the SVG element of the chart
 	var svg = d3.select("#chartDiv").append("svg:svg")
-		.attr("width", w)
-		.attr("height", h)
-		.attr("pointer-events", "all")
-		.append("svg:g")
-		.call(d3.behavior.zoom().on("zoom", redraw));
+		.attr("width", w + margin.left + margin.right)
+		.attr("height", h + margin.top + margin.bottom)
+		.attr("pointer-events", "all");
 
-	var body = svg.append("svg:g");
+	var body = svg.append("svg:g")
+		.attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+		.call(d3.behavior.zoom().on("zoom", redraw));
 
 	function filterFunction(d) {
 		if (d.end.getTime() < x.domain()[0])
@@ -314,73 +328,15 @@ function createGraph() {
 				previousXdomain[1].getTime() != x.domain()[1].getTime())) {
 			closePopup();
 		}
+		
+		body.append("g")
+			.attr("class", "x axis")
+			.attr("transform", "translate(0," + h + ")")
+			.call(xAxis);
 
-		var ticksX = x.ticks(10);
-		if (ticksX.length > 16) {
-			ticksX = x.ticks(d3.time.years, 5);
-		}
-		if (ticksX.length > 16) {
-			ticksX = x.ticks(d3.time.years, 10);
-		}
-		if (ticksX.length > 16) {
-			ticksX = x.ticks(d3.time.years, 20);
-		}
-
-		var fx = x.tickFormat(10),
-			fy = y.tickFormat(10),
-			tx = function(d) {
-				return "translate(" + x(d) + ",0)";
-			},
-			ty = function(d) {
-				return "translate(0," + y(d) + ")";
-			};
-
-		// Regenerate x-ticks
-		var gx = svg.selectAll("g.x")
-			.data(ticksX, fx)
-			.attr("transform", tx);
-
-		var gxe = gx.enter().insert("svg:g", "a")
-			.attr("class", "x")
-			.attr("transform", tx);
-
-		gxe.append("svg:line")
-			.attr("stroke", "#555")
-			.attr("y1", h - 20)
-			.attr("y2", h - 15);
-
-		gxe.append("svg:text")
-			.attr("y", h - 12)
-			.attr("dy", "1em")
-			.attr("text-anchor", "middle")
-			.text(fx);
-
-		gx.exit().remove();
-
-		// Regenerate y-ticks
-		var gy = svg.selectAll("g.y")
-			.data(y.ticks(10), String)
-			.attr("transform", ty);
-
-		gy.select("text")
-			.text(fy);
-
-		var gye = gy.enter().insert("svg:g", "rect")
-			.attr("class", "y")
-			.attr("transform", ty);
-
-		gye.append("svg:line")
-			.attr("stroke", "#555")
-			.attr("x1", 45)
-			.attr("x2", 50);
-
-		gye.append("svg:text")
-			.attr("x", 40)
-			.attr("dy", ".35em")
-			.attr("text-anchor", "end")
-			.text(fy);
-
-		gy.exit().remove();
+		body.append("g")
+			.attr("class", "y axis")
+			.call(yAxis);
 
 		var newData;
 		filteredData = burstData[burstIntervalIndex].data.filter(filterFunction);
@@ -425,7 +381,7 @@ function createGraph() {
 		// 'd' is the data, 'i' is the bar index: 0, 1, ..., 'this' is a svg rect class
 		bursts.enter().append("svg:rect")
 			.attr("class", "bursts")
-			.attr("y", h - 20)
+			.attr("y", h)
 			.on("mouseover", function(d, i) {
 				d3.select(this).transition().duration(300).style("opacity", 0.5);
 			})
@@ -441,7 +397,7 @@ function createGraph() {
 				return y(d.value);
 			})
 			.attr("height", function(d) {
-				return h - 20 - y(d.value);
+				return h - y(d.value);
 			});
 
 		// Delete unneeded bursts and path
@@ -482,7 +438,7 @@ function createGraph() {
 			.attr("class", "period")
 			.attr("fill", "#555")
 			.attr("x", 50)
-			.attr("y", 22)
+			.attr("y", 0)
 			.attr("dy", "1em")
 			.attr("text-anchor", "left");
 
@@ -511,7 +467,7 @@ function createGraph() {
 
 
 	// Raise the bars
-	y.range([h - 20, 0]);
+	y.range([h, 0]);
 
 	if (dijit.byId('sparksDialog') === undefined) {
 		var dialog = new dijit.TooltipDialog({

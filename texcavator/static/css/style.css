@@ -28,3 +28,15 @@
 #result #resultHeader span {
 	margin-right: 24px;
 }
+
+/* D3 chart axes */
+.axis text {
+  font: 12px sans-serif;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
