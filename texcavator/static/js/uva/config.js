@@ -83,7 +83,8 @@ var config = {
 	},
 
 	querydataexport: { // query data
-		format: "csv" // "json", "xml", or "csv"
+		format: "csv", // "json", "xml", or "csv"
+		simplified: false
 	}
 };
 

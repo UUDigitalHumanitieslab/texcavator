@@ -274,22 +274,26 @@ def zip_chunk(req_dict, ichunk, hits_list, zip_file, csv_writer, format):
         print >> stderr, "zip_chunk(): empty hit list"
         return
 
-    for h in range(len(hits_list)):
-        hit = hits_list[h]
+    is_simplified = req_dict.get('simplified', False) == "true"
 
-        _id = hit["_id"]
+    for i, hit in enumerate(hits_list):
+        # Use '-' instead of ':' in file names (Windows doesn't like colons in filenames)
+        pseudo_filename = hit["_id"].replace(':', '-')
 
-        # use '-' instead of ':' in file names
-        pseudo_filename = _id.replace(':', '-')
+        # For the simplified export, only export the article title and full text
+        if is_simplified:
+            hit = {c: hit["_source"][c] for c in ["article_dc_title", "text_content"]}
+
+        # Alternative export per format (xml, csv, json)
         if format == "xml":
             pseudo_filename += ".xml"
             xml = dicttoxml(hit)
-            zip_file.writestr(pseudo_filename, xml.encode("utf-8"))
+            zip_file.writestr(pseudo_filename, xml)
         elif format == "csv":
-            if h == 0:
+            if i == 0:
                 if ichunk == 0:
                     hit2csv_metadata(csv_writer, req_dict)
-                es_header_names, kb_header_names = hit2csv_header(csv_writer, ichunk)
+                es_header_names, kb_header_names = hit2csv_header(csv_writer, ichunk, is_simplified)
             hit2csv_data(csv_writer, hit, es_header_names, kb_header_names)
         else:         # "json"
             pseudo_filename += ".json"
@@ -319,49 +323,55 @@ def hit2csv_metadata(csv_writer, req_dict):
     csv_writer.writerow(md_row)
 
 
-def hit2csv_header(csv_writer, ichunk):
-    """Returns the header row of the csv that is created.
+def hit2csv_header(csv_writer, ichunk, is_simplified):
     """
-    es_header_names = ["_id", "_score"]
+    Returns the header row of the csv that is created.
+    For the simplified export, only the article title and text content are included.
+    """
+    es_header_names = kb_header_names = []
 
-    kb_header_names = \
-        ["identifier",                        # 2
+    if not is_simplified:
+        es_header_names = ["_id", "_score"]
 
-         "paper_dc_date",                    # 3
-         "paper_dc_identifier",                # 4
-         "paper_dc_identifier_resolver",        # 5
-         "paper_dc_language",                # 6
-         "paper_dc_title",                    # 7
-         "paper_dc_publisher",                # 8
-         "paper_dc_source",                    # 9
+    if is_simplified:
+        kb_header_names = ["article_dc_title", "text_content"]
+    else:
+        kb_header_names = \
+            ["identifier",                        # 2
 
-         "paper_dcterms_alternative",         # 10
-         "paper_dcterms_isPartOf",            # 11
-         "paper_dcterms_isVersionOf",        # 12
-         "paper_dcterms_issued",                # 13
-         "paper_dcterms_spatial",            # 14
-         "paper_dcterms_spatial_creation",     # 15
-         "paper_dcterms_temporal",            # 16
+             "paper_dc_date",                    # 3
+             "paper_dc_identifier",                # 4
+             "paper_dc_identifier_resolver",        # 5
+             "paper_dc_language",                # 6
+             "paper_dc_title",                    # 7
+             "paper_dc_publisher",                # 8
+             "paper_dc_source",                    # 9
 
-         "paper_dcx_issuenumber",   # 17 can contain '-' instead of a number
-         "paper_dcx_recordRights",              # 18
-         "paper_dcx_recordIdentifier",         # 19
-         "paper_dcx_volume",                    # 20
+             "paper_dcterms_alternative",         # 10
+             "paper_dcterms_isPartOf",            # 11
+             "paper_dcterms_isVersionOf",        # 12
+             "paper_dcterms_issued",                # 13
+             "paper_dcterms_spatial",            # 14
+             "paper_dcterms_spatial_creation",     # 15
+             "paper_dcterms_temporal",            # 16
 
-         "paper_ddd_yearsDigitized",            # 21
+             "paper_dcx_issuenumber",   # 17 can contain '-' instead of a number
+             "paper_dcx_recordRights",              # 18
+             "paper_dcx_recordIdentifier",         # 19
+             "paper_dcx_volume",                    # 20
 
-         "article_dc_identifier_resolver",    # 21
-         "article_dc_subject",                # 22
-         "article_dc_title",                    # 23
-         "article_dcterms_accessRights",        # 24
-         "article_dcx_recordIdentifier",        # 25
+             "paper_ddd_yearsDigitized",            # 21
 
-         "text_content"]                        # 26
+             "article_dc_identifier_resolver",    # 21
+             "article_dc_subject",                # 22
+             "article_dc_title",                    # 23
+             "article_dcterms_accessRights",        # 24
+             "article_dcx_recordIdentifier",        # 25
 
-    header_names = es_header_names + kb_header_names
+             "text_content"]                        # 26
 
     if ichunk == 0:
-        csv_writer.writerow(header_names)
+        csv_writer.writerow(es_header_names + kb_header_names)
 
     return es_header_names, kb_header_names
 
@@ -378,7 +388,7 @@ def hit2csv_data(csv_writer, hit, es_header_names, kb_header_names):
         es_line.append(val)
 
     kb_line = []
-    _source = hit["_source"]
+    _source = hit["_source"] if "_source" in hit else hit
     for kb_name in kb_header_names:
         try:
             # in number fields, this troubles Jose's SPSS

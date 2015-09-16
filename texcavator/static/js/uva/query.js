@@ -286,6 +286,25 @@ function createQueryDlg() {
 		innerHTML: "&nbsp;CSV (TAB delimited)<br/>"
 	}, cpQData.domNode);
 
+	// Simplified export
+	var divSimplifiedExport = dojo.create("div", {
+		id: "div-simplified-export"
+	}, cpQData.domNode);
+
+	var cbSimplifiedExport = new dijit.form.CheckBox({
+		id: "cb-simplified-export",
+		checked: config.querydataexport.simplified,
+		onChange: function(btn) {
+			config.querydataexport.simplified = btn;
+		}
+	}, divSimplifiedExport);
+
+	var labelSimplifiedExport = dojo.create("label", {
+		id: "label-simplified-export",
+		for: "cb-simplified-export",
+		innerHTML: "&nbsp;Simplified export (only article title and full text)<br/>"
+	}, cpQData.domNode);
+
 
 	// fill the query list
 	var queryListStoreData = new dojo.store.Memory({
@@ -454,7 +473,8 @@ function okDownload(query_title) {
 	var params = {
 		collection: ES_INDEX,
 		query_title: query_title,
-		format: config.querydataexport.format // "json", "xml" or "csv"
+		format: config.querydataexport.format, // "json", "xml" or "csv"
+		simplified: config.querydataexport.simplified
 	};
 
 	dojo.xhrGet({
