@@ -28,3 +28,7 @@
 #result #resultHeader span {
 	margin-right: 24px;
 }
+.filter-reset-btn {
+    margin-left: 40%;
+    font-size: 15px;
+}
