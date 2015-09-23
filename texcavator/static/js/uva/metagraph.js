@@ -103,15 +103,16 @@ function filterSearch(id) {
         }
         searchSubmit();
     }; else /* id === "#chart_pillar" */ return function(segmentData) {
-        var selected = segmentData.label;
-        $('.pillars input').each(function(i) {
+        getToolbarConfig();  // ensure that the checkboxes exist
+        var selectedID = 'cb-pillar-' + segmentData.label;
+        $('.pillar input').each(function(i) {
             var elem = $(this);
-            if (elem.attr('id') === 'cb-pillar-' + selected) {
-                elem.prop('checked') = true;
+            if (elem.attr('id') === selectedID) {
+                elem.prop('checked', true);
             } else {
-                elem.prop('checked') = false;
+                elem.prop('checked', false);
             }
         });
         searchSubmit();
-    }
+    };
 }
