@@ -145,17 +145,13 @@ var getSelectedPillars = function() {
 };
 
 
-var toolbarConfig = function() {
-	if (!dijit.byId("config")) {
-		//	console.log( "creating config" );
-		createConfig();
-	}
-	showConfig();
+var getToolbarConfig = function() {
+    return (dijit.byId("config") || createConfig());
 };
 
 
 var showConfig = function() {
-	dijit.byId("config").show();
+	getToolbarConfig().show();
 };
 
 
@@ -1185,4 +1181,5 @@ var createConfig = function() {
 		}
 	});
 	actionBar.appendChild(bOK.domNode);
+    return dijit.byId("config");
 }; // createConfig
