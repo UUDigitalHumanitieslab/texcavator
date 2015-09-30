@@ -165,7 +165,7 @@ def timeline(request, query_id, resolution):
         print >> stderr, "query/bursts() query_id:", query_id, \
                          "resolution:", resolution
 
-    normalize = request.REQUEST.get('normalize') == 1
+    normalize = request.GET.get('normalize') == '1'
     bg_smooth = False
 
     query = get_object_or_404(Query, pk=query_id)
