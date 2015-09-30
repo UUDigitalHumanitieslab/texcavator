@@ -290,37 +290,33 @@ def zip_chunk(req_dict, ichunk, hits_list, zip_file, csv_writer, format):
             xml = dicttoxml(hit)
             zip_file.writestr(pseudo_filename, xml)
         elif format == "csv":
+            # By default, metadata is an empty cell
+            metadata = ''
             if i == 0:
-                if ichunk == 0:
-                    hit2csv_metadata(csv_writer, req_dict)
                 es_header_names, kb_header_names = hit2csv_header(csv_writer, ichunk, is_simplified)
-            hit2csv_data(csv_writer, hit, es_header_names, kb_header_names)
+                if ichunk == 0:
+                    # Only on the first row of the first chunk, we set the metadata
+                    metadata = hit2csv_metadata(req_dict)
+            hit2csv_data(csv_writer, hit, metadata, es_header_names, kb_header_names)
         else:         # "json"
             pseudo_filename += ".json"
             zip_file.writestr(pseudo_filename, json.dumps(hit))
 
 
-def hit2csv_metadata(csv_writer, req_dict):
-    """Writes the metadata rows
+def hit2csv_metadata(req_dict):
     """
-    md_header = ['comment',
-                 'query',
-                 'date executed',
-                 'excluded article types',
-                 'excluded distributions',
-                 'selected pillars']
-    md_row = [req_dict['comment'],
-              req_dict['query'],
-              req_dict['date_created'],
-              req_dict['exclude_article_types'],
-              req_dict['exclude_distributions'],
-              req_dict['selected_pillar_names']]
-    for d in req_dict['dates']:
-        md_header.extend(['date_lower', 'date_upper'])
-        md_row.extend([d['lower'], d['upper']])
-
-    csv_writer.writerow(md_header)
-    csv_writer.writerow(md_row)
+    Returns the metadata in JSON format.
+    Encode the JSON to UTF-8 in two steps (see http://stackoverflow.com/a/18337754/3710392):
+    the default dumps method will return only ASCII characters, but for later processing UTF-8 is required.
+    """
+    result = {'comment': req_dict['comment'],
+              'query': req_dict['query'],
+              'date executed': req_dict['date_created'],
+              'excluded article types': req_dict['exclude_article_types'],
+              'excluded distributions': req_dict['exclude_distributions'],
+              'selected pillars': req_dict['selected_pillar_names'],
+              'selected periods': req_dict['dates']}
+    return json.dumps(result, ensure_ascii=False).encode('utf8')
 
 
 def hit2csv_header(csv_writer, ichunk, is_simplified):
@@ -329,6 +325,7 @@ def hit2csv_header(csv_writer, ichunk, is_simplified):
     For the simplified export, only the article title and text content are included.
     """
     es_header_names = kb_header_names = []
+    metadata_header_name = ["metadata"]
 
     if not is_simplified:
         es_header_names = ["_id", "_score"]
@@ -371,12 +368,12 @@ def hit2csv_header(csv_writer, ichunk, is_simplified):
              "text_content"]                        # 26
 
     if ichunk == 0:
-        csv_writer.writerow(es_header_names + kb_header_names)
+        csv_writer.writerow(metadata_header_name + es_header_names + kb_header_names)
 
     return es_header_names, kb_header_names
 
 
-def hit2csv_data(csv_writer, hit, es_header_names, kb_header_names):
+def hit2csv_data(csv_writer, hit, metadata, es_header_names, kb_header_names):
     """Writes a single document to the csv file.
     """
     es_line = []
@@ -395,11 +392,11 @@ def hit2csv_data(csv_writer, hit, es_header_names, kb_header_names):
             if _source[kb_name] == '-':
                 val = ''
             else:
-                val = _source[kb_name].replace('\n', ' ').encode("utf-8")
+                val = _source[kb_name].replace('\n', ' ').encode('utf8')
         except:
             val = ""
         kb_line.append(val)
 
-    data_line = es_line + kb_line
+    data_line = [metadata] + es_line + kb_line
 
     csv_writer.writerow(data_line)
