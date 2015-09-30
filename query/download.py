@@ -5,14 +5,13 @@ Query data download (export) functionality.
 
 import os
 import datetime
-import unicodedata
 import base64
 import logging
 import json
-import subprocess
 from sys import stderr
 
 from django.conf import settings
+from django.utils.text import get_valid_filename
 
 from .tasks import zipquerydata
 
@@ -20,20 +19,11 @@ logger = logging.getLogger(__name__)
 
 
 def create_zipname(user, query):
-    """Returns a name for the zipfile containing the exported data.
+    """
+    Returns a (valid) filename for the zipfile containing the exported data.
     """
     date_created = query.date_created.strftime('%Y.%m.%d-%H.%M.%S')
-    return '_'.join([user.username, query.title, date_created])
-
-
-def clean_filename(s):
-    """Strips problematic characters from filename
-    """
-    s = ''.join((c for c in unicodedata.normalize('NFD', s)
-                 if unicodedata.category(c) != 'Mn'))
-    s = s.replace(' ', '_')
-    s = "".join(i for i in s if (i.isalnum() or i == '_'))
-    return s
+    return get_valid_filename('_'.join([user.username, query.title, date_created]))
 
 
 def execute(query, req_dict, zip_basename, to_email, email_message):
