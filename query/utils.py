@@ -11,7 +11,8 @@ from texcavator.utils import json_response_message
 
 
 def get_query_object(query_id):
-    """Returns the query object stored for a query id and an appropriate error
+    """
+    Returns the query object stored for a query id and an appropriate error
     message if the query cannot be retrieved.
     """
     query = None
@@ -33,24 +34,19 @@ def get_query_object(query_id):
     return query, response
 
 
-def query2docidsdate(query, date_begin, date_end):
-    """Get the document ids plus their date for the query and date range.
+def query2docidsdate(query):
     """
-    # this is called multiple times by the timeline
+    Get the document ids plus their date for the query.
+    """
     if settings.DEBUG:
         print >> stderr, "query2docidsdate()"
-
-    date_ranges = [{
-        'lower': date_begin,
-        'upper': date_end
-    }]
 
     query_dict = query.get_query_dict()
 
     return get_document_ids(settings.ES_INDEX,
                             settings.ES_DOCTYPE,
                             query_dict['query'],
-                            date_ranges,
+                            query_dict['dates'],
                             query_dict['exclude_distributions'],
                             query_dict['exclude_article_types'],
                             query_dict['selected_pillars'])

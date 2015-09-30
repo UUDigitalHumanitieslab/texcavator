@@ -182,9 +182,7 @@ def timeline(request, query_id, resolution):
         if enddate >= dc['date'] >= begindate:
             date2countC[dc['date']] = dc['count']
 
-    documents_raw = query2docidsdate(query,
-                                     str(begindate),
-                                     str(enddate))
+    documents_raw = query2docidsdate(query)
     documents = sorted(documents_raw, key=lambda k: k["date"])
     doc2date = {}
     for doc in documents:
