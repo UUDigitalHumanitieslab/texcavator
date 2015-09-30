@@ -82,3 +82,6 @@ LOGIN_URL = '/'
 
 # Temporary setting for whether or not stemming is available
 STEMMING_AVAILABLE = True
+
+# Temporary setting for whether or not the hotfix for duplicate newspapers should be used
+KB_HOTFIX_DUPLICATE_NEWSPAPERS = True
