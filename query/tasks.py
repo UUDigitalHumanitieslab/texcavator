@@ -184,11 +184,11 @@ def download_collect(req_dict, zip_basename, to_email, email_message):
         # create csv file
         try:
             csv_file = open(csv_pathname, 'w')
-            quotechar = '"'        # default
+            csv_file.write(u'\uFEFF'.encode('utf-8'))  # the UTF-8 BOM to hint Excel we are using that.
             csv_writer = csv.writer(csv_file,
                                     delimiter='\t',
                                     quoting=csv.QUOTE_NONNUMERIC,
-                                    quotechar=quotechar)
+                                    quotechar='"')
         except Exception as e:
             msg = "opening CSV file failed: %s" % str(e)
             if settings.DEBUG:
