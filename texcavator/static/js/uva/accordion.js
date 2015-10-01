@@ -141,7 +141,7 @@ function createQueryLine(item) {
 		disabled: false,
 		label: "Re-search",
 		showLabel: false,
-		title: "Re-search: " + title,
+		title: "Re-search",
 		pk: item.pk,
 		iconClass: "dijitIconNewTask",
 		onClick: function() {
@@ -162,9 +162,9 @@ function createQueryLine(item) {
 	dojo.place((new dijit.form.Button({
 		id: "btn-sq-cloud-" + item.pk,
 		disabled: false,
-		label: "Apply",
+		label: "Generate wordcloud and metadata graphs",
 		showLabel: false,
-		title: "Apply query: " + item.query,
+		title: "Generate wordcloud and metadata graphs",
 		query: item.query,
 		pk: item.pk,
 		iconClass: "dijitIconSearch",
