@@ -552,6 +552,9 @@ function nextResults( amount )
 
 		var ocr_pane = "record";
 		var cloud_pane = "cloudPane";
+    	var art_container = "articleContainer";
+        var tc = dijit.byId( art_container );
+    	tc.selectChild( dijit.byId( ocr_pane ) );		// select OCR tab
 		
         dojo.place( new dijit.ProgressBar( { indeterminate: true } ).domNode, dojo.byId( ocr_pane ), "only" );
 		dojo.place( new dijit.ProgressBar( { indeterminate: true } ).domNode, dojo.byId( cloud_pane ), "only" );
