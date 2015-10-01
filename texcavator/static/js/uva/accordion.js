@@ -138,11 +138,7 @@ function createQueryLine(item) {
 
 	dojo.place((new dijit.form.Button({
 		id: "btn-sq-fetch-" + item.pk,
-		disabled: false,
-		label: "Re-search",
-		showLabel: false,
 		title: "Re-search",
-		pk: item.pk,
 		iconClass: "dijitIconNewTask",
 		onClick: function() {
 			console.log("Re-search " + title);
@@ -161,12 +157,7 @@ function createQueryLine(item) {
 
 	dojo.place((new dijit.form.Button({
 		id: "btn-sq-cloud-" + item.pk,
-		disabled: false,
-		label: "Generate wordcloud and metadata graphs",
-		showLabel: false,
 		title: "Generate wordcloud and metadata graphs",
-		query: item.query,
-		pk: item.pk,
 		iconClass: "dijitIconSearch",
 		onClick: function() {
 			onClickExecute(item);
@@ -186,12 +177,8 @@ function createQueryLine(item) {
 	// timeline for lexicon item
 	dojo.place((new dijit.form.Button({
 		id: "btn-sq-timeline-" + item.pk,
-		disabled: false,
-		label: "Timeline",
-		showLabel: false,
 		title: "Timeline",
 		iconClass: "dijitIconChart",
-		pk: item.pk,
 		onClick: function() {
 			var collection = collection_fromradio();
 			showTimeline(item, collection); // timeline.js
@@ -209,11 +196,8 @@ function createQueryLine(item) {
 
 	dojo.place((new dijit.form.Button({
 		id: "btn-sq-modify-" + item.pk,
-		label: "Modify",
-		showLabel: false,
 		title: "Modify",
 		iconClass: "dijitIconSave",
-		pk: item.pk,
 		onClick: function() {
 			var title = dojo.byId("lexiconItemTitle").value;
 			var comment = dojo.byId("queryComment").value;
@@ -236,11 +220,8 @@ function createQueryLine(item) {
 
 	dojo.place((new dijit.form.Button({
 		id: "btn-sq-delete-" + item.pk,
-		label: "Delete",
-		showLabel: false,
 		title: "Delete",
 		iconClass: "dijitIconDelete",
-		pk: item.pk,
 		onClick: function() {
 			genDialog(
 				"Delete query",
