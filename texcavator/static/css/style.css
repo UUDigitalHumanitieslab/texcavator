@@ -29,6 +29,11 @@
 	margin-right: 24px;
 }
 
+.filter-reset-btn {
+    margin-left: 40%;
+    font-size: 15px;
+}
+
 /* D3 chart axes */
 .axis text {
   font: 12px sans-serif;
