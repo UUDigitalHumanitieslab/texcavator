@@ -145,6 +145,27 @@ var getSelectedPillars = function() {
 };
 
 
+var resetArticleTypes = function() {
+    for (key in config.search.type) {
+        config.search.type[key] = true;
+    }
+};
+
+
+var resetDistributions = function() {
+    for (key in config.search.distrib) {
+        config.search.distrib[key] = true;
+    }
+};
+
+
+var resetPillars = function() {
+    $('.pillar input').each(function(i) {
+        $(this).prop('checked', true);
+    });
+};
+
+
 var getToolbarConfig = function() {
     return (dijit.byId("config") || createConfig());
 };
