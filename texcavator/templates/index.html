@@ -625,19 +625,24 @@ function nextResults( amount )
 		retrieveRecordCloudData( record_id, ocr_text );
 	}
 
+	// Creates a single article cloud
 	var retrieveRecordCloudData = function( record_id, ocr_text )
 	{
 		console.log( "retrieveRecordCloudData: " + record_id );
 
-		// create single article cloud
+        // Cancel any existing request for a word cloud
+        if (current_task_id !== undefined) {
+            cancel_celery_task(current_task_id);
+        }
+
+        // Collect the parameters
 		var params = {
 		    "collections": ES_INDEX,		// 	can be more than 1
 		    "record_id": record_id
 		}
 	    params = getCloudParameters( params );
-		
-        var cloud_pane = "cloudPane";
 
+        // Create a request for a word cloud
         dojo.xhrGet({
             url: "services/cloud",
             content: params,
@@ -663,7 +668,7 @@ function nextResults( amount )
 				{
 					var nwords = json_data.result.length;
 					console.log( "cloud words: " + nwords );
-					createCloud( "article", json_data, "borderContainer", cloud_pane );
+					createCloud( "article", json_data, "borderContainer", "cloudPane" );
 					return response;
 				}
 		
@@ -949,35 +954,39 @@ function onClickExecute(item)
 } // onClickExecute
 
 
-
 function onClickExecuteCloud( queryID )
 {
-	var collection = collection_fromradio();
-	console.log( "onClickExecuteCloud() queryID: " + queryID + ", collection: " + collection );
+	console.log("onClickExecuteCloud() queryID: " + queryID);
 
-	var cloud_pane = "cloudPane";
-	var art_container =  "articleContainer"
-	
-    var tc = dijit.byId( art_container );
-	tc.selectChild( dijit.byId( cloud_pane ) );		// select cloud tab
-    
-    dojo.byId(cloud_pane).innerHTML = '';
-    var pBar = new dijit.ProgressBar({ indeterminate: true });
-	dojo.place( pBar.domNode, dojo.byId( cloud_pane ), "first" );
+    // Cancel any existing request for a word cloud
+	if (current_task_id !== undefined) {
+	    cancel_celery_task(current_task_id);
+	}
+
+    // Select the cloud tab
+	dijit.byId("articleContainer").selectChild(dijit.byId("cloudPane"));
+
+    // Create a progress bar and cancel button
+    dojo.byId("cloudPane").innerHTML = '';
+    var pBar = new dijit.ProgressBar({indeterminate: true});
+	dojo.place(pBar.domNode, dojo.byId("cloudPane"), "first");
     dojo.place('<div id="wordcloud_progress">Progress: 0 of ?</div><div id="cancel_wordcloud"></div>', pBar.domNode, "after");
 
-	canvas = dojo.byId( "cloudCanvas" );
-	if( canvas && canvas.getContext )
+    // Clear the canvas
+	canvas = dojo.byId("cloudCanvas");
+	if (canvas && canvas.getContext)
 	{
 		var context = canvas.getContext( '2d' );		// get the 2d context
 		if( context ) { context.clearRect ( 0, 0, canvas.width, canvas.height ); }
 	}
 
+    // Set the cloud parameters
 	var params = {
 		queryID: queryID
 	};
-	params = getCloudParameters(params);					// add user-changeable parameters
+	params = getCloudParameters(params);
 
+    // Create a request for a word cloud, and then start polling for the cloud
 	dojo.xhrGet({
         url: "services/cloud",
 		content: params, 
@@ -1018,21 +1027,22 @@ function onClickExecuteCloud( queryID )
     });
 } // onClickExecuteCloud
 
-var interval_id;
-var task_number;
+// Global variables to keep track of the current word cloud task
+var current_task_id;
+var current_interval_id;
 
 /*
  * Functions for polling celery task
  */
  function handle_error(xhr, textStatus, errorThrown) {
-     clearTimeout(interval_id);
+     clearTimeout(current_interval_id);
      console.log("Please report this error: "+errorThrown+xhr.status+xhr.responseText);
  }
 
  function show_status(obj) {
      console.log(obj);
      if (obj.error) {
-        clearTimeout(interval_id);
+        clearTimeout(current_interval_id);
         console.log(obj.error);
      }
      if (obj.status == "WAITING"){
@@ -1041,12 +1051,12 @@ var task_number;
             console.log('Update wordcloud progress');
             update_wordcloud_progress(obj.current, obj.total);
         }
-        clearTimeout(interval_id);
-        check_status(task_number);
+        clearTimeout(current_interval_id);
+        check_status(current_task_id);
      }
      else if (obj.status == "ok"){
         console.log("finished generating cloud");
-        clearTimeout(interval_id);
+        clearTimeout(current_interval_id);
         // show the solution
         if(obj.burstcloud){
             placeCloudInTarget( "burst", obj, 'cloud' );
@@ -1054,7 +1064,7 @@ var task_number;
             createCloud( "normal", obj, "borderContainer", "cloudPane" );
         }
      } else {
-        clearTimeout(interval_id);
+        clearTimeout(current_interval_id);
         console.log("other status for celery task");
         console.log(obj);
 		var title = "Wordcloud failed";
@@ -1064,11 +1074,11 @@ var task_number;
 }
 
 function check_status(task_id) {
-    task_number = task_id;
-    interval_id = setTimeout(function(){
+    current_task_id = task_id;
+    current_interval_id = setTimeout(function(){
         console.log('checking status of task_id ' + task_id);
         $.ajax({
-            type: "GET",
+            method: "GET",
             url: "/services/task_status/" + task_id,
             success: show_status,
             error: handle_error
@@ -1082,14 +1092,16 @@ function update_wordcloud_progress(current, total){
     }
 }
 
-function cancel_celery_task(task_id){
-    console.log('canceling celery task '+task_id);
+// Cancels the given Celery task id, synchronously
+function cancel_celery_task(task_id) {
+    console.log('Canceling celery task ' + task_id);
 
-    clearTimeout(interval_id);
-    
+    clearTimeout(current_interval_id);
+
     $.ajax({
-        type: "GET",
-        url: "/services/cancel_task/"+task_id,
+        method: "GET",
+        url: "/services/cancel_task/" + task_id,
+        async: false,
         success: dojo.byId('cloudPane').innerHTML = '<div>Canceled generating wordcloud.</div>',
         error: handle_error
     });
