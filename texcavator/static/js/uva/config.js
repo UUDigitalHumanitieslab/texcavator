@@ -146,17 +146,34 @@ var getSelectedPillars = function() {
 };
 
 
-var toolbarConfig = function() {
-	if (!dijit.byId("config")) {
-		//	console.log( "creating config" );
-		createConfig();
-	}
-	showConfig();
+var resetArticleTypes = function() {
+    for (key in config.search.type) {
+        config.search.type[key] = true;
+    }
+};
+
+
+var resetDistributions = function() {
+    for (key in config.search.distrib) {
+        config.search.distrib[key] = true;
+    }
+};
+
+
+var resetPillars = function() {
+    $('.pillar input').each(function(i) {
+        $(this).prop('checked', true);
+    });
+};
+
+
+var getToolbarConfig = function() {
+    return (dijit.byId("config") || createConfig());
 };
 
 
 var showConfig = function() {
-	dijit.byId("config").show();
+	getToolbarConfig().show();
 };
 
 
@@ -1186,4 +1203,5 @@ var createConfig = function() {
 		}
 	});
 	actionBar.appendChild(bOK.domNode);
+    return dijit.byId("config");
 }; // createConfig

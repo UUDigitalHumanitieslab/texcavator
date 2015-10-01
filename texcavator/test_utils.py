@@ -45,3 +45,9 @@ def test_daterange2dates():
     # Empty input
     assert_equals(utils.daterange2dates(""),
                   [{'lower': '1850-01-01', 'upper': '1990-12-31'}])
+
+
+def test_flip_dict():
+    example = {'1': 'one', '2': 'two'}
+    result = utils.flip_dict(example)
+    assert_equals(result, {'one': '1', 'two': '2'})

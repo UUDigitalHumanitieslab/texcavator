@@ -284,7 +284,7 @@ var createToolbar = function() {
 		label: "<img src = '/static/image/icon/Tango/22/categories/utilities.png')/>Config",
 		showLabel: true,
 		style: "float:right",
-		onClick: toolbarConfig // config.js
+		onClick: showConfig // config.js
 	});
 	toolbar.addChild(btnConfig);
 
