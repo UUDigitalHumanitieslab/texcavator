@@ -83,7 +83,7 @@ def elasticsearch_htmlresp(collection, start_record, chunk_size, es_dict):
         paper_dc_title = hit["fields"]["paper_dc_title"][0]
         paper_dc_date = hit["fields"]["paper_dc_date"][0]
 
-        item_str = "<li>"
+        item_str = '<li id="{}">'.format(_id)
         item_str += '<a href=javascript:retrieveRecord("' + datastore + '","' + collection + '","' + _id + '","' + zipfile + '"); '
 
         if len(article_dc_title) > 45:  # limit displayed title length

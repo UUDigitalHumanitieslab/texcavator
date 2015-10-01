@@ -555,6 +555,12 @@ function nextResults( amount )
     	var art_container = "articleContainer";
         var tc = dijit.byId( art_container );
     	tc.selectChild( dijit.byId( ocr_pane ) );		// select OCR tab
+        
+        // Cause the selected article to be highlighted
+        $('#search-result ol li').removeClass('active-article');
+        // Using the [id="value"] construct because jQuery will choke on the
+        // colons in the id otherwise.
+        $('[id="' + record_id + '"]').addClass('active-article');
 		
         dojo.place( new dijit.ProgressBar( { indeterminate: true } ).domNode, dojo.byId( ocr_pane ), "only" );
 		dojo.place( new dijit.ProgressBar( { indeterminate: true } ).domNode, dojo.byId( cloud_pane ), "only" );
