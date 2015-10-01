@@ -92,6 +92,7 @@ function filterSearch(id) {
             }
         }
         searchSubmit();
+		$('#filter-reset-btn-type').parents('.filter-reset-btn').show();
     }; else if (id === "#chart_distribution") return function(segmentData) {
         var selected = ES_REVERSE_MAPPING.sd[segmentData.label].slice(3);
         for (key in config.search.distrib) {
@@ -102,6 +103,7 @@ function filterSearch(id) {
             }
         }
         searchSubmit();
+		$('#filter-reset-btn-distrib').parents('.filter-reset-btn').show();
     }; else /* id === "#chart_pillar" */ return function(segmentData) {
         getToolbarConfig();  // ensure that the checkboxes exist
         var selectedID = 'cb-pillar-' + segmentData.label;
@@ -114,5 +116,6 @@ function filterSearch(id) {
             }
         });
         searchSubmit();
+		$('#filter-reset-btn-pillar').parents('.filter-reset-btn').show();
     };
 }
