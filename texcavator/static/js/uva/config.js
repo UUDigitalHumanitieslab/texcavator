@@ -867,7 +867,7 @@ var createConfig = function() {
 	var cloudexportcfg = config.cloudexport;
 	var cpExport = new dijit.layout.ContentPane({
 		title: "Export",
-		content: "<b>Cloud CSV export options</b><br/>"
+		content: "<b>Cloud export options</b><br/>"
 	});
 	tabCont.addChild(cpExport);
 
