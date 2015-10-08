@@ -126,6 +126,8 @@ function createQueryLine(item) {
 
 	var btn = null;
 	var debug_destroy = false;
+	
+	var articleContainer = dijit.byId('articleContainer');
 
 	//	console.log( "Button re-search" );
 	btn = dijit.byId("btn-sq-fetch-" + item.pk);
@@ -138,11 +140,12 @@ function createQueryLine(item) {
 
 	dojo.place((new dijit.form.Button({
 		id: "btn-sq-fetch-" + item.pk,
-		title: "Re-search",
+		title: "Fetch results and visualise metadata",
 		iconClass: "dijitIconNewTask",
 		onClick: function() {
-			console.log("Re-search " + title);
+			console.log("Fetch " + title);
 			researchSubmit(item);
+			articleContainer.selectChild(dijit.byId('metadata'));
 		}
 	})).domNode, buttonsNode);
 

@@ -331,6 +331,7 @@ function searchSubmit(newStartRecord)
                 return;
             } else {
 			    dojo.byId( "search-result" ).innerHTML = data.html;		// put html text in panel
+            	metadataGraphics( itemFromCurrentQuery() );  // Visualise meta
             }
 
 		},
