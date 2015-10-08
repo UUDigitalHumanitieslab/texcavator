@@ -1,15 +1,12 @@
 // Create metadata graphics for a query
-function metadataGraphics(query) {
+function metadataGraphics(item) {
     console.log("metadataGraphics()");
-
-    // TODO: it's better not to pass the search parameters here. See also TODO in backend.
-    var params = getSearchParameters();
-    params.query = query;
 
     dojo.xhrGet({
         url: "services/metadata/",
         handleAs: "json",
-        content: params,
+        // TODO: it's better not to pass the search parameters here. See also TODO in backend.
+        content: item,
     }).then(function(response) {
         // Add pie charts
         addPieChart(response.articletype.buckets, "#chart_articletype");
