@@ -892,10 +892,6 @@ function onClickExecute(item)
 	storeLexiconID( queryID );			// query.js
 
     setQueryMetadata(item);
-	searchSubmit();							// HTML search result in Search panel of accordion
-	dijit.byId( 'leftAccordion' ).back();
-
-	metadataGraphics( item );		// create the metadata graphics
 
 	// Cloud
 	var config = getConfig();

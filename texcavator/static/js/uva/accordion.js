@@ -160,7 +160,7 @@ function createQueryLine(item) {
 
 	dojo.place((new dijit.form.Button({
 		id: "btn-sq-cloud-" + item.pk,
-		title: "Generate wordcloud and metadata graphs",
+		title: "Generate wordcloud",
 		iconClass: "dijitIconSearch",
 		onClick: function() {
 			onClickExecute(item);
