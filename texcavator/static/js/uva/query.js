@@ -506,20 +506,14 @@ function okDownload(query_title) {
 }
 
 
-function saveQuery(title, comment, query, url) {
-	console.log("saveQuery() title: " + title + ", query: " + query);
+function saveQuery(item, url) {
+	console.log("saveQuery() title: " + item.title + ", query: " + item.query);
 	console.log("url: " + url);
-
-	// get user-changeable parameters from config
-	var params = getSearchParameters();
-	params.query = query;
-	params.title = title;
-	params.comment = comment;
 
 	dojo.xhrPost({
 		url: url,
 		handleAs: "json",
-		content: params,
+		content: item,
 		load: function(result) {
 			if (result.status !== "SUCCESS") {
 				var msg = "The query could not be saved:<br/>" + result.msg;

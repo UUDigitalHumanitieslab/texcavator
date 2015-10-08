@@ -1082,19 +1082,26 @@ function cancel_celery_task(task_id) {
     });
 }
 
+// Return the current query as the kind of 'item' that is used everywhere
+function itemFromCurrentQuery() {
+	var params = getSearchParameters();
+	params.title = dojo.byId("lexiconItemTitle").value;
+	params.comment = dojo.byId("queryComment").value;
+	params.query = dojo.byId("query").value;
+    return params;
+}
+
 // button Save query
 function queryToLexicon()
 {
-	var title = dojo.byId( "lexiconItemTitle" ).value;
 	var dialog = new dijit.Dialog({
 		title: "Save query",
 		style: "width: 300px",
 	});
 
-	var query = dojo.byId( "query" ).value;
-    var comment = dojo.byId("queryComment").value;
+	var item = itemFromCurrentQuery();
 
-	if( isWhitespaceOrEmpty( query ) == true )		// utils.js
+	if( isWhitespaceOrEmpty( item.query ) == true )		// utils.js
 	{
 		var title = "Save query";
 		var buttons = { "OK": true };
@@ -1103,7 +1110,7 @@ function queryToLexicon()
 	}
 
 	// validate CQL -> ES; when valid, stores query
-	saveQuery(title, comment, query, "query/create");		// query.js
+	saveQuery(item, "query/create");		// query.js
 } // queryToLexicon
 
 
