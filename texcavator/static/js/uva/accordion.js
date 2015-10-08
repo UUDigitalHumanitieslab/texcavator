@@ -141,7 +141,7 @@ function createQueryLine(item) {
 	dojo.place((new dijit.form.Button({
 		id: "btn-sq-fetch-" + item.pk,
 		title: "Fetch results and visualise metadata",
-		iconClass: "dijitIconNewTask",
+		iconClass: "dijitIconSearch",
 		onClick: function() {
 			console.log("Fetch " + title);
 			researchSubmit(item);
@@ -161,7 +161,7 @@ function createQueryLine(item) {
 	dojo.place((new dijit.form.Button({
 		id: "btn-sq-cloud-" + item.pk,
 		title: "Generate wordcloud",
-		iconClass: "dijitIconSearch",
+		iconClass: "dijitEditorIcon dijitEditorIconJustifyCenter",
 		onClick: function() {
 			onClickExecute(item);
 		}
