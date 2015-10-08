@@ -30,9 +30,6 @@ var getCloudParameters = function( params )
 	// add user-changeable parameters
 	var cloudcfg = config[ "cloud" ];
 
-	if( cloudcfg[ "refresh" ] )
-	{ params[ "dummy" ] = Math.random(); }			// force new request by random parameter
-
 	// Ork expects { 0 | 1 }
 	params[ "order" ] = "count";
 
@@ -53,13 +50,6 @@ var getCloudParameters = function( params )
 	} else {
 		params["min_length"] = 2;
 	}
-
-//	else { params[ "stopwords" ] = 0; }		// valid, but superfluous
-
-	// no more sentiment in cloud
-//	var sentimentcfg = config[ "sentiment" ];
-//	if( sentimentcfg[ "highlight" ] ) { params[ "sentiment" ] = 1; }
-//	else { params[ "sentiment" ] = 0; }
 
 //	console.log( params );
 	return params;

@@ -56,7 +56,6 @@ var config = {
 		stopwords_default: true, // use default stopword set
 		stoplimit: 4, // require word length > stoplimit
 
-		refresh: false, // false: get cloud from cache; true: force recompute
 		fontscale: 75, // font scale factor
 		fontreduce: true, // reduce fontsize differences
 		stems: false, // apply stemming
@@ -576,26 +575,6 @@ var createConfig = function() {
 		content: "<b>Word cloud options</b><br/>"
 	});
 	tabCont.addChild(cpCloud);
-
-
-	var divRefresh = dojo.create("div", {
-		id: "div-refresh"
-	}, cpCloud.domNode);
-
-	var cbRefresh = new dijit.form.CheckBox({
-		id: "cb-refresh",
-		checked: config.cloud.refresh,
-		onChange: function(btn) {
-			config.cloud.refresh = btn;
-		}
-	}, divRefresh);
-
-	var labelRefresh = dojo.create("label", {
-		id: "label-refresh",
-		for: "cb-refresh",
-		innerHTML: "&nbsp;Require fresh cloud (ignore browser cache)<br/>"
-	}, cpCloud.domNode);
-
 
 	var divFReduce = dojo.create("div", {
 		id: "div-freduce"
