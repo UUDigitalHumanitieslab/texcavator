@@ -15,3 +15,6 @@ Thumbs.db
 # IDE stuff
 .*.sw[op]
 .idea
+
+# Newspaper mapping
+newspapers.json
