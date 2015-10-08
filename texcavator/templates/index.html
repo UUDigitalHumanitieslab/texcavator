@@ -923,52 +923,6 @@ function onClickExecute(item)
 			else
 			{
 				onClickExecuteCloud( queryID );
-                /*
-				// limit the number of documents for a burst cloud [same as in timeline.js:burstClicked()]
-				var doc_count   = parseInt( data.doc_count );
-				var warn_count  = parseInt( XTAS_MAX_CLOUD_DOCS_WARN );
-				var error_count = parseInt( XTAS_MAX_CLOUD_DOCS_ERROR );
-
-				if( doc_count < warn_count )
-				{
-					// Create a cloud for the documents
-					if( stopwordsRemove() )			// remove stopwords from cloud
-					{
-						// retrieve current stopword list from db, then call onClickExecuteCloud()
-						var call_func = true;
-						var boundFunction = dojo.hitch( this, onClickExecuteCloud, lexiconID );
-						stopwordsGetString( lexiconID, call_func, boundFunction );
-					}
-					else
-					{ onClickExecuteCloud( lexiconID ); }
-				}
-				else if( doc_count >= warn_count && doc_count < error_count )
-				{
-					console.warn( "doc_count: " + doc_count );
-
-					var title = "Cloud request considered";
-					var msg = "Cloud from " + doc_count + " documents.</br>";
-					msg += "This will likely give you timeout[s] and may hamper others.</br>";
-					msg += "Do you want to proceed anyway?";
-					console.warn( msg );
-					var buttons = { "OK": true, "Cancel": true }
-
-					var call_func = true;
-					var boundFunction = dojo.hitch( this, onClickExecuteCloudStopwords, lexiconID );
-					var resp = genDialogCallback( title, msg, buttons, call_func, boundFunction );
-				//	console.log( "resp:" + resp );
-				}
-				else if( doc_count >= error_count )
-				{
-					var title = "Cloud request ignored";
-					var msg = "Cloud with " + doc_count + " documents.</br>";
-					msg += "Too many documents for cloud.</br>";
-					msg += "The maximum number of cloud documents is currently set to " + error_count + ".";
-					console.warn( msg );
-					var buttons = { "OK": true };
-					genDialog( title, msg, buttons );
-					return;
-				} */
 			} 
 		}
 	});
