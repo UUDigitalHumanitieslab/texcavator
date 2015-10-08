@@ -8,6 +8,7 @@ import json
 import csv
 import zipfile
 
+from celery import shared_task
 from math import ceil
 from time import time, localtime, strftime
 from sys import exc_info, stderr
@@ -20,6 +21,12 @@ from django.http import HttpResponse
 from services.es import do_search
 
 logger = logging.getLogger(__name__)
+
+
+@shared_task
+def write_newspaper_classification(classification_json):
+    with open('newspapers.json', 'wb') as out:
+        out.write(classification_json)
 
 
 def zipquerydata(*args):

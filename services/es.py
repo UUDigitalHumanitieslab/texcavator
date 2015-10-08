@@ -2,6 +2,7 @@
 """Elasticsearch functionality"""
 
 import json
+import logging
 from collections import Counter
 from datetime import datetime
 
@@ -10,8 +11,9 @@ from elasticsearch.client import indices
 
 from django.conf import settings
 
-from query.models import Newspaper
 from texcavator.utils import daterange2dates
+
+logger = logging.getLogger(__name__)
 
 _ES_RETURN_FIELDS = ('article_dc_title',
                      'paper_dcterms_temporal',
@@ -173,11 +175,17 @@ def create_query(query_str, date_ranges, exclude_distributions,
             }
         )
 
+    # Filters on newspapers. This reads from a local file; as Celery can't read from the database.
     newspaper_ids = []
     if selected_pillars:
-        newspapers = Newspaper.objects.filter(pillar__in=selected_pillars).values_list('id', flat=True)
-        newspaper_ids = list(newspapers)
-
+        try:
+            with open('newspapers.json', 'r') as in_file:
+                categorization = json.load(in_file)
+                for pillar, n_ids in categorization.iteritems():
+                    if int(pillar) in selected_pillars:
+                        newspaper_ids.extend(n_ids)
+        except IOError:
+            logging.warning('No newspaper classification found. Continuing without filter on newspapers.')
     if newspaper_ids:
         filter_must.append({'terms': {'paper_dc_identifier': newspaper_ids}})
 

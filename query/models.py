@@ -1,5 +1,11 @@
+import json
+from collections import defaultdict
+
 from django.db import models
+from django.db.models import signals
 from django.contrib.auth.models import User
+
+from .tasks import write_newspaper_classification
 
 
 class ArticleType(models.Model):
@@ -47,6 +53,21 @@ class Newspaper(models.Model):
 
     def __unicode__(self):
         return self.title
+
+
+def update_newspaper_classification(sender, instance, created, **kwargs):
+    """Updates the newspaper classification to be used both in Django as well as Celery"""
+    classification = defaultdict(list)
+    for newspaper in Newspaper.objects.all():
+        if newspaper.pillar:
+            classification[newspaper.pillar.id].append(newspaper.pk)
+    classification_json = json.dumps(classification)
+    write_newspaper_classification(classification_json)
+    write_newspaper_classification.delay(classification_json)
+
+
+signals.post_save.connect(update_newspaper_classification, sender=Newspaper)
+signals.post_save.connect(update_newspaper_classification, sender=Pillar)
 
 
 class Query(models.Model):
