@@ -565,23 +565,18 @@ function nextResults( amount )
         dojo.place( new dijit.ProgressBar( { indeterminate: true } ).domNode, dojo.byId( ocr_pane ), "only" );
 		dojo.place( new dijit.ProgressBar( { indeterminate: true } ).domNode, dojo.byId( cloud_pane ), "only" );
 
-		var url = "services/retrieve/" + record_id;
-
 		dojo.xhrGet({
-			url: url,
+			url: "services/retrieve/" + record_id,
 			failOk: false,			// true: No dojo console error message
 			handleAs: "json",
 			load: function( resp )
 			{
-			//	console.log( resp );
 				dojo.empty( dojo.byId( ocr_pane ) );			// remove ProgressBar
 				dojo.empty( dojo.byId( cloud_pane ) );			// remove ProgressBar
 
 				if( resp.status === "SUCCESS" )
 				{
-                    console.log(resp);
-					var ocr_text = resp.text_content;
-					processRecord( record_id, ocr_text, zipfile, resp );
+					processRecord( record_id, resp.article_dc_title, resp.text_content, zipfile );
 				}
 				else
 				{
@@ -596,54 +591,13 @@ function nextResults( amount )
 		});
 	}
 
-
-
-	var retrieveRecordKB = function( record_id, store_mongodb )
+    // Process a record: write the OCR, retrieve the scan and create the single article cloud
+	var processRecord = function(record_id, article_title, ocr_text, zipfile)
 	{
-		console.log( "retrieveRecordKB: " + record_id );
-		var url = "services/retrieve/doc/?id=" + record_id;
-
-		dojo.xhrGet({
-			url: url,
-			content: { 
-				"datastore"  : "DSTORE_KBRESOLVER",	// try to fetch from KB instead
-				"collection" : ES_INDEX		// default collection
-			},
-			failOk: false,			// true: No dojo console error message
-			handleAs: "json",
-			load: function( resp )
-			{
-				if( resp.status === "SUCCESS" )
-				{
-					processRecord ( record_id, resp.text, zipfile ); 
-				}
-				else
-				{
-					console.error( resp.msg );
-					var title = "Request failed";
-					var buttons = { "OK": true };
-					genDialog( title, resp.msg, buttons );
-					return;
-				}
-			},
-			error: function( err ) { console.error( err ); }
-		});
-	}
-
-
-	var processRecord = function( record_id, ocr_text, zipfile, documentObj )
-	{
-		console.log( "processRecord: " + record_id );
-	//	console.log( "processRecord: OCR: " + ocr_text );
-
-		var collection = ES_INDEX;
-
-		updateTextview( collection, record_id, ocr_text, documentObj );			// update article in Text tab
-
-		scanImages( collection, record_id, zipfile );	// scan_images.js : scan[s] + View at KB tab
-
-		// create single article cloud
-		retrieveRecordCloudData( record_id, ocr_text );
+		console.log("processRecord: " + record_id);
+		writeTextview(article_title, ocr_text);         // update article in Text tab
+		scanImages(ES_INDEX, record_id, zipfile);	    // scan_images.js : scan[s] + View at KB tab
+		retrieveRecordCloudData(record_id, ocr_text);   // create word cloud
 	}
 
 	// Creates a single article cloud
@@ -839,7 +793,7 @@ function clearGui()
 	dijit.byId( "query" ).set( "value", "" );
 
 	clearCloud();										// Cloud, in cloud_view.js
-	clearTextview();									// OCR text, in ocr_sentiment.js
+	clearTextview();									// OCR text, in ocr.js
 
 	// KB
 	if( dojo.byId( "record" )     != undefined ) { dojo.empty( dojo.byId( "record" ) ); }		// clear ocr

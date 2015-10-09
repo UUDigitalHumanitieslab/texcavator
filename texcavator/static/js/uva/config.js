@@ -77,10 +77,6 @@ var config = {
 		//	cloud2export:   "normal"	// "normal" or "burst"
 	},
 
-	sentiment: { // sentiment
-		highlight: false
-	},
-
 	querydataexport: { // query data
 		format: "csv", // "json", "xml", or "csv"
 		simplified: false
@@ -965,33 +961,6 @@ var createConfig = function() {
 		for: "cb-comma2semicolon",
 		innerHTML: "&nbsp;Replace comma by semicolon<br/>"
 	}, cpExport.domNode);
-
-	// sentiment tab
-	var sentimentcfg = config.sentiment;
-	var cp_sentiment = new dijit.layout.ContentPane({
-		title: "Sentiment",
-		content: "<b>Sentiment options</b><br/>"
-	});
-	tabCont.addChild(cp_sentiment);
-
-	var divHighlight = dojo.create("div", {
-		id: "div-highlight"
-	}, cp_sentiment.domNode);
-
-	var cbHighlight = new dijit.form.CheckBox({
-		id: "cb-highlight",
-		checked: config.sentiment.highlight,
-		onChange: function(btn) {
-			config.sentiment.highlight = btn;
-		}
-	}, divHighlight);
-
-	var labelHighlight = dojo.create("label", {
-		id: "label-highlight",
-		for: "cb-highlight",
-		innerHTML: "&nbsp;Highlight sentiment words in article text<br/>"
-	}, cp_sentiment.domNode);
-
 
 	// NER tab
 	var cp_ner = new dijit.layout.ContentPane({
