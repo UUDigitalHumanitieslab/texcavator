@@ -638,6 +638,9 @@ var createConfig = function() {
 		checked: config.cloud.stopwords,
 		onChange: function(btn) {
 			config.cloud.stopwords = btn;
+			if (!btn) {
+				dijit.byId("cb-stopdefault").set("value", false);
+			}
 		}
 	}, divStop);
 
@@ -657,13 +660,17 @@ var createConfig = function() {
 		checked: config.cloud.stopwords_default,
 		onChange: function(btn) {
 			config.cloud.stopwords_default = btn;
+			if (btn) {
+				dijit.byId("cb-stop").set("value", true);
+			}
 		}
 	}, divStopDefault);
 
+	var stopword_link = 'https://github.com/UUDigitalHumanitieslab/texcavator/blob/develop/query/management/commands/stopwords/nl.txt';
 	var labelStopDefault = dojo.create("label", {
 		id: "label-stopdefault",
 		for: "cb-stopdefault",
-		innerHTML: "&nbsp;Use default stop word set<br/>"
+		innerHTML: "&nbsp;Use the <a href='" + stopword_link + "' target='_blank'>default stop word set</a> on top of your own set of stopwords<br/>"
 	}, cpCloud.domNode);
 
 
