@@ -188,7 +188,7 @@ var createLogin = function( projectname )
 
 					sessionId = response[ "session_id" ];
 					var btnUser = dijit.byId( "toolbar-user" );
-					var label = "<img src = '/static/image/icon/Tango/22/apps/preferences-users.png')/>" + glob_username;
+					var label = "<img src='/static/image/icon/Tango/22/apps/preferences-users.png')/>Logout";
 					btnUser.set( "label", label );
 					createQueryList();		// using username to filter the Saved queries
 
