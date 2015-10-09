@@ -256,7 +256,7 @@ var createToolbar = function() {
 	}));
 
 	var btnQuery = new dijit.form.Button({
-		label: "<img src = '/static/image/icon/Tango/22/apps/utilities-dictionary.png')/>Query",
+		label: "<img src = '/static/image/icon/Tango/22/apps/utilities-dictionary.png')/>Export",
 		showLabel: true,
 		onClick: toolbarQuery
 	});
