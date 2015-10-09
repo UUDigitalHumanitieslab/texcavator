@@ -39,6 +39,16 @@
 	background-color: #cfe5fa;
 }
 
+#div-article-distribution {
+    display: inline-block;
+    width: 50%;
+}
+
+#div-pillar {
+    vertical-align: top;
+    display: inline-block;
+}
+
 /* D3 chart axes */
 .axis text {
   font: 12px sans-serif;

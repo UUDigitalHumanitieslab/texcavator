@@ -199,20 +199,26 @@ var createConfig = function() {
 
 	var disabled = false;
 
+	// Parent div for articles/distributions
+	var divArticleDistribution = dojo.create("div", {
+		id: "div-article-distribution"
+	}, cpSearch.domNode);
+
+	// Article types 
 	var divArticleType = dojo.create("div", {
 		id: "div-articletype"
-	}, cpSearch.domNode);
+	}, divArticleDistribution);
 
 	var textArticleType = dojo.create("label", {
 		id: "text-articletype",
 		for: "div-articletype",
 		innerHTML: "Article type<br/>"
-	}, cpSearch.domNode);
+	}, divArticleType);
 
 
 	var divTypeArticle = dojo.create("div", {
 		id: "div-type-article"
-	}, cpSearch.domNode);
+	}, divArticleType);
 
 	var cbTypeArticle = new dijit.form.CheckBox({
 		id: "cb-type-article",
@@ -228,12 +234,12 @@ var createConfig = function() {
 		id: "label-type-article",
 		for: "cb-type-article",
 		innerHTML: "&nbsp;Search KB regular articles<br/>"
-	}, cpSearch.domNode);
+	}, divArticleType);
 
 
 	var divTypeAdvert = dojo.create("div", {
 		id: "div-type-advert"
-	}, cpSearch.domNode);
+	}, divArticleType);
 
 	var cbTypeAdvert = new dijit.form.CheckBox({
 		id: "cb-type-advert",
@@ -249,12 +255,12 @@ var createConfig = function() {
 		id: "label-type-advert",
 		for: "cb-type-advert",
 		innerHTML: "&nbsp;Search KB advertisements<br/>"
-	}, cpSearch.domNode);
+	}, divArticleType);
 
 
 	var divTypeIllust = dojo.create("div", {
 		id: "div-type-illust"
-	}, cpSearch.domNode);
+	}, divArticleType);
 
 	var cbTypeIllust = new dijit.form.CheckBox({
 		id: "cb-type-illust",
@@ -270,12 +276,12 @@ var createConfig = function() {
 		id: "label-type-illust",
 		for: "cb-type-illust",
 		innerHTML: "&nbsp;Search KB illustration text<br/>"
-	}, cpSearch.domNode);
+	}, divArticleType);
 
 
 	var divTypeFamily = dojo.create("div", {
 		id: "div-type-family"
-	}, cpSearch.domNode);
+	}, divArticleType);
 
 	var cbTypeFamily = new dijit.form.CheckBox({
 		id: "cb-type-family",
@@ -291,24 +297,23 @@ var createConfig = function() {
 		id: "label-type-family",
 		for: "cb-type-family",
 		innerHTML: "&nbsp;Search KB family messages<br/>"
-	}, cpSearch.domNode);
+	}, divArticleType);
 
-
+	// Distributions 
 	var divDistribution = dojo.create("div", {
 		id: "div-distribution"
-	}, cpSearch.domNode);
+	}, divArticleDistribution);
 
 	var textDistribution = dojo.create("label", {
 		id: "text-distribution",
 		for: "div-distribution",
 		innerHTML: "<hr>Distribution<br/>"
-	}, cpSearch.domNode);
-
+	}, divDistribution);
 
 
 	var divDistribNationalNL = dojo.create("div", {
 		id: "div-distrib-national-nl"
-	}, cpSearch.domNode);
+	}, divDistribution);
 
 	var cbDistribNationalNL = new dijit.form.CheckBox({
 		id: "cb-distrib-national-nl",
@@ -324,12 +329,12 @@ var createConfig = function() {
 		id: "label-distrib-national",
 		for: "cb-distrib-national",
 		innerHTML: "&nbsp;National NL<br/>"
-	}, cpSearch.domNode);
+	}, divDistribution);
 
 
 	var divDistribRegionalNL = dojo.create("div", {
 		id: "div-distrib-regional"
-	}, cpSearch.domNode);
+	}, divDistribution);
 
 	var cbDistribRegionalNL = new dijit.form.CheckBox({
 		id: "cb-distrib-regional",
@@ -345,12 +350,12 @@ var createConfig = function() {
 		id: "label-distrib-regional",
 		for: "cb-distrib-regional",
 		innerHTML: "&nbsp;Regional NL<br/>"
-	}, cpSearch.domNode);
+	}, divDistribution);
 
 
 	var divDistribAntillen = dojo.create("div", {
 		id: "div-distrib-antilles"
-	}, cpSearch.domNode);
+	}, divDistribution);
 
 	var cbDistribAntillen = new dijit.form.CheckBox({
 		id: "cb-distrib-antilles",
@@ -366,12 +371,12 @@ var createConfig = function() {
 		id: "label-distrib-antilles",
 		for: "cb-distrib-antilles",
 		innerHTML: "&nbsp;Antillen<br/>"
-	}, cpSearch.domNode);
+	}, divDistribution);
 
 
 	var divDistribSurinam = dojo.create("div", {
 		id: "div-distrib-surinam"
-	}, cpSearch.domNode);
+	}, divDistribution);
 
 	var cbDistribSurinam = new dijit.form.CheckBox({
 		id: "cb-distrib-surinam",
@@ -387,12 +392,12 @@ var createConfig = function() {
 		id: "label-distrib-surinam",
 		for: "cb-distrib-surinam",
 		innerHTML: "&nbsp;Surinam<br/>"
-	}, cpSearch.domNode);
+	}, divDistribution);
 
 
 	var divDistribIndonesia = dojo.create("div", {
 		id: "div-distrib-indonesia"
-	}, cpSearch.domNode);
+	}, divDistribution);
 
 	var cbDistribIndonesia = new dijit.form.CheckBox({
 		id: "cb-distrib-indonesia",
@@ -407,8 +412,8 @@ var createConfig = function() {
 	var labelDistribIndonesia = dojo.create("label", {
 		id: "label-distrib-indonesia",
 		for: "cb-distrib-indonesia",
-		innerHTML: "&nbsp;Indonesia<br/><hr>"
-	}, cpSearch.domNode);
+		innerHTML: "&nbsp;Indonesia<br/>"
+	}, divDistribution);
 
 	/* Pillars starts here */
 	var divPillar = dojo.create("div", {
@@ -419,7 +424,7 @@ var createConfig = function() {
 		id: "text-pillar",
 		for: "div-pillar",
 		innerHTML: "Pillar (<a href='query/newspaper/export'>download distribution as .csv</a>)<br/>"
-	}, cpSearch.domNode);
+	}, divPillar);
 
 	// Retrieves pillars (synchronously)
 	dojo.xhrGet({
@@ -430,7 +435,7 @@ var createConfig = function() {
 		dojo.forEach(response.result, function(entry, i) {
 			var div = dojo.create("div", {
 				id: "div-pillar-" + entry.name
-			}, cpSearch.domNode);
+			}, divPillar);
 
 			var cb = new dijit.form.CheckBox({
 				id: "cb-pillar-" + entry.name,
@@ -443,15 +448,12 @@ var createConfig = function() {
 				id: "label-pillar-" + entry.name,
 				for: "cb-pillar-" + entry.name,
 				innerHTML: "&nbsp;" + entry.name + "<br/>"
-			}, cpSearch.domNode);
-
-			// Add <hr> for last index
-			if (response.result.length - 1 == i) {
-				label.innerHTML += "<hr>";
-			}
+			}, divPillar);
 		});
 	});
 	/* Pillars ends here */
+
+	dojo.create("hr", {}, cpSearch.domNode);
 
 	var divSearchChunk = dojo.create("div", {
 		id: "div-search-chunk"
@@ -862,7 +864,7 @@ var createConfig = function() {
 	var labelBurst = dojo.create("label", {
 		id: "label-burst",
 		for: "cb-burst",
-		innerHTML: "&nbsp;Highlight bursts in Red<br/>"
+		innerHTML: "&nbsp;Highlight bursts in red<br/>"
 	}, cpTimeline.domNode);
 
 
