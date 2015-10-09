@@ -39,6 +39,7 @@
 	background-color: #cfe5fa;
 }
 
+/* Align filters next to each other */
 #div-article-distribution {
     display: inline-block;
     width: 50%;
