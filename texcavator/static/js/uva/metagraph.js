@@ -1,20 +1,39 @@
 // Create metadata graphics for a query
-function metadataGraphics(query) {
+function metadataGraphics(item) {
     console.log("metadataGraphics()");
-
-    // TODO: it's better not to pass the search parameters here. See also TODO in backend.
-    var params = getSearchParameters();
-    params.query = query;
 
     dojo.xhrGet({
         url: "services/metadata/",
         handleAs: "json",
-        content: params,
+        // TODO: it's better not to pass the search parameters here. See also TODO in backend.
+        content: item,
     }).then(function(response) {
+        // Describe what is being visualised
+        $('#metadata_top').text('Metadata for query "' + item.query + '"');
+
         // Add pie charts
-        addPieChart(response.articletype.buckets, "#chart_articletype");
-        addPieChart(response.distribution.buckets, "#chart_distribution");
-        addPieChart(response.pillar, "#chart_pillar");
+        var filtered = {
+            types: !(item.st_advert && item.st_article &&
+                     item.st_family && item.st_illust),
+            distrib: !(item.sd_antilles && item.sd_indonesia &&
+                       item.sd_national && item.sd_regional && item.sd_surinam),
+            pillars: !!(item.pillars.length)
+        };
+        addPieChart(
+            filtered.types, 
+            response.articletype.buckets, 
+            "#chart_articletype"
+        );
+        addPieChart(
+            filtered.distrib, 
+            response.distribution.buckets, 
+            "#chart_distribution"
+        );
+        addPieChart(
+            filtered.pillars, 
+            response.pillar, 
+            "#chart_pillar"
+        );
 
         // Create newspapers bar chart
         data_newspapers = [{
@@ -57,7 +76,7 @@ function metadataGraphics(query) {
 }
 
 // Create a pie chart for a set of data points
-function addPieChart(data, id) {
+function addPieChart(filtered, data, id) {
     nv.addGraph(function() {
         var chart = nv.models.pieChart()
             .x(function(d) {
@@ -68,8 +87,13 @@ function addPieChart(data, id) {
             })
             .valueFormat(d3.format(",d"))
             .showLabels(true);
-            
-        chart.pie.dispatch.on('elementClick', filterSearch(id));
+        
+        if (filtered) {
+            $(id).find('.filter-reset-btn').show();
+        } else {
+            chart.pie.dispatch.on('elementClick', filterSearch(id));
+            $(id).find('.filter-reset-btn').hide();
+        }
 
         d3.select(id + " svg")
             .datum(data)
@@ -92,7 +116,6 @@ function filterSearch(id) {
             }
         }
         searchSubmit();
-		$('#filter-reset-btn-type').parents('.filter-reset-btn').show();
     }; else if (id === "#chart_distribution") return function(segmentData) {
         var selected = ES_REVERSE_MAPPING.sd[segmentData.label].slice(3);
         for (key in config.search.distrib) {
@@ -103,7 +126,6 @@ function filterSearch(id) {
             }
         }
         searchSubmit();
-		$('#filter-reset-btn-distrib').parents('.filter-reset-btn').show();
     }; else /* id === "#chart_pillar" */ return function(segmentData) {
         getToolbarConfig();  // ensure that the checkboxes exist
         var selectedID = 'cb-pillar-' + segmentData.label;
@@ -116,6 +138,5 @@ function filterSearch(id) {
             }
         });
         searchSubmit();
-		$('#filter-reset-btn-pillar').parents('.filter-reset-btn').show();
     };
 }
