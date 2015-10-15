@@ -142,6 +142,7 @@ function createQueryLine(item) {
 		id: "btn-sq-fetch-" + item.pk,
 		title: "Fetch results and visualise metadata",
 		iconClass: "dijitIconSearch",
+		showLabel: false,
 		onClick: function() {
 			console.log("Fetch " + title);
 			researchSubmit(item);
@@ -162,6 +163,7 @@ function createQueryLine(item) {
 		id: "btn-sq-cloud-" + item.pk,
 		title: "Generate wordcloud",
 		iconClass: "dijitEditorIcon dijitEditorIconJustifyCenter",
+		showLabel: false,
 		onClick: function() {
 			onClickExecute(item);
 		}
@@ -182,6 +184,7 @@ function createQueryLine(item) {
 		id: "btn-sq-timeline-" + item.pk,
 		title: "Timeline",
 		iconClass: "dijitIconChart",
+		showLabel: false,
 		onClick: function() {
 			var collection = collection_fromradio();
 			showTimeline(item, collection); // timeline.js
@@ -201,6 +204,7 @@ function createQueryLine(item) {
 		id: "btn-sq-modify-" + item.pk,
 		title: "Modify",
 		iconClass: "dijitIconSave",
+		showLabel: false,
 		onClick: function() {
 			var newItem = itemFromCurrentQuery();
 			saveQuery(newItem, "query/" + item.pk + "/update");
@@ -221,6 +225,7 @@ function createQueryLine(item) {
 		id: "btn-sq-delete-" + item.pk,
 		title: "Delete",
 		iconClass: "dijitIconDelete",
+		showLabel: false,
 		onClick: function() {
 			genDialog(
 				"Delete query",
