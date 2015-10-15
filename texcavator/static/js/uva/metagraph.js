@@ -8,6 +8,9 @@ function metadataGraphics(item) {
         // TODO: it's better not to pass the search parameters here. See also TODO in backend.
         content: item,
     }).then(function(response) {
+        // Describe what is being visualised
+        $('#metadata_top').text('Metadata for query "' + item.query + '"');
+
         // Add pie charts
         addPieChart(response.articletype.buckets, "#chart_articletype");
         addPieChart(response.distribution.buckets, "#chart_distribution");
