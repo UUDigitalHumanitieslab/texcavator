@@ -497,6 +497,7 @@ function setQueryMetadata(item) {
     });
 
     // Set pillars as selected
+    getToolbarConfig();  // ensure checkboxes exist
     var selected_pillars = item.selected_pillars;
     $('.pillar input').each(function(i) {
         var checked = selected_pillars.indexOf(parseInt($(this).val())) != -1;

@@ -157,7 +157,7 @@ var resetDistributions = function() {
 
 var resetPillars = function() {
     $('.pillar input').each(function(i) {
-        $(this).prop('checked', true);
+        $(this).prop('checked', false);
     });
 };
 
