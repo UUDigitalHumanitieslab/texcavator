@@ -3,7 +3,7 @@ django-celery
 lxml
 numpy
 Celery
-elasticsearch
+elasticsearch>=1.0.0,<2.0.0
 redis
 MySQL-python
 sphinx
