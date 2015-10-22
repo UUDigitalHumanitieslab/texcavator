@@ -10,3 +10,4 @@ sphinx
 nose
 requests
 django-nose
+dicttoxml
