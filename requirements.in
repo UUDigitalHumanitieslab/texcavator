@@ -1,0 +1,12 @@
+Django==1.7.7
+django-celery
+lxml
+numpy
+Celery
+elasticsearch
+redis
+MySQL-python
+sphinx
+nose
+requests
+django-nose
