@@ -22,6 +22,7 @@ DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 ALLOWED_HOSTS = []
 STATIC_ROOT = os.path.join(PROJECT_GRANNY, "texcavator_static") + os.sep
+LOGGING_LOCATION = PROJECT_PARENT
 
 # Elasticsearch settings
 ELASTICSEARCH_HOST = "localhost"
