@@ -53,11 +53,11 @@ function metadataGraphics(item) {
                     top: 30,
                     right: 20,
                     bottom: 50,
-                    left: 175
+                    left: 200
                 })
                 .valueFormat(d3.format(",d"))
                 .showValues(true)
-                .tooltips(true);
+                .showControls(false);
 
             chart.yAxis
                 .tickFormat(d3.format(",d"));
