@@ -123,7 +123,7 @@
 			<button data-dojo-type="dijit.form.Button" data-dojo-props="onClick: queryToLexicon, style:'font-size: 130%;', iconClass: 'dijitIconSave'">
 				Save query
 			</button>
-			<button data-dojo-type="dijit.form.Button" data-dojo-props="onClick: refreshQueriesDocCounts, style:'font-size: 130%;', iconClass: 'dijitIconUndo'">
+			<button data-dojo-type="dijit.form.Button" data-dojo-props="onClick: createQueryList, style:'font-size: 130%;', iconClass: 'dijitIconUndo'">
 				Refresh
 			</button>
 			<br /><br />
@@ -740,7 +740,6 @@ function onClickLoadData( lexiconID, datastore )
 						dojo.fx.wipeOut( { node: progressBar.domNode, delay: 2100, onEnd: dojo.hitch( progressBar, 'destroy' ) } ).play();
 
 						// because we now show the article counts in the accordion, we must update that panel
-						refreshQueriesDocCounts();
 						break;
 					case "PROGRESS":
 						// task: Object, id: "5df16f1b-0488-4019-bb95-94d8891d838b"

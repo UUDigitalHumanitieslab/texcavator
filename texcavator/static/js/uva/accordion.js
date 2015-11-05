@@ -6,10 +6,7 @@
 	function accordionSelectChild( id )
 	function createQueryLine( item )
 	function createQueryList()
-	function refreshQueriesDocCounts( items )
 	function updateQueryDocCounts( item )
-	function updateQueryDocCountsElasticSearch( item )
-	function updateQueryDocCountsMongoDB( item )
 */
 
 dojo.require("dojo.store.JsonRest");
@@ -109,16 +106,45 @@ function updateYearSlider(min_date, max_date, n) {
 }
 
 
+// Update the number of results for a Query, synchronically.
+function updateResults(query_id) {
+	var result = 'unknown';
+	dojo.xhrGet({
+		url: 'query/' + query_id + '/update_nr_results',
+		handleAs: 'json',
+		sync: true,
+		load: function(response) {
+			if (response.status === "SUCCESS") {
+				result = response.count;
+			}
+		},
+		error: function(err) {
+			console.error(err);
+		}
+	});
+	return result; 
+}
+
+
 // the "btn-sq-fetch-" button becomes dead with Dojo-1.9.0
 // strangely, the other queryline buttons do work with Dojo-1.9.0
 function createQueryLine(item) {
-	var title = item.query;
+	var title = item.title;
 	var pk = item.pk;
-	var itemNode = dojo.byId("query-" + item.pk);
-	var string = "<span id=query-string-" + item.pk + " />" + title + " <em> " + item.date_created + " </em> </span>";
+	var date_created = new Date(item.date_created).toISOString().slice(0, 16);
+	var results = item.nr_results;
+
+	// If the number of results is invalidated, retrieve the count. 
+	if (!results)
+	{
+		results = updateResults(pk);
+	}
+
+	var string = '<span title="' + item.comment + '">' + title + ' [' + results + '] <em>' + date_created + '</em></span>';
 	var params = {
 		style: 'clear: both;'
 	};
+	var itemNode = dojo.byId("query-" + item.pk);
 	dojo.html.set(itemNode, string, params);
 	var buttonsNode = dojo.create('span', {
 		style: 'float:right;'
@@ -293,8 +319,6 @@ function createQueryList() {
 				dojo.forEach(items, function(item) {
 					createQueryLine(item); // add title, date, buttons
 				});
-
-				refreshQueriesDocCounts(items); // refresh doc counts, enable/disable buttons
 			}
 		},
 		error: function(err) {
@@ -308,80 +332,3 @@ function createQueryList() {
 		}
 	});
 } // createQueryList()
-
-
-function refreshQueriesDocCounts(items) {
-	// get collection setting from radio buttons
-	// TODO: no, you should get that from the settings or the database (though currently it has no function)
-	var collection = collection_fromradio();
-
-	console.log("refreshQueriesDocCounts() " + collection);
-
-	dojo.forEach(items, function(item) {
-		updateQueryDocCountsElasticSearch(item, collection);
-	});
-} // refreshQueriesDocCounts()
-
-
-// Retrives document counts from ElasticSearch
-function updateQueryDocCountsElasticSearch(item, collection) {
-	var lexiconTitle = item.title;
-	// do not show lexicons with *_daterange names TODO: magic string
-	if (!lexiconTitle.endsWith("_daterange")) {
-		var pk = item.pk;
-		var url = "services/doc_count/";
-		var params = {
-			queryID: pk,
-			collection: collection
-		};
-
-		dojo.xhrGet({
-			url: url,
-			content: params,
-			handleAs: "json",
-			load: function(resp) {
-				if (resp === null) {
-					console.error("updateQueryDocCountsElasticSearch(): " + url + " null response");
-				} else if (resp.status === "ok") {
-					doc_count = resp.doc_count;
-					config = getConfig();
-					var counts_str = " [" + doc_count + "] ";
-
-					var cspan = dojo.byId("query-string-" + pk);
-					if (cspan !== null) {
-						var html = "<span id=query-string-" + pk + " />" + lexiconTitle + counts_str + "<em> " + item.date_created + " </em> </span>";
-						cspan.innerHTML = html;
-
-						var btn_sq_cloud = dijit.byId("btn-sq-cloud-" + pk);
-						var btn_sq_timeline = dijit.byId("btn-sq-timeline-" + pk);
-						if (doc_count === 0) {
-							btn_sq_cloud.set("disabled", true); // disable cloud button
-							btn_sq_timeline.set("disabled", true); // disable timeline button
-						} else {
-							btn_sq_cloud.set("disabled", false); // enable cloud button
-							btn_sq_timeline.set("disabled", false); // enable timeline button
-						}
-					}
-				} else {
-					console.log(resp);
-					console.error("updateQueryDocCountsElasticSearch(): " + url + " response status: " + resp.status);
-					var title = "updateQueryDocCountsElasticSearch failed";
-					var msg = "Query with title:<br/><b>" + lexiconTitle + "</b><br/>" + resp.msg;
-					var buttons = {
-						"OK": true
-					};
-					genDialog(title, msg, buttons);
-				}
-			},
-			error: function(err) {
-				console.error(err);
-				var title = "updateQueryDocCountsElasticSearch failed";
-				var buttons = {
-					"OK": true
-				};
-				genDialog(title, err, buttons);
-				return err;
-			}
-		});
-	}
-} // updateQueryDocCountsElasticSearch()

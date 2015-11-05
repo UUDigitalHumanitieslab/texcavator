@@ -84,7 +84,6 @@ function stringToDate(strDate) {
 	return new Date(dateParts[0], (dateParts[1] - 1), dateParts[2]);
 }
 
-
 // Converts a Date into YYYYMMDD (from http://stackoverflow.com/a/3067896/3710392)
 var toDateString = function(date) {
 	var yyyy = date.getFullYear().toString();

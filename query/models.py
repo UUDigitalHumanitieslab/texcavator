@@ -76,13 +76,15 @@ class Query(models.Model):
     title = models.CharField(max_length=100)
     comment = models.TextField(blank=True)
     query = models.TextField()
+    nr_results = models.PositiveIntegerField(null=True)
 
     exclude_article_types = models.ManyToManyField(ArticleType, blank=True)
     exclude_distributions = models.ManyToManyField(Distribution, blank=True)
     selected_pillars = models.ManyToManyField(Pillar, blank=True)
     user = models.ForeignKey(User)
 
-    date_created = models.DateTimeField(auto_now=True)
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_modified = models.DateTimeField(auto_now=True, null=True)
 
     class Meta:
         """Make sure that Query titles are unique for a User"""
@@ -104,6 +106,7 @@ class Query(models.Model):
             'title': self.title,
             'query': self.query,
             'comment': self.comment,
+            'nr_results': self.nr_results,
             'date_created': str(self.date_created),
             'dates': selected_dateranges,
             'exclude_article_types': excl_art_types,

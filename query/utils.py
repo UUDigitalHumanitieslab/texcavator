@@ -6,7 +6,7 @@ from django.conf import settings
 from django.db import DatabaseError
 
 from .models import Query
-from services.es import get_document_ids
+from services.es import get_document_ids, count_search_results
 from texcavator.utils import json_response_message
 
 
@@ -50,3 +50,16 @@ def query2docidsdate(query):
                             query_dict['exclude_distributions'],
                             query_dict['exclude_article_types'],
                             query_dict['selected_pillars'])
+
+
+def count_results(query):
+    """Returns the number of results for a Query"""
+    params = query.get_query_dict()
+    result = count_search_results(settings.ES_INDEX,
+                                  settings.ES_DOCTYPE,
+                                  params['query'],
+                                  params['dates'],
+                                  params['exclude_distributions'],
+                                  params['exclude_article_types'],
+                                  params['selected_pillars'])
+    return result.get('count')

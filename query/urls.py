@@ -5,10 +5,11 @@ from django.conf.urls import patterns, url
 urlpatterns = patterns(
     'query.views',
     url(r'^$', 'index'),
-    url(r'^(?P<query_id>\d+)/?$', 'query'),
+    url(r'^(?P<query_id>\d+)/?$', 'get_query'),
     url('^create$', 'create_query'),
     url(r'^(?P<query_id>\d+)/delete$', 'delete'),
     url(r'^(?P<query_id>\d+)/update$', 'update'),
+    url(r'^(?P<query_id>\d+)/update_nr_results?$', 'update_nr_results'),
 
     url(r'^stopword/add$', 'add_stopword'),
     url(r'^stopword/(?P<stopword_id>\d+)/delete$', 'delete_stopword'),

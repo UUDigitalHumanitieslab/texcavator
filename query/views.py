@@ -20,10 +20,10 @@ from django.db import IntegrityError
 
 from .models import Distribution, ArticleType, Query, DayStatistic, \
     StopWord, Pillar, Newspaper, Period
-from .utils import query2docidsdate
+from .utils import get_query_object, query2docidsdate, count_results
 from .burstsdetector import bursts
 from .download import create_zipname, execute
-from services.es import get_search_parameters, count_search_results
+from services.es import get_search_parameters
 from texcavator.utils import json_response_message
 
 logger = logging.getLogger(__name__)
@@ -31,15 +31,19 @@ logger = logging.getLogger(__name__)
 
 @login_required
 def index(request):
-    """Returns the list of Queries for the current User."""
+    """
+    Returns the list of Queries for the current User.
+    """
     queries = Query.objects.filter(user=request.user).order_by('-date_created')
     queries_json = [q.get_query_dict() for q in queries]
     return json_response_message('OK', '', {'queries': queries_json})
 
 
 @login_required
-def query(request, query_id):
-    """Returns a single Query, checks if Query belongs to User."""
+def get_query(request, query_id):
+    """
+    Returns a single Query, checks if Query belongs to User.
+    """
     query = get_object_or_404(Query, pk=query_id)
     if not request.user == query.user:
         return json_response_message('ERROR', 'Query does not belong to user.')
@@ -49,15 +53,15 @@ def query(request, query_id):
 @csrf_exempt
 @login_required
 def create_query(request):
-    """Creates a new query."""
+    """
+    Creates a new Query.
+    """
     params = get_search_parameters(request.POST)
-    title = request.POST.get('title')
-    comment = request.POST.get('comment')
 
     try:
         q = Query(query=params['query'],
-                  title=title,
-                  comment=comment,
+                  title=request.POST.get('title'),
+                  comment=request.POST.get('comment'),
                   user=request.user)
         q.save()
 
@@ -78,6 +82,9 @@ def create_query(request):
         for pillar in Pillar.objects.all():
             if pillar.id in params['pillars']:
                 q.selected_pillars.add(pillar)
+
+        q.nr_results = count_results(q)
+        q.save()
     except IntegrityError as _:
         return json_response_message('ERROR', 'A query with this title already exists.')
     except Exception as e:
@@ -89,7 +96,8 @@ def create_query(request):
 @csrf_exempt
 @login_required
 def delete(request, query_id):
-    """Deletes a query.
+    """
+    Deletes a Query.
     """
     query = Query.objects.get(pk=query_id)
     if not query:
@@ -107,7 +115,8 @@ def delete(request, query_id):
 @csrf_exempt
 @login_required
 def update(request, query_id):
-    """Updates a query.
+    """
+    Updates an existing Query.
     """
     query = Query.objects.get(pk=query_id)
 
@@ -118,13 +127,12 @@ def update(request, query_id):
         return json_response_message('ERROR', 'Query does not belong to user.')
 
     params = get_search_parameters(request.POST)
-    title = request.POST.get('title')
-    comment = request.POST.get('comment')
 
     try:
-        Query.objects.filter(pk=query_id).update(query=params['query'],
-                                                 title=title,
-                                                 comment=comment)
+        query.query = params['query']
+        query.title = request.POST.get('title')
+        query.comment = request.POST.get('comment')
+        query.save()
 
         Period.objects.filter(query__pk=query_id).delete()
         for date_range in params['dates']:
@@ -147,11 +155,27 @@ def update(request, query_id):
         for pillar in Pillar.objects.all():
             if pillar.id in params['pillars']:
                 query.selected_pillars.add(pillar)
+
+        query.nr_results = count_results(query)
+        query.save()
     except Exception as e:
         return json_response_message('ERROR', str(e))
 
-    return json_response_message('SUCCESS', 'Query saved.')
+    return json_response_message('SUCCESS', 'Query updated.')
 
+
+@login_required
+@csrf_exempt
+def update_nr_results(request, query_id):
+    query, response = get_query_object(query_id)
+
+    if not query:
+        return response
+
+    query.nr_results = count_results(query)
+    query.save()
+
+    return json_response_message('SUCCESS', 'Number of results updated.', {'count': query.nr_results})
 
 @login_required
 def timeline(request, query_id, resolution):
@@ -319,16 +343,7 @@ def download_prepare(request):
 
     user = request.user
     query = Query.objects.get(title=request.GET.get('query_title'), user=user)
-
-    params = query.get_query_dict()
-    result = count_search_results(settings.ES_INDEX,
-                                  settings.ES_DOCTYPE,
-                                  params['query'],
-                                  params['dates'],
-                                  params['exclude_distributions'],
-                                  params['exclude_article_types'],
-                                  params['selected_pillars'])
-    count = result.get('count')
+    count = count_results(query)
 
     if count > settings.QUERY_DATA_MAX_RESULTS:
         msg = "Your query has too much results to export: " + str(count)
