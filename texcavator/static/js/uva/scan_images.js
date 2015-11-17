@@ -63,64 +63,30 @@ Functions:
 			if( article_id == record ) { recordItems.push(item); }
 		});
 
-		// close panes of previous articles before creating new ones
-		var tabs = dijit.byId( "articleContainer" ).getChildren();
-		for( var tab = 2; tab < tabs.length; tab++ )
-		{
-			var cp = tabs[ tab ];
-			var cp_id = cp.get( "id" );
-		//	console.log( cp_id );
-			if( cp_id === "kb-original" || cp_id === "kb-pane" )
-			{ dijit.byId( "articleContainer" ).closeChild( cp ); }
-		//	{ dijit.byId( "articleContainer" ).removeChild( cp ); }
-		}
-
 		for( var item = 0; item < recordItems.length; item++ )
 		{
-			dijit.byId( "articleContainer" ).addChild(
-				new dijit.layout.ContentPane({
-					id: "kb-original",
-					title: ( recordItems.length > 1 ) ? "Page " + (parseInt(item) + 1) : "Scan",
-					content: generateImageForPage( recordItems[ item ] )
-				})
+			var identifier = recordItems[item].getAttributeNS(
+				"http://purl.org/dc/elements/1.1/",
+				"identifier"
 			);
-		}
+			var article_id = recordItems[item].getAttributeNS(
+				"http://www.kb.nl/namespaces/ddd",
+				"article_id"
+			);
 
-		for( var item = 0; item < recordItems.length; item++ )
-		{
-			var identifier = recordItems[item].getAttributeNS( "http://purl.org/dc/elements/1.1/", "identifier" );
-			var article_id = recordItems[item].getAttributeNS( "http://www.kb.nl/namespaces/ddd", "article_id" );
-
-			var art_ident_list = identifier.split( ":" );			// ddd:010013335:mpeg21:p013:a0001
-			var article_id_list = article_id.split( ":" );			// ddd:010013335:mpeg21:a0295
-			art_ident_list[ art_ident_list.length - 1 ] = article_id_list[ article_id_list.length - 1 ];	// replace last element
-			var art_ident = art_ident_list.join( ":" );				// ddd:010013335:mpeg21:p013:a0295
-
-			var kbPane = new dijit.layout.ContentPane({
-				id: "kb-pane",
-				title: (recordItems.length > 1) ? "KB: Page " + (parseInt( item ) + 1) : "View at KB",
-				content: ''
-			});
-			dijit.byId( "articleContainer" ).addChild( kbPane );
-
-			dojo.create( "label", { id: "kb-pane-art-ident", }, kbPane.domNode );
-			
-			kbPane.controlButton.onClick = function( art_ident ) 
-			{
-			//	console.log( "kbPane.controlButton.onClick " + art_ident );
-				// label read by ready function
-				var kblabel = dojo.byId( "kb-pane-art-ident" );
-				kblabel.innerHTML = art_ident;
-
-				// this function no longer gets called with Dojo version >= 1.8
-				return function () {
-					var articleurl = 'http://kranten.kb.nl/view/article/id/' + art_ident;
-					console.log( "articleurl: " + articleurl );
-					var newwindow = window.open( articleurl, 'kb', '' );
-					if( window.focus ) { newwindow.focus(); }
-					return false;
-				};
-			} ( art_ident );
+			var identifier_list = identifier.split(":");
+				// ddd:010013335:mpeg21:p013:a0001
+			var article_id = article_id.split(":").pop();
+				// ddd:010013335:mpeg21:a0295
+			identifier_list.pop();
+			identifier_list.push(article_id);
+			var final_id = identifier_list.join(":");
+				// ddd:010013335:mpeg21:p013:a0295
+			var url = 'http://kranten.kb.nl/view/article/id/' + final_id;
+			var hyperlink = $('<a>');
+			hyperlink.attr({href: url, target: '_blank'});
+			hyperlink.html(generateImageForPage(recordItems[item]));
+			hyperlink.appendTo('#record');
 		}
 	} // scanImagesKB()
 

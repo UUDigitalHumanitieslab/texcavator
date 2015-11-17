@@ -30,8 +30,8 @@
 }
 
 .filter-reset-btn {
-    margin-left: 40%;
-    font-size: 15px;
+	margin-left: 40%;
+	font-size: 15px;
 }
 
 .active-article {
@@ -41,23 +41,33 @@
 
 /* Align filters next to each other */
 #div-article-distribution {
-    display: inline-block;
-    width: 50%;
+	display: inline-block;
+	width: 50%;
 }
 
 #div-pillar {
-    vertical-align: top;
-    display: inline-block;
+	vertical-align: top;
+	display: inline-block;
 }
 
 /* D3 chart axes */
 .axis text {
-  font: 12px sans-serif;
+	font: 12px sans-serif;
 }
 
 .axis path,
 .axis line {
-  fill: none;
-  stroke: #000;
-  shape-rendering: crispEdges;
+	fill: none;
+	stroke: #000;
+	shape-rendering: crispEdges;
+}
+
+#record p {
+	float: left;
+	max-width: 58ex;
+}
+
+#record a {
+	float: left;
+	margin-left: 1em;
 }
