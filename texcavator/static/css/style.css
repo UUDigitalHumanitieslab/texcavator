@@ -61,3 +61,13 @@
   stroke: #000;
   shape-rendering: crispEdges;
 }
+
+#record p {
+	float: left;
+	max-width: 58ex;
+}
+
+#record a {
+	float: left;
+	margin-left: 1em;
+}
