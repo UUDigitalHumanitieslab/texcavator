@@ -131,7 +131,7 @@ function updateResults(query_id) {
 function createQueryLine(item) {
 	var title = item.title;
 	var pk = item.pk;
-	var date_created = new Date(item.date_created).toISOString().slice(0, 16);
+	var date_created = item.date_created.slice(0, 16);
 	var results = item.nr_results;
 
 	// If the number of results is invalidated, retrieve the count. 

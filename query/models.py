@@ -95,7 +95,7 @@ class Query(models.Model):
         contains all relevant data and metadata.
         """
         periods = Period.objects.filter(query=self)
-        selected_dateranges = [{'lower': str(p.date_lower), 'upper': str(p.date_upper)} for p in periods]
+        selected_dateranges = [{'lower': p.date_lower.isoformat(), 'upper': p.date_upper.isoformat()} for p in periods]
         excl_art_types = [a.id for a in self.exclude_article_types.all()]
         excl_distr = [d.id for d in self.exclude_distributions.all()]
         selected_pillars = [p.id for p in self.selected_pillars.all()]
@@ -107,7 +107,7 @@ class Query(models.Model):
             'query': self.query,
             'comment': self.comment,
             'nr_results': self.nr_results,
-            'date_created': str(self.date_created),
+            'date_created': self.date_created.isoformat(),
             'dates': selected_dateranges,
             'exclude_article_types': excl_art_types,
             'exclude_distributions': excl_distr,
