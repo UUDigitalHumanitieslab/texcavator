@@ -6,8 +6,6 @@ This module must be removed.
 """
 
 from sys import stderr
-from lxml import etree
-from lxml.html import fromstring
 
 from django.conf import settings
 
@@ -111,9 +109,6 @@ def elasticsearch_htmlresp(collection, start_record, chunk_size, es_dict):
     html_str += paging_links(start_record, chunk_size, hits_total)
     html_str += '<a href="#search">Back to top</a>'
     html_str += '</body>'
-
-    html = fromstring(html_str)
-    html_str = etree.tostring(html, pretty_print=True)
 
     return html_str
 
