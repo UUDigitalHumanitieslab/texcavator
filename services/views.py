@@ -74,16 +74,20 @@ def doc_count(request):
         print >> stderr, "doc_count()"
 
     query_id = request.REQUEST.get('queryID')
+    logger.info('services/doc_count/ - queryID: {}'.format(query_id))
 
     if query_id:
         query, response = get_query_object(query_id)
 
         if not query:
+            logger.info('services/doc_count/ - returned cached response.')
             return response
     else:
+        logger.info('services/doc_count/ - returned "missing query id".')
         return json_response_message('error', 'Missing query id.')
 
     params = query.get_query_dict()
+    logger.info('services/doc_count/ - params: {}'.format(params))
 
     result = count_search_results(settings.ES_INDEX,
                                   settings.ES_DOCTYPE,
@@ -92,13 +96,16 @@ def doc_count(request):
                                   params['exclude_distributions'],
                                   params['exclude_article_types'],
                                   params['selected_pillars'])
+    logger.info('services/doc_count/ - ES returned normally')
 
     count = result.get('count', 'error')
 
     if not count == 'error':
         params = {'doc_count': str(count)}
+        logger.info('services/doc_count/ - returned calculated count.')
         return json_response_message('ok', 'Retrieved document count.', params)
 
+    logger.info('services/doc_count/ - returned "unable to retrieve".')
     return json_response_message('error', 'Unable to retrieve document count'
                                  ' for query "{query}"' % query)
 
@@ -151,6 +158,8 @@ def tv_cloud(request):
         stopwords = stopwords_user + stopwords_query + stopwords_default
 
     record_id = request.GET.get('record_id')
+    logger.info('services/cloud/ - record_id: {}'.format(record_id))
+    
     if record_id:
         # Cloud for a single document
         t_vector = single_document_word_cloud(settings.ES_INDEX,
