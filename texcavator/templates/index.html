@@ -528,15 +528,15 @@ function nextResults( amount )
 
 
 <script type="text/javascript">
-	var retrieveRecord = function( datastore, collection, record_id, zipfile )
+	var retrieveRecord = function( record_id )
 	{
-		console.log( "retrieveRecord: " + datastore + ", " + collection + ", " + record_id + ", " + zipfile );
+		console.log("retrieveRecord: " + record_id);
 
 		var ocr_pane = "record";
 		var cloud_pane = "cloudPane";
-		var art_container = "articleContainer";
-		var tc = dijit.byId( art_container );
-		tc.selectChild( dijit.byId( ocr_pane ) );      // select OCR tab
+
+		// Select OCR tab
+		dijit.byId("articleContainer").selectChild(dijit.byId(ocr_pane));
 		
 		// Cause the selected article to be highlighted
 		$('#search-result ol li').removeClass('active-article');
@@ -558,7 +558,7 @@ function nextResults( amount )
 
 				if( resp.status === "SUCCESS" )
 				{
-					processRecord( record_id, resp.article_dc_title, resp.text_content, zipfile );
+					processRecord(record_id, resp.article_dc_title, resp.text_content);
 				}
 				else
 				{
@@ -574,11 +574,11 @@ function nextResults( amount )
 	}
 
 	// Process a record: write the OCR, retrieve the scan and create the single article cloud
-	var processRecord = function(record_id, article_title, ocr_text, zipfile)
+	var processRecord = function(record_id, article_title, ocr_text)
 	{
 		console.log("processRecord: " + record_id);
 		writeTextview(article_title, ocr_text);         // update article in Text tab
-		scanImages(ES_INDEX, record_id, zipfile);       // scan_images.js : scan[s] + View at KB tab
+		scanImages(record_id);                          // scan_images.js : scan[s] + View at KB tab
 		retrieveRecordCloudData(record_id, ocr_text);   // create word cloud
 	}
 

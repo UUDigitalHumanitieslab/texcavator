@@ -9,8 +9,6 @@ from sys import stderr
 
 from django.conf import settings
 
-ES_CHUNK_SIZE = 2000
-
 
 def elasticsearch_htmlresp(collection, start_record, chunk_size, es_dict):
     """Create HTML response from ElasticSearch request.
@@ -53,8 +51,6 @@ def elasticsearch_htmlresp(collection, start_record, chunk_size, es_dict):
 
     html_str += '<ol start="' + '%s' % start_record + '">'
 
-    datastore = "DSTORE_ELASTICSEARCH"
-
     for h in range(hits_retrieved):
         hit = hits_list[h]
 
@@ -73,16 +69,11 @@ def elasticsearch_htmlresp(collection, start_record, chunk_size, es_dict):
             paper_dcterms_temporal = ""
             paper_dcterms_spatial = ""
 
-        try:
-            zipfile = hit["fields"]["zipfile"][0]
-        except:
-            zipfile = ""
-
         paper_dc_title = hit["fields"]["paper_dc_title"][0]
         paper_dc_date = hit["fields"]["paper_dc_date"][0]
 
         item_str = '<li id="{}">'.format(_id)
-        item_str += '<a href=javascript:retrieveRecord("' + datastore + '","' + collection + '","' + _id + '","' + zipfile + '"); '
+        item_str += '<a href=javascript:retrieveRecord("' + _id + '"); '
 
         if len(article_dc_title) > 45:  # limit displayed title length
             item_str += 'title=' + article_dc_title + '><b>' + article_dc_title[0:45] + '</b>...</a>'
