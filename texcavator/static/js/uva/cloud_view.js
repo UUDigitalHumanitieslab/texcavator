@@ -67,6 +67,7 @@ var stopwordsRemove = function()
 }
 
 
+// TODO: non-existing endpoint
 var stopwordsGetString = function( lexiconID, call_func, boundFunction )
 {
 	console.log( "stopwordsGetString() lexiconID: " + lexiconID );
@@ -76,7 +77,6 @@ var stopwordsGetString = function( lexiconID, call_func, boundFunction )
 		url: "lexicon/stopwords/retrieve/string/",	// POST url must end with `/'
 		handleAs: "text",
 		content: {
-			username:  glob_username,
 			lexiconID: lexiconID
 		},
 		load: function( data )
@@ -113,9 +113,6 @@ var stopwordsGetTable = function( target )
 	dojo.xhrPost({
 		url: "query/stopwords",	// POST url must end with `/'
 		handleAs: "json",
-		content: {
-			username:  glob_username
-		},
 		load: function(response)
 		{
 			var status = response[ "status" ];
@@ -189,29 +186,16 @@ function stopwordsFillTable( stopwordsList, editglob, target )
 			iconClass: "dijitIconDelete",
 			onClick: function()
 			{
-				console.log( "id " + pk + " (" + word + ") to be deleted" );
-
 				dojo.xhrPost({
 					url: "query/stopword/" + pk + "/delete",
 					handleAs: "json",
-					content: {
-						username: glob_username,
-						pk: pk
-					},
 					load: function(response)
 					{
-						var status = response[ "status" ];
-
-						if( status !== "SUCCESS" )
-						{
-							console.log( status + ": " + resp[ "msg" ] );
-							var buttons = { "OK": true, "Cancel": false };
-							answer = genDialog( "Delete stopword", resp[ "msg" ], buttons );
-						}
-						dijit.byId( "dlg-cloudword" ).destroyRecursive();
+						genDialog("Delete stopword", response.msg, { "OK": true });
+						dijit.byId("dlg-cloudword").destroyRecursive();
 					},
-					error: function( err ) {
-						console.error( err );
+					error: function(err) {
+						console.error(err);
 						return err;
 					}
 				});

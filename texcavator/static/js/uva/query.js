@@ -395,7 +395,7 @@ function createQueryDlg() {
 	tabCont.addChild(cpQEdit);
 	//	tabCont.addChild( cpQCreate );
 
-	if (glob_username != "guest" && QUERY_DATA_DOWNLOAD) {
+	if (QUERY_DATA_DOWNLOAD) {
 		tabCont.addChild(cpQData);
 	} // guest has no email
 }

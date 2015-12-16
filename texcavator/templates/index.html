@@ -240,26 +240,8 @@ dojo.ready( function() { createLogin( "{{ PROJECT_NAME }}" ) } );   // login.js
 dojo.ready( showLogin );                                            // login.js
 
 dojo.ready( function() { 
-	if( "{{ QUERY_DATA_DOWNLOAD_ALLOW }}" == "True" )
-	{ QUERY_DATA_DOWNLOAD = true; }
-	else
-	{ QUERY_DATA_DOWNLOAD = false; }
-//	console.log( "Query data download: " + QUERY_DATA_DOWNLOAD );
-
-	if( "{{ GOOGLE_TRANSLATE }}" == "True" )
-	{ GOOGLE_TRANSLATE = true; }
-	else
-	{ GOOGLE_TRANSLATE = false; }
-
-	if( "{{ MOSES_TRANSLATE }}" == "True" )
-	{ MOSES_TRANSLATE = true; }
-	else
-	{ MOSES_TRANSLATE = false; }
-
-	if( "{{ ILPS_LOGGING }}" == "True" )
-	{ ILPS_LOGGING = true; }
-	else
-	{ ILPS_LOGGING = false; }
+	QUERY_DATA_DOWNLOAD = "{{ QUERY_DATA_DOWNLOAD_ALLOW }}" == "True";
+	ILPS_LOGGING = "{{ ILPS_LOGGING }}" == "True";
 } );
 
 dojo.ready( function() { celeryCheckFailure( "None" ); } ); // celery.js

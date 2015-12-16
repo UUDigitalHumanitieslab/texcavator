@@ -277,15 +277,15 @@ def delete_stopword(request, stopword_id):
     """Deletes a stopword from the stopword list.
     """
     stopword = StopWord.objects.get(pk=stopword_id)
+
     if not stopword:
         return json_response_message('ERROR', 'Stopword not found.')
-
     if not request.user == stopword.user:
-        return json_response_message('ERROR', 'Stopword does not belong to '
-                                              'user.')
-    stopword.delete()
+        return json_response_message('ERROR', 'Stopword does not belong to this user.')
 
-    return json_response_message('SUCCESS', 'Stopword deleted.')
+    msg = 'Stopword {} deleted.'.format(stopword.word)
+    stopword.delete()
+    return json_response_message('SUCCESS', msg)
 
 
 # TODO: turn into get method (get user via currently logged in user)
