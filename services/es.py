@@ -3,6 +3,7 @@
 
 import json
 import logging
+import os
 from collections import Counter
 from datetime import datetime
 
@@ -179,7 +180,7 @@ def create_query(query_str, date_ranges, exclude_distributions,
     newspaper_ids = []
     if selected_pillars:
         try:
-            with open('newspapers.json', 'r') as in_file:
+            with open(os.path.join(settings.PROJECT_PARENT, 'newspapers.txt'), 'rb') as in_file:
                 categorization = json.load(in_file)
                 for pillar, n_ids in categorization.iteritems():
                     if int(pillar) in selected_pillars:
