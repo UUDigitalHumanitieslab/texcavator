@@ -116,10 +116,8 @@
 		<div id="lexicon" data-dojo-type="dijit.layout.ContentPane" 
 						  data-dojo-props="title:'Saved queries'">
 			The creation of a lexicon starts with composing its query in the Search accordion. Give it a name and save the query. Then fetch the articles by clicking the 1st of the 4 small icons.<br /><br />
-			<textarea id="queryComment" name="queryComment" data-dojo-type="dijit/form/Textarea"></textarea></br>
-			<input id="lexiconItemTitle" type="text" 
-					data-dojo-type="dijit.form.TextBox"
-					data-dojo-props="placeHolder:'Type query title here.', name:'lexiconItemTitle', style:'width: 170px; font-size: 130%;'" />
+			<textarea id="queryComment" name="queryComment" placeholder="Query comment (optional)"></textarea></br>
+			<input id="queryTitle" name="queryTitle" type="text" placeholder="Query title" />
 			<button data-dojo-type="dijit.form.Button" data-dojo-props="onClick: queryToLexicon, style:'font-size: 130%;', iconClass: 'dijitIconSave'">
 				Save query
 			</button>
@@ -363,7 +361,7 @@ function setQueryMetadata(item) {
 
 	// set query meta data
 	// set query title and comment
-	dojo.byId("lexiconItemTitle").value = item.title;
+	dojo.byId("queryTitle").value = item.title;
 	dojo.byId("queryComment").value = item.comment;
 
 	// Daterange
@@ -789,7 +787,6 @@ function clearGui()
 
 	dojo.byId( "search-result" ).innerHTML = "Search for newspaper articles at the KB."; // default search result text
 	dojo.empty( dojo.byId( "lexiconItems" ) );
-	dojo.empty( dojo.byId( "lexiconItemTitle" ) );      // Save query
 	dojo.empty( dojo.byId( "cql" ) );
 	dijit.byId( "query" ).set( "value", "" );
 
@@ -1036,7 +1033,7 @@ function cancel_celery_task(task_id) {
 // Return the current query as the kind of 'item' that is used everywhere
 function itemFromCurrentQuery() {
 	var params = getSearchParameters();
-	params.title = dojo.byId("lexiconItemTitle").value;
+	params.title = dojo.byId("queryTitle").value;
 	params.comment = dojo.byId("queryComment").value;
 	params.query = dojo.byId("query").value;
 	return params;
