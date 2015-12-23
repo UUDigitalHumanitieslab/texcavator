@@ -606,36 +606,24 @@ function nextResults( amount )
 			handleAs: 'json',
 			load: function(response)
 			{
-			//	console.log( response );
-				if( typeof( response ) == "string" )
-				{ var json_data = dojo.fromJson( response ); }
-				else
-				{ var json_data = response; }
-
-				var status = json_data.status;
-				if( json_data.status != "ok" )
+				if( response.status != "ok" )
 				{
-					console.warn( "retrieveRecordCloudData: " + json_data.error );
+					console.warn( "retrieveRecordCloudData: " + response.error );
 					var title = "Cloud data request failed";
 					var buttons = { "OK": true };
-					genDialog( title, json_data.error, buttons );
-					return response;
+					genDialog( title, response.error, buttons );
 				}
 				else
 				{
-					var nwords = json_data.result.length;
-					console.log( "cloud words: " + nwords );
-					createCloud( "article", json_data, "borderContainer", "cloudPane" );
-					return response;
+					console.log( "cloud words: " + response.result.length );
+					createCloud( "article", response, "borderContainer", "cloudPane" );
 				}
-		
 			},
 			error: function(error){
 				console.error(error);
 				return error;
 			}
 		});
-
 	}
 
 

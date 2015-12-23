@@ -177,3 +177,4 @@ class StopWord(models.Model):
 class Term(models.Model):
     word = models.CharField(max_length=100, unique=True)
     count = models.PositiveIntegerField()
+    idf = models.DecimalField(max_digits=7, decimal_places=4)

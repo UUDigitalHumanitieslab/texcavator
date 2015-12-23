@@ -1,4 +1,5 @@
 """Gather statistics of the total number of terms"""
+import math
 from collections import Counter
 
 from django.core.management.base import BaseCommand
@@ -22,16 +23,19 @@ class Command(BaseCommand):
         sets = document_id_chunks(1000,
                                   settings.ES_INDEX,
                                   settings.ES_DOCTYPE,
-                                  'de',
+                                  'test',
                                   date_range,
                                   dist=exclude_dist)
 
         counter = Counter()
+        total_documents = 0
         for n, s in enumerate(sets):
             counter += termvector_wordcloud(settings.ES_INDEX, settings.ES_DOCTYPE, s, 4)
+            total_documents += len(s)
             if n == 1:
                 break
 
         for term, count in counter.items():
-            t = Term(word=term, count=count)
+            idf = math.log10(total_documents / float(count))
+            t = Term(word=term, count=count, idf=idf)
             t.save()

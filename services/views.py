@@ -21,7 +21,7 @@ from es import get_search_parameters, do_search, count_search_results, \
 
 from texcavator.utils import json_response_message, daterange2dates
 
-from query.models import Query, StopWord, Newspaper
+from query.models import Query, StopWord, Newspaper, Term
 from query.utils import get_query_object
 
 from services.export import export_csv
@@ -168,6 +168,17 @@ def tv_cloud(request):
                                               min_length,
                                               stopwords,
                                               stems)
+
+        # If IDF is set, multiply term frequencies by inverse document frequencies
+        if request.GET.get('idf') == '1':
+            for item in t_vector['result']:
+                try:
+                    t = Term.objects.get(word=item['term'])
+                    if t:
+                        item['count'] = round(item['count'] * t.idf, 2)
+                except Term.DoesNotExist:
+                    continue
+
         return json_response_message('ok', 'Word cloud generated', t_vector)
     else:
         # Cloud for a query

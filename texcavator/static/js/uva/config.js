@@ -59,6 +59,7 @@ var config = {
 		fontscale: 75, // font scale factor
 		fontreduce: true, // reduce fontsize differences
 		stems: false, // apply stemming
+		idf: false, // divide by inverse document frequencies
 
 		NER: false, // Named Entity Recognition
 		maxwords: 100, // default max words displayed
@@ -735,6 +736,24 @@ var createConfig = function() {
 		id: "label-stem",
 		for: "cb-stem",
 		innerHTML: "&nbsp;Stemming<br/>"
+	}, cpCloud.domNode);
+
+	var divIdf = dojo.create("div", {
+		id: "div-idf"
+	}, cpCloud.domNode);
+
+	var cbIdf = new dijit.form.CheckBox({
+		id: "cb-idf",
+		checked: config.cloud.idf,
+		onChange: function(btn) {
+			config.cloud.idf = btn;
+		}
+	}, divIdf);
+
+	var labelIdf = dojo.create("label", {
+		id: "label-idf",
+		for: "cb-idf",
+		innerHTML: "&nbsp;Divide frequencies by inverse document frequency<br/>"
 	}, cpCloud.domNode);
 
 

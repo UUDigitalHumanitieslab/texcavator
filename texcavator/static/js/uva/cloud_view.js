@@ -37,7 +37,7 @@ var getCloudParameters = function( params )
 	else { params[ "words" ] = 1; }							// all words cloud
 
 	if( cloudcfg[ "stems" ] ) { params[ "stems" ] = 1; }
-//	else { params[ "stems" ] = 0; }		// valid, but superfluous
+	if( cloudcfg[ "idf" ] ) { params[ "idf" ] = 1; }
 
 	if( cloudcfg[ "stopwords" ] )
 	{
@@ -345,16 +345,16 @@ var placeCloudInTarget = function( cloud_src, json_data, target )
 	var rwidth  = contentBox[ "w" ] -8;
 	var rheight = contentBox[ "h" ] -8;
 
-//	console.log( "width: " + rwidth + ", height: " + rheight );
+	console.log( "width: " + rwidth + ", height: " + rheight );
 
-	var min_width = 400;
+	var min_width = 1000;
 	if( isNaN( rwidth ) || rwidth < min_width )
 	{
 	//	console.log( "placeCloudInTarget() bad rwidth: " + rwidth );
 		rwidth = min_width;		// just try something
 	}
 
-	var min_height = 300;
+	var min_height = 600;
 	if( isNaN( rheight ) || rheight < min_height )
 	{
 	//	console.log( "placeCloudInTarget() bad rheight: " + rheight );
@@ -372,17 +372,6 @@ var placeCloudInTarget = function( cloud_src, json_data, target )
 		console.log( "placeCloudInTarget: not clearing " + target );
 	//	dojo.byId( target ).innerHTML = "";				// remove  progress bar
 	}
-
-	/*
-	var json_data = dojo.fromJson( data );
-//	console.log( data );								// can be big
-//	console.log( json_data );							// can be big
-
-	// cloud_data is an object array:
-	// without NER: [ Object{ count=15, term="film"}, Object{...}, ... ]
-	//    with NER: [ Object{ count=15, term="film", type="MISC" }, Object{...}, ... ]
-	var cloud_data = json_data.result;
-	*/
 
 	var cloud_data = json_data.result;
 //	console.log( cloud_data );
@@ -426,9 +415,6 @@ var placeCloudInTarget = function( cloud_src, json_data, target )
 	var fontreduce = config[ "cloud" ][ "fontreduce" ];
 	var stopwords  = config[ "cloud" ][ "stopwords" ];
 	var stoplimit  = config[ "cloud" ][ "stoplimit" ];
-
-	var wordCountMax = json_data.max_count 
-	console.log( "wordCountMax: " + wordCountMax );
 
 	var nerType2Color = function( nertype )
 	{
@@ -493,7 +479,6 @@ var placeCloudInTarget = function( cloud_src, json_data, target )
 //	console.log( text_type_hash );
 //	console.log( text_color_hash );
 
-//	var weightFactor = 0.5 * wordsDisplayedMax / wordCountMax;
 	var weightFactor = fontscale / countMax;
 
 //	console.log( "countMax: " + countMax );
@@ -582,18 +567,9 @@ var d3CreateCloud = function( target, cloud_src, svg_width, svg_height, weightFa
 	var divStatusline = dojo.create( "div", { id: "statusline" }, dojo.byId( dest ) );
 	divStatusline.innerHTML = "&nbsp;";		// prevent the cloud jumping up-and-down
 
-//	var words = [ "Hello", "world", "normally", "you", "want", "more", "words", "than", "this" ];
-//	var text_size_list0 = words.map( function( d ) 
-//	{ 
-//		return { text: d, size: 15 + Math.random() * 90 }; 
-//	});
-
 	var text_size_list = text_size_list.map( function( d ) { 
 		return { text: d[ 0 ], size: Math.round( weightFactor * d[ 1 ] ) }; 
 	});
-
-//	var text_size_list = text_size_list0;
-//	console.log( text_size_list );
 
 	var fontSize = d3.scale.log().range( [ 10, 100 ] );
 
@@ -611,7 +587,7 @@ var d3CreateCloud = function( target, cloud_src, svg_width, svg_height, weightFa
 
 	function draw( words ) 
 	{
-		console.log( "draw" );
+		console.log( "Drawing word cloud..." );
 
 		d3.select( "#" + dest )
 			.append( "center" )
