@@ -215,16 +215,6 @@ dojo.ready( showDojoLocale );
 ES_INDEX = "{{ ES_INDEX }}";
 ES_REVERSE_MAPPING = {{ ES_REVERSE_MAPPING|safe }};
 
-/*
-dojo.ready( function()
-{ 
-	console.log( "ILPSlogging start" );
-	var options = {};
-	var logging = ILPSLogging('ilps-vm14.science.uva.nl', 'bt6ATs2XGL4skCRKTAfUCbg3NwTLRZhFjGKY2leQxGM ', options);
-//	var logging.start();
-}
-*/
-
 function hideResetButtons() {
 	$('.filter-reset-btn').hide();
 }
@@ -516,7 +506,6 @@ function nextResults( amount )
 
 	dojo.require( "dojox.form.RangeSlider" );
 	dojo.require( "dojox.html.entities" );
-//	dojo.require( "dojox.math.random.Secure" );
 	dojo.require( "dojox.widget.Standby" );
 	dojo.require( "dojox.xml.parser" );
 </script>
@@ -657,99 +646,6 @@ function nextResults( amount )
 
 
 <script type="text/javascript">
-// button Basislexicon laden
-function onClickLoadData( lexiconID, datastore )
-{
-	console.log( "onClickLoadData() lexiconID: " + lexiconID + ", datastore: " + datastore );
-
-//	if( !confirm( 'Fetching the KB articles may take a while. Do you want to continue?' ) )
-//	{ return; }
-
-	/*
-	var title = "Retrieve and store KB data";
-	var message = "U wilt het basislexicon laden. Dat kan geruime tijd duren. Wilt u doorgaan?";
-	var buttons = { "OK": true, "Cancel": true };
-	var answer = genDialog( title, message, buttons );
-	console.log( "basislexicon laden: " + answer );
-	return;
-	*/
-
-	var progressBar = new dijit.ProgressBar( { indeterminate: true });
-	progressBar.domNode.style.display = 'none';
-	dojo.place( progressBar.domNode, dojo.byId( "lexiconItems" ), "first" );
-	dojo.fx.wipeIn( { node: progressBar.domNode } ).play();
-
-	var updateProgress = function( progressBar, taskID )
-	{
-		dojo.xhrGet({
-			url: "lexicon/tasks/" + taskID + "/status/",
-			handleAs: "json",
-			load: function( data )
-			{
-				switch( data.task.status )
-				{
-					case "SUCCESS":
-						progressBar.update({
-							maximum:  Math.max( data.task.result, 1 ),
-							progress: Math.max( data.task.result, 1 ),
-							indeterminate: false
-						});
-						console.log( data );
-						var title = "Query";
-						var art_count = data.task.result;
-						if( art_count === 0 )
-						{ var msg = "This query did not yield any articles."; }
-						else if( art_count === 1 )
-						{ var msg = "1 query article is loaded."; }
-						else
-						{ msg = art_count + " query articles are loaded.<br/>You may need to click the Refresh button to see the actual article count."; }
-						var buttons = { "OK": true, "Cancel": false };
-						genDialog( title, msg, buttons );
-						dojo.fx.wipeOut( { node: progressBar.domNode, delay: 2100, onEnd: dojo.hitch( progressBar, 'destroy' ) } ).play();
-
-						// because we now show the article counts in the accordion, we must update that panel
-						break;
-					case "PROGRESS":
-						// task: Object, id: "5df16f1b-0488-4019-bb95-94d8891d838b"
-						// status: "PROGRESS"
-						// result: Object, currentPage: 1, start: 1, step: 5, total: 9276, totalPages: 1856
-						progressBar.update({
-							maximum: Math.max( data.task.result.total, 1 ),
-							progress: data.task.result.start,
-							indeterminate: false
-						});
-						setTimeout( updateProgress, 5000, progressBar, taskID );
-						break;
-					case "PENDING":
-						setTimeout( updateProgress, 5000, progressBar, taskID );
-						break;
-					default:
-						throw Error( data.task.status );
-				}
-			},
-			error: function( err ) { console.error( err ); return err; }
-		});
-	};
-
-	var params = {
-		datastore  : datastore,
-		collection : ES_INDEX,        // default collection
-	};
-
-	dojo.xhrGet({
-		url: "lexicon/" + lexiconID + "/addToXtas",
-		content: params,
-		handleAs: "json",
-		load: function( data ) {
-			if( data.ok != "true" )
-			{ throw Error( data ); }
-			updateProgress( progressBar, data.task_id ) ;
-		},
-		error: function( err ) { console.error( err ); return err; }
-	});
-}
-
-
 // called after logout: glob_username = ""
 function clearGui()
 {
@@ -1030,19 +926,6 @@ function queryToLexicon()
 	// validate CQL -> ES; when valid, stores query
 	saveQuery(item, "query/create");     // query.js
 } // queryToLexicon
-
-
-
-// button Bijwerken
-function updateItemInLexicon( pk )
-{
-	return lexiconStore.get( pk ).then( function( data )
-	{
-		data[ 0 ].fields.query = dojo.byId( "query" ).value;
-		lexiconStore.put( data, { "overwrite": true, id: pk } ).then( createQueryList );     // HTTP POST
-		return data;
-	});
-} // updateItemInLexicon
 
 </script>
 
