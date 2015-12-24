@@ -345,8 +345,6 @@ var placeCloudInTarget = function( cloud_src, json_data, target )
 	var rwidth  = contentBox[ "w" ] -8;
 	var rheight = contentBox[ "h" ] -8;
 
-	console.log( "width: " + rwidth + ", height: " + rheight );
-
 	var min_width = 1000;
 	if( isNaN( rwidth ) || rwidth < min_width )
 	{

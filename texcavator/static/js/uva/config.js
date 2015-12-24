@@ -59,7 +59,7 @@ var config = {
 		fontscale: 75, // font scale factor
 		fontreduce: true, // reduce fontsize differences
 		stems: false, // apply stemming
-		idf: false, // divide by inverse document frequencies
+		idf: false, // normalize using inverse document frequencies
 
 		NER: false, // Named Entity Recognition
 		maxwords: 100, // default max words displayed
@@ -753,7 +753,7 @@ var createConfig = function() {
 	var labelIdf = dojo.create("label", {
 		id: "label-idf",
 		for: "cb-idf",
-		innerHTML: "&nbsp;Divide frequencies by inverse document frequency<br/>"
+		innerHTML: "&nbsp;Normalize using inverse document frequency<br/>"
 	}, cpCloud.domNode);
 
 

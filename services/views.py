@@ -1,11 +1,12 @@
 # -* coding: utf-8 -*-
 """Views for the services app
 """
-from sys import stderr, exc_info
-from collections import Counter
-import requests
+import json
 import logging
+from collections import Counter
+from sys import stderr, exc_info
 
+import requests
 from celery.result import AsyncResult
 
 from django.conf import settings
@@ -168,21 +169,6 @@ def tv_cloud(request):
                                               min_length,
                                               stopwords,
                                               stems)
-
-        # If IDF is set, multiply term frequencies by inverse document frequencies
-        if request.GET.get('idf') == '1':
-            for word in t_vector['result']:
-                try:
-                    t = Term.objects.get(word=word)
-                    if t:
-                        t_vector['result'][word] *= t.idf
-                except Term.DoesNotExist:
-                    continue
-
-        # Limit the retrieved vector to a set number of words
-        maxwords = settings.WORDCLOUD_MAX_WORDS
-        t_vector['result'] = [{'term': t, 'count': round(c, 2)} for t, c in t_vector['result'].most_common(maxwords)]
-
         return json_response_message('ok', 'Word cloud generated', t_vector)
     else:
         # Cloud for a query
@@ -200,6 +186,30 @@ def tv_cloud(request):
         logger.info('services/cloud/ - Celery task id: {}'.format(task.id))
 
         return json_response_message('ok', '', {'task': task.id})
+
+
+@csrf_exempt
+@login_required
+def normalize_cloud(request):
+    """
+    Normalizes cloud data:
+    - if necessary, calculates the tf-idf-scores
+    """
+    cloud_data = json.loads(request.POST.get('cloud_data'))
+
+    # If IDF is set, multiply term frequencies by inverse document frequencies
+    if request.POST.get('idf') == '1':
+        for word in cloud_data:
+            try:
+                t = Term.objects.get(word=word)
+                if t:
+                    cloud_data[word] *= t.idf
+            except Term.DoesNotExist:
+                continue
+
+    print cloud_data
+    cloud_data = [{'term': t, 'count': round(c, 2)} for t, c in cloud_data.items()]
+    return json_response_message('ok', '', {'result': cloud_data})
 
 
 @login_required

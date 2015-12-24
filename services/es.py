@@ -374,7 +374,7 @@ def single_document_word_cloud(idx, typ, doc_id, min_length=0, stopwords=None, s
                     wordcloud[term] += int(count_dict.get('term_freq'))
 
         return {
-            'result': wordcloud,
+            'result': json.dumps(wordcloud),
             'status': 'ok'
         }
 

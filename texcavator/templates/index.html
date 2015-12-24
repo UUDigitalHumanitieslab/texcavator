@@ -584,33 +584,59 @@ function nextResults( amount )
 		}
 
 		// Collect the parameters
-		var params = {
-			"collections": ES_INDEX,        //  can be more than 1
-			"record_id": record_id
-		}
+		var params = { "record_id": record_id };
 		params = getCloudParameters( params );
 
 		// Create a request for a word cloud
 		dojo.xhrGet({
 			url: "services/cloud",
 			content: params,
-			handleAs: 'json',
+			handleAs: "json",
 			load: function(response)
 			{
 				if( response.status != "ok" )
 				{
 					console.warn( "retrieveRecordCloudData: " + response.error );
-					var title = "Cloud data request failed";
-					var buttons = { "OK": true };
-					genDialog( title, response.error, buttons );
+					genDialog( "Cloud data request failed", response.error, { "OK": true } );
 				}
 				else
 				{
-					console.log( "cloud words: " + response.result.length );
+				    console.log( "Starting normalizing" );
+					normalizeCloud( response.result );
+				}
+			},
+			error: function(error) {
+				console.error(error);
+				return error;
+			}
+		});
+	}
+
+    // Normalizes cloud data before the cloud is actually generated.
+	var normalizeCloud = function ( cloud_data )
+	{
+	    var params = { "cloud_data": cloud_data };
+	    params = getCloudParameters(params);
+
+		// Create a request for a word cloud
+		dojo.xhrPost({
+			url: "services/normalize_cloud/",
+			content: params,
+			handleAs: "json",
+			load: function(response)
+			{
+				if( response.status != "ok" )
+				{
+					console.warn( "preprocessCloud: " + response.error );
+					genDialog( "Preprocessing cloud failed", response.error, { "OK": true } );
+				}
+				else
+				{
+				    console.log( "Starting cloud creation" );
 					createCloud( "article", response, "borderContainer", "cloudPane" );
 				}
 			},
-			error: function(error){
+			error: function(error) {
 				console.error(error);
 				return error;
 			}
