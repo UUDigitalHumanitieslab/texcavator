@@ -483,29 +483,6 @@ def termvector_wordcloud(idx, typ, doc_ids, min_length=0, stems=False):
     return wordcloud
 
 
-def counter2wordclouddata(wordcloud_counter, burst, stopwords=None):
-    """Transform a counter into the data required to draw a word cloud.
-    """
-    if not stopwords:
-        stopwords = []
-    for stopw in stopwords:
-        del wordcloud_counter[stopw]
-
-    result = []
-    for term, count in wordcloud_counter.most_common(100):
-        result.append({
-            'term': term,
-            'count': count
-        })
-
-    return {
-        'max_count': wordcloud_counter.most_common(1)[0][1],
-        'result': result,
-        'status': 'ok',
-        'burstcloud': burst
-    }
-
-
 def get_search_parameters(req_dict):
     """Return a tuple of search parameters extracted from a dictionary
 

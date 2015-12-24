@@ -561,7 +561,7 @@ function burstCloud(params) {
 			return;
 		} else if (resp.result) {
 			// this will be the case for single documents
-			placeCloudInTarget("burst", resp, 'cloud');
+			normalizeCloud("burst", resp.result, "cloud");
 			return;
 		} else {
 			console.log("Retrieved task_id: " + resp.task);
