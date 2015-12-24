@@ -232,6 +232,8 @@ dojo.ready( showLogin );                                            // login.js
 dojo.ready( function() { 
 	QUERY_DATA_DOWNLOAD = "{{ QUERY_DATA_DOWNLOAD_ALLOW }}" == "True";
 	ILPS_LOGGING = "{{ ILPS_LOGGING }}" == "True";
+	WORDCLOUD_MIN_WORDS = {{ WORDCLOUD_MIN_WORDS }};
+	WORDCLOUD_MAX_WORDS = {{ WORDCLOUD_MAX_WORDS }};
 } );
 
 dojo.ready( function() { celeryCheckFailure( "None" ); } ); // celery.js

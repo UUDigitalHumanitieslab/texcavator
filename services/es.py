@@ -373,12 +373,8 @@ def single_document_word_cloud(idx, typ, doc_id, min_length=0, stopwords=None, s
                 if term not in stopwords and len(term) >= min_length:
                     wordcloud[term] += int(count_dict.get('term_freq'))
 
-        common_terms = wordcloud.most_common(100)
-        result = [{'term': t, 'count': c} for t, c in common_terms]
-
         return {
-            'max_count': common_terms[0][0],
-            'result': result,
+            'result': wordcloud,
             'status': 'ok'
         }
 

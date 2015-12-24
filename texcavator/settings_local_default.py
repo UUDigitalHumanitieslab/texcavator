@@ -70,6 +70,10 @@ EMAIL_PORT = 1025
 LOGIN_URL = '/'
 LOGIN_REDIRECT_URL = '/'
 
+# Minimum and maximum number of words allowed in the word cloud
+WORDCLOUD_MIN_WORDS = 1
+WORDCLOUD_MAX_WORDS = 200
+
 # Temporary setting for whether or not stemming is available
 STEMMING_AVAILABLE = True
 

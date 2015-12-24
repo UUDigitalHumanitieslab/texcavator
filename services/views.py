@@ -171,13 +171,17 @@ def tv_cloud(request):
 
         # If IDF is set, multiply term frequencies by inverse document frequencies
         if request.GET.get('idf') == '1':
-            for item in t_vector['result']:
+            for word in t_vector['result']:
                 try:
-                    t = Term.objects.get(word=item['term'])
+                    t = Term.objects.get(word=word)
                     if t:
-                        item['count'] = round(item['count'] * t.idf, 2)
+                        t_vector['result'][word] *= t.idf
                 except Term.DoesNotExist:
                     continue
+
+        # Limit the retrieved vector to a set number of words
+        maxwords = settings.WORDCLOUD_MAX_WORDS
+        t_vector['result'] = [{'term': t, 'count': round(c, 2)} for t, c in t_vector['result'].most_common(maxwords)]
 
         return json_response_message('ok', 'Word cloud generated', t_vector)
     else:

@@ -765,8 +765,8 @@ var createConfig = function() {
 		id: "ns-wcount",
 		smallDelta: 10,
 		constraints: {
-			min: 10,
-			max: 500,
+			min: WORDCLOUD_MIN_WORDS,
+			max: WORDCLOUD_MAX_WORDS,
 			places: 0
 		},
 		style: "width:50px",
