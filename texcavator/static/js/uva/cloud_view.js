@@ -554,7 +554,6 @@ var wordCloudClicked = function( event )
 	var newQuery = query + " +" + event.word;
 	if( !confirm( 'This adds ' + event.word + ' to the query. Do you want to continue?', 'Modify query' ) ) return;
 	dojo.byId( "query" ).value = newQuery;
-	dojo.empty( dojo.byId( "cql" ) );
 	searchSubmit();
 }
 

@@ -27,61 +27,9 @@
 				</input>
 				<!-- value:'opium', -->
 
-				<button data-dojo-type="dijit.form.ComboButton" id="searchButton"
+				<button data-dojo-type="dijit.form.Button" id="searchButton"
 						data-dojo-props="iconClass:'dijitIcon dijitIconSearch', style:'font-size: 125%;', type: 'submit'">
 					<span>Search</span>
-					<div dojoType="dijit.Menu">
-						<div dojoType="dijit.MenuItem">
-							<script type="dojo/method" event="onClick">
-								uva.logger.log("Start search: " + dijit.byId('query').value);
-
-								var terms = dijit.byId('query').value.split(' ');
-								dijit.byId('query').textbox.readOnly = true;
-								dojo.empty('cql');
-
-								var queryTerms = [];
-								var queryBuilder = new uva.query.CQL();
-
-								var updateQuery = function() {
-									var query = "";
-									dojo.forEach(queryTerms, function(term, termIndex) {
-										var part = queryBuilder.createQuery(term.get("words"), 
-																			term.get("modifier"), 
-																			term.get("forbidden"));
-										if(query.length > 0)
-											query = queryBuilder.combineWithAND(query, part);
-										else
-											query = part;
-									});
-									dijit.byId('query').set('value', query);
-									uva.logger.log("Updated query: " + query);
-								};
-								var newTerm = function(term) {
-									var term = new uva.query.Term({value: term});
-									dojo.place(term.domNode, 'cql');
-									term.termChanged = updateQuery;
-									queryTerms.push(term);
-									term.uninitialize = function () {
-										// Remove this item from queryTerms
-										queryTerms = dojo.filter(queryTerms, function(item) { return item != this; }, this);
-										updateQuery();
-									};
-								};
-								dojo.forEach(terms, newTerm);
-								updateQuery();
-
-								new dijit.form.Button({
-									label: '+',
-									onClick: function() {
-										uva.logger.log("New term");
-										newTerm('term');
-										updateQuery();
-									}
-								}, 'cqlAdd');
-							</script>
-							Start search
-						</div>
-					</div>
 				</button>
 
 				<button data-dojo-type="dijit.form.Button" id="clearButton"
@@ -91,7 +39,6 @@
 					//	console.log( "Clear" );
 						dijit.byId( "query" ).set( "value", "" );
 						dijit.byId( "query" ).textbox.readOnly = false;
-						dojo.empty( "cql" );
 					</script>
 				</button>
 
@@ -104,8 +51,6 @@
 				<div id="div-year-range-slider-2">
 					<div id="div-year-range-legend-2"></div>
 				</div>
-
-				<span id="cql"></span><div id="cqlAdd"></div>
 			</form>
 
 			<div id="search-result">
@@ -521,11 +466,6 @@ function nextResults( amount )
 	dojo.require( "dojox.xml.parser" );
 </script>
 
-<script type="text/javascript">
-	dojo.require( "uva.query.Term" );
-	dojo.require( "uva.query.CQL" );
-</script>
-
 
 <script type="text/javascript">
 	var retrieveRecord = function( record_id )
@@ -769,7 +709,6 @@ function clearGui()
 
 	dojo.byId( "search-result" ).innerHTML = "Search for newspaper articles at the KB."; // default search result text
 	dojo.empty( dojo.byId( "lexiconItems" ) );
-	dojo.empty( dojo.byId( "cql" ) );
 	dijit.byId( "query" ).set( "value", "" );
 
 	clearCloud();                                       // Cloud, in cloud_view.js
