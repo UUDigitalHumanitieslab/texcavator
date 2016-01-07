@@ -198,19 +198,21 @@ def normalize_cloud(request):
     cloud_data = json.loads(request.POST.get('cloud_data'))
 
     # If IDF is set, multiply term frequencies by inverse document frequencies
-    # TODO: only loop over the data once
-    # TODO: add separate column for tfidf scores in output
     if request.POST.get('idf') == '1':
-        for word in cloud_data:
-            try:
-                t = Term.objects.get(word=word)
-                if t:
-                    cloud_data[word] *= t.idf
-            except Term.DoesNotExist:
-                continue
+        result = [{'term': t, 'count': c, 'tfidf': round(tfidf(t, c), 2)} for t, c in cloud_data.items()]
+    else:
+        result = [{'term': t, 'count': c} for t, c in cloud_data.items()]
 
-    cloud_data = [{'term': t, 'count': round(c, 2)} for t, c in cloud_data.items()]
-    return json_response_message('ok', '', {'result': cloud_data})
+    return json_response_message('ok', '', {'result': result})
+
+
+def tfidf(word, frequency):
+    try:
+        t = Term.objects.get(word=word)
+        frequency *= t.idf
+    except Term.DoesNotExist:
+        pass
+    return frequency
 
 
 @login_required

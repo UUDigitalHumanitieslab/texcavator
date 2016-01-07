@@ -440,55 +440,48 @@ var placeCloudInTarget = function( cloud_src, json_data, target )
 
 	var text_size_list  = [];	// [ ["Duitsche", 13], ["Europa", 13], ... ]
 	var text_count_hash = {};	// { {"Duitsche"=13}, {"Europa"=13}, ... }
+	var text_tfidf_hash = {};	// { {"Duitsche"=13}, {"Europa"=13}, ... }
 	var text_type_hash  = {};	// { {"Duitsche"="MISC"}, {"Europa"="LOC"}, ... }
 	var text_color_hash = {};	// { {"Duitsche"="Orange"}, {"Europa"="Green"}, ...  }
 	var minFontSize = 6;		// minimum size shown; used to be 8
 
 	dojo.forEach( cloud_data, function( val, i )
 	{
+		freq = config.cloud.idf ? val.tfidf : val.count;
 		countAllWords += 1;
 		if( wordsDisplayed < wordsDisplayedMax )
 		{
-				if( fontreduce )
-				{
-					// using Math.sqrt() compresses the font size differences
-					text_size_list.push( [ val.term, Math.sqrt( val.count ) ] );
-					if( countMax <  Math.sqrt( val.count ) )
-					{ countMax = Math.sqrt( val.count ); }
-				}
-				else
-				{
-					text_size_list.push( [ val.term, val.count ] );
-					if( countMax < val.count )
-					{ countMax = val.count; }
-				}
+			if( fontreduce )
+			{
+				// using Math.sqrt() compresses the font size differences
+				text_size_list.push( [ val.term, Math.sqrt( freq ) ] );
+				if( countMax <  Math.sqrt( freq ) )
+				{ countMax = Math.sqrt( freq ); }
+			}
+			else
+			{
+				text_size_list.push( [ val.term, freq ] );
+				if( countMax < freq )
+				{ countMax = freq; }
+			}
 
-				text_count_hash[ val.term ] = val.count;
-				text_type_hash[  val.term ] = val.type;
-			//	text_type_list.push( [ val.term, val.type ] );
+			text_count_hash[ val.term ] = val.count;
+			text_tfidf_hash[ val.term ] = val.tfidf;
+			text_type_hash[  val.term ] = val.type;
+		//	text_type_list.push( [ val.term, val.type ] );
 
-				text_color_hash[ val.term ] = nerType2Color( val.type );
-			//	text_color_list.push( [ val.term, nerType2Color( val.type ) ] );
-				wordsDisplayed += 1;
+			text_color_hash[ val.term ] = nerType2Color( val.type );
+		//	text_color_list.push( [ val.term, nerType2Color( val.type ) ] );
+			wordsDisplayed += 1;
 		}
 	});
-//	console.log( text_size_list );
-//	console.log( text_count_hash );
-//	console.log( text_type_hash );
-//	console.log( text_color_hash );
 
 	var weightFactor = fontscale / countMax;
 
-//	console.log( "countMax: " + countMax );
-//	console.log( "weightFactor: " + weightFactor );
-//	console.log( "words displayed: " + wordsDisplayed + " of: " + countAllWords );
-//	console.log( "word cloud lib loaded? " + $.wordCloudSupported );
-//	console.log( "minium font size? " + $.miniumFontSize );
-//	console.log( "words to process: " + text_size_list.length );
-
 	if( cloud_render === "svg" )
 	{
-		d3CreateCloud( target, cloud_src, rwidth, rheight, weightFactor, text_size_list, text_count_hash, text_type_hash, text_color_hash );
+		d3CreateCloud( target, cloud_src, rwidth, rheight, weightFactor, text_size_list, 
+			text_count_hash, text_tfidf_hash, text_type_hash, text_color_hash );
 	}
 
 	else
@@ -544,7 +537,7 @@ var wordCloudClicked = function( event )
 
 // =============================================================================
 var d3CreateCloud = function( target, cloud_src, svg_width, svg_height, weightFactor, 
-	text_size_list, text_count_hash, text_type_hash, text_color_hash )
+	text_size_list, text_count_hash, text_tfidf_hash, text_type_hash, text_color_hash )
 {
 //	console.log( "d3CreateCloud() ");
 	if( svg_width == undefined || svg_height == undefined )
@@ -603,12 +596,14 @@ var d3CreateCloud = function( target, cloud_src, svg_width, svg_height, weightFa
 				.attr( "transform", function( d ) 
 					{ return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")"; } )
 				.attr( "count",   function( d ) { return text_count_hash[ d.text ]; } )
+				.attr( "tfidf",   function( d ) { return text_tfidf_hash[ d.text ]; } )
 				.attr( "nertype", function( d ) { return text_type_hash[  d.text ]; } )
 			.text( function( d ) { return d.text; } )
 			.on( "mouseover", function( d ) { 
 				var count   = d3.select( this ).attr( "count" );
+				var tfidf   = d3.select( this ).attr( "tfidf" );
 				var nertype = d3.select( this ).attr( "nertype" );
-				svgMouseover( d, count, nertype ); } )
+				svgMouseover( d, count, tfidf, nertype ); } )
 			.on( "mouseout", function( d ) { 
 				svgMouseout( d ); } )
 			.on( "mouseup", function( d ) { 
@@ -616,15 +611,19 @@ var d3CreateCloud = function( target, cloud_src, svg_width, svg_height, weightFa
 				svgMouseup( d, count ); } );
 	}
 
-	var svgMouseover = function( word, count, nertype )
+	var svgMouseover = function( word, count, tfidf, nertype )
 	{
 		if (nertype == null)
 		{
 			result = "<center><u>word</u>: <b>" +  word.text + "</b>";
 			result += ", <u>count</u>: <b>" + count + "</b>"; 
 
+			if (config.cloud.idf) {
+				result += ", <u>tdidf</u>: <b>" + tfidf + "</b>"; 
+			}
+
 			// Show stemmed form if we're not showing the stemmed cloud
-			if (!config[ "cloud" ][ "stems" ])
+			if (!config.cloud.stems)
 			{
 				dojo.xhrPost({
 					url: "services/stem/",

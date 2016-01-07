@@ -4,6 +4,7 @@
 from __future__ import absolute_import
 
 import json
+import math
 from itertools import dropwhile
 from collections import Counter
 
@@ -56,7 +57,7 @@ def generate_tv_cloud(search_params, min_length, stopwords, date_range=None, ste
         update_task_status(progress, doc_count)
 
     # Remove non-frequent words form the counter
-    for key, count in dropwhile(lambda c: c[1] > 1, wordcloud_counter.most_common()):
+    for key, count in dropwhile(lambda c: c[1] > math.log10(doc_count), wordcloud_counter.most_common()):
         del wordcloud_counter[key]
 
     # Remove the stopwords from the counter

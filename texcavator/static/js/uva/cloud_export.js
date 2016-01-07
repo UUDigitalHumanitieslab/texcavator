@@ -29,30 +29,18 @@ var cloud_src  = "";
 var cloud_data = [];
 var cloud_data_elems = 0;
 
-/*
-var cloud_data = [
-	{"count": 42, "term": "jaar"}, 
-	{"count": 34, "term": "alle"}, 
-	{"count": 30, "term": "onder"}, 
-	{"count": 29, "term": "jeugd"}, 
-	{"count": 25, "term": "daarvan"}, 
-	{"count": 24, "term": "wordt"}
-];
-*/
-
 var grid_3layout = [
 	{ field: "id",    width: "25%" },
-	{ field: "count", width: "25%" },
-	{ field: "term",  width: "50%" },
+	{ field: "term", width: "50%" },
+	{ field: "count",  width: "25%" },
 ];
 
 var grid_4layout = [
 	{ field: "id",    width: "20%" },
+	{ field: "term",  width: "40%" },
 	{ field: "count", width: "20%" },
-	{ field: "term",  width: "45%" },
-	{ field: "type",  width: "15%" }	// chrome needs more than 10%
+	{ field: "tfidf",  width: "20%" }
 ];
-
 
 
 var storeCloudData = function( cloudType, cloudData )
@@ -62,17 +50,7 @@ var storeCloudData = function( cloudType, cloudData )
 
 	cloud_data = cloudData;
 	cloud_src  = cloudType;
-	cloud_data_elems = 0;
-
-	// has the cloud data 2 or 3 elements: 
-	// count + term, or count + term + type ?
-	var o = cloud_data[ 0 ];
-	if( typeof( o ) !== "undefined" )
-	{
-		for( var v in o )
-		{ cloud_data_elems += 1; }
-	}
-	//	console.log( "cloud data elems: " + cloud_data_elems );
+	cloud_data_elems = getConfig().cloud.NER || getConfig().cloud.idf ? 3 : 2;
 };
 
 var getCloudSrc = function()
@@ -88,23 +66,22 @@ var getCloudTermCount = function()
 
 var getCloudGridLayout = function()
 {
-	// 3 columns without NER (including # column)
-	// 4 columns with NER (including # column)
+	var grid_layout;
+	// 3 columns without NER/idf (including # column)
+	// 4 columns with NER/idf (including # column)
 	if( typeof( cloud_data_elems ) === "undefined" )
-	{ var grid_layout = grid_3layout; }			// 3 columns (+id)
+	{ grid_layout = grid_3layout; }			// 3 columns (+id)
 	else
 	{
 		if( cloud_data_elems === 0 || cloud_data_elems === 2 )
-		{ var grid_layout = grid_3layout; }		// 3 columns (+id)
+		{ grid_layout = grid_3layout; }		// 3 columns (+id)
 		else if( cloud_data_elems === 3 ) 
-		{ var grid_layout = grid_4layout; }		// 4 columns (+id)
+		{ grid_layout = grid_4layout; }		// 4 columns (+id)
 		else
-		{ var grid_layout = grid_3layout; }		// 3 columns (+id)
-		console.log( "cloud data elems: " + cloud_data_elems );
+		{ grid_layout = grid_3layout; }		// 3 columns (+id)
 	}
-	return grid_layout
-}
-
+	return grid_layout;
+};
 
 
 var showCloudDlg = function()
@@ -113,14 +90,13 @@ var showCloudDlg = function()
 	dlg_cloud = dijit.byId( "dlg-cloud" );
 	if( dlg_cloud == null ) { createCloudDlg(); }	// create an new one
 	dijit.byId( "dlg-cloud" ).show();
-}
+};
 
 var createCloudDlg = function()
 {
 	console.log( "createCloudDlg()");
 
 	var grid_layout = getCloudGridLayout();
-
 
 	var dlgCloud = new dijit.Dialog({
 		id: "dlg-cloud",
@@ -244,35 +220,28 @@ var createCloudTableData = function()
 		items: []
 	};
 
-	if( cloud_data_elems == 3 )
-	{ var ner_cloud = true; }
-	else
-	{ var ner_cloud = false; }
+	var ner_cloud = cloud_data_elems == 3;
 
-	var normalize_ws    = config[ "cloudexport" ][ "normalize_ws" ];
-	var comma2semicolon = config[ "cloudexport" ][ "comma2semicolon" ];
-
-	var i, len;
-	for( i = 0, len = cloud_data.length; i < len; ++i ) 
+	for( var i = 0; i < cloud_data.length; ++i ) 
 	{
-		var cloud_line = cloud_data[ i % len ];
+		var cloud_line = cloud_data[ i ];
 
 		// NER terms 
-		var term = cloud_line[ 'term' ];
+		var term = cloud_line.term;
 
-		if( ner_cloud == true && normalize_ws == true )
+		if( ner_cloud && config.cloudexport.normalize_ws )
 		{
 			// replace any (multiple) whitespace by a single space
 			var term_new = term.replace( /\s+/g, " " );
 			if( term != term_new )
 			{
 			//	console.warn( (i+1) + ": " + term_new );
-				cloud_line[ 'term' ] = term_new;
+				cloud_line.term = term_new;
 			}
 			term = term_new;
 		}
 
-		if( ner_cloud == true && comma2semicolon == true )
+		if( ner_cloud && config.cloudexport.comma2semicolon )
 		{
 			// a comma splits the term by (some?) spreadsheets, notwithstanding ""
 			// a semicolon seems fine
@@ -282,7 +251,7 @@ var createCloudTableData = function()
 			//	console.warn( (i+1) + ": " + term );
 				var term_new = term.replace( ',', ';' );		// comma -> semicolon
 			//	console.log( term_new );
-				cloud_line[ 'term' ] = term_new;
+				cloud_line.term = term_new;
 			}
 		}
 
@@ -369,7 +338,7 @@ function exportCloudData( filename )
 		var cdata = {
 			"clouddata": str,				// the cloud data
 			"filename": filename,
-			"separator": config[ "cloudexport" ][ "separator" ],
+			"separator": config.cloudexport.separator,
 			"zipped": '0',					// {0|1} compression
 		};
 		var options = {
