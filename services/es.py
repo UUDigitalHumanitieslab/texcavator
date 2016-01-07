@@ -207,7 +207,8 @@ def create_query(query_str, date_ranges, exclude_distributions,
             'filtered': {
                 'query': {
                     'query_string': {
-                        'query': query_str
+                        'query': query_str,
+                        'allow_leading_wildcard': getattr(settings, 'QUERY_ALLOW_LEADING_WILDCARD', True),
                     }
                 },
                 'filter': {
