@@ -194,16 +194,19 @@ def normalize_cloud(request):
     """
     Normalizes cloud data:
     - if necessary, calculates the tf-idf-scores
+    - sort and return the maximum allowed number of words
     """
     cloud_data = json.loads(request.POST.get('cloud_data'))
 
     # If IDF is set, multiply term frequencies by inverse document frequencies
     if request.POST.get('idf') == '1':
         result = [{'term': t, 'count': c, 'tfidf': round(tfidf(t, c), 2)} for t, c in cloud_data.items()]
+        result = sorted(result, key=lambda k: k['tfidf'], reverse=True)
     else:
         result = [{'term': t, 'count': c} for t, c in cloud_data.items()]
+        result = sorted(result, key=lambda k: k['count'], reverse=True)
 
-    return json_response_message('ok', '', {'result': result})
+    return json_response_message('ok', '', {'result': result[:settings.WORDCLOUD_MAX_WORDS]})
 
 
 def tfidf(word, frequency):
