@@ -198,18 +198,9 @@ def create_query(query_str, date_ranges, exclude_distributions,
         filter_must_not.append(
             {"term": {"article_dc_subject": _KB_ARTICLE_TYPE_VALUES[typ]}})
 
-    # Temporary hotfix for duplicate newspapers, see #73.
-    if getattr(settings, 'KB_HOTFIX_DUPLICATE_NEWSPAPERS', True):
-        query_str += ' -identifier:ddd\:11*'
-
     query = {
         'query': {
             'filtered': {
-                'query': {
-                    'query_string': {
-                        'query': query_str
-                    }
-                },
                 'filter': {
                     'bool': {
                         'must': filter_must,
@@ -220,6 +211,12 @@ def create_query(query_str, date_ranges, exclude_distributions,
             }
         }
     }
+
+    if query_str:
+        # Temporary hotfix for duplicate newspapers, see #73.
+        if getattr(settings, 'KB_HOTFIX_DUPLICATE_NEWSPAPERS', True):
+            query_str += ' -identifier:ddd\:11*'
+        query['query']['filtered']['query'] = {'query_string': {'query': query_str}}
 
     return query
 
