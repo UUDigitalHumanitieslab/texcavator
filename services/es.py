@@ -212,6 +212,7 @@ def create_query(query_str, date_ranges, exclude_distributions,
         }
     }
 
+    # Add the query string part.
     if query_str:
         # Temporary hotfix for duplicate newspapers, see #73.
         if getattr(settings, 'KB_HOTFIX_DUPLICATE_NEWSPAPERS', True):
@@ -330,22 +331,17 @@ def single_document_word_cloud(idx, typ, doc_id, min_length=0, stopwords=None, s
     Returns:
         dict : dict
             A dictionary that contains word frequencies for all the terms in
-            the document. The data returned is formatted according to what is
-            expected by the user interface:
+            the document.
 
             .. code-block:: javascript
 
                 {
-                    'status': 'ok'
-                    'max_count': ...
+                    'status': 'ok',
                     'result':
-                        [
-                            {
-                                'term': ...
-                                'count': ...
-                            },
-                            ...
-                        ]
+                        {
+                            term: count
+                        },
+                        ...
                 }
     """
 
