@@ -70,9 +70,9 @@ wildcard_any = (wildcard / nonreserved / escape)+
 
 wildcard = [?*]
 
-nonreserved = [^+-=&|><!(){}\[\]^\"~*?:\/]
+nonreserved = [^+-=&|><!(){}\[\]^\"~*?:\/ ]
 
-escape = '\\' [+-=&|><!(){}\[\]^\"~*?:\/]
+escape = '\\' [+-=&|><!(){}\[\]^\"~*?:\/ ]
 
 namechar = [a-z_]i
 
