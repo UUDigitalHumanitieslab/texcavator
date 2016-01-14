@@ -1,10 +1,9 @@
-"""Gather statistics of the total number of terms"""
 import math
+import time
 from collections import Counter
 
 from django.core.management.base import BaseCommand
 from django.conf import settings
-from django.db import transaction
 
 from query.models import Distribution, Term
 from services.es import count_search_results, document_id_chunks, termvector_wordcloud
@@ -12,8 +11,12 @@ from texcavator.utils import daterange2dates
 
 
 class Command(BaseCommand):
+    """
+    Gathers the total counts of terms in the index.
+    This can be used to normalize for inverse document frequencies in word clouds
+    """
     args = ''
-    help = ''
+    help = 'Gather term counts in the complete index. Make sure ElasticSearch is running!'
 
     def handle(self, *args, **options):
         print 'Emptying table...'
@@ -30,7 +33,7 @@ class Command(BaseCommand):
                                                exclude_dist, [], []).get('count')
         print 'Total documents: {}'.format(total_documents)
 
-        sets = document_id_chunks(settings.QUERY_DATA_CHUNK_SIZE,
+        sets = document_id_chunks(10000,
                                   settings.ES_INDEX,
                                   settings.ES_DOCTYPE,
                                   None,
@@ -40,17 +43,16 @@ class Command(BaseCommand):
         print 'Counting terms...'
         counter = Counter()
         for n, s in enumerate(sets):
-            print 'At set {}...'.format(n)
-            counter += termvector_wordcloud(settings.ES_INDEX, settings.ES_DOCTYPE, s, min_length=4)
-            if n == 10:
-                break
+            start_time = time.time()
+            counter += termvector_wordcloud(settings.ES_INDEX, settings.ES_DOCTYPE, s, min_length=2)
+            print 'Completed set {} in {} seconds...'.format(n + 1, time.time() - start_time)
 
         print 'Calculating IDFs...'
         terms = []
         for term, count in counter.items():
-            idf = math.log10(total_documents / float(count))
-            terms.append(Term(word=term, count=count, idf=idf))
-        Term.objects.bulk_create(terms)
+            if count > 1:  # don't add single occurrences
+                idf = math.log10(total_documents / float(count))
+                terms.append(Term(word=term, count=count, idf=idf))
 
-        print 'Deleting all terms with frequency of 1...'
-        Term.objects.filter(count=1).delete()
+        print 'Transferring to database...'
+        Term.objects.bulk_create(terms, batch_size=10000)
