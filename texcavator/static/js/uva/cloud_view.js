@@ -345,14 +345,14 @@ var placeCloudInTarget = function( cloud_src, json_data, target )
 	var rwidth  = contentBox[ "w" ] -8;
 	var rheight = contentBox[ "h" ] -8;
 
-	var min_width = 1000;
+	var min_width = cloud_src == 'burst' ? 400 : 1000;
 	if( isNaN( rwidth ) || rwidth < min_width )
 	{
 	//	console.log( "placeCloudInTarget() bad rwidth: " + rwidth );
 		rwidth = min_width;		// just try something
 	}
 
-	var min_height = 600;
+	var min_height = cloud_src == 'burst' ? 300 : 600;
 	if( isNaN( rheight ) || rheight < min_height )
 	{
 	//	console.log( "placeCloudInTarget() bad rheight: " + rheight );
