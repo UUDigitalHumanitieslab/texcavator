@@ -1,0 +1,92 @@
+/*
+	Query string parsing grammar based on PEG.js
+	(c) 2016 Digital Humanities Lab, Utrecht University
+*/
+
+subquery = part (' '+ part)*
+// quick brown fox
+
+part = negation / conjunction / disjunction / qualified
+
+negation = (('NOT' ' '+) / '!') right:boosted
+// !news
+// NOT news
+
+conjunction = left:part ' '+ ('AND' / '&&') ' '+ right:part
+// quick AND fox
+// quick && fox
+
+disjunction = left:part ' '+ ('OR' / '||') ' '+ right:part
+// quick OR brown
+// quick || brown
+
+qualified = [+-]? boosted
+// +fox
+// -news
+
+boosted = matcher ('^' nonzero_float?)?
+// fox
+// fox^
+// fox^4
+
+matcher = (fieldname ':')? value
+        / '_missing_:' fieldname
+        / '_exists_:' fieldname
+// fox
+// title:fox
+// _missing_:title
+
+fieldname = fieldname_part ('.' fieldname_part)*
+// title
+// book.\*
+// book.date.year
+
+fieldname_part = '\\*' / name
+
+name = namechar (namechar / digit)+
+// any javascript identifier
+
+value = group / fuzzed
+
+group = '(' subquery ')'
+// (foo bar)
+
+fuzzed = (term / phrase) ('~' nonzero_integer?)?
+// brwn~
+// quikc~1
+// "fox quick"~5
+
+term = wildcard_initial / wildcard_any
+
+wildcard_initial = wildcard right:wildcard_any
+// *ing
+// ?ing
+
+wildcard_any = (wildcard / nonreserved / escape)+
+// qu?ck
+// bro*
+// quick
+// qu1ck
+
+wildcard = [?*]
+
+nonreserved = [^+-=&|><!(){}\[\]^\"~*?:\/]
+
+escape = '\\' [+-=&|><!(){}\[\]^\"~*?:\/]
+
+namechar = [a-z_]i
+
+nonzero_float = nonzero_integer ('.' integer)? / '0'* '.' nonzero_integer
+// 12
+// .5
+// 4.5
+
+nonzero_integer = !('0'+ [^1-9]) integer
+// 12
+// 012
+
+integer = digit+
+// 0
+// 12
+
+digit = [0-9]
