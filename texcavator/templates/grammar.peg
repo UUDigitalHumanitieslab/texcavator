@@ -6,23 +6,25 @@
 subquery = part (' '+ part)*
 // quick brown fox
 
-part = negation / conjunction / disjunction / qualified
+part = (negation / qualified) part2
+
+part2 = AND part part2 / OR part part2 / ''
+// quick AND fox
+// quick && fox
+// quick OR brown
+// quick || brown
 
 negation = (('NOT' ' '+) / '!') right:boosted
 // !news
 // NOT news
 
-conjunction = left:part ' '+ ('AND' / '&&') ' '+ right:part
-// quick AND fox
-// quick && fox
-
-disjunction = left:part ' '+ ('OR' / '||') ' '+ right:part
-// quick OR brown
-// quick || brown
-
 qualified = [+-]? boosted
 // +fox
 // -news
+
+AND = ' '+ ('AND' / '&&') ' '+
+
+OR = ' '+ ('OR' / '||') ' '+
 
 boosted = matcher ('^' nonzero_float?)?
 // fox
