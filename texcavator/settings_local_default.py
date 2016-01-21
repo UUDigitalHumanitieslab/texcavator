@@ -15,11 +15,10 @@ PROJECT_GRANNY = os.path.dirname(PROJECT_PARENT)
 
 sys.path.append(PROJECT_PARENT)
 
-# Deployment settings
-# See https://docs.djangoproject.com/en/1.7/howto/deployment/checklist/
+# Quick-start development settings - unsuitable for production
+# See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
 SECRET_KEY = '5at!yd@mwyn_^xn54m&rg%(6zqprm22^)lke5$v&)-s$+yfj1f'
 DEBUG = True
-TEMPLATE_DEBUG = DEBUG
 ALLOWED_HOSTS = []
 STATIC_ROOT = os.path.join(PROJECT_GRANNY, "texcavator_static") + os.sep
 LOGGING_LOCATION = PROJECT_PARENT
@@ -48,6 +47,7 @@ QUERY_DATA_EXPIRE_DAYS = 1			# delete after one day
 ILPS_LOGGING = False				# if True, also uncomment code in base.html
 
 # Database settings
+# https://docs.djangoproject.com/en/1.8/ref/settings/#databases
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
