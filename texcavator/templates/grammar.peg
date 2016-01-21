@@ -68,6 +68,18 @@ wildcard_any = (wildcard / nonreserved / escape)+
 // quick
 // \&qu1ck
 
+phrase = '"' (strict_quoted / liberal_quoted / empty_string) '"'
+
+strict_quoted = word (' '+ word)*
+// "foo bar"
+
+word = (nonreserved / escape)+
+
+liberal_quoted = ([^"] / '\\"')+
+// "foo~ bar*"
+
+empty_string = ' '*
+
 wildcard = [?*]
 
 nonreserved = [^+-=&|><!(){}\[\]^\"~*?:\/ ]
