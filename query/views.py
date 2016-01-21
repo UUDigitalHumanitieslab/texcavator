@@ -337,7 +337,7 @@ def download_prepare(request):
     """
     if settings.DEBUG:
         print >> stderr, "download_prepare()"
-        print >> stderr, request.REQUEST
+        print >> stderr, request.GET
     logger.info('query/download/prepare - user: {}'.
                 format(request.user.username))
 
@@ -380,7 +380,7 @@ def download_prepare(request):
         print >> stderr, 'http://{}'.format(request.get_host())
 
     # zip documents by celery background task
-    execute(query, dict(request.REQUEST), zip_basename, user.email, email_message)
+    execute(query, dict(request.GET), zip_basename, user.email, email_message)
 
     msg = "Your export for query <b>" + query.title + \
           "</b> is completed.<br/>An e-mail with a download link has been sent " + \
