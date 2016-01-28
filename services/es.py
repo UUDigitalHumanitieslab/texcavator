@@ -451,6 +451,10 @@ def termvector_wordcloud(idx, typ, doc_ids, min_length=0, stems=False):
     """
     wordcloud = Counter()
 
+    # If no documents are provided, return an empty Counter.
+    if not doc_ids:
+        return wordcloud
+
     bdy = {
         'ids': doc_ids,
         'parameters': {
