@@ -367,7 +367,7 @@ def single_document_word_cloud(idx, typ, doc_id, min_length=0, stopwords=None, s
                     wordcloud[term] += int(count_dict.get('term_freq'))
 
         return {
-            'result': json.dumps(wordcloud),
+            'result': wordcloud,
             'status': 'ok'
         }
 
@@ -451,7 +451,7 @@ def termvector_wordcloud(idx, typ, doc_ids, min_length=0, stems=False):
     """
     wordcloud = Counter()
 
-    # If no documents are provided, return an empty Counter.
+    # If no documents are provided, return an empty counter.
     if not doc_ids:
         return wordcloud
 

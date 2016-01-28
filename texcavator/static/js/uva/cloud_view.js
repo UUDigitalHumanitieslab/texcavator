@@ -37,8 +37,7 @@ var getCloudParameters = function( params )
 	else { params.words = 1; }							// all words cloud
 
 	if( cloudcfg.stems ) { params.stems = 1; }
-	if (cloudcfg.idf) { 
-		params.idf = 1;
+	if (cloudcfg.idf) {
 		params.idf_timeframe = $(".idf-timeframe input:checked").val();
 	}
 
@@ -331,7 +330,6 @@ var placeCloudInTarget = function( cloud_src, json_data, target )
 	}
 
 	var cloud_data = json_data.result;
-//	console.log( cloud_data );
 
 	storeCloudData( cloud_src, cloud_data );		// in table & global var
 

@@ -561,7 +561,7 @@ function burstCloud(params) {
 			return;
 		} else if (resp.result) {
 			// this will be the case for single documents
-			normalizeCloud("burst", resp.result, "cloud");
+			createCloud("burst", resp, "cloud");
 			return;
 		} else {
 			console.log("Retrieved task_id: " + resp.task);

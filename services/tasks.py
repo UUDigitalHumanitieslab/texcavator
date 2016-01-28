@@ -3,7 +3,6 @@
 """
 from __future__ import absolute_import
 
-import json
 import math
 from itertools import dropwhile
 from collections import Counter
@@ -13,10 +12,11 @@ from celery import shared_task, current_task
 from django.conf import settings
 
 from services.es import document_id_chunks, termvector_wordcloud, count_search_results
+from texcavator.utils import normalize_cloud
 
 
 @shared_task
-def generate_tv_cloud(search_params, min_length, stopwords, date_range=None, stems=False):
+def generate_tv_cloud(search_params, min_length, stopwords, date_range=None, stems=False, idf_timeframe=''):
     """
     Generates multiple document word clouds using the termvector approach.
     """
@@ -66,7 +66,7 @@ def generate_tv_cloud(search_params, min_length, stopwords, date_range=None, ste
 
     # Return a dictionary with the results
     return {
-        'result': json.dumps(wordcloud_counter),
+        'result': normalize_cloud(wordcloud_counter, idf_timeframe),
         'status': 'ok',
         'burstcloud': date_range is not None
     }

@@ -1,12 +1,10 @@
 # -* coding: utf-8 -*-
 """Views for the services app
 """
-import json
 import logging
 from collections import Counter
 from sys import stderr, exc_info
 
-import dawg
 import requests
 from celery.result import AsyncResult
 
@@ -21,7 +19,7 @@ from es import get_search_parameters, do_search, count_search_results, \
     single_document_word_cloud, get_document, \
     metadata_aggregation, get_stemmed_form
 
-from texcavator.utils import json_response_message, daterange2dates
+from texcavator.utils import json_response_message, daterange2dates, normalize_cloud
 
 from query.models import Query, StopWord, Newspaper
 from query.utils import get_query_object
@@ -161,6 +159,8 @@ def tv_cloud(request):
 
     record_id = request.GET.get('record_id')
     logger.info('services/cloud/ - record_id: {}'.format(record_id))
+
+    idf_timeframe = request.GET.get('idf_timeframe')
     
     if record_id:
         # Cloud for a single document
@@ -170,7 +170,8 @@ def tv_cloud(request):
                                               min_length,
                                               stopwords,
                                               stems)
-        return json_response_message('ok', 'Word cloud generated', t_vector)
+        normalized = normalize_cloud(t_vector['result'], idf_timeframe)
+        return json_response_message('ok', 'Word cloud generated', {'result': normalized})
     else:
         # Cloud for a query
         logger.info('services/cloud/ - multiple document word cloud')
@@ -183,42 +184,10 @@ def tv_cloud(request):
         if request.GET.get('is_timeline'):
             date_range = daterange2dates(request.GET.get('date_range'))
 
-        task = generate_tv_cloud.delay(params, min_length, stopwords, date_range, stems)
+        task = generate_tv_cloud.delay(params, min_length, stopwords, date_range, stems, idf_timeframe)
         logger.info('services/cloud/ - Celery task id: {}'.format(task.id))
 
         return json_response_message('ok', '', {'task': task.id})
-
-
-@csrf_exempt
-@login_required
-def normalize_cloud(request):
-    """
-    Normalizes cloud data:
-    - if necessary, calculates the tf-idf-scores
-    - sort and return the maximum allowed number of words
-    """
-    cloud_data = json.loads(request.POST.get('cloud_data'))
-
-    # If IDF is set, multiply term frequencies by inverse document frequencies
-    if request.POST.get('idf') == '1':
-        d = dawg.RecordDAWG('<d')
-        d.load(request.POST.get('idf_timeframe') + '.dawg')
-        result = [{'term': t, 'count': c, 'tfidf': round(tfidf(d, t, c), 2)} for t, c in cloud_data.items()]
-        result = sorted(result, key=lambda k: k['tfidf'], reverse=True)
-    else:
-        result = [{'term': t, 'count': c} for t, c in cloud_data.items()]
-        result = sorted(result, key=lambda k: k['count'], reverse=True)
-
-    return json_response_message('ok', '', {'result': result[:settings.WORDCLOUD_MAX_WORDS]})
-
-
-def tfidf(dawg, word, frequency):
-    try:
-        t = dawg[word][0][0]
-        frequency *= t
-    except KeyError:
-        pass
-    return frequency
 
 
 @login_required
