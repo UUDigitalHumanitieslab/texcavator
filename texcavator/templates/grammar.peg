@@ -3,7 +3,7 @@
 	(c) 2016 Digital Humanities Lab, Utrecht University
 */
 
-subquery = part (' '+ part)*
+subquery = ' '* part (' '+ part)* ' '*
 // quick brown fox
 
 part = (negation / qualified) part2
