@@ -747,6 +747,7 @@ var createConfig = function() {
 		checked: config.cloud.idf,
 		onChange: function(btn) {
 			config.cloud.idf = btn;
+			$("#div-idf-timeframes").toggle(btn);
 		}
 	}, divIdf);
 
@@ -756,6 +757,44 @@ var createConfig = function() {
 		innerHTML: "&nbsp;Normalize using inverse document frequency<br/>"
 	}, cpCloud.domNode);
 
+	/* IDF timeframes starts here */
+	var divIdfTimeframes = dojo.create("div", {
+		id: "div-idf-timeframes",
+		style: "display: none"
+	}, cpCloud.domNode);
+
+	var textIdfTimeframes = dojo.create("label", {
+		id: "text-idf-timeframes",
+		for: "div-idf-timeframes",
+		innerHTML: "&nbsp;Select a time frame:<br/>"
+	}, divIdfTimeframes);
+
+	// Retrieves IDF timeframes (synchronously)
+	dojo.xhrGet({
+		url: "query/timeframes",
+		handleAs: "json",
+		sync: true
+	}).then(function(response) {
+		dojo.forEach(response.result, function(entry, i) {
+			var div = dojo.create("div", {
+				id: "div-idf-timeframes-" + entry.name
+			}, divIdfTimeframes);
+
+			var rb = new dijit.form.RadioButton({
+				id: "rb-idf-timeframes-" + entry.name,
+				class: "idf-timeframe",
+				checked: i + 1 == response.result.length, // Select last item by default
+				value: entry.id.toString()
+			}, div);
+
+			var label = dojo.create("label", {
+				id: "label-idf-timeframes-" + entry.name,
+				for: "rb-idf-timeframes-" + entry.name,
+				innerHTML: "&nbsp;" + entry.name + "<br/>"
+			}, divIdfTimeframes);
+		});
+	});
+	/* IDF timeframes ends here */
 
 	var divWCount = dojo.create("div", {
 		id: "div-wcount"

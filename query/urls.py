@@ -21,6 +21,7 @@ urlpatterns = [
     url(r'^timeline/(?P<query_id>\d+)?/(?P<resolution>\w+)$', timeline),
 
     url(r'^pillars$', retrieve_pillars),
+    url(r'^timeframes$', retrieve_timeframes),
 
     url(r'^newspaper/export$', export_newspapers),
 

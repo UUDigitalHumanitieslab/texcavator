@@ -28,81 +28,42 @@ var getCloudParameters = function( params )
 	var config = getConfig();
 
 	// add user-changeable parameters
-	var cloudcfg = config[ "cloud" ];
+	var cloudcfg = config.cloud;
 
 	// Ork expects { 0 | 1 }
-	params[ "order" ] = "count";
+	params.order = "count";
 
-	if( cloudcfg[ "NER" ] ) { params[ "entities" ] = 1; }	// only entities in cloud
-	else { params[ "words" ] = 1; }							// all words cloud
+	if( cloudcfg.NER ) { params.entities = 1; }	// only entities in cloud
+	else { params.words = 1; }							// all words cloud
 
-	if( cloudcfg[ "stems" ] ) { params[ "stems" ] = 1; }
-	if( cloudcfg[ "idf" ] ) { params[ "idf" ] = 1; }
-
-	if( cloudcfg[ "stopwords" ] )
-	{
-		params[ "stopwords" ] = 1;
-		params[ "stopwords_default" ] = cloudcfg[ "stopwords_default" ] ? 1 : 0;
+	if( cloudcfg.stems ) { params.stems = 1; }
+	if (cloudcfg.idf) { 
+		params.idf = 1;
+		params.idf_timeframe = $(".idf-timeframe input:checked").val();
 	}
 
-	if(cloudcfg["stoplimit"]){
-		params["min_length"] = cloudcfg["stoplimit"];
+	if( cloudcfg.stopwords )
+	{
+		params.stopwords = 1;
+		params.stopwords_default = cloudcfg.stopwords_default ? 1 : 0;
+	}
+
+	if(cloudcfg.stoplimit){
+		params.min_length = cloudcfg.stoplimit;
 	} else {
-		params["min_length"] = 2;
+		params.min_length = 2;
 	}
 
 //	console.log( params );
 	return params;
-}
-
+};
 
 
 var stopwordsRemove = function()
 {
 	var config = getConfig();
-	if( config[ "cloud" ][ "stopwords" ] )
-	{ return true; }
-	else
-	{ return false; }
-}
-
-
-// TODO: non-existing endpoint
-var stopwordsGetString = function( lexiconID, call_func, boundFunction )
-{
-	console.log( "stopwordsGetString() lexiconID: " + lexiconID );
-	// lexiconID can be null for single article cloud
-
-	dojo.xhrPost({
-		url: "lexicon/stopwords/retrieve/string/",	// POST url must end with `/'
-		handleAs: "text",
-		content: {
-			lexiconID: lexiconID
-		},
-		load: function( data )
-		{
-			var resp = JSON.parse( data );
-			var status = resp[ "status" ];
-
-			if( status === "SUCCESS" )
-			{
-				config[ "cloud" ][ "stopwords_str" ] = resp[ "stopwords" ];
-				console.log( "new: " + resp[ "stopwords" ] );
-				if( call_func ) { boundFunction(); }		// e.g., create cloud with updated stopwords
-			}
-			else
-			{
-				console.log( status );
-				var msg = resp[ "msg" ];
-				console.log( msg );
-			}
-		},
-		error: function( err ) {
-			console.error( err );
-			return err;
-		}
-	});
-}
+	return config.cloud.stopwords;
+};
 
 
 var stopwordsGetTable = function( target )
@@ -115,17 +76,16 @@ var stopwordsGetTable = function( target )
 		handleAs: "json",
 		load: function(response)
 		{
-			var status = response[ "status" ];
+			var status = response.status;
 
-			if( status === "SUCCESS" )
+			if (status === "SUCCESS")
 			{
-			//	console.log( resp[ "stopwords" ] );
-				stopwordsFillTable( response[ "stopwords" ], response[ "editglob" ], target );
+				stopwordsFillTable( response.stopwords, response.editglob, target );
 			}
 			else
 			{
 				console.error( status );
-				var msg = response[ "msg" ];
+				var msg = response.msg;
 				console.error( msg );
 			}
 		},
@@ -134,8 +94,7 @@ var stopwordsGetTable = function( target )
 			return err;
 		}
 	});
-}
-
+};
 
 
 function stopwordsFillTable( stopwordsList, editglob, target )
@@ -144,8 +103,8 @@ function stopwordsFillTable( stopwordsList, editglob, target )
 //	console.log( stopwordsList );
 
 	var label = dojo.byId( "label-grid-stopwords" );
-	if( label != null )
-	{ label.innerHTML = stopwordsList.length + " stopwords for user " + glob_username + ":<br/>" }
+	if( label !== null )
+	{ label.innerHTML = stopwordsList.length + " stopwords for user " + glob_username + ":<br/>"; }
 
 	var table_data = 
 	{
