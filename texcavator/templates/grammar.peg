@@ -64,29 +64,28 @@ wildcard_initial = wildcard right:wildcard_any
 // *ing
 // ?ing
 
-wildcard_any = (wildcard / nonreserved / escape)+
+wildcard_any = (escape / wildcard / nonreserved)+
 // qu?ck
 // bro*
 // quick
 // \&qu1ck
 
-phrase = '"' (strict_quoted / liberal_quoted / empty_string) '"'
+phrase = empty_phrase / strict_phrase / liberal_phrase
 
-strict_quoted = word (' '+ word)*
+empty_phrase = '"' ' '* '"'
+// " "
+
+strict_phrase = '"' (' ' / nonreserved / escape)+ '"'
 // "foo bar"
 
-word = (nonreserved / escape)+
-
-liberal_quoted = ([^"] / '\\"')+
+liberal_phrase = '"' ([^"] / '\\"')+ '"'
 // "foo~ bar*"
-
-empty_string = ' '*
 
 wildcard = [?*]
 
-nonreserved = [^+-=&|><!(){}\[\]^\"~*?:\/ ]
+nonreserved = [^+\-=&|><!(){}\[\]^"~*?:/ ]
 
-escape = '\\' [+-=&|><!(){}\[\]^\"~*?:\/ ]
+escape = '\\' [+\-=&|><!(){}\[\]^"~*?:/ ]
 
 namechar = [a-z_]i
 
