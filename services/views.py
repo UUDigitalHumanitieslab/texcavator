@@ -6,6 +6,7 @@ import logging
 from collections import Counter
 from sys import stderr, exc_info
 
+import dawg
 import requests
 from celery.result import AsyncResult
 
@@ -22,7 +23,7 @@ from es import get_search_parameters, do_search, count_search_results, \
 
 from texcavator.utils import json_response_message, daterange2dates
 
-from query.models import Query, StopWord, Newspaper, Term
+from query.models import Query, StopWord, Newspaper
 from query.utils import get_query_object
 
 from services.export import export_csv
@@ -200,7 +201,9 @@ def normalize_cloud(request):
 
     # If IDF is set, multiply term frequencies by inverse document frequencies
     if request.POST.get('idf') == '1':
-        result = [{'term': t, 'count': c, 'tfidf': round(tfidf(t, c), 2)} for t, c in cloud_data.items()]
+        d = dawg.RecordDAWG('<d')
+        d.load(request.POST.get('idf_timeframe') + '.dawg')
+        result = [{'term': t, 'count': c, 'tfidf': round(tfidf(d, t, c), 2)} for t, c in cloud_data.items()]
         result = sorted(result, key=lambda k: k['tfidf'], reverse=True)
     else:
         result = [{'term': t, 'count': c} for t, c in cloud_data.items()]
@@ -209,11 +212,11 @@ def normalize_cloud(request):
     return json_response_message('ok', '', {'result': result[:settings.WORDCLOUD_MAX_WORDS]})
 
 
-def tfidf(word, frequency):
+def tfidf(dawg, word, frequency):
     try:
-        t = Term.objects.get(word=word)
-        frequency *= t.idf
-    except Term.DoesNotExist:
+        t = dawg[word][0][0]
+        frequency *= t
+    except KeyError:
         pass
     return frequency
 
