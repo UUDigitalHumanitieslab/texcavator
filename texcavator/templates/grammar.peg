@@ -31,12 +31,13 @@ boosted = matcher ('^' nonzero_float?)?
 // fox^
 // fox^4
 
-matcher = (fieldname ':')? value
-        / '_missing_:' fieldname
-        / '_exists_:' fieldname
+matcher = !special (fieldname ':')? value
+        / special fieldname
 // fox
 // title:fox
 // _missing_:title
+
+special = '_missing_:' / '_exists_:'
 
 fieldname = $( fieldname_part ('.' fieldname_part)* )
 // title
