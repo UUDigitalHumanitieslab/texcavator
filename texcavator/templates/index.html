@@ -234,6 +234,12 @@ function searchSubmit(newStartRecord)
 		console.log( "searchSubmit(): empty query: nothing to do." );
 		return;
 	}
+	
+	// sanitize_query.js
+	if (!validateQuery(dojo.byId( "query" ).value)) {
+		console.log('searchSubmit(): invalid query.');
+		return;
+	}
 
 	console.log( "searchSubmit()" );
 	dojo.place( new dijit.ProgressBar( { indeterminate: true } ).domNode, dojo.byId( "search-result" ), "only" );
@@ -977,6 +983,8 @@ function queryToLexicon()
 		genDialog( title, "Your query is empty", buttons );
 		return;
 	}
+	
+	if (!validateQuery(item.query)) return;  // sanitize_query.js
 
 	// validate CQL -> ES; when valid, stores query
 	saveQuery(item, "query/create");     // query.js
