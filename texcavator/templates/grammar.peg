@@ -14,7 +14,7 @@ part2 = AND part part2 / OR part part2 / ''
 // quick OR brown
 // quick || brown
 
-negation = (('NOT' ' '+) / '!') right:boosted
+negation = op:$(('NOT' ' '+) / '!') right:boosted
 // !news
 // NOT news
 
@@ -22,9 +22,9 @@ qualified = [+-]? boosted
 // +fox
 // -news
 
-AND = ' '+ ('AND' / '&&') ' '+
+AND = ' '+ op:('AND' / '&&') ' '+ {return op;}
 
-OR = ' '+ ('OR' / '||') ' '+
+OR = ' '+ op:('OR' / '||') ' '+ {return op;}
 
 boosted = matcher ('^' nonzero_float?)?
 // fox
@@ -38,14 +38,14 @@ matcher = (fieldname ':')? value
 // title:fox
 // _missing_:title
 
-fieldname = fieldname_part ('.' fieldname_part)*
+fieldname = $( fieldname_part ('.' fieldname_part)* )
 // title
 // book.\*
 // book.date.year
 
 fieldname_part = '\\*' / name
 
-name = namechar (namechar / digit)+
+name = $( namechar (namechar / digit)+ )
 // any javascript identifier
 
 value = group / fuzzed
@@ -58,7 +58,7 @@ fuzzed = (term / phrase) ('~' nonzero_integer?)?
 // quikc~1
 // "fox quick"~5
 
-term = wildcard_initial / wildcard_any
+term = $( wildcard_initial / wildcard_any )
 
 wildcard_initial = wildcard right:wildcard_any
 // *ing
@@ -70,7 +70,7 @@ wildcard_any = (escape / wildcard / nonreserved)+
 // quick
 // \&qu1ck
 
-phrase = empty_phrase / strict_phrase / liberal_phrase
+phrase = $( empty_phrase / strict_phrase / liberal_phrase )
 
 empty_phrase = '"' ' '* '"'
 // " "
@@ -89,12 +89,13 @@ escape = '\\' [+\-=&|><!(){}\[\]^"~*?:/ ]
 
 namechar = [a-z_]i
 
-nonzero_float = nonzero_integer ('.' integer)? / '0'* '.' nonzero_integer
+nonzero_float = $(  nonzero_integer ('.' integer)?
+                  / '0'* '.' nonzero_integer       )
 // 12
 // .5
 // 4.5
 
-nonzero_integer = !('0'+ [^1-9]) integer
+nonzero_integer = $( !('0'+ [^1-9]) integer )
 // 12
 // 012
 
