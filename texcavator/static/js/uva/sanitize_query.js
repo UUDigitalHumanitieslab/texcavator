@@ -5,7 +5,7 @@ $(document).ready(function () {
 
 var defaultExplanation = 'A problem was found in your query. '
                        + 'Please read the description below, '
-                       + 'then review your query and try again.'
+                       + 'then review your query and try again.';
 
 function validateQuery(query) {
     try {
