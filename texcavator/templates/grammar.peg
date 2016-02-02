@@ -17,7 +17,8 @@ part2 = AND part part2 / OR part part2 / ''
 negation = op:$(('NOT' ' '+) / '!') right:boosted {
 	error(
 		'It is recommended not to use boolean operators like ' +
-		'AND, OR, NOT. Instead of NOT or !, write a - sign.'
+		'AND, OR, NOT. Instead of NOT or !, write a - sign ' +
+		'directly before the term that you want to exclude.'
 	);
 }
 // !news
