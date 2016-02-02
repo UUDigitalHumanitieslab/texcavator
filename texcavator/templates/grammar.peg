@@ -14,7 +14,7 @@ part2 = AND part part2 / OR part part2 / ''
 // quick OR brown
 // quick || brown
 
-negation = NOT right:boosted
+negation = NOT boosted
 // !news
 // NOT news
 
@@ -22,7 +22,7 @@ qualified = [+-]? boosted
 // +fox
 // -news
 
-NOT = op:$(('NOT' ' '+) / '!') {
+NOT = $(('NOT' ' '+) / '!') {
 	error(
 		'It is recommended not to use boolean operators like ' +
 		'AND, OR, NOT. Instead of NOT or !, write a - sign ' +
@@ -30,7 +30,7 @@ NOT = op:$(('NOT' ' '+) / '!') {
 	);
 }
 
-AND = ' '+ op:('AND' / '&&') ' '+ {
+AND = ' '+ ('AND' / '&&') ' '+ {
 	error(
 		'It is recommended not to use boolean operators like ' +
 		'AND, OR, NOT. Instead of using AND, prefix the left and ' +
@@ -39,7 +39,7 @@ AND = ' '+ op:('AND' / '&&') ' '+ {
 	);
 }
 
-OR = ' '+ op:('OR' / '||') ' '+ {
+OR = ' '+ ('OR' / '||') ' '+ {
 	error(
 		'It is recommended not to use boolean operators like ' +
 		'AND, OR, NOT. You can simply replace OR by a space.'
@@ -81,7 +81,7 @@ fuzzed = (term / phrase) ('~' nonzero_integer?)?
 
 term = $( wildcard_initial / wildcard_any )
 
-wildcard_initial = wildcard right:wildcard_any {
+wildcard_initial = wildcard wildcard_any {
 	error('Wildcards at the start of a term are not allowed.');
 }
 // *ing
