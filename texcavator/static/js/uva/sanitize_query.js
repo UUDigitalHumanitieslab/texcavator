@@ -32,6 +32,7 @@ function validateQuery(query) {
         messageBits.push('</kbd>');
         var message = messageBits.join('');
         genDialog('Invalid query string', message, {OK: true});
+        return false;
     }
 }
 
