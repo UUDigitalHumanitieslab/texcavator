@@ -61,7 +61,9 @@ fuzzed = (term / phrase) ('~' nonzero_integer?)?
 
 term = $( wildcard_initial / wildcard_any )
 
-wildcard_initial = wildcard right:wildcard_any
+wildcard_initial = wildcard right:wildcard_any {
+	error('Wildcards at the start of a term are not allowed.');
+}
 // *ing
 // ?ing
 
