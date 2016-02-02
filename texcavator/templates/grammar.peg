@@ -14,7 +14,12 @@ part2 = AND part part2 / OR part part2 / ''
 // quick OR brown
 // quick || brown
 
-negation = op:$(('NOT' ' '+) / '!') right:boosted
+negation = op:$(('NOT' ' '+) / '!') right:boosted {
+	error(
+		'It is recommended not to use boolean operators like ' +
+		'AND, OR, NOT. Instead of NOT or !, write a - sign.'
+	);
+}
 // !news
 // NOT news
 
@@ -22,9 +27,21 @@ qualified = [+-]? boosted
 // +fox
 // -news
 
-AND = ' '+ op:('AND' / '&&') ' '+ {return op;}
+AND = ' '+ op:('AND' / '&&') ' '+ {
+	error(
+		'It is recommended not to use boolean operators like ' +
+		'AND, OR, NOT. Instead of using AND, prefix the left and ' +
+		'right operands with a + sign (or a - sign if you want to ' +
+		'exclude an operand) and separate them by a space.'
+	);
+}
 
-OR = ' '+ op:('OR' / '||') ' '+ {return op;}
+OR = ' '+ op:('OR' / '||') ' '+ {
+	error(
+		'It is recommended not to use boolean operators like ' +
+		'AND, OR, NOT. You can simply replace OR by a space.'
+	);
+}
 
 boosted = matcher ('^' nonzero_float?)?
 // fox
