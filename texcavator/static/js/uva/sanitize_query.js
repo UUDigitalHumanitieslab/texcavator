@@ -15,7 +15,7 @@ function validateQuery(query) {
         var messageBits = [
                 defaultExplanation,
                 '<br><br>',
-                $('<div>').text(error.message).html(),  // entities
+                escapeHTML(error.message),  // entities
                 '<br><br><kbd>'
             ],
             start = error.location.start.offset,
@@ -23,14 +23,20 @@ function validateQuery(query) {
             contextStart = Math.max(start - 10, 0),
             contextEnd = Math.min(end + 10, query.length);
         if (contextStart !== 0) messageBits.push('...');
-        messageBits.push(query.slice(contextStart, start));
+        messageBits.push(escapeHTML(query.slice(contextStart, start)));
         messageBits.push('<mark>');
-        messageBits.push(query.slice(start, end));
+        messageBits.push(escapeHTML(query.slice(start, end)));
         messageBits.push('</mark>');
-        messageBits.push(query.slice(end, contextEnd));
+        messageBits.push(escapeHTML(query.slice(end, contextEnd)));
         if (contextEnd !== query.length) messageBits.push('...');
         messageBits.push('</kbd>');
         var message = messageBits.join('');
         genDialog('Invalid query string', message, {OK: true});
     }
 }
+
+function escapeHTML(text) {
+    return escapeHTML.arena.text(text).html();
+}
+
+escapeHTML.arena = $('<div>');
