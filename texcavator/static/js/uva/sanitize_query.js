@@ -12,12 +12,7 @@ function validateQuery(query) {
         queryParser.parse(query);
         return true;
     } catch (error) {
-        var messageBits = [
-                defaultExplanation,
-                '<br><br>',
-                escapeHTML(error.message),  // entities
-                '<br><br><kbd>'
-            ],
+        var messageBits = [defaultExplanation, '<br><br><kbd>'],
             start = error.location.start.offset,
             end = error.location.end.offset,
             contextStart = Math.max(start - 10, 0),
@@ -29,7 +24,8 @@ function validateQuery(query) {
         messageBits.push('</mark>');
         messageBits.push(escapeHTML(query.slice(end, contextEnd)));
         if (contextEnd !== query.length) messageBits.push('...');
-        messageBits.push('</kbd>');
+        messageBits.push('</kbd><br><br>');
+        messageBits.push(escapeHTML(error.message));
         var message = messageBits.join('');
         genDialog('Invalid query string', message, {OK: true});
         return false;
