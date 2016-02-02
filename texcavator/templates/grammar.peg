@@ -14,19 +14,21 @@ part2 = AND part part2 / OR part part2 / ''
 // quick OR brown
 // quick || brown
 
-negation = op:$(('NOT' ' '+) / '!') right:boosted {
-	error(
-		'It is recommended not to use boolean operators like ' +
-		'AND, OR, NOT. Instead of NOT or !, write a - sign ' +
-		'directly before the term that you want to exclude.'
-	);
-}
+negation = NOT right:boosted
 // !news
 // NOT news
 
 qualified = [+-]? boosted
 // +fox
 // -news
+
+NOT = op:$(('NOT' ' '+) / '!') {
+	error(
+		'It is recommended not to use boolean operators like ' +
+		'AND, OR, NOT. Instead of NOT or !, write a - sign ' +
+		'directly before the term that you want to exclude.'
+	);
+}
 
 AND = ' '+ op:('AND' / '&&') ' '+ {
 	error(
