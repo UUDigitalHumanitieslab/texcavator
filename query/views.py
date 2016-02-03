@@ -356,7 +356,7 @@ def download_prepare(request):
         maximum = settings.QUERY_DATA_UNPRIV_RESULTS
 
     if count > maximum:
-        msg = "Your query has too much results to export: " + str(count)
+        msg = "Your query has too many results to export: " + str(count)
         msg += " where " + str(maximum) + " are allowed. "
         msg += "Please consider filtering your results before exporting."
         return json_response_message('error', msg)
