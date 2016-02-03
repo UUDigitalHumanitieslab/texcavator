@@ -92,6 +92,10 @@ class Query(models.Model):
         # Custom permissions
         permissions = (
             (
+                'download_documents',
+                'Can download results of a query',
+            ),
+            (
                 'download_many_documents',
                 'Can download larger numbers of results',
             ),

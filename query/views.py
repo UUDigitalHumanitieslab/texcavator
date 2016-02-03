@@ -12,7 +12,7 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.core.validators import validate_email
 from django.views.decorators.csrf import csrf_exempt
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.core.servers.basehttp import FileWrapper
 from django.conf import settings
 from django.db.models import Q, Min, Max
@@ -342,6 +342,12 @@ def download_prepare(request):
                 format(request.user.username))
 
     user = request.user
+    
+    if not user.has_perm('query.download_documents'):
+        msg = 'You are not allowed to download query results. '
+        msg += 'Please contact the administrators for further information.'
+        return json_response_message('error', msg)
+    
     query = Query.objects.get(title=request.GET.get('query_title'), user=user)
     count = count_results(query)
     if user.has_perm('query.download_many_documents'):
@@ -393,6 +399,7 @@ def download_prepare(request):
 
 
 @csrf_exempt
+@permission_required('query.download_documents', raise_exception=True)
 @login_required
 def download_data(request, zip_name):
     """Downloads the prepared data created from :func:`views.download_prepare` above
