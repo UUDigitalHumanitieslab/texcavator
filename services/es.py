@@ -4,7 +4,7 @@
 import json
 import logging
 import os
-from collections import Counter
+from collections import Counter, defaultdict
 from datetime import datetime
 
 from elasticsearch import Elasticsearch
@@ -373,7 +373,7 @@ def single_document_word_cloud(idx, typ, doc_id, min_length=0, stopwords=None, s
                     wordcloud[term] += int(count_dict.get('term_freq'))
 
         return {
-            'result': json.dumps(wordcloud),
+            'result': wordcloud,
             'status': 'ok'
         }
 
@@ -438,15 +438,29 @@ def multiple_document_word_cloud(idx, typ, query, date_ranges, dist, art_types, 
     }
 
 
-def termvector_wordcloud(idx, typ, doc_ids, min_length=0, stems=False):
+def termvector_wordcloud(idx, typ, doc_ids, min_length=0, stems=False, add_freqs=True):
     """Return word frequencies in a set of documents.
 
     Return data required to draw a word cloud for multiple documents by
     'manually' merging termvectors.
 
     The counter returned by this method can be transformed into the input
-    expected by the interface by passing it to the counter2wordclouddata
+    expected by the interface by passing it to the normalize_cloud
     method.
+
+    Parameters:
+        idx : str
+            The name of the elasticsearch index
+        typ : str
+            The type of document requested
+        doc_ids : list(str)
+            The requested documents
+        min_length : int, optional
+            The minimum length of words in the word cloud
+        stems : boolean, optional
+            Whether or not we should look at the stemmed columns
+        add_freqs : boolean, optional
+            Whether or not we should count total occurrences
 
     See also
         :func:`single_document_word_cloud` generate data for a single document
@@ -456,6 +470,10 @@ def termvector_wordcloud(idx, typ, doc_ids, min_length=0, stems=False):
         terms aggregation approach
     """
     wordcloud = Counter()
+
+    # If no documents are provided, return an empty counter.
+    if not doc_ids:
+        return wordcloud
 
     bdy = {
         'ids': doc_ids,
@@ -472,12 +490,15 @@ def termvector_wordcloud(idx, typ, doc_ids, min_length=0, stems=False):
     t_vectors = _es().mtermvectors(index=idx, doc_type=typ, body=bdy)
 
     for doc in t_vectors.get('docs'):
+        temp = defaultdict(int) if add_freqs else set()
         for field, data in doc.get('term_vectors').iteritems():
-            temp = {}
             for term, details in data.get('terms').iteritems():
                 if len(term) >= min_length:
-                    temp[term] = int(details['term_freq'])
-            wordcloud.update(temp)
+                    if add_freqs:
+                        temp[term] += int(details['term_freq'])
+                    else:
+                        temp.add(term)  # only count individual occurrences
+        wordcloud.update(temp)
 
     return wordcloud
 

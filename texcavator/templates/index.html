@@ -547,8 +547,8 @@ function nextResults( amount )
 				}
 				else
 				{
-				    console.log( "Starting normalizing" );
-					normalizeCloud( "article", response.result, "cloudPane", "borderContainer" );
+				    console.log( "Creating cloud" );
+					createCloud( "article", response, "cloudPane", "borderContainer" );
 				}
 			},
 			error: function(error) {
@@ -557,40 +557,6 @@ function nextResults( amount )
 			}
 		});
 	}
-
-    // Normalizes cloud data before the cloud is actually generated.
-	var normalizeCloud = function ( cloud_src, cloud_data, target, container )
-	{
-		console.log( "normalizeCloud" );
-
-	    var params = { "cloud_data": cloud_data };
-	    params = getCloudParameters(params);
-
-		// Create a request for a word cloud
-		dojo.xhrPost({
-			url: "services/normalize_cloud/",
-			content: params,
-			handleAs: "json",
-			load: function(response)
-			{
-				if( response.status != "ok" )
-				{
-					console.warn( "preprocessCloud: " + response.error );
-					genDialog( "Preprocessing cloud failed", response.error, { "OK": true } );
-				}
-				else
-				{
-				    console.log( "Starting cloud creation" );
-					createCloud( cloud_src, response, target, container );
-				}
-			},
-			error: function(error) {
-				console.error(error);
-				return error;
-			}
-		});
-	}
-
 
 	var createCloud = function( cloud_src, cloud_data, target, container )
 	{
@@ -825,9 +791,9 @@ var current_interval_id;
 		clearTimeout(current_interval_id);
 		// show the solution
 		if (obj.burstcloud){
-			normalizeCloud( "burst", obj.result, "cloud" );
+			createCloud( "burst", obj, "cloud" );
 		} else {
-			normalizeCloud( "normal", obj.result, "cloudPane", "borderContainer" );
+			createCloud( "normal", obj, "cloudPane", "borderContainer" );
 		}
 	 } else {
 		clearTimeout(current_interval_id);

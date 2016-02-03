@@ -19,7 +19,7 @@ from django.db.models import Q, Min, Max
 from django.db import IntegrityError
 
 from .models import Distribution, ArticleType, Query, DayStatistic, \
-    StopWord, Pillar, Newspaper, Period
+    StopWord, Pillar, Newspaper, Period, Term
 from .utils import get_query_object, query2docidsdate, count_results
 from .burstsdetector import bursts
 from .download import create_zipname, execute
@@ -437,6 +437,11 @@ def retrieve_pillars(request):
     pillars = Pillar.objects.all()
     return json_response_message('ok', '', {'result': [{'id': p.id, 'name': p.name} for p in pillars]})
 
+
+def retrieve_timeframes(request):
+    """Retrieves all timeframes of Terms as JSON objects
+    """
+    return json_response_message('ok', '', {'result': [{'id': t[0], 'name': t[1]} for t in Term.TIMEFRAME_CHOICES]})
 
 @login_required
 def export_newspapers(request):

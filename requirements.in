@@ -10,3 +10,4 @@ nose
 requests
 django-nose
 dicttoxml
+DAWG

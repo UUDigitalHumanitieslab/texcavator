@@ -187,6 +187,18 @@ class StopWord(models.Model):
 
 class Term(models.Model):
     """Model to store frequencies and inverse document frequencies per term"""
-    word = models.CharField(max_length=200, unique=True)
+    PRE_WWII = 'pre'
+    WWII = 'WWII'
+    POST_WWII = 'post'
+    TIMEFRAME_CHOICES = (
+        (PRE_WWII, 'pre-WWII: 1900-1940'),
+        (WWII, 'WWII: 1940-1945'),
+        (POST_WWII, 'post-WWII: 1945-1990'),
+    )
+    timeframe = models.CharField(max_length=4, choices=TIMEFRAME_CHOICES)
+    word = models.CharField(max_length=200)
     count = models.PositiveIntegerField()
     idf = models.DecimalField(max_digits=7, decimal_places=4)
+
+    class Meta:
+        unique_together = (('timeframe', 'word'),)

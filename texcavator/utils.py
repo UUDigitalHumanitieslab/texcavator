@@ -1,6 +1,9 @@
 """Utility functions for the Texcavator app"""
+import os
 from datetime import datetime
 from itertools import izip
+
+import dawg
 
 from django.http import JsonResponse
 from django.conf import settings
@@ -78,3 +81,31 @@ def flip_dict(dictionary):
     and vice versa.
     """
     return dict(izip(dictionary.itervalues(), dictionary.iterkeys()))
+
+
+def normalize_cloud(cloud_data, idf_timeframe=''):
+    """
+    Normalizes cloud data:
+    - if necessary, calculates the tf-idf-scores
+    - sort and return the maximum allowed number of words
+    """
+    # If IDF is set, multiply term frequencies by inverse document frequencies
+    if idf_timeframe:
+        d = dawg.RecordDAWG('<d')
+        d.load(os.path.join(settings.PROJECT_PARENT, idf_timeframe + '.dawg'))
+        result = [{'term': t, 'count': c, 'tfidf': round(tfidf(d, t, c), 2)} for t, c in cloud_data.items()]
+        result = sorted(result, key=lambda k: k['tfidf'], reverse=True)
+    else:
+        result = [{'term': t, 'count': c} for t, c in cloud_data.items()]
+        result = sorted(result, key=lambda k: k['count'], reverse=True)
+
+    return result[:settings.WORDCLOUD_MAX_WORDS]
+
+
+def tfidf(dawg, word, frequency):
+    try:
+        t = dawg[word][0][0]
+        frequency *= t
+    except KeyError:
+        pass
+    return frequency
