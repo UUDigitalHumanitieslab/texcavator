@@ -50,7 +50,11 @@ class Command(BaseCommand):
             counter = Counter()
             for n, s in enumerate(sets):
                 start_time = time.time()
-                counter += termvector_wordcloud(settings.ES_INDEX, settings.ES_DOCTYPE, s, min_length=2)
+                counter += termvector_wordcloud(settings.ES_INDEX,
+                                                settings.ES_DOCTYPE,
+                                                s,
+                                                min_length=2,
+                                                add_freqs=False)
                 print 'Completed set {} in {} seconds...'.format(n + 1, time.time() - start_time)
 
             print 'Calculating IDFs...'
