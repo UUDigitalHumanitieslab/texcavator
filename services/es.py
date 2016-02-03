@@ -201,12 +201,6 @@ def create_query(query_str, date_ranges, exclude_distributions,
     query = {
         'query': {
             'filtered': {
-                'query': {
-                    'query_string': {
-                        'query': query_str,
-                        'allow_leading_wildcard': getattr(settings, 'QUERY_ALLOW_LEADING_WILDCARD', True),
-                    }
-                },
                 'filter': {
                     'bool': {
                         'must': filter_must,
@@ -223,7 +217,8 @@ def create_query(query_str, date_ranges, exclude_distributions,
         # Temporary hotfix for duplicate newspapers, see #73.
         if getattr(settings, 'KB_HOTFIX_DUPLICATE_NEWSPAPERS', True):
             query_str += ' -identifier:ddd\:11*'
-        query['query']['filtered']['query'] = {'query_string': {'query': query_str}}
+        alw = getattr(settings, 'QUERY_ALLOW_LEADING_WILDCARD', True)
+        query['query']['filtered']['query'] = {'query_string': {'query': query_str, 'allow_leading_wildcard': alw}}
 
     return query
 
