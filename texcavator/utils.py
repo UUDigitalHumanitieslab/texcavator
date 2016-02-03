@@ -1,4 +1,5 @@
 """Utility functions for the Texcavator app"""
+import os
 from datetime import datetime
 from itertools import izip
 
@@ -91,7 +92,7 @@ def normalize_cloud(cloud_data, idf_timeframe=''):
     # If IDF is set, multiply term frequencies by inverse document frequencies
     if idf_timeframe:
         d = dawg.RecordDAWG('<d')
-        d.load(idf_timeframe + '.dawg')
+        d.load(os.path.join(settings.PROJECT_PARENT, idf_timeframe + '.dawg'))
         result = [{'term': t, 'count': c, 'tfidf': round(tfidf(d, t, c), 2)} for t, c in cloud_data.items()]
         result = sorted(result, key=lambda k: k['tfidf'], reverse=True)
     else:

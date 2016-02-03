@@ -1,7 +1,9 @@
 import math
-import dawg
+import os
 import time
 from collections import Counter
+
+import dawg
 
 from django.core.management.base import BaseCommand
 from django.conf import settings
@@ -63,7 +65,7 @@ class Command(BaseCommand):
 
             print 'Creating RecordDAWG'
             d = dawg.RecordDAWG('<d', zip([t.word for t in terms], [(t.idf,) for t in terms]))
-            d.save(timeframe + '.dawg')
+            d.save(os.path.join(settings.PROJECT_PARENT, timeframe + '.dawg'))
 
         """ Test code below.
         print 'Testing DAWG'
