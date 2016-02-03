@@ -1,0 +1,129 @@
+/*
+	Query string parsing grammar based on PEG.js
+	(c) 2016 Digital Humanities Lab, Utrecht University
+*/
+
+subquery = ' '* part (' '+ part)* ' '*
+// quick brown fox
+
+part = (negation / qualified) part2
+
+part2 = AND part part2 / OR part part2 / ''
+// quick AND fox
+// quick && fox
+// quick OR brown
+// quick || brown
+
+negation = NOT boosted
+// !news
+// NOT news
+
+qualified = [+-]? boosted
+// +fox
+// -news
+
+NOT = $(('NOT' ' '+) / '!') {
+	error(
+		'It is recommended not to use boolean operators like ' +
+		'AND, OR, NOT. Instead of NOT or !, write a - sign ' +
+		'directly before the term that you want to exclude.'
+	);
+}
+
+AND = ' '+ ('AND' / '&&') ' '+ {
+	error(
+		'It is recommended not to use boolean operators like ' +
+		'AND, OR, NOT. Instead of using AND, prefix the left and ' +
+		'right operands with a + sign (or a - sign if you want to ' +
+		'exclude an operand) and separate them by a space.'
+	);
+}
+
+OR = ' '+ ('OR' / '||') ' '+ {
+	error(
+		'It is recommended not to use boolean operators like ' +
+		'AND, OR, NOT. You can simply replace OR by a space.'
+	);
+}
+
+boosted = matcher ('^' nonzero_float?)?
+// fox
+// fox^
+// fox^4
+
+matcher = !special (fieldname ':')? value
+        / special fieldname
+// fox
+// title:fox
+// _missing_:title
+
+special = '_missing_:' / '_exists_:'
+
+fieldname = $( fieldname_part ('.' fieldname_part)* )
+// title
+// book.\*
+// book.date.year
+
+fieldname_part = '\\*' / name
+
+name = $( namechar (namechar / digit)+ )
+// any javascript identifier
+
+value = group / fuzzed
+
+group = '(' subquery ')'
+// (foo bar)
+
+fuzzed = (term / phrase) ('~' nonzero_integer?)?
+// brwn~
+// quikc~1
+// "fox quick"~5
+
+term = $( wildcard_initial / wildcard_any )
+
+wildcard_initial = wildcard wildcard_any {
+	error('Wildcards at the start of a term are not allowed.');
+}
+// *ing
+// ?ing
+
+wildcard_any = (escape / wildcard / nonreserved)+
+// qu?ck
+// bro*
+// quick
+// \&qu1ck
+
+phrase = $( empty_phrase / strict_phrase / liberal_phrase )
+
+empty_phrase = '"' ' '* '"'
+// " "
+
+strict_phrase = '"' (' ' / nonreserved / escape)+ '"'
+// "foo bar"
+
+liberal_phrase = '"' ([^"] / '\\"')+ '"'
+// "foo~ bar*"
+
+wildcard = [?*]
+
+nonreserved = [^+\-=&|><!(){}\[\]^"~*?:/ ]
+
+escape = '\\' [+\-=&|><!(){}\[\]^"~*?:/ ]
+
+namechar = [a-z_]i
+
+nonzero_float = $(  nonzero_integer ('.' integer)?
+                  / '0'* '.' nonzero_integer       )
+// 12
+// .5
+// 4.5
+
+nonzero_integer = $( !('0'+ [^1-9]) integer )
+// 12
+// 012
+
+integer = digit+
+// 0
+// 12
+
+digit = [0-9]
