@@ -312,7 +312,7 @@ def word_cloud_aggregation(agg_name, num_words=100):
     return agg
 
 
-def single_document_word_cloud(idx, typ, doc_id, min_length=0, stopwords=None, stems=False):
+def single_document_word_cloud(idx, typ, doc_id, min_length=0, stopwords=[], stems=False):
     """Return data required to draw a word cloud for a single document.
 
     Parameters:
@@ -356,9 +356,6 @@ def single_document_word_cloud(idx, typ, doc_id, min_length=0, stopwords=None, s
         'fields': get_cloud_fields(stems)
     }
     t_vector = _es().termvector(index=idx, doc_type=typ, id=doc_id, body=bdy)
-
-    if not stopwords:
-        stopwords = []
 
     if t_vector.get('found', False):
         wordcloud = Counter()
