@@ -4,12 +4,13 @@
 the database.
 """
 from datetime import datetime
+import sys
 
 from django.core.management.base import BaseCommand
 from django.db import DatabaseError
 from django.conf import settings
 
-from query.models import DayStatistic
+from query.models import DayStatistic, ArticleType, Distribution
 from services.es import day_statistics
 from texcavator.utils import daterange2dates
 
@@ -50,18 +51,33 @@ class Command(BaseCommand):
                                      settings.ES_DOCTYPE,
                                      date_range,
                                      agg_name)
+            self.save_to_database(agg_name, results)
 
-            if results:
-                # save results to database
-                agg_data = results['aggregations'][agg_name]['buckets']
+            for article_type in ArticleType.objects.all():
+                for distribution in Distribution.objects.all():
+                    results = day_statistics(settings.ES_INDEX,
+                                             settings.ES_DOCTYPE,
+                                             date_range,
+                                             agg_name,
+                                             distribution.id,
+                                             article_type.id)
+                    self.save_to_database(agg_name, results, distribution, article_type)
 
-                for date in agg_data:
-                    try:
-                        d = datetime.strptime(date['key_as_string'],
-                                              '%Y-%m-%dT00:00:00.000Z').date()
-                        DayStatistic.objects.create(date=str(d),
-                                                    count=date['doc_count'])
-                    except DatabaseError, exc:
-                        msg = "Database Error: %s" % exc
-                        if settings.DEBUG:
-                            print msg
+    @staticmethod
+    def save_to_database(agg_name, results, distribution=None, article_type=None):
+        if results:
+            # save results to database
+            agg_data = results['aggregations'][agg_name]['buckets']
+
+            for date in agg_data:
+                try:
+                    d = datetime.strptime(date['key_as_string'],
+                                          '%Y-%m-%dT00:00:00.000Z').date()
+                    DayStatistic.objects.create(date=str(d),
+                                                distribution=distribution,
+                                                article_type=article_type,
+                                                count=date['doc_count'])
+                except DatabaseError, exc:
+                    msg = "Database Error: %s" % exc
+                    if settings.DEBUG:
+                        print msg
