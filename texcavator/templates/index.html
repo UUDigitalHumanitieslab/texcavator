@@ -674,7 +674,7 @@ function onClickExecute(item)
 			{
 				var title = "Request failed";
 				var buttons = { "OK": true };
-				genDialog( title, data.msg, buttons )
+				genDialog( title, data.msg, buttons );
 				return;
 			}
 			else
@@ -736,6 +736,7 @@ function onClickExecuteCloud( queryID )
 				console.warn( "onClickExecuteCloud: " + json_data.error );
 				var title = "Cloud data request failed";
 				var buttons = { "OK": true };
+				dojo.byId('cloudPane').innerHTML = '<div>' + title + '.</div>';
 				genDialog( title, json_data.error, buttons );
 				return null;
 			}
@@ -801,6 +802,7 @@ var current_interval_id;
 		console.log(obj);
 		var title = "Wordcloud failed";
 		var buttons = { "OK": true };
+		dojo.byId('cloudPane').innerHTML = '<div>' + title + '.</div>';
 		genDialog( title, obj.msg, buttons );
 	 }
 }
