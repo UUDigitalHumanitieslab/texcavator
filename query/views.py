@@ -399,7 +399,7 @@ def download_prepare(request):
 
 
 @csrf_exempt
-@permission_required('query.download_documents', raise_exception=True)
+@permission_required('query.download_documents')
 @login_required
 def download_data(request, zip_name):
     """Downloads the prepared data created from :func:`views.download_prepare` above
