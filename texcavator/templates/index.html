@@ -260,6 +260,10 @@ function searchSubmit(newStartRecord)
 		},
 		error: function( err ) {
 			console.error( err );  // display the error
+			var title = "An error occurred";
+			var buttons = { "OK": true };
+			genDialog( title, err.message, buttons );
+			dojo.byId( "search-result" ).innerHTML = '<div>' + title + '.</div>';
 		}
 	});
 }
