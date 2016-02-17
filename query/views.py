@@ -178,6 +178,7 @@ def update_nr_results(request, query_id):
 
     return json_response_message('SUCCESS', 'Number of results updated.', {'count': query.nr_results})
 
+
 @login_required
 def timeline(request, query_id, resolution):
     """
@@ -186,12 +187,14 @@ def timeline(request, query_id, resolution):
     """
     logger.info('query/timeline/ - user: {}'.format(request.user.username))
 
-    if settings.DEBUG:
-        print >> stderr, "query/bursts() query_id:", query_id, \
-                         "resolution:", resolution
-
     normalize = request.GET.get('normalize') == '1'
-    bg_smooth = False
+
+    if settings.DEBUG:
+        print >> stderr, "query/bursts() query_id:", query_id
+        print >> stderr, "resolution:", resolution
+        print >> stderr, "query_id:", query_id
+        print >> stderr, "normalize:", normalize
+        print >> stderr, "resolution:", resolution
 
     query = get_object_or_404(Query, pk=query_id)
 
@@ -200,63 +203,39 @@ def timeline(request, query_id, resolution):
     _, begindate = periods.aggregate(Min('date_lower')).popitem()
     _, enddate = periods.aggregate(Max('date_upper')).popitem()
 
-    # normalization and/or smoothing
-    values = DayStatistic.objects.\
-        filter(date__range=(begindate, enddate)).\
-        exclude(article_type__in=query.exclude_article_types.all()).\
-        exclude(distribution__in=query.exclude_distributions.all()).\
-        values('date').\
-        annotate(count=Sum('count'))
-    # old
-    date2countC = {}
-    for dc in values:
-        date2countC[dc['date']] = dc['count']
-    # new (to be implemented)
-    date2normalize = dict()
-    for dc in values:
-        date2normalize[dc['date']] = dc['count']
-
-    # Retrieving the documents for this Query
-    documents = sorted(query2docidsdate(query), key=lambda k: k['date'])
-    # old
-    doc2date = {}
-    for doc in documents:
-        doc2date[doc['identifier']] = doc['date']
-    # new (to be implemented)
+    # Retrieve the documents for this Query
     date2doc = defaultdict(list)
-    for doc in documents:
-        date2doc[doc['date']].append(doc['identifier'])
+    for doc in query2docidsdate(query):
+        y = doc['date'].year
+        m = doc['date'].month if resolution != 'year' else 1
+        d = doc['date'].day if resolution == 'day' else 1
+        date2doc[datetime(y, m, d)].append(doc['identifier'])
 
-    #print date2normalize.items()[:3]
-    #print date2doc.items()[:3]
+    # Retrieve normalization values if necessary
+    if normalize:
+        values = DayStatistic.objects.\
+            filter(date__range=(begindate, enddate)).\
+            exclude(article_type__in=query.exclude_article_types.all()).\
+            exclude(distribution__in=query.exclude_distributions.all()).\
+            values('date').\
+            annotate(count=Sum('count'))
+        date2normalize = defaultdict(int)
+        for v in values:
+            y = v['date'].year
+            m = v['date'].month if resolution != 'year' else 1
+            d = v['date'].day if resolution == 'day' else 1
+            date2normalize[datetime(y, m, d)] += v['count']
 
-    if settings.DEBUG:
-        print >> stderr, "burst parameters:"
-        print >> stderr, "query_id:", query_id
-        print >> stderr, "normalize:", normalize
-        print >> stderr, "resolution:", resolution
+    # Calculate relative frequencies
+    result = dict()
+    for d, docs in date2doc.items():
+        value = len(docs)
+        if normalize:
+            value = round(value / float(date2normalize[d]), 10)
+        result[str(d)] = (value, 0, 0, 0, len(docs), docs)
 
-    bursts_list = bursts.bursts(doc2date,
-                                {},
-                                date2countC=date2countC,
-                                normalise=normalize,
-                                bg_smooth=bg_smooth,
-                                resolution=resolution)[0]
-
-    date2count = {}
-    for date, tup in bursts_list.iteritems():
-        doc_float, zero_one, i, limit, doc_count, doc_ids = tup
-        if doc_count != 0:
-            doc_float = float("%.1f" % doc_float)  # less decimals
-            if limit:                              # not None
-                limit = float("%.1f" % limit)      # less decimals
-            date2count[str(date)] = (doc_float,
-                                     zero_one,
-                                     i,
-                                     limit,
-                                     doc_count,
-                                     doc_ids)
-    return HttpResponse(json.dumps(date2count))
+    # Return the result (TODO: via json_response_message)
+    return HttpResponse(json.dumps(result))
 
 
 @csrf_exempt
