@@ -3,6 +3,7 @@ import os
 import json
 import logging
 import csv
+from collections import defaultdict
 from sys import stderr
 from datetime import datetime
 from urllib import quote_plus, unquote_plus
@@ -15,7 +16,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required, permission_required
 from django.core.servers.basehttp import FileWrapper
 from django.conf import settings
-from django.db.models import Q, Min, Max
+from django.db.models import Q, Min, Max, Sum
 from django.db import IntegrityError
 
 from .models import Distribution, ArticleType, Query, DayStatistic, \
@@ -200,29 +201,39 @@ def timeline(request, query_id, resolution):
     _, enddate = periods.aggregate(Max('date_upper')).popitem()
 
     # normalization and/or smoothing
-    values = DayStatistic.objects.values('date', 'count').all()
+    values = DayStatistic.objects.\
+        filter(date__range=(begindate, enddate)).\
+        exclude(article_type__in=query.exclude_article_types.all()).\
+        exclude(distribution__in=query.exclude_distributions.all()).\
+        values('date').\
+        annotate(count=Sum('count'))
+    # old
     date2countC = {}
     for dc in values:
-        if enddate >= dc['date'] >= begindate:
-            date2countC[dc['date']] = dc['count']
+        date2countC[dc['date']] = dc['count']
+    # new (to be implemented)
+    date2normalize = dict()
+    for dc in values:
+        date2normalize[dc['date']] = dc['count']
 
-    documents_raw = query2docidsdate(query)
-    documents = sorted(documents_raw, key=lambda k: k["date"])
+    # Retrieving the documents for this Query
+    documents = sorted(query2docidsdate(query), key=lambda k: k['date'])
+    # old
     doc2date = {}
     for doc in documents:
-        doc_date = doc["date"]
-        if enddate >= doc_date >= begindate:
-            doc2date[doc["identifier"]] = doc_date
+        doc2date[doc['identifier']] = doc['date']
+    # new (to be implemented)
+    date2doc = defaultdict(list)
+    for doc in documents:
+        date2doc[doc['date']].append(doc['identifier'])
+
+    #print date2normalize.items()[:3]
+    #print date2doc.items()[:3]
 
     if settings.DEBUG:
         print >> stderr, "burst parameters:"
-        # print >> stderr, "len doc2date:", len(doc2date)  # can be big
-        print >> stderr, "(doc2date not shown)"
-        print >> stderr, "doc2relevance: {}"
-        # print >> stderr, "len date2countC:", len(date2countC)  # can be big
-        print >> stderr, "(date2countC not shown)"
+        print >> stderr, "query_id:", query_id
         print >> stderr, "normalize:", normalize
-        print >> stderr, "bg_smooth:", False
         print >> stderr, "resolution:", resolution
 
     bursts_list = bursts.bursts(doc2date,
@@ -245,7 +256,6 @@ def timeline(request, query_id, resolution):
                                      limit,
                                      doc_count,
                                      doc_ids)
-
     return HttpResponse(json.dumps(date2count))
 
 
