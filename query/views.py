@@ -232,7 +232,7 @@ def timeline(request, query_id, resolution):
         value = len(docs)
         if normalize:
             value = round(value / float(date2normalize[d]), 10)
-        result[str(d)] = (value, 0, 0, 0, len(docs), docs)
+        result[str(d)] = (value, len(docs), docs)
 
     # Return the result (TODO: via json_response_message)
     return HttpResponse(json.dumps(result))
