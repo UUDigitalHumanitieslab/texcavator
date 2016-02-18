@@ -422,7 +422,11 @@ function createGraph() {
 		body.selectAll("title").remove();
 		bursts.append("svg:title")
 			.text(function(d, i) {
-				return d.value + " document" + ((d.value == 1) ? "" : "s");
+				s = d.count + " document" + ((d.count == 1) ? "" : "s");
+				if (getConfig().timeline.normalize) {
+					s += " (relative frequency: " + d.value + "%)"
+				}
+				return s;
 			});
 
 		// Update period
