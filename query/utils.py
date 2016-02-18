@@ -34,7 +34,7 @@ def get_query_object(query_id):
     return query, response
 
 
-def query2docidsdate(query):
+def query2docidsdate(query, resolution):
     """
     Get the document ids plus their date for the query.
     """
@@ -47,6 +47,7 @@ def query2docidsdate(query):
                             settings.ES_DOCTYPE,
                             query_dict['query'],
                             query_dict['dates'],
+                            resolution,
                             query_dict['exclude_distributions'],
                             query_dict['exclude_article_types'],
                             query_dict['selected_pillars'])

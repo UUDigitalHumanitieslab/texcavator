@@ -554,11 +554,11 @@ def get_search_parameters(req_dict):
     }
 
 
-def get_document_ids(idx, typ, query, date_ranges, exclude_distributions=[],
-                     exclude_article_types=[], selected_pillars=[]):
+def get_document_ids(idx, typ, query, date_ranges, resolution,
+                     exclude_distributions=[], exclude_article_types=[], selected_pillars=[]):
     """Return a list of document ids and dates for a query
     """
-    doc_ids = []
+    result = defaultdict(list)
 
     q = create_query(query, date_ranges, exclude_distributions,
                      exclude_article_types, selected_pillars)
@@ -572,20 +572,19 @@ def get_document_ids(idx, typ, query, date_ranges, exclude_distributions=[],
     while get_more_docs:
         results = _es().search(index=idx, doc_type=typ, body=q, fields=fields,
                                from_=start, size=num)
-        for result in results['hits']['hits']:
-            doc_ids.append(
-                {
-                    'identifier': result['_id'],
-                    'date': datetime.strptime(result['fields'][date_field][0],
-                                              '%Y-%m-%d').date()
-                })
+        for r in results['hits']['hits']:
+            ymd = r['fields'][date_field][0].split('-')
+            y = int(ymd[0])
+            m = int(ymd[1]) if resolution != 'year' else 1
+            d = int(ymd[2]) if resolution == 'day' else 1
+            result[datetime(y, m, d)].append(r['_id'])
 
         start += num
 
         if len(results['hits']['hits']) < num:
             get_more_docs = False
 
-    return doc_ids
+    return result
 
 
 def document_id_chunks(chunk_size, idx, typ, query, date_ranges, dist=[],

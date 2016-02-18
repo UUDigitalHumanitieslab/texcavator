@@ -22,7 +22,6 @@ from django.db import IntegrityError
 from .models import Distribution, ArticleType, Query, DayStatistic, \
     StopWord, Pillar, Newspaper, Period, Term
 from .utils import get_query_object, query2docidsdate, count_results
-from .burstsdetector import bursts
 from .download import create_zipname, execute
 from services.es import get_search_parameters
 from texcavator.utils import json_response_message
@@ -203,13 +202,8 @@ def timeline(request, query_id, resolution):
     _, begindate = periods.aggregate(Min('date_lower')).popitem()
     _, enddate = periods.aggregate(Max('date_upper')).popitem()
 
-    # Retrieve the documents for this Query
-    date2doc = defaultdict(list)
-    for doc in query2docidsdate(query):
-        y = doc['date'].year
-        m = doc['date'].month if resolution != 'year' else 1
-        d = doc['date'].day if resolution == 'day' else 1
-        date2doc[datetime(y, m, d)].append(doc['identifier'])
+    # Retrieve a dictionary with date and corresponding documents for this Query
+    date2doc = query2docidsdate(query, resolution)
 
     # Retrieve normalization values if necessary
     if normalize:
