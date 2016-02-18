@@ -225,7 +225,7 @@ def timeline(request, query_id, resolution):
         value = len(docs)
         if normalize:
             value = round(value / float(date2normalize[d]), 10)
-        result[str(d)] = (value, len(docs), docs)
+        result[d.isoformat()] = (value, len(docs), docs)
 
     # Return the result
     return json_response_message('SUCCESS', 'Timeline retrieved', {'result': result})
