@@ -1,23 +1,22 @@
 # -*- coding: utf-8 -*-
-import os
-import json
-import logging
 import csv
+import logging
+import os
 from collections import defaultdict
-from sys import stderr
 from datetime import datetime
+from sys import stderr
 from urllib import quote_plus, unquote_plus
 from urlparse import urljoin
 
-from django.http import HttpResponse
-from django.shortcuts import get_object_or_404
-from django.core.validators import validate_email
-from django.views.decorators.csrf import csrf_exempt
+from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
 from django.core.servers.basehttp import FileWrapper
-from django.conf import settings
-from django.db.models import Q, Min, Max, Sum
+from django.core.validators import validate_email
 from django.db import IntegrityError
+from django.db.models import Q, Min, Max, Sum
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404
+from django.views.decorators.csrf import csrf_exempt
 
 from .models import Distribution, ArticleType, Query, DayStatistic, \
     StopWord, Pillar, Newspaper, Period, Term
@@ -205,7 +204,7 @@ def timeline(request, query_id, resolution):
     # Retrieve a dictionary with date and corresponding documents for this Query
     date2doc = query2docidsdate(query, resolution)
 
-    # Retrieve normalization values if necessary
+    # Retrieve normalization values (if necessary)
     if normalize:
         values = DayStatistic.objects.\
             filter(date__range=(begindate, enddate)).\
@@ -228,8 +227,8 @@ def timeline(request, query_id, resolution):
             value = round(value / float(date2normalize[d]), 10)
         result[str(d)] = (value, len(docs), docs)
 
-    # Return the result (TODO: via json_response_message)
-    return HttpResponse(json.dumps(result))
+    # Return the result
+    return json_response_message('SUCCESS', 'Timeline retrieved', {'result': result})
 
 
 @csrf_exempt

@@ -168,7 +168,7 @@ function getData(queryId, interval, callback) {
 			// Prepare data
 			var data = [];
 
-			$.each(rawData, function(key, value) {
+			$.each(rawData.result, function(key, value) {
 				data.push({
 					start: new Date(key),
 					end: getEndOfInterval(new Date(key), interval),
