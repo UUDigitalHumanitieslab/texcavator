@@ -158,57 +158,6 @@ function createQueryDlg() {
 		style: "background-color: white; width: 410px; height: 320px; line-height: 18pt"
 	}, "tc-div-query");
 
-
-	// Edit a query
-	//	console.log( "cpQEdit" );
-	var cpQEdit = new dijit.layout.ContentPane({
-		id: "cp-edit",
-		title: "Edit",
-		content: "<b>Edit a query</b>"
-	});
-
-	// fill the query list
-	var queryListStoreEdit = new dojo.store.Memory({
-		data: getQueryList()
-	});
-
-	var queryNameEdit = "";
-	dojo.create("div", {
-		id: "div-query-edit"
-	}, cpQEdit.domNode);
-	var cbQueryEdit = new dijit.form.ComboBox({
-		id: "cb-query-edit",
-		name: "cbQueryEdit",
-		style: "width: 100%",
-		displayedValue: "Select query to edit",
-		store: queryListStoreEdit,
-		searchAttr: "name",
-		onChange: function() {
-			bOK.set("disabled", false);
-			bValidate.set("disabled", false);
-			queryNameEdit = cbQueryEdit.get("value");
-			console.log("Query name: " + queryNameEdit);
-
-			dojo.forEach(glob_lexiconData, function(item) {
-				var query_title = item.title;
-				if (query_title === queryNameEdit && !query_title.endsWith("_daterange")) // do not show queries with *_daterange names
-				{
-					taQuery.set("value", item.query);
-				}
-			});
-		}
-	});
-	cbQueryEdit.placeAt(cpQEdit.domNode);
-
-
-	var taQuery = new dijit.form.Textarea({
-		name: "myarea",
-		value: "",
-		style: "width: 100%; height: 100%;"
-	});
-	taQuery.placeAt(cpQEdit.domNode);
-
-
 	// Download query data
 	//	console.log( "cpQData" );
 	var cpQData = new dijit.layout.ContentPane({
@@ -390,10 +339,6 @@ function createQueryDlg() {
 	});
 	actionBar.appendChild(bOK.domNode);
 
-
-	// choose the order in which the tabs appear
-	tabCont.addChild(cpQEdit);
-	//	tabCont.addChild( cpQCreate );
 
 	if (QUERY_DATA_DOWNLOAD) {
 		tabCont.addChild(cpQData);
