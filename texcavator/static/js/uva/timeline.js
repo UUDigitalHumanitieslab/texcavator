@@ -442,7 +442,7 @@ function createGraph() {
 		if (beginDate2) {
 			title += " & " + toDateString(beginDate2) + " - " + toDateString(endDate2);
 		}
-		title += ", Query title: " + retrieveLexiconTitle(); 
+		title += ", Query title: " + retrieveLexiconTitle();
 
 		svg.selectAll("text.period").text(title);
 
@@ -484,7 +484,7 @@ function createGraph() {
 	}
 
 	dojo.place(button.domNode, 'chartDiv');
-} // createGraph() 
+} // createGraph()
 
 
 function burstClicked(data) {
@@ -583,3 +583,26 @@ function closePopup() {
 		sparksDD.closeDropDown();
 	}
 } // closePopup()
+
+
+function switchTimelineNormalize() {
+	// Switch between normalizations
+	var newValue = !getConfig().timeline.normalize;
+	getConfig().timeline.normalize = newValue;
+	dijit.byId('cb-normalize').set('checked', newValue);
+
+	// Reload the timeline graph
+	dojo.xhrGet({
+		url: 'query/' + retrieveLexiconID(),
+		handleAs: 'json',
+		sync: true,
+		load: function(response) {
+			if (response.status === "OK") {
+				showTimeline(response.query);
+			}
+		},
+		error: function(err) {
+			console.error(err);
+		}
+	});
+} // switchTimelineNormalize()
