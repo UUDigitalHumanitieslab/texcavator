@@ -142,9 +142,14 @@ class DayStatistic(models.Model):
     DayStatistic table is gathered with the 'gatherstatistics' management
     command.
     """
-    date = models.DateField(unique=True)
+    date = models.DateField()
+    distribution = models.ForeignKey(Distribution, blank=True, null=True)
+    article_type = models.ForeignKey(ArticleType, blank=True, null=True)
     count = models.IntegerField()
     checked = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = (('date', 'distribution', 'article_type'),)
 
     def __unicode__(self):
         return '{}: {}'.format(str(self.date), self.count)

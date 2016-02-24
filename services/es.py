@@ -253,7 +253,7 @@ def create_ids_query(ids):
     return query
 
 
-def create_day_statistics_query(date_range, agg_name):
+def create_day_statistics_query(date_range, agg_name, distribution, article_type):
     """Create ES query to gather day statistics for the given date range.
 
     This function is used by the gatherstatistics management command.
@@ -263,21 +263,28 @@ def create_day_statistics_query(date_range, agg_name):
     diff = date_upper-date_lower
     num_days = diff.days
 
+    filter_must = [
+        {'range':
+            {'paper_dc_date':
+                {'gte': date_range['lower'],
+                 'lte': date_range['upper'],
+                 }
+            }
+        }
+    ]
+
+    if distribution:
+        filter_must.append({"term": {"paper_dcterms_spatial": _KB_DISTRIBUTION_VALUES[distribution]}})
+
+    if article_type:
+        filter_must.append({"term": {"article_dc_subject": _KB_ARTICLE_TYPE_VALUES[article_type]}})
+
     return {
         'query': {
             'filtered': {
                 'filter': {
                     'bool': {
-                        'must': [
-                            {
-                                'range': {
-                                    'paper_dc_date': {
-                                        'gte': date_range['lower'],
-                                        'lte': date_range['upper']
-                                    }
-                                }
-                            }
-                        ]
+                        'must': filter_must
                     }
                 },
                 'query': {
@@ -544,11 +551,11 @@ def get_search_parameters(req_dict):
     }
 
 
-def get_document_ids(idx, typ, query, date_ranges, exclude_distributions=[],
-                     exclude_article_types=[], selected_pillars=[]):
+def get_document_ids(idx, typ, query, date_ranges, resolution,
+                     exclude_distributions=[], exclude_article_types=[], selected_pillars=[]):
     """Return a list of document ids and dates for a query
     """
-    doc_ids = []
+    result = defaultdict(list)
 
     q = create_query(query, date_ranges, exclude_distributions,
                      exclude_article_types, selected_pillars)
@@ -562,20 +569,19 @@ def get_document_ids(idx, typ, query, date_ranges, exclude_distributions=[],
     while get_more_docs:
         results = _es().search(index=idx, doc_type=typ, body=q, fields=fields,
                                from_=start, size=num)
-        for result in results['hits']['hits']:
-            doc_ids.append(
-                {
-                    'identifier': result['_id'],
-                    'date': datetime.strptime(result['fields'][date_field][0],
-                                              '%Y-%m-%d').date()
-                })
+        for r in results['hits']['hits']:
+            ymd = r['fields'][date_field][0].split('-')
+            y = int(ymd[0])
+            m = int(ymd[1]) if resolution != 'year' else 1
+            d = int(ymd[2]) if resolution == 'day' else 1
+            result[datetime(y, m, d)].append(r['_id'])
 
         start += num
 
         if len(results['hits']['hits']) < num:
             get_more_docs = False
 
-    return doc_ids
+    return result
 
 
 def document_id_chunks(chunk_size, idx, typ, query, date_ranges, dist=[],
@@ -601,12 +607,12 @@ def document_id_chunks(chunk_size, idx, typ, query, date_ranges, dist=[],
             get_more_docs = False
 
 
-def day_statistics(idx, typ, date_range, agg_name):
+def day_statistics(idx, typ, date_range, agg_name, distribution=None, article_type=None):
     """Gather day statistics for all dates in the date range
 
     This function is used by the gatherstatistics management command.
     """
-    q = create_day_statistics_query(date_range, agg_name)
+    q = create_day_statistics_query(date_range, agg_name, distribution, article_type)
 
     results = _es().search(index=idx, doc_type=typ, body=q, size=0)
 

@@ -2,11 +2,10 @@ dojo.require("dijit.Tooltip");
 dojo.require("dijit.popup");
 
 /*
-var showTimeline = function( lexiconId, lexiconTitle )
-function loadGraphData( lexiconId )
+function loadGraphData( queryId )
 function findValue(start, end, data, startIndex)
-function getDataForInterval( lexiconId, intervalIndex, callback )
-function getData( lexiconId, field, interval, callback )
+function getDataForInterval( queryId, intervalIndex, callback )
+function getData( queryId, field, interval, callback )
 function getEndOfInterval( date, interval )
 function createGraph() {
 	function filterFunction( d )
@@ -15,13 +14,12 @@ function createGraph() {
 		function burstUpdateFunction( burst )
 	}
 }
-function burstSearch( lexicon_query, date_range, max_records )
 function burstClicked( data, index, element )
 function burstCloud( params )
 function closePopup() {}
 */
 
-var intervals = ["year", "month", "day"];
+var intervals = ['year']; // since zooming is broken, only query the year instead of ["year", "month", "day"];
 
 var zoomLimit = 8 * 24 * 3600000; // Eight days
 var zoomLimit = 10 * 60000; // Ten minutes //24*3600000; // One days
@@ -29,18 +27,18 @@ var zoomLimit = 10 * 60000; // Ten minutes //24*3600000; // One days
 var detectBursts = true;
 
 
-var showTimeline = function(item, collection) {
-	lexiconId = item.pk;
-	lexiconTitle = item.title;
-	query_string = item.query;
-	console.log("showTimeline() lexiconId: " + lexiconId + ", lexiconTitle: " + lexiconTitle + ", collection: " + collection);
+var showTimeline = function(item) {
+	queryId = item.pk;
+	queryTitle = item.title;
+	queryString = item.query;
+	console.log("showTimeline() queryId: " + queryId + ", queryTitle: " + queryTitle);
 
 	setQueryMetadata(item);
 
-	storeLexiconID(lexiconId); // query.js
-	storeLexiconTitle(lexiconTitle); // query.js
-	storeLexiconQuery(query_string); // query.js
-	storeCollectionUsed(collection); // query.js
+	storeLexiconID(queryId); // query.js
+	storeLexiconTitle(queryTitle); // query.js
+	storeLexiconQuery(queryString); // query.js
+	storeCollectionUsed(ES_INDEX); // query.js
 
 	var sparksDD = dijit.byId('sparksDropDownButton');
 	if (sparksDD !== undefined) {
@@ -51,23 +49,23 @@ var showTimeline = function(item, collection) {
 	var tc = dijit.byId("articleContainer");
 	tc.selectChild(dijit.byId("timeline"));
 
-	loadGraphData(lexiconId);
+	loadGraphData(queryId);
 };
 
 
-function loadGraphData(lexiconId) {
+function loadGraphData(queryId) {
 	burstData = {};
 	burstIntervalIndex = 0;
 	burstAnimation = false;
 
-	getDataForInterval(lexiconId, 0, function() {
+	getDataForInterval(queryId, 0, function() {
 		createGraph();
 
 		var intervalIndex = 0;
 
 		var continueFunction = function() {
 			if (++intervalIndex < intervals.length) {
-				getDataForInterval(lexiconId, intervalIndex, continueFunction);
+				getDataForInterval(queryId, intervalIndex, continueFunction);
 			}
 		};
 
@@ -87,10 +85,10 @@ function findValue(start, end, data, startIndex) {
 }
 
 
-function getDataForInterval(lexiconId, intervalIndex, callback) {
+function getDataForInterval(queryId, intervalIndex, callback) {
 	var interval = intervals[intervalIndex];
 
-	getData(lexiconId, interval, function(data) {
+	getData(queryId, interval, function(data) {
 		// Detect bursts (mean + 2 * stddev)
 		var mean = d3.mean(data, function(d) {
 			return d.value;
@@ -149,17 +147,13 @@ function getDataForInterval(lexiconId, intervalIndex, callback) {
 }
 
 
-function getData(lexiconId, interval, callback) {
-	var timeline_url = "query/timeline/" + lexiconId + "/" + interval;
+function getData(queryId, interval, callback) {
+	var timeline_url = "query/timeline/" + queryId + "/" + interval;
 
-	var config = getConfig();
-	var collection = retrieveCollectionUsed();
-	timeline_url = timeline_url + "?collection=" + collection;
-
-	if (config.timeline.normalize) {
-		timeline_url += "&normalize=1";
+	if (getConfig().timeline.normalize) {
+		timeline_url += "?normalize=1";
 	} else {
-		timeline_url += "&normalize=0";
+		timeline_url += "?normalize=0";
 	}
 
 	console.log("timeline_url: " + timeline_url);
@@ -173,26 +167,25 @@ function getData(lexiconId, interval, callback) {
 			// Prepare data
 			var data = [];
 
-			$.each(rawData, function(key, value) {
+			$.each(rawData.result, function(key, value) {
 				data.push({
 					start: new Date(key),
 					end: getEndOfInterval(new Date(key), interval),
 					value: value[0],
-					index: value[2],
-					count: value[4], // doc count shown in tooltip
-					docs: value[5] // doc ids
+					count: value[1], // doc count shown in tooltip
+					docs: value[2] // doc ids
 				});
 			});
 
 			data = data.sort(function(a, b) {
 				return a.start - b.start;
 			});
-			callback(data);
 
+			callback(data);
 		},
 		error: function(xhr, message, error) {
-			console.error("Error while loading timeline data:", message);
-			throw (error);
+			console.error(message);
+			genDialog("Error while loading timeline data", message, { "OK": true });
 		}
 	});
 }
@@ -240,7 +233,6 @@ function createGraph() {
 	var config = getConfig();
 
 	// Create a place for the chart
-	var collection = retrieveCollectionUsed();
 	var dest = dojo.byId("chartDiv");
 	if (dest === null) {
 		$('#timeline').append('<div id="chartDiv" style="width: 100%; height: 280px; float: center;"></div>');
@@ -428,7 +420,11 @@ function createGraph() {
 		body.selectAll("title").remove();
 		bursts.append("svg:title")
 			.text(function(d, i) {
-				return d.value + " document" + ((d.value == 1) ? "" : "s");
+				s = d.count + " document" + ((d.count == 1) ? "" : "s");
+				if (getConfig().timeline.normalize) {
+					s += " (relative frequency: " + d.value + "%)";
+				}
+				return s;
 			});
 
 		// Update period
@@ -446,7 +442,7 @@ function createGraph() {
 		if (beginDate2) {
 			title += " & " + toDateString(beginDate2) + " - " + toDateString(endDate2);
 		}
-		title += ", Query title: " + retrieveLexiconTitle(); 
+		title += ", Query title: " + retrieveLexiconTitle();
 
 		svg.selectAll("text.period").text(title);
 
@@ -488,7 +484,7 @@ function createGraph() {
 	}
 
 	dojo.place(button.domNode, 'chartDiv');
-} // createGraph() 
+} // createGraph()
 
 
 function burstClicked(data) {
@@ -497,10 +493,10 @@ function burstClicked(data) {
 	var d = data;
 
 	// Show burst articles in accordion; set timeline values in filters
-	var lexicon_query = retrieveLexiconQuery();
+	var query = retrieveLexiconQuery();
 	beginDate = d.start;
 	endDate = d.end;
-	dijit.byId("query").set("value", lexicon_query); 
+	dijit.byId("query").set("value", query); 
 	dijit.byId("begindate").set("value", beginDate);
 	dijit.byId("enddate").set("value", endDate);
 	if (beginDate2 !== undefined) {
@@ -587,3 +583,26 @@ function closePopup() {
 		sparksDD.closeDropDown();
 	}
 } // closePopup()
+
+
+function switchTimelineNormalize() {
+	// Switch between normalizations
+	var newValue = !getConfig().timeline.normalize;
+	getConfig().timeline.normalize = newValue;
+	dijit.byId('cb-normalize').set('checked', newValue);
+
+	// Reload the timeline graph
+	dojo.xhrGet({
+		url: 'query/' + retrieveLexiconID(),
+		handleAs: 'json',
+		sync: true,
+		load: function(response) {
+			if (response.status === "OK") {
+				showTimeline(response.query);
+			}
+		},
+		error: function(err) {
+			console.error(err);
+		}
+	});
+} // switchTimelineNormalize()
