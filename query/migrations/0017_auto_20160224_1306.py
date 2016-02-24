@@ -15,8 +15,8 @@ class Migration(migrations.Migration):
     operations = [
         engine_specific(('mysql',),
             migrations.RunSQL(
-                'alter table query_term modify word varchar(200) character set utf8 collate utf8_bin;',
-                'alter table query_term modify word varchar(200) character set utf8 collate utf8_general_ci;'
+                sql='alter table query_term modify word varchar(200) character set utf8 collate utf8_bin;',
+                reverse_sql='alter table query_term modify word varchar(200) character set utf8 collate utf8_general_ci;'
             )
         ),
     ]
