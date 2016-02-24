@@ -2,7 +2,6 @@ dojo.require("dijit.Tooltip");
 dojo.require("dijit.popup");
 
 /*
-var showTimeline = function( item, collection )
 function loadGraphData( queryId )
 function findValue(start, end, data, startIndex)
 function getDataForInterval( queryId, intervalIndex, callback )
@@ -28,18 +27,18 @@ var zoomLimit = 10 * 60000; // Ten minutes //24*3600000; // One days
 var detectBursts = true;
 
 
-var showTimeline = function(item, collection) {
+var showTimeline = function(item) {
 	queryId = item.pk;
 	queryTitle = item.title;
 	queryString = item.query;
-	console.log("showTimeline() queryId: " + queryId + ", queryTitle: " + queryTitle + ", collection: " + collection);
+	console.log("showTimeline() queryId: " + queryId + ", queryTitle: " + queryTitle);
 
 	setQueryMetadata(item);
 
 	storeLexiconID(queryId); // query.js
 	storeLexiconTitle(queryTitle); // query.js
 	storeLexiconQuery(queryString); // query.js
-	storeCollectionUsed(collection); // query.js
+	storeCollectionUsed(ES_INDEX); // query.js
 
 	var sparksDD = dijit.byId('sparksDropDownButton');
 	if (sparksDD !== undefined) {
@@ -234,7 +233,6 @@ function createGraph() {
 	var config = getConfig();
 
 	// Create a place for the chart
-	var collection = retrieveCollectionUsed();
 	var dest = dojo.byId("chartDiv");
 	if (dest === null) {
 		$('#timeline').append('<div id="chartDiv" style="width: 100%; height: 280px; float: center;"></div>');
@@ -424,7 +422,7 @@ function createGraph() {
 			.text(function(d, i) {
 				s = d.count + " document" + ((d.count == 1) ? "" : "s");
 				if (getConfig().timeline.normalize) {
-					s += " (relative frequency: " + d.value + "%)"
+					s += " (relative frequency: " + d.value + "%)";
 				}
 				return s;
 			});

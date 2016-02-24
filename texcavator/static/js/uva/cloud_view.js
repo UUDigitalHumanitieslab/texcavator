@@ -243,8 +243,7 @@ var clearCloud = function ()
 {
 	console.log( "clearCloud()" );
 
-	var collection = collection_fromradio();		// accordion.js
-	var cloud_pane = "cloudPane"
+	var cloud_pane = "cloudPane";
 
 	if( dojo.byId( cloud_pane ) == undefined )
 	{ return; }

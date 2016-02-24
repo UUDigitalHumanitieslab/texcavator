@@ -2,7 +2,6 @@
 // FL-10-Sep-2013 Changed
 
 /*
-	function collection_fromradio()
 	function accordionSelectChild( id )
 	function createQueryLine( item )
 	function createQueryList()
@@ -11,11 +10,6 @@
 
 dojo.require("dojo.store.JsonRest");
 dojo.require("dojox.form.RangeSlider");
-
-
-function collection_fromradio() {
-	return ES_INDEX;
-}
 
 
 function accordionSelectChild(id) {
@@ -212,8 +206,7 @@ function createQueryLine(item) {
 		iconClass: "dijitIconChart",
 		showLabel: false,
 		onClick: function() {
-			var collection = collection_fromradio();
-			showTimeline(item, collection); // timeline.js
+			showTimeline(item); // timeline.js
 		}
 	})).domNode, buttonsNode);
 
