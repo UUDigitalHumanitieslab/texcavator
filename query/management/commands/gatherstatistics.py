@@ -47,12 +47,6 @@ class Command(BaseCommand):
 
             print year
 
-            results = day_statistics(settings.ES_INDEX,
-                                     settings.ES_DOCTYPE,
-                                     date_range,
-                                     agg_name)
-            self.save_to_database(agg_name, results)
-
             for article_type in ArticleType.objects.all():
                 for distribution in Distribution.objects.all():
                     results = day_statistics(settings.ES_INDEX,
