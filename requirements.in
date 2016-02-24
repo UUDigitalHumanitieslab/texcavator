@@ -11,3 +11,4 @@ requests
 django-nose
 dicttoxml
 DAWG
+sqlparse
