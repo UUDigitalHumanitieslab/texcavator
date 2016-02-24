@@ -903,7 +903,7 @@ var createConfig = function() {
 	var labelNormalize = dojo.create("label", {
 		id: "label-normalize",
 		for: "cb-normalize",
-		innerHTML: "&nbsp;Normalize document counts<br/>"
+		innerHTML: "&nbsp;Normalize document counts (use relative instead of absolute frequencies)<br/>"
 	}, cpTimeline.domNode);
 
 
