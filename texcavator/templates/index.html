@@ -96,7 +96,9 @@
 				<div id="timeline" title="Timeline" dojoType="dijit.layout.ContentPane" selected="false">  <!-- Timeline -->
 				<!-- <div id="chart"></div><br /> -->
 					<div style="color:grey; text-align: center;">
-						Hover over a bar for doc count, click for burst cloud.</div>
+						Hover over a bar to inspect the values, click a bar to show a word cloud for this period.
+                        Click <a href="javascript:switchTimelineNormalize()">here</a> to switch between absolute and relative frequencies.
+                    </div>
 				</div>
 
 				<div id="record" title="OCR" dojoType="dijit.layout.ContentPane" selected="false">  <!-- OCR -->
@@ -663,8 +665,6 @@ function onClickExecute(item)
 	var config = getConfig();
 	var params = {
 		queryID    : queryID,
-		datastore  : config[ "datastore" ],
-		collection : collection_fromradio(),
 		dateRange  : getDateRangeString()
 	}
 	params = getCloudParameters( params );

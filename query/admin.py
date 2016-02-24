@@ -3,7 +3,7 @@ from query.models import Query, DayStatistic, StopWord, Pillar, Newspaper
 
 
 class DayStatisticAdmin(admin.ModelAdmin):
-    list_display = ('date', 'count', 'checked')
+    list_display = ('date', 'distribution', 'article_type', 'count', 'checked')
 
 
 class StopWordAdmin(admin.ModelAdmin):

@@ -9,7 +9,6 @@ dojo.require("dijit.Tooltip");
 var config
 var getConfig = function()
 function storeCeleryOwner( celery_owner )
-function storeDatastore( datastore )
 function getSearchParameters()
 var toolbarConfig = function()
 var showConfig = function()
@@ -96,15 +95,8 @@ function storeCeleryOwner(celery_owner) {
 }
 
 
-function storeDatastore(datastore) {
-	config.datastore = datastore;
-	console.log("xTAS datastore: " + datastore);
-}
-
-
 function getSearchParameters() {
 	params = {
-		datastore: config.datastore,
 		maximumRecords: config.search.chunk_size,
 		sort_order: config.search.sort_order,
 
@@ -903,7 +895,7 @@ var createConfig = function() {
 	var labelNormalize = dojo.create("label", {
 		id: "label-normalize",
 		for: "cb-normalize",
-		innerHTML: "&nbsp;Normalize document counts<br/>"
+		innerHTML: "&nbsp;Normalize document counts (use relative instead of absolute frequencies)<br/>"
 	}, cpTimeline.domNode);
 
 
