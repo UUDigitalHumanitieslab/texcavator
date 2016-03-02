@@ -92,13 +92,6 @@ TEMPLATE_DIRS = (
 # Test settings
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 
-# Celery settings
-BROKER_URL = 'redis://localhost:6379/0'
-CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
-CELERY_ACCEPT_CONTENT = ['json']
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_RESULT_SERIALIZER = 'json'
-
 # Logging settings
 # Taken from http://ianalexandr.com/blog/getting-started-with-django-logging-in-5-minutes.html
 LOGGING = {

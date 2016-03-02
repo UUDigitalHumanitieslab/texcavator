@@ -24,6 +24,13 @@ ALLOWED_HOSTS = []
 STATIC_ROOT = os.path.join(PROJECT_GRANNY, "texcavator_static") + os.sep
 LOGGING_LOCATION = PROJECT_PARENT
 
+# Celery settings
+BROKER_URL = 'redis://localhost:6379/0'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+
 # Elasticsearch settings
 ELASTICSEARCH_HOST = "localhost"
 ELASTICSEARCH_PORT = 9200
