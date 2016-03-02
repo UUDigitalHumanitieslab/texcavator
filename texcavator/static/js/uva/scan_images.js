@@ -6,14 +6,13 @@ Functions:
 	function scanImages( record_id )
 	function scanImagesKB( record, metadata_xml )
 	function generateImageForPage( record )
-	function scanImageStaBi( collection, record_id )
 */
 
 
-	function scanImages( collection, record_id, zipfile )
+	function scanImages( record_id )
 	{
 		// this KB specific
-		console.log( "scanImages: collection: " + collection + ", record_id: " + record_id + ", zipfile: " + zipfile );
+		console.log( "scanImages: record_id: " + record_id );
 
 		var urn = record_id.split( ':' ).slice( 0, 3 ).join( ':' );
 		// e.g record_id -> urn: ddd:010434315:mpeg21:a0003:ocr -> ddd:010434315:mpeg21
@@ -159,33 +158,3 @@ Functions:
 
 		return '<img src="' + url + '" />';
 	} // generateImageForPage()
-
-
-
-	function scanImageStaBi( collection, record_id, zipfile )
-	{
-		console.log( "scanImageStaBi(): record_id: " +  record_id + ", zipfile: " + zipfile );
-
-		var url = "services/scan/?id=" + record_id + "&zipfile=" + zipfile;
-		console.log( "url: " + url );
-
-		var tabs = dijit.byId( "articleContainer2" ).getChildren();
-		for( var tab = 0; tab < tabs.length; tab++ )
-		{
-			var cp = tabs[ tab ];
-			var cp_id = cp.get( "id" );
-			if( cp_id === "stabi-original" )
-			{ dijit.byId( "articleContainer2" ).closeChild( cp ); }
-		}
-
-		dijit.byId( "articleContainer2" ).addChild(
-			new dijit.layout.ContentPane({
-				id : "stabi-original",
-				title : "Scan",
-				content : '<img src="' + url + '" />'
-			})
-		);
-
-	} // scanImageStaBi()
-
-// [eof]

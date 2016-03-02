@@ -1,27 +1,30 @@
 # -*- coding: utf-8 -*-
 
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 
-urlpatterns = patterns(
-    'query.views',
-    url(r'^$', 'index'),
-    url(r'^(?P<query_id>\d+)/?$', 'get_query'),
-    url('^create$', 'create_query'),
-    url(r'^(?P<query_id>\d+)/delete$', 'delete'),
-    url(r'^(?P<query_id>\d+)/update$', 'update'),
-    url(r'^(?P<query_id>\d+)/update_nr_results?$', 'update_nr_results'),
+from .views import *
 
-    url(r'^stopword/add$', 'add_stopword'),
-    url(r'^stopword/(?P<stopword_id>\d+)/delete$', 'delete_stopword'),
-    url(r'^stopword/export$', 'export_stopwords'),
-    url(r'^stopwords$', 'stopwords'),
+urlpatterns = [
+    url(r'^$', index),
 
-    url(r'^timeline/(?P<query_id>\d+)?/(?P<resolution>\w+)$', 'timeline'),
+    url(r'^(?P<query_id>\d+)/?$', get_query),
+    url('^create$', create_query),
+    url(r'^(?P<query_id>\d+)/delete$', delete),
+    url(r'^(?P<query_id>\d+)/update$', update),
+    url(r'^(?P<query_id>\d+)/update_nr_results?$', update_nr_results),
 
-    url(r'^pillars$', 'retrieve_pillars'),
+    url(r'^stopword/add$', add_stopword),
+    url(r'^stopword/(?P<stopword_id>\d+)/delete$', delete_stopword),
+    url(r'^stopword/export$', export_stopwords),
+    url(r'^stopwords$', stopwords),
 
-    url(r'^newspaper/export$', 'export_newspapers'),
+    url(r'^timeline/(?P<query_id>\d+)?/(?P<resolution>\w+)$', timeline),
 
-    url(r'^download/prepare/$', 'download_prepare'),
-    url(r'^download/(?P<zip_name>.*)$', 'download_data'),
-)
+    url(r'^pillars$', retrieve_pillars),
+    url(r'^timeframes$', retrieve_timeframes),
+
+    url(r'^newspaper/export$', export_newspapers),
+
+    url(r'^download/prepare/$', download_prepare),
+    url(r'^download/(?P<zip_name>.*)$', download_data),
+]

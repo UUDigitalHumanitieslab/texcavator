@@ -1,27 +1,26 @@
 # -*- coding: utf-8 -*-
-import os
-import json
-import logging
 import csv
-from sys import stderr
+import logging
+import os
+from collections import defaultdict
 from datetime import datetime
+from sys import stderr
 from urllib import quote_plus, unquote_plus
 from urlparse import urljoin
 
+from django.conf import settings
+from django.contrib.auth.decorators import login_required, permission_required
+from django.core.servers.basehttp import FileWrapper
+from django.core.validators import validate_email
+from django.db import IntegrityError
+from django.db.models import Q, Min, Max, Sum
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
-from django.core.validators import validate_email
 from django.views.decorators.csrf import csrf_exempt
-from django.contrib.auth.decorators import login_required
-from django.core.servers.basehttp import FileWrapper
-from django.conf import settings
-from django.db.models import Q, Min, Max
-from django.db import IntegrityError
 
 from .models import Distribution, ArticleType, Query, DayStatistic, \
-    StopWord, Pillar, Newspaper, Period
+    StopWord, Pillar, Newspaper, Period, Term
 from .utils import get_query_object, query2docidsdate, count_results
-from .burstsdetector import bursts
 from .download import create_zipname, execute
 from services.es import get_search_parameters
 from texcavator.utils import json_response_message
@@ -177,6 +176,7 @@ def update_nr_results(request, query_id):
 
     return json_response_message('SUCCESS', 'Number of results updated.', {'count': query.nr_results})
 
+
 @login_required
 def timeline(request, query_id, resolution):
     """
@@ -185,12 +185,14 @@ def timeline(request, query_id, resolution):
     """
     logger.info('query/timeline/ - user: {}'.format(request.user.username))
 
-    if settings.DEBUG:
-        print >> stderr, "query/bursts() query_id:", query_id, \
-                         "resolution:", resolution
-
     normalize = request.GET.get('normalize') == '1'
-    bg_smooth = False
+
+    if settings.DEBUG:
+        print >> stderr, "query/bursts() query_id:", query_id
+        print >> stderr, "resolution:", resolution
+        print >> stderr, "query_id:", query_id
+        print >> stderr, "normalize:", normalize
+        print >> stderr, "resolution:", resolution
 
     query = get_object_or_404(Query, pk=query_id)
 
@@ -199,54 +201,34 @@ def timeline(request, query_id, resolution):
     _, begindate = periods.aggregate(Min('date_lower')).popitem()
     _, enddate = periods.aggregate(Max('date_upper')).popitem()
 
-    # normalization and/or smoothing
-    values = DayStatistic.objects.values('date', 'count').all()
-    date2countC = {}
-    for dc in values:
-        if enddate >= dc['date'] >= begindate:
-            date2countC[dc['date']] = dc['count']
+    # Retrieve a dictionary with date and corresponding documents for this Query
+    date2doc = query2docidsdate(query, resolution)
 
-    documents_raw = query2docidsdate(query)
-    documents = sorted(documents_raw, key=lambda k: k["date"])
-    doc2date = {}
-    for doc in documents:
-        doc_date = doc["date"]
-        if enddate >= doc_date >= begindate:
-            doc2date[doc["identifier"]] = doc_date
+    # Retrieve normalization values (if necessary)
+    if normalize:
+        values = DayStatistic.objects.\
+            filter(date__range=(begindate, enddate)).\
+            exclude(article_type__in=query.exclude_article_types.all()).\
+            exclude(distribution__in=query.exclude_distributions.all()).\
+            values('date').\
+            annotate(count=Sum('count'))
+        date2normalize = defaultdict(int)
+        for v in values:
+            y = v['date'].year
+            m = v['date'].month if resolution != 'year' else 1
+            d = v['date'].day if resolution == 'day' else 1
+            date2normalize[datetime(y, m, d)] += v['count']
 
-    if settings.DEBUG:
-        print >> stderr, "burst parameters:"
-        # print >> stderr, "len doc2date:", len(doc2date)  # can be big
-        print >> stderr, "(doc2date not shown)"
-        print >> stderr, "doc2relevance: {}"
-        # print >> stderr, "len date2countC:", len(date2countC)  # can be big
-        print >> stderr, "(date2countC not shown)"
-        print >> stderr, "normalize:", normalize
-        print >> stderr, "bg_smooth:", False
-        print >> stderr, "resolution:", resolution
+    # Calculate relative frequencies
+    result = dict()
+    for d, docs in date2doc.items():
+        value = len(docs)
+        if normalize:
+            value = round(value / float(date2normalize[d]), 10)
+        result[d.isoformat()] = (value, len(docs), docs)
 
-    bursts_list = bursts.bursts(doc2date,
-                                {},
-                                date2countC=date2countC,
-                                normalise=normalize,
-                                bg_smooth=bg_smooth,
-                                resolution=resolution)[0]
-
-    date2count = {}
-    for date, tup in bursts_list.iteritems():
-        doc_float, zero_one, i, limit, doc_count, doc_ids = tup
-        if doc_count != 0:
-            doc_float = float("%.1f" % doc_float)  # less decimals
-            if limit:                              # not None
-                limit = float("%.1f" % limit)      # less decimals
-            date2count[str(date)] = (doc_float,
-                                     zero_one,
-                                     i,
-                                     limit,
-                                     doc_count,
-                                     doc_ids)
-
-    return HttpResponse(json.dumps(date2count))
+    # Return the result
+    return json_response_message('SUCCESS', 'Timeline retrieved', {'result': result})
 
 
 @csrf_exempt
@@ -277,15 +259,15 @@ def delete_stopword(request, stopword_id):
     """Deletes a stopword from the stopword list.
     """
     stopword = StopWord.objects.get(pk=stopword_id)
+
     if not stopword:
         return json_response_message('ERROR', 'Stopword not found.')
-
     if not request.user == stopword.user:
-        return json_response_message('ERROR', 'Stopword does not belong to '
-                                              'user.')
-    stopword.delete()
+        return json_response_message('ERROR', 'Stopword does not belong to this user.')
 
-    return json_response_message('SUCCESS', 'Stopword deleted.')
+    msg = 'Stopword {} deleted.'.format(stopword.word)
+    stopword.delete()
+    return json_response_message('SUCCESS', msg)
 
 
 # TODO: turn into get method (get user via currently logged in user)
@@ -342,12 +324,22 @@ def download_prepare(request):
                 format(request.user.username))
 
     user = request.user
+    
+    if not user.has_perm('query.download_documents'):
+        msg = 'You are not allowed to download query results. '
+        msg += 'Please contact the administrators for further information.'
+        return json_response_message('error', msg)
+    
     query = Query.objects.get(title=request.GET.get('query_title'), user=user)
     count = count_results(query)
+    if user.has_perm('query.download_many_documents'):
+        maximum = settings.QUERY_DATA_MAX_RESULTS
+    else:
+        maximum = settings.QUERY_DATA_UNPRIV_RESULTS
 
-    if count > settings.QUERY_DATA_MAX_RESULTS:
-        msg = "Your query has too much results to export: " + str(count)
-        msg += " where " + str(settings.QUERY_DATA_MAX_RESULTS) + " are allowed. "
+    if count > maximum:
+        msg = "Your query has too many results to export: " + str(count)
+        msg += " where " + str(maximum) + " are allowed. "
         msg += "Please consider filtering your results before exporting."
         return json_response_message('error', msg)
 
@@ -389,6 +381,7 @@ def download_prepare(request):
 
 
 @csrf_exempt
+@permission_required('query.download_documents')
 @login_required
 def download_data(request, zip_name):
     """Downloads the prepared data created from :func:`views.download_prepare` above
@@ -426,6 +419,11 @@ def retrieve_pillars(request):
     pillars = Pillar.objects.all()
     return json_response_message('ok', '', {'result': [{'id': p.id, 'name': p.name} for p in pillars]})
 
+
+def retrieve_timeframes(request):
+    """Retrieves all timeframes of Terms as JSON objects
+    """
+    return json_response_message('ok', '', {'result': [{'id': t[0], 'name': t[1]} for t in Term.TIMEFRAME_CHOICES]})
 
 @login_required
 def export_newspapers(request):

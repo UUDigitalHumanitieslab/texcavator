@@ -27,61 +27,9 @@
 				</input>
 				<!-- value:'opium', -->
 
-				<button data-dojo-type="dijit.form.ComboButton" id="searchButton"
+				<button data-dojo-type="dijit.form.Button" id="searchButton"
 						data-dojo-props="iconClass:'dijitIcon dijitIconSearch', style:'font-size: 125%;', type: 'submit'">
 					<span>Search</span>
-					<div dojoType="dijit.Menu">
-						<div dojoType="dijit.MenuItem">
-							<script type="dojo/method" event="onClick">
-								uva.logger.log("Start search: " + dijit.byId('query').value);
-
-								var terms = dijit.byId('query').value.split(' ');
-								dijit.byId('query').textbox.readOnly = true;
-								dojo.empty('cql');
-
-								var queryTerms = [];
-								var queryBuilder = new uva.query.CQL();
-
-								var updateQuery = function() {
-									var query = "";
-									dojo.forEach(queryTerms, function(term, termIndex) {
-										var part = queryBuilder.createQuery(term.get("words"), 
-																			term.get("modifier"), 
-																			term.get("forbidden"));
-										if(query.length > 0)
-											query = queryBuilder.combineWithAND(query, part);
-										else
-											query = part;
-									});
-									dijit.byId('query').set('value', query);
-									uva.logger.log("Updated query: " + query);
-								};
-								var newTerm = function(term) {
-									var term = new uva.query.Term({value: term});
-									dojo.place(term.domNode, 'cql');
-									term.termChanged = updateQuery;
-									queryTerms.push(term);
-									term.uninitialize = function () {
-										// Remove this item from queryTerms
-										queryTerms = dojo.filter(queryTerms, function(item) { return item != this; }, this);
-										updateQuery();
-									};
-								};
-								dojo.forEach(terms, newTerm);
-								updateQuery();
-
-								new dijit.form.Button({
-									label: '+',
-									onClick: function() {
-										uva.logger.log("New term");
-										newTerm('term');
-										updateQuery();
-									}
-								}, 'cqlAdd');
-							</script>
-							Start search
-						</div>
-					</div>
 				</button>
 
 				<button data-dojo-type="dijit.form.Button" id="clearButton"
@@ -91,7 +39,6 @@
 					//	console.log( "Clear" );
 						dijit.byId( "query" ).set( "value", "" );
 						dijit.byId( "query" ).textbox.readOnly = false;
-						dojo.empty( "cql" );
 					</script>
 				</button>
 
@@ -104,8 +51,6 @@
 				<div id="div-year-range-slider-2">
 					<div id="div-year-range-legend-2"></div>
 				</div>
-
-				<span id="cql"></span><div id="cqlAdd"></div>
 			</form>
 
 			<div id="search-result">
@@ -116,10 +61,8 @@
 		<div id="lexicon" data-dojo-type="dijit.layout.ContentPane" 
 						  data-dojo-props="title:'Saved queries'">
 			The creation of a lexicon starts with composing its query in the Search accordion. Give it a name and save the query. Then fetch the articles by clicking the 1st of the 4 small icons.<br /><br />
-			<textarea id="queryComment" name="queryComment" data-dojo-type="dijit/form/Textarea"></textarea></br>
-			<input id="lexiconItemTitle" type="text" 
-					data-dojo-type="dijit.form.TextBox"
-					data-dojo-props="placeHolder:'Type query title here.', name:'lexiconItemTitle', style:'width: 170px; font-size: 130%;'" />
+			<textarea id="queryComment" name="queryComment" placeholder="Query comment (optional)"></textarea></br>
+			<input id="queryTitle" name="queryTitle" type="text" placeholder="Query title" />
 			<button data-dojo-type="dijit.form.Button" data-dojo-props="onClick: queryToLexicon, style:'font-size: 130%;', iconClass: 'dijitIconSave'">
 				Save query
 			</button>
@@ -153,7 +96,9 @@
 				<div id="timeline" title="Timeline" dojoType="dijit.layout.ContentPane" selected="false">  <!-- Timeline -->
 				<!-- <div id="chart"></div><br /> -->
 					<div style="color:grey; text-align: center;">
-						Hover over a bar for doc count, click for burst cloud.</div>
+						Hover over a bar to inspect the values, click a bar to show a word cloud for this period.
+                        Click <a href="javascript:switchTimelineNormalize()">here</a> to switch between absolute and relative frequencies.
+                    </div>
 				</div>
 
 				<div id="record" title="OCR" dojoType="dijit.layout.ContentPane" selected="false">  <!-- OCR -->
@@ -217,16 +162,6 @@ dojo.ready( showDojoLocale );
 ES_INDEX = "{{ ES_INDEX }}";
 ES_REVERSE_MAPPING = {{ ES_REVERSE_MAPPING|safe }};
 
-/*
-dojo.ready( function()
-{ 
-	console.log( "ILPSlogging start" );
-	var options = {};
-	var logging = ILPSLogging('ilps-vm14.science.uva.nl', 'bt6ATs2XGL4skCRKTAfUCbg3NwTLRZhFjGKY2leQxGM ', options);
-//	var logging.start();
-}
-*/
-
 function hideResetButtons() {
 	$('.filter-reset-btn').hide();
 }
@@ -242,26 +177,10 @@ dojo.ready( function() { createLogin( "{{ PROJECT_NAME }}" ) } );   // login.js
 dojo.ready( showLogin );                                            // login.js
 
 dojo.ready( function() { 
-	if( "{{ QUERY_DATA_DOWNLOAD_ALLOW }}" == "True" )
-	{ QUERY_DATA_DOWNLOAD = true; }
-	else
-	{ QUERY_DATA_DOWNLOAD = false; }
-//	console.log( "Query data download: " + QUERY_DATA_DOWNLOAD );
-
-	if( "{{ GOOGLE_TRANSLATE }}" == "True" )
-	{ GOOGLE_TRANSLATE = true; }
-	else
-	{ GOOGLE_TRANSLATE = false; }
-
-	if( "{{ MOSES_TRANSLATE }}" == "True" )
-	{ MOSES_TRANSLATE = true; }
-	else
-	{ MOSES_TRANSLATE = false; }
-
-	if( "{{ ILPS_LOGGING }}" == "True" )
-	{ ILPS_LOGGING = true; }
-	else
-	{ ILPS_LOGGING = false; }
+	QUERY_DATA_DOWNLOAD = "{{ QUERY_DATA_DOWNLOAD_ALLOW }}" == "True";
+	ILPS_LOGGING = "{{ ILPS_LOGGING }}" == "True";
+	WORDCLOUD_MIN_WORDS = {{ WORDCLOUD_MIN_WORDS }};
+	WORDCLOUD_MAX_WORDS = {{ WORDCLOUD_MAX_WORDS }};
 } );
 
 dojo.ready( function() { celeryCheckFailure( "None" ); } ); // celery.js
@@ -309,6 +228,12 @@ function searchSubmit(newStartRecord)
 		console.log( "searchSubmit(): empty query: nothing to do." );
 		return;
 	}
+	
+	// sanitize_query.js
+	if (!validateQuery(dojo.byId( "query" ).value)) {
+		console.log('searchSubmit(): invalid query.');
+		return;
+	}
 
 	console.log( "searchSubmit()" );
 	dojo.place( new dijit.ProgressBar( { indeterminate: true } ).domNode, dojo.byId( "search-result" ), "only" );
@@ -337,6 +262,10 @@ function searchSubmit(newStartRecord)
 		},
 		error: function( err ) {
 			console.error( err );  // display the error
+			var title = "An error occurred";
+			var buttons = { "OK": true };
+			genDialog( title, err.message, buttons );
+			dojo.byId( "search-result" ).innerHTML = '<div>' + title + '.</div>';
 		}
 	});
 }
@@ -363,7 +292,9 @@ function setQueryMetadata(item) {
 
 	// set query meta data
 	// set query title and comment
-	dojo.byId("lexiconItemTitle").value = item.title;
+	$('#queryTitle').data('activeItem', item);
+
+	dojo.byId("queryTitle").value = item.title;
 	dojo.byId("queryComment").value = item.comment;
 
 	// Daterange
@@ -536,27 +467,21 @@ function nextResults( amount )
 
 	dojo.require( "dojox.form.RangeSlider" );
 	dojo.require( "dojox.html.entities" );
-//	dojo.require( "dojox.math.random.Secure" );
 	dojo.require( "dojox.widget.Standby" );
 	dojo.require( "dojox.xml.parser" );
 </script>
 
-<script type="text/javascript">
-	dojo.require( "uva.query.Term" );
-	dojo.require( "uva.query.CQL" );
-</script>
-
 
 <script type="text/javascript">
-	var retrieveRecord = function( datastore, collection, record_id, zipfile )
+	var retrieveRecord = function( record_id )
 	{
-		console.log( "retrieveRecord: " + datastore + ", " + collection + ", " + record_id + ", " + zipfile );
+		console.log("retrieveRecord: " + record_id);
 
 		var ocr_pane = "record";
 		var cloud_pane = "cloudPane";
-		var art_container = "articleContainer";
-		var tc = dijit.byId( art_container );
-		tc.selectChild( dijit.byId( ocr_pane ) );      // select OCR tab
+
+		// Select OCR tab
+		dijit.byId("articleContainer").selectChild(dijit.byId(ocr_pane));
 		
 		// Cause the selected article to be highlighted
 		$('#search-result ol li').removeClass('active-article');
@@ -578,7 +503,7 @@ function nextResults( amount )
 
 				if( resp.status === "SUCCESS" )
 				{
-					processRecord( record_id, resp.article_dc_title, resp.text_content, zipfile );
+					processRecord(record_id, resp.article_dc_title, resp.text_content);
 				}
 				else
 				{
@@ -594,11 +519,11 @@ function nextResults( amount )
 	}
 
 	// Process a record: write the OCR, retrieve the scan and create the single article cloud
-	var processRecord = function(record_id, article_title, ocr_text, zipfile)
+	var processRecord = function(record_id, article_title, ocr_text)
 	{
 		console.log("processRecord: " + record_id);
 		writeTextview(article_title, ocr_text);         // update article in Text tab
-		scanImages(ES_INDEX, record_id, zipfile);       // scan_images.js : scan[s] + View at KB tab
+		scanImages(record_id);                          // scan_images.js : scan[s] + View at KB tab
 		retrieveRecordCloudData(record_id, ocr_text);   // create word cloud
 	}
 
@@ -613,70 +538,54 @@ function nextResults( amount )
 		}
 
 		// Collect the parameters
-		var params = {
-			"collections": ES_INDEX,        //  can be more than 1
-			"record_id": record_id
-		}
+		var params = { "record_id": record_id };
 		params = getCloudParameters( params );
 
 		// Create a request for a word cloud
 		dojo.xhrGet({
 			url: "services/cloud",
 			content: params,
-			handleAs: 'json',
+			handleAs: "json",
 			load: function(response)
 			{
-			//	console.log( response );
-				if( typeof( response ) == "string" )
-				{ var json_data = dojo.fromJson( response ); }
-				else
-				{ var json_data = response; }
-
-				var status = json_data.status;
-				if( json_data.status != "ok" )
+				if( response.status != "ok" )
 				{
-					console.warn( "retrieveRecordCloudData: " + json_data.error );
-					var title = "Cloud data request failed";
-					var buttons = { "OK": true };
-					genDialog( title, json_data.error, buttons );
-					return response;
+					console.warn( "retrieveRecordCloudData: " + response.error );
+					genDialog( "Cloud data request failed", response.error, { "OK": true } );
 				}
 				else
 				{
-					var nwords = json_data.result.length;
-					console.log( "cloud words: " + nwords );
-					createCloud( "article", json_data, "borderContainer", "cloudPane" );
-					return response;
+				    console.log( "Creating cloud" );
+					createCloud( "article", response, "cloudPane", "borderContainer" );
 				}
-		
 			},
-			error: function(error){
+			error: function(error) {
 				console.error(error);
 				return error;
 			}
 		});
-
 	}
 
-
-	var createCloud = function( cloud_src, json_data, container, target )
+	var createCloud = function( cloud_src, cloud_data, target, container )
 	{
 		console.log( "createCloud: " + cloud_src + " in " + target + " of " + container );
 
-		var contentBox = dojo.contentBox( target );
-		var rheight = contentBox[ "h" ] -4;
+		if ( cloud_src != "burst" ) {
+            var contentBox = dojo.contentBox( target );
+            var rheight = contentBox[ "h" ] -4;
 
-		// Animate the cloud coming into view
-		var animation = dojo.animateProperty({
-			node: target,
-			properties: { height: {end: rheight, units: "px"} }
-		});
+            // Animate the cloud coming into view
+            var animation = dojo.animateProperty({
+                node: target,
+                properties: { height: {end: rheight, units: "px"} }
+            });
 
-		// Update borderContainer on every step, as changing height doesn't automatically do so.
-		dojo.connect( animation, "onAnimate", function() { dijit.byId( container ).layout(); });
-		animation.play();
+            // Update borderContainer on every step, as changing height doesn't automatically do so.
+            dojo.connect( animation, "onAnimate", function() { dijit.byId( container ).layout(); });
+            animation.play();
+		}
 
-		placeCloudInTarget( cloud_src, json_data, target )
+		placeCloudInTarget( cloud_src, cloud_data, target );
 	}
 </script>
 
@@ -689,99 +598,6 @@ function nextResults( amount )
 
 
 <script type="text/javascript">
-// button Basislexicon laden
-function onClickLoadData( lexiconID, datastore )
-{
-	console.log( "onClickLoadData() lexiconID: " + lexiconID + ", datastore: " + datastore );
-
-//	if( !confirm( 'Fetching the KB articles may take a while. Do you want to continue?' ) )
-//	{ return; }
-
-	/*
-	var title = "Retrieve and store KB data";
-	var message = "U wilt het basislexicon laden. Dat kan geruime tijd duren. Wilt u doorgaan?";
-	var buttons = { "OK": true, "Cancel": true };
-	var answer = genDialog( title, message, buttons );
-	console.log( "basislexicon laden: " + answer );
-	return;
-	*/
-
-	var progressBar = new dijit.ProgressBar( { indeterminate: true });
-	progressBar.domNode.style.display = 'none';
-	dojo.place( progressBar.domNode, dojo.byId( "lexiconItems" ), "first" );
-	dojo.fx.wipeIn( { node: progressBar.domNode } ).play();
-
-	var updateProgress = function( progressBar, taskID )
-	{
-		dojo.xhrGet({
-			url: "lexicon/tasks/" + taskID + "/status/",
-			handleAs: "json",
-			load: function( data )
-			{
-				switch( data.task.status )
-				{
-					case "SUCCESS":
-						progressBar.update({
-							maximum:  Math.max( data.task.result, 1 ),
-							progress: Math.max( data.task.result, 1 ),
-							indeterminate: false
-						});
-						console.log( data );
-						var title = "Query";
-						var art_count = data.task.result;
-						if( art_count === 0 )
-						{ var msg = "This query did not yield any articles."; }
-						else if( art_count === 1 )
-						{ var msg = "1 query article is loaded."; }
-						else
-						{ msg = art_count + " query articles are loaded.<br/>You may need to click the Refresh button to see the actual article count."; }
-						var buttons = { "OK": true, "Cancel": false };
-						genDialog( title, msg, buttons );
-						dojo.fx.wipeOut( { node: progressBar.domNode, delay: 2100, onEnd: dojo.hitch( progressBar, 'destroy' ) } ).play();
-
-						// because we now show the article counts in the accordion, we must update that panel
-						break;
-					case "PROGRESS":
-						// task: Object, id: "5df16f1b-0488-4019-bb95-94d8891d838b"
-						// status: "PROGRESS"
-						// result: Object, currentPage: 1, start: 1, step: 5, total: 9276, totalPages: 1856
-						progressBar.update({
-							maximum: Math.max( data.task.result.total, 1 ),
-							progress: data.task.result.start,
-							indeterminate: false
-						});
-						setTimeout( updateProgress, 5000, progressBar, taskID );
-						break;
-					case "PENDING":
-						setTimeout( updateProgress, 5000, progressBar, taskID );
-						break;
-					default:
-						throw Error( data.task.status );
-				}
-			},
-			error: function( err ) { console.error( err ); return err; }
-		});
-	};
-
-	var params = {
-		datastore  : datastore,
-		collection : ES_INDEX,        // default collection
-	};
-
-	dojo.xhrGet({
-		url: "lexicon/" + lexiconID + "/addToXtas",
-		content: params,
-		handleAs: "json",
-		load: function( data ) {
-			if( data.ok != "true" )
-			{ throw Error( data ); }
-			updateProgress( progressBar, data.task_id ) ;
-		},
-		error: function( err ) { console.error( err ); return err; }
-	});
-}
-
-
 // called after logout: glob_username = ""
 function clearGui()
 {
@@ -789,8 +605,6 @@ function clearGui()
 
 	dojo.byId( "search-result" ).innerHTML = "Search for newspaper articles at the KB."; // default search result text
 	dojo.empty( dojo.byId( "lexiconItems" ) );
-	dojo.empty( dojo.byId( "lexiconItemTitle" ) );      // Save query
-	dojo.empty( dojo.byId( "cql" ) );
 	dijit.byId( "query" ).set( "value", "" );
 
 	clearCloud();                                       // Cloud, in cloud_view.js
@@ -851,8 +665,6 @@ function onClickExecute(item)
 	var config = getConfig();
 	var params = {
 		queryID    : queryID,
-		datastore  : config[ "datastore" ],
-		collection : collection_fromradio(),
 		dateRange  : getDateRangeString()
 	}
 	params = getCloudParameters( params );
@@ -868,7 +680,7 @@ function onClickExecute(item)
 			{
 				var title = "Request failed";
 				var buttons = { "OK": true };
-				genDialog( title, data.msg, buttons )
+				genDialog( title, data.msg, buttons );
 				return;
 			}
 			else
@@ -930,6 +742,7 @@ function onClickExecuteCloud( queryID )
 				console.warn( "onClickExecuteCloud: " + json_data.error );
 				var title = "Cloud data request failed";
 				var buttons = { "OK": true };
+				dojo.byId('cloudPane').innerHTML = '<div>' + title + '.</div>';
 				genDialog( title, json_data.error, buttons );
 				return null;
 			}
@@ -984,10 +797,10 @@ var current_interval_id;
 		console.log("finished generating cloud");
 		clearTimeout(current_interval_id);
 		// show the solution
-		if(obj.burstcloud){
-			placeCloudInTarget( "burst", obj, 'cloud' );
+		if (obj.burstcloud){
+			createCloud( "burst", obj, "cloud" );
 		} else {
-			createCloud( "normal", obj, "borderContainer", "cloudPane" );
+			createCloud( "normal", obj, "cloudPane", "borderContainer" );
 		}
 	 } else {
 		clearTimeout(current_interval_id);
@@ -995,6 +808,7 @@ var current_interval_id;
 		console.log(obj);
 		var title = "Wordcloud failed";
 		var buttons = { "OK": true };
+		dojo.byId('cloudPane').innerHTML = '<div>' + title + '.</div>';
 		genDialog( title, obj.msg, buttons );
 	 }
 }
@@ -1036,7 +850,7 @@ function cancel_celery_task(task_id) {
 // Return the current query as the kind of 'item' that is used everywhere
 function itemFromCurrentQuery() {
 	var params = getSearchParameters();
-	params.title = dojo.byId("lexiconItemTitle").value;
+	params.title = dojo.byId("queryTitle").value;
 	params.comment = dojo.byId("queryComment").value;
 	params.query = dojo.byId("query").value;
 	return params;
@@ -1059,23 +873,25 @@ function queryToLexicon()
 		genDialog( title, "Your query is empty", buttons );
 		return;
 	}
+	
+	if (!validateQuery(item.query)) return;  // sanitize_query.js
+	
+	// optionally overwrite an existing query
+	var formerItem = $('#queryTitle').data('activeItem');
+	if (formerItem && item.title == formerItem.title) {
+		var title = 'Overwrite query';
+		var message = 'You changed the query but not the title. Do you want to replace the query?';
+		var buttons = {'OK': true, 'Cancel': true};
+		genDialog(title, message, buttons, function () {
+			saveQuery(item, 'query/' + formerItem.pk + '/update');
+		});
+		$('#queryTitle').focus();
+		return;
+	}
 
 	// validate CQL -> ES; when valid, stores query
 	saveQuery(item, "query/create");     // query.js
 } // queryToLexicon
-
-
-
-// button Bijwerken
-function updateItemInLexicon( pk )
-{
-	return lexiconStore.get( pk ).then( function( data )
-	{
-		data[ 0 ].fields.query = dojo.byId( "query" ).value;
-		lexiconStore.put( data, { "overwrite": true, id: pk } ).then( createQueryList );     // HTTP POST
-		return data;
-	});
-} // updateItemInLexicon
 
 </script>
 

@@ -29,7 +29,9 @@ def index(request):
         "QUERY_DATA_DOWNLOAD_ALLOW": settings.QUERY_DATA_DOWNLOAD_ALLOW,
         "ES_INDEX": settings.ES_INDEX,
         "ES_REVERSE_MAPPING": json.dumps(config_reverse_mapping),
-        "ILPS_LOGGING": settings.ILPS_LOGGING
+        "ILPS_LOGGING": settings.ILPS_LOGGING,
+        "WORDCLOUD_MIN_WORDS": settings.WORDCLOUD_MIN_WORDS,
+        "WORDCLOUD_MAX_WORDS": settings.WORDCLOUD_MAX_WORDS,
     }
 
     return render_to_response('index.html', data, RequestContext(request))

@@ -3,24 +3,24 @@
 """
 from __future__ import absolute_import
 
+import math
+from itertools import dropwhile
 from collections import Counter
 
 from celery import shared_task, current_task
 
 from django.conf import settings
 
-from services.es import document_id_chunks, termvector_wordcloud, \
-    counter2wordclouddata, count_search_results
+from services.es import document_id_chunks, termvector_wordcloud, count_search_results
+from texcavator.utils import normalize_cloud
 
 
 @shared_task
-def generate_tv_cloud(search_params, min_length, stopwords, date_range=None, stems=False):
-    """Generates multiple document word clouds using the termvector approach"""
-    chunk_size = settings.QUERY_DATA_CHUNK_SIZE
-    progress = 0
-    wordcloud_counter = Counter()
-
-    # Date range is either provided or from the Query
+def generate_tv_cloud(search_params, min_length, stopwords, date_range=None, stems=False, idf_timeframe=''):
+    """
+    Generates multiple document word clouds using the termvector approach.
+    """
+    # Date range is either provided (in case of burst clouds from the timelines) or from the Query
     dates = date_range or search_params['dates']
 
     # First, count the search results
@@ -32,15 +32,12 @@ def generate_tv_cloud(search_params, min_length, stopwords, date_range=None, ste
                                   search_params['exclude_article_types'],
                                   search_params['selected_pillars'])
     doc_count = result.get('count')
-
-    info = {
-        'current': 0,
-        'total': doc_count
-    }
-    current_task.update_state(state='PROGRESS', meta=info)
+    update_task_status(0, doc_count)
 
     # Then, create the word clouds per chunk
-    for subset in document_id_chunks(chunk_size,
+    progress = 0
+    wordcloud_counter = Counter()
+    for subset in document_id_chunks(settings.QUERY_DATA_CHUNK_SIZE,
                                      settings.ES_INDEX,
                                      settings.ES_DOCTYPE,
                                      search_params['query'],
@@ -49,19 +46,39 @@ def generate_tv_cloud(search_params, min_length, stopwords, date_range=None, ste
                                      search_params['exclude_article_types'],
                                      search_params['selected_pillars']):
 
-        result = termvector_wordcloud(settings.ES_INDEX,
-                                      settings.ES_DOCTYPE,
-                                      subset,
-                                      min_length,
-                                      stems)
-        wordcloud_counter = wordcloud_counter + result
+        wordcloud_counter += termvector_wordcloud(settings.ES_INDEX,
+                                                  settings.ES_DOCTYPE,
+                                                  subset,
+                                                  min_length,
+                                                  stems)
 
+        # Update the task status
         progress += len(subset)
-        info = {
-            'current': progress,
-            'total': doc_count
-        }
-        current_task.update_state(state='PROGRESS', meta=info)
+        update_task_status(progress, doc_count)
 
-    burst = date_range is not None
-    return counter2wordclouddata(wordcloud_counter, burst, stopwords)
+    # Remove non-frequent words form the counter
+    for key, count in dropwhile(lambda c: c[1] > math.log10(doc_count), wordcloud_counter.most_common()):
+        del wordcloud_counter[key]
+
+    # Remove the stopwords from the counter
+    for sw in stopwords:
+        del wordcloud_counter[sw]
+
+    # Return a dictionary with the results
+    return {
+        'result': normalize_cloud(wordcloud_counter, idf_timeframe),
+        'status': 'ok',
+        'burstcloud': date_range is not None
+    }
+
+
+def update_task_status(progress, total):
+    """
+    Updates the current task with the progress
+    """
+    info = {
+        'current': progress,
+        'total': total
+    }
+    current_task.update_state(state='PROGRESS', meta=info)
+

@@ -17,4 +17,7 @@ Thumbs.db
 .idea
 
 # Newspaper mapping
-newspapers.json
+newspapers.txt
+
+# DAWGs
+*.dawg

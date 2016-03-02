@@ -39,6 +39,16 @@
 	background-color: #cfe5fa;
 }
 
+#queryComment {
+    width: 390px;
+    height: 35px;
+}
+
+#queryTitle {
+    width: 170px;
+    font-size: 130%;
+}
+
 /* Align filters next to each other */
 #div-article-distribution {
 	display: inline-block;

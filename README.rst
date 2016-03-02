@@ -209,6 +209,13 @@ Then, start Celery and the webserver::
 
 Texcavator is now ready for use at ``http://localhost:8000``.
 
+Downloading of query data requires a running SMTP server; you can use Python's build in for that::
+
+    python -m smtpd -n -c DebuggingServer localhost:1025
+
+Additional functionality via management commands
+================================================
+
 If you want to display timelines, run the management command ``gatherstatistics``::
 
     python manage.py gatherstatistics
@@ -217,9 +224,9 @@ To add a default list of stopwords, run the management command ``add_stopwords``
 
     python manage.py add_stopwords stopwords/nl.txt
 
-Downloading of query data requires a running SMTP server; you can use Python's build in for that::
+To be able to create word clouds normalized for inverse document frequency, run the management command ``gathertermcounts``::
 
-    python -m smtpd -n -c DebuggingServer localhost:1025
+    python manage.py gathertermcounts
 
 Deployment
 ==========
@@ -242,6 +249,8 @@ If you have deployed your server, updating can be done via the following command
 For Celery, follow the instructions on http://celery.readthedocs.org/en/latest/tutorials/daemonizing.html#example-django-configuration
 
 For Postfix, follow the instructions on https://www.digitalocean.com/community/tutorials/how-to-install-and-setup-postfix-on-ubuntu-14-04
+
+On request, we can provide you with a Puppet script that handles the complete installation for you.
 
 Documentation
 =============

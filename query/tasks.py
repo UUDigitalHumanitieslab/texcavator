@@ -25,7 +25,7 @@ logger = logging.getLogger(__name__)
 
 @shared_task
 def write_newspaper_classification(classification_json):
-    with open('newspapers.json', 'wb') as out:
+    with open(os.path.join(settings.PROJECT_PARENT, 'newspapers.txt'), 'wb') as out:
         out.write(classification_json)
 
 

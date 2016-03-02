@@ -89,6 +89,17 @@ class Query(models.Model):
     class Meta:
         """Make sure that Query titles are unique for a User"""
         unique_together = ('user', 'title')
+        # Custom permissions
+        permissions = (
+            (
+                'download_documents',
+                'Can download results of a query',
+            ),
+            (
+                'download_many_documents',
+                'Can download larger numbers of results',
+            ),
+        )
 
     def get_query_dict(self):
         """Returns a JSON serializable representation of the query object, that
@@ -131,9 +142,14 @@ class DayStatistic(models.Model):
     DayStatistic table is gathered with the 'gatherstatistics' management
     command.
     """
-    date = models.DateField(unique=True)
+    date = models.DateField()
+    distribution = models.ForeignKey(Distribution, blank=True, null=True)
+    article_type = models.ForeignKey(ArticleType, blank=True, null=True)
     count = models.IntegerField()
     checked = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = (('date', 'distribution', 'article_type'),)
 
     def __unicode__(self):
         return '{}: {}'.format(str(self.date), self.count)
@@ -172,3 +188,22 @@ class StopWord(models.Model):
             'query': query,
             'word': self.word
         }
+
+
+class Term(models.Model):
+    """Model to store frequencies and inverse document frequencies per term"""
+    PRE_WWII = 'pre'
+    WWII = 'WWII'
+    POST_WWII = 'post'
+    TIMEFRAME_CHOICES = (
+        (PRE_WWII, 'pre-WWII: 1900-1940'),
+        (WWII, 'WWII: 1940-1945'),
+        (POST_WWII, 'post-WWII: 1945-1990'),
+    )
+    timeframe = models.CharField(max_length=4, choices=TIMEFRAME_CHOICES)
+    word = models.CharField(max_length=200)
+    count = models.PositiveIntegerField()
+    idf = models.DecimalField(max_digits=7, decimal_places=4)
+
+    class Meta:
+        unique_together = (('timeframe', 'word'),)

@@ -28,81 +28,41 @@ var getCloudParameters = function( params )
 	var config = getConfig();
 
 	// add user-changeable parameters
-	var cloudcfg = config[ "cloud" ];
+	var cloudcfg = config.cloud;
 
 	// Ork expects { 0 | 1 }
-	params[ "order" ] = "count";
+	params.order = "count";
 
-	if( cloudcfg[ "NER" ] ) { params[ "entities" ] = 1; }	// only entities in cloud
-	else { params[ "words" ] = 1; }							// all words cloud
+	if( cloudcfg.NER ) { params.entities = 1; }	// only entities in cloud
+	else { params.words = 1; }							// all words cloud
 
-	if( cloudcfg[ "stems" ] ) { params[ "stems" ] = 1; }
-//	else { params[ "stems" ] = 0; }		// valid, but superfluous
-
-	if( cloudcfg[ "stopwords" ] )
-	{
-		params[ "stopwords" ] = 1;
-		params[ "stopwords_default" ] = cloudcfg[ "stopwords_default" ] ? 1 : 0;
+	if( cloudcfg.stems ) { params.stems = 1; }
+	if (cloudcfg.idf) {
+		params.idf_timeframe = $(".idf-timeframe input:checked").val();
 	}
 
-	if(cloudcfg["stoplimit"]){
-		params["min_length"] = cloudcfg["stoplimit"];
+	if( cloudcfg.stopwords )
+	{
+		params.stopwords = 1;
+		params.stopwords_default = cloudcfg.stopwords_default ? 1 : 0;
+	}
+
+	if(cloudcfg.stoplimit){
+		params.min_length = cloudcfg.stoplimit;
 	} else {
-		params["min_length"] = 2;
+		params.min_length = 2;
 	}
 
 //	console.log( params );
 	return params;
-}
-
+};
 
 
 var stopwordsRemove = function()
 {
 	var config = getConfig();
-	if( config[ "cloud" ][ "stopwords" ] )
-	{ return true; }
-	else
-	{ return false; }
-}
-
-
-var stopwordsGetString = function( lexiconID, call_func, boundFunction )
-{
-	console.log( "stopwordsGetString() lexiconID: " + lexiconID );
-	// lexiconID can be null for single article cloud
-
-	dojo.xhrPost({
-		url: "lexicon/stopwords/retrieve/string/",	// POST url must end with `/'
-		handleAs: "text",
-		content: {
-			username:  glob_username,
-			lexiconID: lexiconID
-		},
-		load: function( data )
-		{
-			var resp = JSON.parse( data );
-			var status = resp[ "status" ];
-
-			if( status === "SUCCESS" )
-			{
-				config[ "cloud" ][ "stopwords_str" ] = resp[ "stopwords" ];
-				console.log( "new: " + resp[ "stopwords" ] );
-				if( call_func ) { boundFunction(); }		// e.g., create cloud with updated stopwords
-			}
-			else
-			{
-				console.log( status );
-				var msg = resp[ "msg" ];
-				console.log( msg );
-			}
-		},
-		error: function( err ) {
-			console.error( err );
-			return err;
-		}
-	});
-}
+	return config.cloud.stopwords;
+};
 
 
 var stopwordsGetTable = function( target )
@@ -113,22 +73,18 @@ var stopwordsGetTable = function( target )
 	dojo.xhrPost({
 		url: "query/stopwords",	// POST url must end with `/'
 		handleAs: "json",
-		content: {
-			username:  glob_username
-		},
 		load: function(response)
 		{
-			var status = response[ "status" ];
+			var status = response.status;
 
-			if( status === "SUCCESS" )
+			if (status === "SUCCESS")
 			{
-			//	console.log( resp[ "stopwords" ] );
-				stopwordsFillTable( response[ "stopwords" ], response[ "editglob" ], target );
+				stopwordsFillTable( response.stopwords, response.editglob, target );
 			}
 			else
 			{
 				console.error( status );
-				var msg = response[ "msg" ];
+				var msg = response.msg;
 				console.error( msg );
 			}
 		},
@@ -137,8 +93,7 @@ var stopwordsGetTable = function( target )
 			return err;
 		}
 	});
-}
-
+};
 
 
 function stopwordsFillTable( stopwordsList, editglob, target )
@@ -147,8 +102,8 @@ function stopwordsFillTable( stopwordsList, editglob, target )
 //	console.log( stopwordsList );
 
 	var label = dojo.byId( "label-grid-stopwords" );
-	if( label != null )
-	{ label.innerHTML = stopwordsList.length + " stopwords for user " + glob_username + ":<br/>" }
+	if( label !== null )
+	{ label.innerHTML = stopwordsList.length + " stopwords for user " + glob_username + ":<br/>"; }
 
 	var table_data = 
 	{
@@ -166,16 +121,16 @@ function stopwordsFillTable( stopwordsList, editglob, target )
 		var user  = entry.user;
 		var query = entry.query;
 
-		if( user == "" )
+		if( user === "" )
 		{
-			if( editglob == true ) { var disabled = false; }
+			if( editglob === true ) { var disabled = false; }
 			else { var disabled = true; }
-			if( query == "" ) { query = "(all)"; }
+			if( query === "" ) { query = "(all)"; }
 		}
 		else
 		{
 			var disabled = false;
-			if( query == "" ) { query = "(all " + user + ")"; }
+			if( query === "" ) { query = "(all " + user + ")"; }
 		}
 
 	//	console.log( i, word, user, query, editglob );
@@ -189,29 +144,16 @@ function stopwordsFillTable( stopwordsList, editglob, target )
 			iconClass: "dijitIconDelete",
 			onClick: function()
 			{
-				console.log( "id " + pk + " (" + word + ") to be deleted" );
-
 				dojo.xhrPost({
 					url: "query/stopword/" + pk + "/delete",
 					handleAs: "json",
-					content: {
-						username: glob_username,
-						pk: pk
-					},
 					load: function(response)
 					{
-						var status = response[ "status" ];
-
-						if( status !== "SUCCESS" )
-						{
-							console.log( status + ": " + resp[ "msg" ] );
-							var buttons = { "OK": true, "Cancel": false };
-							answer = genDialog( "Delete stopword", resp[ "msg" ], buttons );
-						}
-						dijit.byId( "dlg-cloudword" ).destroyRecursive();
+						genDialog("Delete stopword", response.msg, { "OK": true });
+						dijit.byId("dlg-cloudword").destroyRecursive();
 					},
-					error: function( err ) {
-						console.error( err );
+					error: function(err) {
+						console.error(err);
 						return err;
 					}
 				});
@@ -256,11 +198,10 @@ function stopwordsFillTable( stopwordsList, editglob, target )
 }
 
 
-
 var stopwordsSave = function( word, stopwords_cat )
 {
-	var stopwords_clean = config[ "cloud" ][ "stopwords_clean" ];
-	if( stopwords_clean == true ) { stopwords_clean01 = 1; }
+	var stopwords_clean = config.cloud.stopwords_clean;
+	if( stopwords_clean === true ) { stopwords_clean01 = 1; }
 	else { stopwords_clean01 = 0; }
 
 	var content = {
@@ -269,18 +210,18 @@ var stopwordsSave = function( word, stopwords_cat )
 
 	if( stopwords_cat === "singleq" )
 	{
-		content[ "query_id" ] = lexiconID;
+		content.query_id = lexiconID;
 	}
 
-	console.log(content)
+	console.log(content);
 
 	dojo.xhrPost({
 		url: "query/stopword/add",
 		handleAs: "json",
 		content: content,
 		load: function(response) {
-			var status = response[ "status" ];
-			var msg = response[ "msg" ];
+			var status = response.status;
+			var msg = response.msg;
 			if( status !== "SUCCESS" )
 			{
 				console.log( status + ": " + msg );
@@ -293,24 +234,22 @@ var stopwordsSave = function( word, stopwords_cat )
 			return err;
 		}
 	});
-}
-
+};
 
 
 var clearCloud = function ()
 {
 	console.log( "clearCloud()" );
 
-	var collection = collection_fromradio();		// accordion.js
-	var cloud_pane = "cloudPane"
+	var cloud_pane = "cloudPane";
 
-	if( dojo.byId( cloud_pane ) == undefined )
+	if( dojo.byId( cloud_pane ) === undefined )
 	{ return; }
 	else
 	{ dojo.byId( cloud_pane ).innerHTML = ""; }
 
 	var config = getConfig();
-	var cloud_render = config[ "cloud" ][ "render" ];
+	var cloud_render = config.cloud.render;
 
 	if( cloud_render === "svg" )
 	{ 
@@ -340,8 +279,7 @@ var clearCloud = function ()
 		{ console.log( "clearCloudCanvas failed" ); }
 		*/
 	}
-}
-
+};
 
 
 var placeCloudInTarget = function( cloud_src, json_data, target )
@@ -351,26 +289,24 @@ var placeCloudInTarget = function( cloud_src, json_data, target )
 	console.log( "Cloud target: " + target );
 
 	var config = getConfig();
-	var cloud_render = config[ "cloud" ][ "render" ];
+	var cloud_render = config.cloud.render;
 	console.log( "Cloud render: " + cloud_render);
 
 	clearCloud();
 
 	var contentBox = dojo.contentBox( target );
 	// -8 to prevent scroll bars popping up
-	var rwidth  = contentBox[ "w" ] -8;
-	var rheight = contentBox[ "h" ] -8;
+	var rwidth  = contentBox.w - 8;
+	var rheight = contentBox.h - 8;
 
-//	console.log( "width: " + rwidth + ", height: " + rheight );
-
-	var min_width = 400;
+	var min_width = cloud_src == 'burst' ? 400 : 1000;
 	if( isNaN( rwidth ) || rwidth < min_width )
 	{
 	//	console.log( "placeCloudInTarget() bad rwidth: " + rwidth );
 		rwidth = min_width;		// just try something
 	}
 
-	var min_height = 300;
+	var min_height = cloud_src == 'burst' ? 300 : 600;
 	if( isNaN( rheight ) || rheight < min_height )
 	{
 	//	console.log( "placeCloudInTarget() bad rheight: " + rheight );
@@ -389,19 +325,7 @@ var placeCloudInTarget = function( cloud_src, json_data, target )
 	//	dojo.byId( target ).innerHTML = "";				// remove  progress bar
 	}
 
-	/*
-	var json_data = dojo.fromJson( data );
-//	console.log( data );								// can be big
-//	console.log( json_data );							// can be big
-
-	// cloud_data is an object array:
-	// without NER: [ Object{ count=15, term="film"}, Object{...}, ... ]
-	//    with NER: [ Object{ count=15, term="film", type="MISC" }, Object{...}, ... ]
 	var cloud_data = json_data.result;
-	*/
-
-	var cloud_data = json_data.result;
-//	console.log( cloud_data );
 
 	storeCloudData( cloud_src, cloud_data );		// in table & global var
 
@@ -437,19 +361,16 @@ var placeCloudInTarget = function( cloud_src, json_data, target )
 	var countMax = 0;
 	var countAllWords = 0;
 	var wordsDisplayed = 0;
-	var wordsDisplayedMax = config[ "cloud" ][ "maxwords" ];
-	var fontscale  = config[ "cloud" ][ "fontscale" ];
-	var fontreduce = config[ "cloud" ][ "fontreduce" ];
-	var stopwords  = config[ "cloud" ][ "stopwords" ];
-	var stoplimit  = config[ "cloud" ][ "stoplimit" ];
-
-	var wordCountMax = json_data.max_count 
-	console.log( "wordCountMax: " + wordCountMax );
+	var wordsDisplayedMax = config.cloud.maxwords;
+	var fontscale  = config.cloud.fontscale;
+	var fontreduce = config.cloud.fontreduce;
+	var stopwords  = config.cloud.stopwords;
+	var stoplimit  = config.cloud.stoplimit;
 
 	var nerType2Color = function( nertype )
 	{
 	//	console.log( "nerType2Color() " + nertype );
-		if( nertype == undefined ) { return 'Black'; }
+		if( nertype === undefined ) { return 'Black'; }
 		else
 		{
 		//	console.log( cw );
@@ -468,60 +389,52 @@ var placeCloudInTarget = function( cloud_src, json_data, target )
 			else
 			{ return 'Black'; }
 		}
-	}
+	};
 
 	var text_size_list  = [];	// [ ["Duitsche", 13], ["Europa", 13], ... ]
 	var text_count_hash = {};	// { {"Duitsche"=13}, {"Europa"=13}, ... }
+	var text_tfidf_hash = {};	// { {"Duitsche"=13}, {"Europa"=13}, ... }
 	var text_type_hash  = {};	// { {"Duitsche"="MISC"}, {"Europa"="LOC"}, ... }
 	var text_color_hash = {};	// { {"Duitsche"="Orange"}, {"Europa"="Green"}, ...  }
 	var minFontSize = 6;		// minimum size shown; used to be 8
 
 	dojo.forEach( cloud_data, function( val, i )
 	{
+		freq = config.cloud.idf ? val.tfidf : val.count;
 		countAllWords += 1;
 		if( wordsDisplayed < wordsDisplayedMax )
 		{
-				if( fontreduce )
-				{
-					// using Math.sqrt() compresses the font size differences
-					text_size_list.push( [ val.term, Math.sqrt( val.count ) ] );
-					if( countMax <  Math.sqrt( val.count ) )
-					{ countMax = Math.sqrt( val.count ); }
-				}
-				else
-				{
-					text_size_list.push( [ val.term, val.count ] );
-					if( countMax < val.count )
-					{ countMax = val.count; }
-				}
+			if( fontreduce )
+			{
+				// using Math.sqrt() compresses the font size differences
+				text_size_list.push( [ val.term, Math.sqrt( freq ) ] );
+				if( countMax <  Math.sqrt( freq ) )
+				{ countMax = Math.sqrt( freq ); }
+			}
+			else
+			{
+				text_size_list.push( [ val.term, freq ] );
+				if( countMax < freq )
+				{ countMax = freq; }
+			}
 
-				text_count_hash[ val.term ] = val.count;
-				text_type_hash[  val.term ] = val.type;
-			//	text_type_list.push( [ val.term, val.type ] );
+			text_count_hash[ val.term ] = val.count;
+			text_tfidf_hash[ val.term ] = val.tfidf;
+			text_type_hash[  val.term ] = val.type;
+		//	text_type_list.push( [ val.term, val.type ] );
 
-				text_color_hash[ val.term ] = nerType2Color( val.type );
-			//	text_color_list.push( [ val.term, nerType2Color( val.type ) ] );
-				wordsDisplayed += 1;
+			text_color_hash[ val.term ] = nerType2Color( val.type );
+		//	text_color_list.push( [ val.term, nerType2Color( val.type ) ] );
+			wordsDisplayed += 1;
 		}
 	});
-//	console.log( text_size_list );
-//	console.log( text_count_hash );
-//	console.log( text_type_hash );
-//	console.log( text_color_hash );
 
-//	var weightFactor = 0.5 * wordsDisplayedMax / wordCountMax;
 	var weightFactor = fontscale / countMax;
-
-//	console.log( "countMax: " + countMax );
-//	console.log( "weightFactor: " + weightFactor );
-//	console.log( "words displayed: " + wordsDisplayed + " of: " + countAllWords );
-//	console.log( "word cloud lib loaded? " + $.wordCloudSupported );
-//	console.log( "minium font size? " + $.miniumFontSize );
-//	console.log( "words to process: " + text_size_list.length );
 
 	if( cloud_render === "svg" )
 	{
-		d3CreateCloud( target, cloud_src, rwidth, rheight, weightFactor, text_size_list, text_count_hash, text_type_hash, text_color_hash );
+		d3CreateCloud( target, cloud_src, rwidth, rheight, weightFactor, text_size_list, 
+			text_count_hash, text_tfidf_hash, text_type_hash, text_color_hash );
 	}
 
 	else
@@ -539,7 +452,7 @@ var placeCloudInTarget = function( cloud_src, json_data, target )
 			wordColor: function( w, we, fo, ra, the )
 			{
 				var cw = text_type_hash[ w ];
-				if( cw == undefined ) { return 'Black'; }
+				if( cw === undefined ) { return 'Black'; }
 				else
 				{
 					if ( cw === "DATE" )
@@ -560,7 +473,7 @@ var placeCloudInTarget = function( cloud_src, json_data, target )
 			}
 		}).bind( "wordcloudclick", wordCloudClicked );
 	}
-}
+};
 
 
 var wordCloudClicked = function( event ) 
@@ -570,20 +483,19 @@ var wordCloudClicked = function( event )
 	var newQuery = query + " +" + event.word;
 	if( !confirm( 'This adds ' + event.word + ' to the query. Do you want to continue?', 'Modify query' ) ) return;
 	dojo.byId( "query" ).value = newQuery;
-	dojo.empty( dojo.byId( "cql" ) );
 	searchSubmit();
-}
+};
 
 
 // =============================================================================
 var d3CreateCloud = function( target, cloud_src, svg_width, svg_height, weightFactor, 
-	text_size_list, text_count_hash, text_type_hash, text_color_hash )
+	text_size_list, text_count_hash, text_tfidf_hash, text_type_hash, text_color_hash )
 {
 //	console.log( "d3CreateCloud() ");
-	if( svg_width == undefined || svg_height == undefined )
+	if( svg_width === undefined || svg_height === undefined )
 	{
 		console.error( "bad svg size, width: " + svg_width + " , height: " + svg_height ); 
-		return
+		return;
 	}
 
 	svg_height = svg_height - 18;		// leave some room for the mouseover statusline (without scrollbars)
@@ -598,18 +510,9 @@ var d3CreateCloud = function( target, cloud_src, svg_width, svg_height, weightFa
 	var divStatusline = dojo.create( "div", { id: "statusline" }, dojo.byId( dest ) );
 	divStatusline.innerHTML = "&nbsp;";		// prevent the cloud jumping up-and-down
 
-//	var words = [ "Hello", "world", "normally", "you", "want", "more", "words", "than", "this" ];
-//	var text_size_list0 = words.map( function( d ) 
-//	{ 
-//		return { text: d, size: 15 + Math.random() * 90 }; 
-//	});
-
 	var text_size_list = text_size_list.map( function( d ) { 
 		return { text: d[ 0 ], size: Math.round( weightFactor * d[ 1 ] ) }; 
 	});
-
-//	var text_size_list = text_size_list0;
-//	console.log( text_size_list );
 
 	var fontSize = d3.scale.log().range( [ 10, 100 ] );
 
@@ -627,7 +530,7 @@ var d3CreateCloud = function( target, cloud_src, svg_width, svg_height, weightFa
 
 	function draw( words ) 
 	{
-		console.log( "draw" );
+		console.log( "Drawing word cloud..." );
 
 		d3.select( "#" + dest )
 			.append( "center" )
@@ -645,12 +548,14 @@ var d3CreateCloud = function( target, cloud_src, svg_width, svg_height, weightFa
 				.attr( "transform", function( d ) 
 					{ return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")"; } )
 				.attr( "count",   function( d ) { return text_count_hash[ d.text ]; } )
+				.attr( "tfidf",   function( d ) { return text_tfidf_hash[ d.text ]; } )
 				.attr( "nertype", function( d ) { return text_type_hash[  d.text ]; } )
 			.text( function( d ) { return d.text; } )
 			.on( "mouseover", function( d ) { 
 				var count   = d3.select( this ).attr( "count" );
+				var tfidf   = d3.select( this ).attr( "tfidf" );
 				var nertype = d3.select( this ).attr( "nertype" );
-				svgMouseover( d, count, nertype ); } )
+				svgMouseover( d, count, tfidf, nertype ); } )
 			.on( "mouseout", function( d ) { 
 				svgMouseout( d ); } )
 			.on( "mouseup", function( d ) { 
@@ -658,15 +563,19 @@ var d3CreateCloud = function( target, cloud_src, svg_width, svg_height, weightFa
 				svgMouseup( d, count ); } );
 	}
 
-	var svgMouseover = function( word, count, nertype )
+	var svgMouseover = function( word, count, tfidf, nertype )
 	{
-		if (nertype == null)
+		if (nertype === null)
 		{
 			result = "<center><u>word</u>: <b>" +  word.text + "</b>";
 			result += ", <u>count</u>: <b>" + count + "</b>"; 
 
+			if (config.cloud.idf) {
+				result += ", <u>tdidf</u>: <b>" + tfidf + "</b>"; 
+			}
+
 			// Show stemmed form if we're not showing the stemmed cloud
-			if (!config[ "cloud" ][ "stems" ])
+			if (!config.cloud.stems)
 			{
 				dojo.xhrPost({
 					url: "services/stem/",
@@ -685,10 +594,10 @@ var d3CreateCloud = function( target, cloud_src, svg_width, svg_height, weightFa
 		{
 			divStatusline.innerHTML = "<center>phrase: <b>" +  word.text + "</b>" + ", count: <b>" + count + "</b>, NER type: <b>" + nertype + "</b></center>"; 
 		}
-	}
+	};
 
 	var svgMouseout = function( word )
-	{  divStatusline.innerHTML = "&nbsp;"; }
+	{  divStatusline.innerHTML = "&nbsp;"; };
 
 
 	var svgMouseup = function( word, count )
@@ -696,7 +605,7 @@ var d3CreateCloud = function( target, cloud_src, svg_width, svg_height, weightFa
 	//	console.log( "svgMouseup: word: " + word.text + ", count: " + count );
 
 		var old_dialog = dijit.byId( "dlg-cloudword" );
-		if( old_dialog != null ) { old_dialog.destroyRecursive(); }		// ? not properly deleted last time
+		if( old_dialog !== null ) { old_dialog.destroyRecursive(); }		// ? not properly deleted last time
 
 		var dialog = new dijit.Dialog({
 			id: "dlg-cloudword",
@@ -725,7 +634,7 @@ var d3CreateCloud = function( target, cloud_src, svg_width, svg_height, weightFa
 		tabCont.addChild( cp_grid_stopwords );
 
 
-		var stopwords_cat = "singleq"		// default
+		var stopwords_cat = "singleq";		// default
 
 		//var change_system_stopwords = true; // enable for superusers?
 		var change_system_stopwords = false;
@@ -769,7 +678,7 @@ var d3CreateCloud = function( target, cloud_src, svg_width, svg_height, weightFa
 			checked: stopwords_singleq,
 			onChange: function( btn )
 			{
-				if( btn == true )
+				if( btn === true )
 				{ stopwords_cat = "singleq"; }
 			},
 		}, "div-singleq-stopword");
@@ -790,13 +699,13 @@ var d3CreateCloud = function( target, cloud_src, svg_width, svg_height, weightFa
 			checked: stopwords_allqs,
 			onChange: function( btn )
 			{
-				if( btn == true )
+				if( btn === true )
 				{ stopwords_cat = "allqs"; }
 			},
 		}, "div-allqs-stopword");
 
 		var htmlAllQStopword = "&nbsp;For all " + glob_username + " queries&nbsp;";
-		if( change_system_stopwords == false ) { htmlAllQStopword += "<br/>"; }
+		if( change_system_stopwords === false ) { htmlAllQStopword += "<br/>"; }
 		var labelAllQStopword = dojo.create( "label", {
 			id: "label-allqs-stopword",
 			for: "rb-allqs-stopword",
@@ -804,7 +713,7 @@ var d3CreateCloud = function( target, cloud_src, svg_width, svg_height, weightFa
 		}, cp_grid_stopwords.domNode );
 
 
-		if( change_system_stopwords == true )
+		if( change_system_stopwords === true )
 		{
 			var divSystemStopword = dojo.create( "div", {
 				id: "div-system-stopword"
@@ -815,7 +724,7 @@ var d3CreateCloud = function( target, cloud_src, svg_width, svg_height, weightFa
 				checked: false,
 				onChange: function( btn )
 				{
-					if( btn == true )
+					if( btn === true )
 					{ stopwords_cat = "system"; }
 				},
 			}, "div-system-stopword");
@@ -834,8 +743,8 @@ var d3CreateCloud = function( target, cloud_src, svg_width, svg_height, weightFa
 
 		var cbGlobalStopw = new dijit.form.CheckBox({
 			id: "cb-global-stopw",
-			checked: config[ "cloud" ][ "stopwords_clean" ],
-			onChange: function( btn ) { config[ "cloud" ][ "stopwords_clean" ] = btn; }
+			checked: config.cloud.stopwords_clean,
+			onChange: function( btn ) { config.cloud.stopwords_clean = btn; }
 		}, divGlobalStopw );
 
 		var labelGlobalStopw = dojo.create( "label", {
@@ -880,7 +789,7 @@ var d3CreateCloud = function( target, cloud_src, svg_width, svg_height, weightFa
 		var debug_destroy = false;
 
 		tt = dijit.byId( "tt-cancel-cloudword" );
-		if( tt != null )
+		if( tt !== null )
 		{
 			if( debug_destroy ) { console.error( "tt-cancel-cloudword tooltip already exists" ); }
 			tt.destroy();
@@ -900,7 +809,7 @@ var d3CreateCloud = function( target, cloud_src, svg_width, svg_height, weightFa
 			role: "presentation",
 			onClick: function() {
 				answer = "OK";
-				var stopwords_clean = config[ "cloud" ][ "stopwords_clean" ];
+				var stopwords_clean = config.cloud.stopwords_clean;
 				stopwordsSave( word.text, stopwords_cat, stopwords_clean );
 				dijit.byId( "tt-cancel-cloudword" ).destroyRecursive();
 				dijit.byId( "tt-ok-cloudword" ).destroyRecursive();
@@ -910,7 +819,7 @@ var d3CreateCloud = function( target, cloud_src, svg_width, svg_height, weightFa
 		actionBar.appendChild( bOK.domNode );
 
 		tt = dijit.byId( "tt-ok-cloudword" );
-		if( tt != null )
+		if( tt !== null )
 		{
 			if( debug_destroy ) { console.error( "tt-ok-cloudword tooltip already exists" ); }
 			tt.destroy();
@@ -923,9 +832,9 @@ var d3CreateCloud = function( target, cloud_src, svg_width, svg_height, weightFa
 		});
 
 		dialog.show();
-	}
-	var showDialog = function() { dijit.byId( "dlg-cloudword" ).show(); }
-	var hideDialog = function() { dijit.byId( "dlg-cloudword" ).hide(); }
+	};
+	var showDialog = function() { dijit.byId( "dlg-cloudword" ).show(); };
+	var hideDialog = function() { dijit.byId( "dlg-cloudword" ).hide(); };
 
 
 	// this works
@@ -940,15 +849,14 @@ var d3CreateCloud = function( target, cloud_src, svg_width, svg_height, weightFa
 		.attr( "stroke-width", 2 )
 		.attr( "fill", "red" );
 	*/
-}
-
+};
 
 
 function destroyDlgCloudword()
 {
 	// delete a pre-existing table, and the buttons
 	var old_grid = dojo.byId( "grid-stopwords" );
-	if( old_grid != null )
+	if( old_grid !== null )
 	{
 		console.log( "deleting old grid" );
 		old_grid.destroyRecursive();
@@ -957,14 +865,12 @@ function destroyDlgCloudword()
 	var i = 0;
 	do {
 		var old_btn = dijit.byId( "btn-stopw-delete-" + i );
-		if( old_btn != null )
+		if( old_btn !== null )
 		{
 		//	console.log( "deleting delete button " + i );
 			old_btn.destroyRecursive();
 			i++;
 		}
-	} while( old_btn != null );
+	} while( old_btn !== null );
 //	console.log( dijit.registry._hash );	// show registered widgets
 }
-
-// [eof]

@@ -9,7 +9,6 @@ dojo.require("dijit.Tooltip");
 var config
 var getConfig = function()
 function storeCeleryOwner( celery_owner )
-function storeDatastore( datastore )
 function getSearchParameters()
 var toolbarConfig = function()
 var showConfig = function()
@@ -59,6 +58,7 @@ var config = {
 		fontscale: 75, // font scale factor
 		fontreduce: true, // reduce fontsize differences
 		stems: false, // apply stemming
+		idf: false, // normalize using inverse document frequencies
 
 		NER: false, // Named Entity Recognition
 		maxwords: 100, // default max words displayed
@@ -95,15 +95,8 @@ function storeCeleryOwner(celery_owner) {
 }
 
 
-function storeDatastore(datastore) {
-	config.datastore = datastore;
-	console.log("xTAS datastore: " + datastore);
-}
-
-
 function getSearchParameters() {
 	params = {
-		datastore: config.datastore,
 		maximumRecords: config.search.chunk_size,
 		sort_order: config.search.sort_order,
 
@@ -737,6 +730,63 @@ var createConfig = function() {
 		innerHTML: "&nbsp;Stemming<br/>"
 	}, cpCloud.domNode);
 
+	var divIdf = dojo.create("div", {
+		id: "div-idf"
+	}, cpCloud.domNode);
+
+	var cbIdf = new dijit.form.CheckBox({
+		id: "cb-idf",
+		checked: config.cloud.idf,
+		onChange: function(btn) {
+			config.cloud.idf = btn;
+			$("#div-idf-timeframes").toggle(btn);
+		}
+	}, divIdf);
+
+	var labelIdf = dojo.create("label", {
+		id: "label-idf",
+		for: "cb-idf",
+		innerHTML: "&nbsp;Normalize using inverse document frequency<br/>"
+	}, cpCloud.domNode);
+
+	/* IDF timeframes starts here */
+	var divIdfTimeframes = dojo.create("div", {
+		id: "div-idf-timeframes",
+		style: "display: none"
+	}, cpCloud.domNode);
+
+	var textIdfTimeframes = dojo.create("label", {
+		id: "text-idf-timeframes",
+		for: "div-idf-timeframes",
+		innerHTML: "&nbsp;Select a time frame:<br/>"
+	}, divIdfTimeframes);
+
+	// Retrieves IDF timeframes (synchronously)
+	dojo.xhrGet({
+		url: "query/timeframes",
+		handleAs: "json",
+		sync: true
+	}).then(function(response) {
+		dojo.forEach(response.result, function(entry, i) {
+			var div = dojo.create("div", {
+				id: "div-idf-timeframes-" + entry.name
+			}, divIdfTimeframes);
+
+			var rb = new dijit.form.RadioButton({
+				id: "rb-idf-timeframes-" + entry.name,
+				class: "idf-timeframe",
+				checked: i + 1 == response.result.length, // Select last item by default
+				value: entry.id.toString()
+			}, div);
+
+			var label = dojo.create("label", {
+				id: "label-idf-timeframes-" + entry.name,
+				for: "rb-idf-timeframes-" + entry.name,
+				innerHTML: "&nbsp;" + entry.name + "<br/>"
+			}, divIdfTimeframes);
+		});
+	});
+	/* IDF timeframes ends here */
 
 	var divWCount = dojo.create("div", {
 		id: "div-wcount"
@@ -746,8 +796,8 @@ var createConfig = function() {
 		id: "ns-wcount",
 		smallDelta: 10,
 		constraints: {
-			min: 10,
-			max: 500,
+			min: WORDCLOUD_MIN_WORDS,
+			max: WORDCLOUD_MAX_WORDS,
 			places: 0
 		},
 		style: "width:50px",
@@ -845,7 +895,7 @@ var createConfig = function() {
 	var labelNormalize = dojo.create("label", {
 		id: "label-normalize",
 		for: "cb-normalize",
-		innerHTML: "&nbsp;Normalize document counts<br/>"
+		innerHTML: "&nbsp;Normalize document counts (use relative instead of absolute frequencies)<br/>"
 	}, cpTimeline.domNode);
 
 

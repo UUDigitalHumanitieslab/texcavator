@@ -1,6 +1,5 @@
 Django==1.7.7
 django-celery
-lxml
 numpy
 Celery
 elasticsearch>=1.0.0,<2.0.0
@@ -11,3 +10,5 @@ nose
 requests
 django-nose
 dicttoxml
+DAWG
+sqlparse
