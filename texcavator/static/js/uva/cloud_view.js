@@ -102,7 +102,7 @@ function stopwordsFillTable( stopwordsList, editglob, target )
 //	console.log( stopwordsList );
 
 	var label = dojo.byId( "label-grid-stopwords" );
-	if( label !== null )
+	if( label )
 	{ label.innerHTML = stopwordsList.length + " stopwords for user " + glob_username + ":<br/>"; }
 
 	var table_data = 
@@ -605,7 +605,7 @@ var d3CreateCloud = function( target, cloud_src, svg_width, svg_height, weightFa
 	//	console.log( "svgMouseup: word: " + word.text + ", count: " + count );
 
 		var old_dialog = dijit.byId( "dlg-cloudword" );
-		if( old_dialog !== null ) { old_dialog.destroyRecursive(); }		// ? not properly deleted last time
+		if (old_dialog) { old_dialog.destroyRecursive(); }		// ? not properly deleted last time
 
 		var dialog = new dijit.Dialog({
 			id: "dlg-cloudword",
@@ -789,7 +789,7 @@ var d3CreateCloud = function( target, cloud_src, svg_width, svg_height, weightFa
 		var debug_destroy = false;
 
 		tt = dijit.byId( "tt-cancel-cloudword" );
-		if( tt !== null )
+		if( tt )
 		{
 			if( debug_destroy ) { console.error( "tt-cancel-cloudword tooltip already exists" ); }
 			tt.destroy();
@@ -819,7 +819,7 @@ var d3CreateCloud = function( target, cloud_src, svg_width, svg_height, weightFa
 		actionBar.appendChild( bOK.domNode );
 
 		tt = dijit.byId( "tt-ok-cloudword" );
-		if( tt !== null )
+		if( tt )
 		{
 			if( debug_destroy ) { console.error( "tt-ok-cloudword tooltip already exists" ); }
 			tt.destroy();
@@ -856,7 +856,7 @@ function destroyDlgCloudword()
 {
 	// delete a pre-existing table, and the buttons
 	var old_grid = dojo.byId( "grid-stopwords" );
-	if( old_grid !== null )
+	if( old_grid )
 	{
 		console.log( "deleting old grid" );
 		old_grid.destroyRecursive();
@@ -865,12 +865,12 @@ function destroyDlgCloudword()
 	var i = 0;
 	do {
 		var old_btn = dijit.byId( "btn-stopw-delete-" + i );
-		if( old_btn !== null )
+		if( old_btn )
 		{
 		//	console.log( "deleting delete button " + i );
 			old_btn.destroyRecursive();
 			i++;
 		}
-	} while( old_btn !== null );
+	} while( old_btn );
 //	console.log( dijit.registry._hash );	// show registered widgets
 }
