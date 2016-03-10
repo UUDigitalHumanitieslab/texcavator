@@ -17,42 +17,21 @@ var createResponse = function( msg, retry )
 var showResponse = function()
 */
 
-var default_username = "";
-var default_password = "";
-var default_projectn = "";	// WAHSP, BiLand, Horizon
-
 glob_username  = "";		// global
 
 
 var createLogin = function( projectname )
 {
-//	console.log( "createLogin()" );
-//	console.log( "projectname: " + projectname );
-
-	default_projectn = projectname;
-
 	var checkSubmit = function()
 	{
-	//	console.log( "checkSubmit()" );
-
 		var curr_username = dijit.byId( "tb-username" ).get( "value" );
 		var curr_password = dijit.byId( "tb-password" ).get( "value" );
 		var curr_projectn = dijit.byId( "cb-projectn" ).get( "value" );
 
-		if(curr_username  == "" || curr_password == "" || curr_projectn == "" )
-		{ var disabled = true; }
-		else
-		{ var disabled = false; }		// user must supply values
-
+		var disabled = curr_username === "" || curr_password === "" || curr_projectn === ""; // user must supply values
 		bSubmit.set( "disabled", disabled );
-
 		return disabled;
-	}
-
-	if( default_username == "" || default_password == "" || default_projectn == "" )
-	{ var submit_disabled = true; }		// user must supply values
-	else
-	{ var submit_disabled = false; }
+	};
 
 	var dlgLogin = new dijit.Dialog({
 		id: "dlg-login",
@@ -84,13 +63,11 @@ var createLogin = function( projectname )
 		id: "tb-username",
 		label: "Username",
 		title: "Username",
-		value: default_username,
 		onChange: function() { checkSubmit(); },
 		onKeyPress: function( ev ) {
-			if( ev.charCode == 0 && ev.keyCode == dojo.keys.ENTER )
+			if( ev.charCode === 0 && ev.keyCode == dojo.keys.ENTER )
 			{
-				var disabled = checkSubmit();
-				if( disabled == false ) { fSubmit(); }
+				if( !checkSubmit() ) { fSubmit(); }
 			}
 		}
 	})).domNode, usrNode );
@@ -107,13 +84,11 @@ var createLogin = function( projectname )
 		label: "Password",
 		title: "Password",
 		type: "password",
-		value: default_password,
 		onChange: function() { checkSubmit(); },
 		onKeyPress: function( ev ) {
-			if( ev.charCode == 0 && ev.keyCode == dojo.keys.ENTER )
+			if( ev.charCode === 0 && ev.keyCode == dojo.keys.ENTER )
 			{
-				var disabled = checkSubmit();
-				if( disabled == false ) { fSubmit(); }
+				if( !checkSubmit() ) { fSubmit(); }
 			}
 		}
 	})).domNode, pwdNode );
@@ -126,10 +101,7 @@ var createLogin = function( projectname )
 	}, loginContainer.domNode );
 
     var projectData = [
-        { id:1, name : "WAHSP" },
-        { id:2, name : "BiLand" },
-        { id:3, name : "Horizon" },
-        { id:4, name : "All KB" }
+        { id: 1, name: projectname },
     ];
 
 	var projectListStore = new dojo.store.Memory({ data: projectData });
@@ -157,8 +129,9 @@ var createLogin = function( projectname )
 		var password = dijit.byId( "tb-password" ).get( "value" );
 		var next = location.search.split('next=')[1]; // TODO: dirty way to retrieve next url
 
-		dijit.byId( "tb-username" ).set( "value", default_username );
-		dijit.byId( "tb-password" ).set( "value", default_password );
+		// Empty the username and password fields
+		dijit.byId( "tb-username" ).set( "value", "" );
+		dijit.byId( "tb-password" ).set( "value", "" );
 
 		dojo.xhrPost({
 			url: "login",
@@ -170,13 +143,12 @@ var createLogin = function( projectname )
 			},
 			load: function(response)
 			{
-				var status = response["status"];
-				var msg = response["msg"];
-				var next_url = response["next_url"];
+				var status = response.status;
+				var msg = response.msg;
+				var next_url = response.next_url;
 
 				if( status === "SUCCESS" )
 				{
-					sessionId = response[ "session_id" ];
 					var btnUser = dijit.byId( "toolbar-user" );
 					var label = "<img src='/static/image/icon/Tango/22/apps/preferences-users.png')/>Logout";
 					btnUser.set( "label", label );
@@ -200,10 +172,10 @@ var createLogin = function( projectname )
 				return err;
 			}
 		});
-	}
+	};
 
 	var bSubmit = new dijit.form.Button({
-		disabled: submit_disabled,
+		disabled: true,
 		label: "Login",
 		iconClass: "dijitIconUsers",
 		title: "Login",
@@ -213,18 +185,17 @@ var createLogin = function( projectname )
 		onClick: fSubmit
 	});
 	actionBar.appendChild( bSubmit.domNode );
-}
+};
 
 var showLogin = function()
 {
-	if( dijit.byId( "dlg-login" ) == undefined )
+	if( dijit.byId( "dlg-login" ) === undefined )
 	{ console.log( "showLogin: dlg-login is undefined" ); }
 
 	dijit.byId( "dlg-login" ).show();
-}
+};
 
-var hideLogin = function() { dijit.byId( "dlg-login" ).hide(); }
-
+var hideLogin = function() { dijit.byId( "dlg-login" ).hide(); };
 
 var createLogout = function()
 {
@@ -286,9 +257,6 @@ var createLogout = function()
 		    dojo.xhrPost({
 			    url: "logout",
 			    handleAs: "json",
-			    content: {
-				    "username" : glob_username
-			    },
 			    load: function(response)
 			    {
 			        dijit.byId( "dlg-logout" ).hide();
@@ -308,11 +276,10 @@ var createLogout = function()
         }
 	});
 	actionBar.appendChild( bLogout.domNode );
-}
+};
 
-var showLogout = function() { dijit.byId( "dlg-logout" ).show(); }
-var hideLogout = function() { dijit.byId( "dlg-logout" ).hide(); }
-
+var showLogout = function() { dijit.byId( "dlg-logout" ).show(); };
+var hideLogout = function() { dijit.byId( "dlg-logout" ).hide(); };
 
 var createResponse = function( msg, retry )
 {
@@ -338,10 +305,9 @@ var createResponse = function( msg, retry )
 		style: style
 	}, "login-resp-div" );
 
+	var icon = "<img src='/static/image/icon/Tango/48/status/dialog-information.png' height='50' align='left' />";
 	if( retry )
-	{ var icon = "<img src='/static/image/icon/Tango/48/status/dialog-warning.png' height='50' align='left' />"; }
-	else
-	{ var icon = "<img src='/static/image/icon/Tango/48/status/dialog-information.png' height='50' align='left' />"; }
+	{ icon = "<img src='/static/image/icon/Tango/48/status/dialog-warning.png' height='50' align='left' />"; }
 
 	dojo.create( "div", {
 		innerHTML: icon,
@@ -373,8 +339,6 @@ var createResponse = function( msg, retry )
 		}
 	});
 	actionBar.appendChild( bOK.domNode );
-}
+};
 
-var showResponse = function() { dijit.byId( "message" ).show(); }
-
-// [eof]
+var showResponse = function() { dijit.byId( "message" ).show(); };

@@ -59,7 +59,7 @@ def user_login(request):
                                          'Please contact the system '
                                          'administrator.')
 
-    return json_response_message('ERROR', 'Oops, that is not correct!')
+    return json_response_message('ERROR', 'The username or password you entered is invalid.')
 
 
 @csrf_exempt
