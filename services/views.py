@@ -37,7 +37,7 @@ def search(request):
 
     logger.info('services/search/ - user: {}'.format(request.user.username))
 
-    params = get_search_parameters(request.REQUEST)
+    params = get_search_parameters(request.GET)
 
     valid_q, result = do_search(settings.ES_INDEX,
                                 settings.ES_DOCTYPE,
@@ -73,7 +73,7 @@ def doc_count(request):
     if settings.DEBUG:
         print >> stderr, "doc_count()"
 
-    query_id = request.REQUEST.get('queryID')
+    query_id = request.GET.get('queryID')
     logger.info('services/doc_count/ - queryID: {}'.format(query_id))
 
     if query_id:
@@ -241,7 +241,7 @@ def log(request):
     """Log the request message to the logger"""
     logger.info('log')
 
-    logger.debug(request.REQUEST['message'])
+    logger.debug(request.GET['message'])
     return json_response_message('success', 'Message logged')
 
 
@@ -259,7 +259,10 @@ def export_cloud(request):
 @csrf_exempt
 @login_required
 def download_scan_image(request):
-    """Download scan image file"""
+    """
+    Download scan image file
+    TODO: This is not called anywhere from the front-end. Remove?
+    """
     logger.info('download_scan_image')
 
     from django.core.servers.basehttp import FileWrapper
@@ -268,7 +271,7 @@ def download_scan_image(request):
     if settings.DEBUG:
         print >> stderr, "download_scan_image()"
 
-    req_dict = request.REQUEST
+    req_dict = request.GET
     _id = req_dict["id"]
     id_parts = _id.split('-')
     zipfile = req_dict["zipfile"]
@@ -319,7 +322,7 @@ def retrieve_kb_resolver(request):
     path = 'resolve'
     logger.debug('retrieve_kb_resolver: %s', request.META["QUERY_STRING"])
 
-    kb_resolver_url = "http://" + host + ':' + str(port) + '/' + path + '?urn=' + request.REQUEST["id"]
+    kb_resolver_url = "http://" + host + ':' + str(port) + '/' + path + '?urn=' + request.GET["id"]
     try:
         response = requests.get(kb_resolver_url)
     except:
@@ -340,7 +343,7 @@ def metadata(request):
     """This view will show metadata aggregations"""
     # TODO: the current implementation depends upon correct settings in UI.
     # TODO: (cont) it's better to retrieve values from the saved query directly.
-    params = get_search_parameters(request.REQUEST)
+    params = get_search_parameters(request.GET)
     result = metadata_aggregation(settings.ES_INDEX,
                                   settings.ES_DOCTYPE,
                                   params['query'],

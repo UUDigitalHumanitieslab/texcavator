@@ -4,8 +4,7 @@ dojo.provide("uva.logger");
 uva.logger.log = function(message) {
 	console.log("[LOG] " + message);
 	dojo.xhrGet({
-		url: "/services/logger/",			// django development server
-	//	url: "/biland/services/logger/",	// django production server
+		url: "/services/logger/",
 		content: {message: message},
 		handleAs: "text",
 		load: function(data) {

@@ -14,15 +14,15 @@ from django.http import HttpResponse
 def export_csv(request):
     """Export cloud data to a csv file
     """
-    dict = request.REQUEST		# searches POST first, then GET
+    r = request.POST
 
     try:
-        content = dict["clouddata"]
+        content = r["clouddata"]
     except KeyError:
         content = ""
 
     try:
-        zipped_str = dict["zipped"]
+        zipped_str = r["zipped"]
         if zipped_str == '1':
             zipped = True
         else:
@@ -31,7 +31,7 @@ def export_csv(request):
         zipped = False
 
     try:
-        filename = dict["filename"]
+        filename = r["filename"]
     except KeyError:
         if zipped:
             filename = "cloud.csv.zip"
@@ -39,7 +39,7 @@ def export_csv(request):
             filename = "cloud.csv"
 
     try:
-        separator_str = dict["separator"]
+        separator_str = r["separator"]
     except KeyError:
         separator_str = "tab"
 
@@ -51,7 +51,7 @@ def export_csv(request):
         separator = '\t'
 
     try:
-        str_zipped = dict["zipped"]
+        str_zipped = r["zipped"]
     except KeyError:
         str_zipped = 0
 
