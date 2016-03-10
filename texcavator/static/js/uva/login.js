@@ -22,8 +22,6 @@ var default_password = "";
 var default_projectn = "";	// WAHSP, BiLand, Horizon
 
 glob_username  = "";		// global
-glob_userid    = null;		// global
-glob_sessionId = "";		// global
 
 
 var createLogin = function( projectname )
@@ -293,8 +291,6 @@ var createLogout = function()
 		showLabel: true,
 		role: "presentation",
 		onClick: function() {
-			console.log( "bLogout: " + glob_userid + " (" + glob_username + ")" );
-
 		    dojo.xhrPost({
 			    url: "logout",
 			    handleAs: "json",
