@@ -31,7 +31,6 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'django.contrib.flatpages',
     'django.contrib.sites',
 
     'services',
@@ -50,8 +49,6 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
-
-    'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
 )
 
 ROOT_URLCONF = 'texcavator.urls'
@@ -154,6 +151,3 @@ LOGGING = {
         },
     }
 }
-
-# Flatpages setting (TODO: remove?)
-SITE_ID = 1
