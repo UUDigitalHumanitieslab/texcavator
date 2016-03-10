@@ -147,16 +147,13 @@ var createLogin = function( projectname )
 				var msg = response.msg;
 				var next_url = response.next_url;
 
-				if( status === "SUCCESS" )
+				if ( status === "SUCCESS" )
 				{
-					var btnUser = dijit.byId( "toolbar-user" );
-					var label = "<img src='/static/image/icon/Tango/22/apps/preferences-users.png')/>Logout";
-					btnUser.set( "label", label );
 					createQueryList();		// using username to filter the Saved queries
 
 					if ( next_url )
 					{
-					    window.location.href = next_url;
+						window.location.href = next_url;
 					}
 				}
 				else
@@ -261,9 +258,6 @@ var createLogout = function()
 			    {
 			        dijit.byId( "dlg-logout" ).hide();
 			        glob_username = "";
-			        var btnUser = dijit.byId( "toolbar-user" );
-			        var label = "<img src = '/static/image/icon/Tango/22/apps/preferences-users.png')/>";
-			        btnUser.set( "label", label );
 			        clearGui();		// cloud, article, lexicons...
 			        showLogin();
 			    },

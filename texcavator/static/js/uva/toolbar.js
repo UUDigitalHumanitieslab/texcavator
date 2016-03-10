@@ -255,42 +255,36 @@ var createToolbar = function() {
 	}));
 
 	var btnQuery = new dijit.form.Button({
-		label: "<img src = '/static/image/icon/Tango/22/apps/utilities-dictionary.png')/>Export",
+		label: "<img src='/static/image/icon/Tango/22/actions/document-save.png')/>Export",
 		showLabel: true,
 		onClick: toolbarQuery
 	});
-	toolbar.addChild(btnQuery);
 
 	var btnCloud = new dijit.form.Button({
-		label: "<img src = '/static/image/icon/Tango/22/actions/check-spelling.png')/>Cloud Data",
+		label: "<img src='/static/image/icon/Tango/22/actions/check-spelling.png')/>Cloud Data",
 		showLabel: true,
 		onClick: showCloudDlg
 	});
-	toolbar.addChild(btnCloud);
 
 	// remaining icons style: "float:right"
 
 	var btnAbout = new dijit.form.Button({
-		label: "<img src='/static/image/icon/gnome/22/actions/help-about.png'/>About",
+		label: "<img src='/static/image/icon/gnome/22/actions/help-about.png' />About",
 		showLabel: true,
 		style: "float:right",
 		onClick: toolbarAbout
 	});
-	toolbar.addChild(btnAbout);
-
 
 	var btnConfig = new dijit.form.Button({
-		label: "<img src = '/static/image/icon/Tango/22/categories/utilities.png')/>Config",
+		label: "<img src='/static/image/icon/Tango/22/categories/system.png' />Config",
 		showLabel: true,
 		style: "float:right",
 		onClick: showConfig // config.js
 	});
-	toolbar.addChild(btnConfig);
-
 
 	var btnUser = new dijit.form.Button({
 		id: "toolbar-user",
-		label: "<img src = '/static/image/icon/Tango/22/apps/preferences-users.png')/>",
+		label: "<img src='/static/image/icon/Tango/22/actions/application-exit.png' />Logout",
 		showLabel: true,
 		style: "float:right",
 		onClick: function() {
@@ -301,7 +295,13 @@ var createToolbar = function() {
 			showLogout();
 		}
 	});
+
+	toolbar.addChild(btnQuery);
+	toolbar.addChild(btnCloud);
+	// The order below is in reverse because of the "float:right" style above (probably).
 	toolbar.addChild(btnUser);
+	toolbar.addChild(btnAbout);
+	toolbar.addChild(btnConfig);
 }; // createToolbar()
 
 dojo.addOnLoad(createToolbar);
