@@ -146,16 +146,19 @@ var createToolbar = function() {
 		id: "begindate",
 		style: "width: 90px;",
 		onChange: function() {
-			// Set the global beginDate variable
-			beginDate = beginDateTB.value;
+			if (beginDateTB.value !== undefined && endDateTB.value !== undefined)
+			{
+				// Set the global beginDate variable
+				beginDate = beginDateTB.value;
 
-			// set new min constraint for endDateTB
-			require(["dojo/date"], function(date) {
-				endDateTB.constraints.min = date.add(beginDateTB.value, "day", 1);
-			});
+				// set new min constraint for endDateTB
+				require(["dojo/date"], function(date) {
+					endDateTB.constraints.min = date.add(beginDateTB.value, "day", 1);
+				});
 
-			// Update the slider
-			updateYearSlider(beginDateTB.value, endDateTB.value);
+				// Update the slider
+				updateYearSlider(beginDateTB.value, endDateTB.value);
+			}
 		}
 	});
 
@@ -169,16 +172,19 @@ var createToolbar = function() {
 		id: "enddate",
 		style: "width: 90px;",
 		onChange: function() {
-			// Set the global endDate variable
-			endDate = endDateTB.value;
+			if (beginDateTB.value !== undefined && endDateTB.value !== undefined)
+			{
+				// Set the global endDate variable
+				endDate = endDateTB.value;
 
-			// Set new max constraint for beginDateTB
-			require(["dojo/date"], function(date) {
-				beginDateTB.constraints.max = date.add(endDateTB.value, "day", -1);
-			});
+				// Set new max constraint for beginDateTB
+				require(["dojo/date"], function(date) {
+					beginDateTB.constraints.max = date.add(endDateTB.value, "day", -1);
+				});
 
-			// Update the slider
-			updateYearSlider(beginDateTB.value, endDateTB.value);
+				// Update the slider
+				updateYearSlider(beginDateTB.value, endDateTB.value);
+			}
 		}
 	});
 
@@ -194,17 +200,19 @@ var createToolbar = function() {
 		id: "begindate-2",
 		style: "width: 90px; display: none;",
 		onChange: function(value) {
-			// Set the global beginDate2 variable
-			beginDate2 = value;
-			console.log(beginDate2);
+			if (beginDateTB2.value !== undefined && endDateTB2.value !== undefined)
+			{
+				// Set the global beginDate2 variable
+				beginDate2 = value;
 
-			// set new min constraint for endDateTB2
-			require(["dojo/date"], function(date) {
-				endDateTB2.constraints.min = date.add(value, "day", 1);
-			});
+				// set new min constraint for endDateTB2
+				require(["dojo/date"], function(date) {
+					endDateTB2.constraints.min = date.add(value, "day", 1);
+				});
 
-			// Update the slider
-			updateYearSlider(value, endDateTB2.value, "-2");
+				// Update the slider
+				updateYearSlider(value, endDateTB2.value, "-2");
+			}
 		}
 	});
 
@@ -219,16 +227,19 @@ var createToolbar = function() {
 		id: "enddate-2",
 		style: "width: 90px; display: none;",
 		onChange: function(value) {
-			// Set the global endDate2 variable
-			endDate2 = value;
+			if (beginDateTB2.value !== undefined && endDateTB2.value !== undefined)
+			{
+				// Set the global endDate2 variable
+				endDate2 = value;
 
-			// Set new max constraint for beginDateTB2
-			require(["dojo/date"], function(date) {
-				beginDateTB2.constraints.max = date.add(value, "day", -1);
-			});
+				// Set new max constraint for beginDateTB2
+				require(["dojo/date"], function(date) {
+					beginDateTB2.constraints.max = date.add(value, "day", -1);
+				});
 
-			// Update the slider
-			updateYearSlider(beginDateTB2.value, value, "-2");
+				// Update the slider
+				updateYearSlider(beginDateTB2.value, value, "-2");
+			}
 		}
 	});
 
@@ -313,8 +324,6 @@ var toggleSecondDateFilter = function() {
 	var toggleDiv = $("#toggleBtn").parent().parent();
 	toggleDiv.nextUntil($("#sep")).toggle();
 	$("#year-range-slider-2").toggle();
-
-	console.log(beginDate2);
 
 	// If toggled hidden, set variables to undefined  
 	if (beginDate2) {
@@ -445,3 +454,16 @@ var createAbout = function() {
 	});
 	actionBar.appendChild(bClose.domNode);
 }; // createAbout
+
+
+// Basic validation of dates.
+function validateDates() {
+	if (dijit.byId("begindate").value == undefined || dijit.byId("enddate").value == undefined ||
+		dijit.byId("begindate-2").value == undefined || dijit.byId("enddate-2").value == undefined) 
+	{
+		var message = 'You entered an invalid date range. Please check your date filters.'
+        genDialog('Invalid date range', message, {OK: true});
+		return false;
+	}
+	return true;
+}

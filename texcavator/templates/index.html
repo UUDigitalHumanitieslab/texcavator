@@ -227,6 +227,12 @@ function searchSubmit(newStartRecord)
 		console.log( "searchSubmit(): empty query: nothing to do." );
 		return;
 	}
+
+    // toolbar.js
+	if (!validateDates()) {
+		console.log('searchSubmit(): invalid date range.');
+		return;
+	}
 	
 	// sanitize_query.js
 	if (!validateQuery(dojo.byId( "query" ).value)) {

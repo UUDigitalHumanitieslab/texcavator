@@ -3,6 +3,7 @@
 """
 import logging
 from collections import Counter
+from datetime import datetime
 from sys import stderr, exc_info
 
 import requests
@@ -39,6 +40,10 @@ def search(request):
 
     params = get_search_parameters(request.GET)
 
+    if not validate_dates(params['dates']):
+        msg = 'You entered an invalid date range. Please check your date filters.'
+        return json_response_message('error', msg)
+
     valid_q, result = do_search(settings.ES_INDEX,
                                 settings.ES_DOCTYPE,
                                 params['query'],
@@ -61,6 +66,21 @@ def search(request):
             format(q=params['query'])
         msg = msg + result.replace('\n', '<br />')
         return json_response_message('error', msg)
+
+
+def validate_dates(date_ranges):
+    """
+    Basic date validation: check if the entered date ranges are valid.
+    TODO: also check for TEXCAVATOR_DATE_RANGE
+    TODO: check if multiple date ranges do not conflict
+    """
+    for date_range in date_ranges:
+        for date in date_range.values():
+            try:
+                datetime.strptime(date, '%Y-%m-%d')
+            except ValueError:
+                return False
+    return True
 
 
 @csrf_exempt
