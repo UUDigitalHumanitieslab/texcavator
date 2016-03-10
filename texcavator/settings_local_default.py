@@ -52,9 +52,6 @@ QUERY_DATA_CHUNK_SIZE = 1000		# no. of documents from ES with 1 query
 QUERY_DATA_DELETE_DATA = True		# delete query download data
 QUERY_DATA_EXPIRE_DAYS = 1			# delete after one day
 
-# user action logging
-ILPS_LOGGING = False				# if True, also uncomment code in base.html
-
 # Database settings
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
 DATABASES = {

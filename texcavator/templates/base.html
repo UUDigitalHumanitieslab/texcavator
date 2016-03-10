@@ -1,10 +1,4 @@
 <!DOCTYPE html>
-
-{% comment %}
-DO-%%-%%%-2011: Created
-FL-29-Nov-2013: Changed: ILPSlogging off
-{% endcomment %}
-
 <html>
 <head>
 	<meta charset="utf-8">
@@ -39,35 +33,6 @@ FL-29-Nov-2013: Changed: ILPSlogging off
 
 	<script src="{{ STATIC_URL }}js/jQuery/jquery.min.js"></script>
 	<script src="{{ STATIC_URL }}js/jQuery/jquery.wordcloud.js"></script>
-
-	<!-- ILPSLogging -->
-	<!--
-	<script>
-		(function() {
-			var script = document.createElement('script');
-			script.async = true;
-			script.src = 'http://ilpslogging.staging.dispectu.com/jssdk/ilpslogging-0.2.min.js';
-			var entry = document.getElementsByTagName('script')[0];
-			entry.parentNode.insertBefore(script, entry);
-		})();
-
-		var ILPSLogging_ready = ILPSLogging_ready || [];
-		ILPSLogging_ready.push(function(){
-			var config = {
-				api_url: 'http://ilpslogging.staging.dispectu.com',
-				project_key: 'ZJ3fhPoNHnym76UuYAKVJ5XtrtZ5iNfzTUGY19w81lo',
-				log_mouse_movements: false,
-				log_mouse_clicks: true,
-				post_events_queue_on_browser_close: true,
-				log_browser_close: true,
-				debug: false,
-			};
-			ILPSLogging.init(config, function(){
-				console.log('ILPSLogging: ready for action');
-			});
-		});
-	</script>
-	-->
 
 	<script src="{{ STATIC_URL }}js/uva/timestamp.js"></script>
 	<script src="{{ STATIC_URL }}js/uva/dialogs.js"></script>

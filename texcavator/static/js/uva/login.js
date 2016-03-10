@@ -196,16 +196,6 @@ var createLogin = function( projectname )
 					{
 					    window.location.href = next_url;
 					}
-
-					if( ILPS_LOGGING )
-					{
-						glob_userid = response[ "user_id" ];
-						var user_info = { username: response[ "user_name" ] };
-						var login_event = false;					// avoid generating multiple login events 
-						// when login_event = false, only the user_id is logged, but not the user_info
-						console.log( "ILPSLogging.userLogin()" );
-						ILPSLogging.userLogin( glob_userid, user_info, login_event );
-					}
 				}
 				else
 				{
@@ -313,12 +303,6 @@ var createLogout = function()
 			    },
 			    load: function(response)
 			    {
-			        if( ILPS_LOGGING )
-			        {
-			            console.log( "ILPSLogging.userLogout()" );
-			            ILPSLogging.userLogout();
-			        }
-
 			        dijit.byId( "dlg-logout" ).hide();
 			        glob_username = "";
 			        var btnUser = dijit.byId( "toolbar-user" );
