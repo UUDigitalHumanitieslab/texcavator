@@ -4,30 +4,32 @@
 #
 #    pip-compile requirements.in
 #
-alabaster==0.7.6          # via sphinx
-amqp==1.4.8               # via kombu
+alabaster==0.7.7          # via sphinx
+amqp==1.4.9               # via kombu
 anyjson==0.3.3            # via kombu
-babel==2.1.1              # via sphinx
-billiard==3.3.0.22        # via celery
-celery==3.1.19
+babel==2.2.0              # via sphinx
+billiard==3.3.0.23        # via celery
+Celery==3.1.23            # via django-celery
+DAWG==0.7.8
 dicttoxml==1.6.6
 django-celery==3.1.17
-django-nose==1.4.2
-django==1.7.7
+django-nose==1.4.3
+Django==1.8.11
 docutils==0.12            # via sphinx
 elasticsearch==1.9.0
-jinja2==2.8               # via sphinx
-kombu==3.0.30             # via celery
-markupsafe==0.23          # via jinja2
-mysql-python==1.2.5
+Jinja2==2.8               # via sphinx
+kombu==3.0.34             # via celery
+MarkupSafe==0.23          # via jinja2
+MySQL-python==1.2.5
 nose==1.3.7
-numpy==1.10.2
-pygments==2.0.2           # via sphinx
+numpy==1.10.4
+Pygments==2.1.3           # via sphinx
 pytz==2015.7              # via babel, celery
 redis==2.10.5
-requests==2.9.0
+requests==2.9.1
 six==1.10.0               # via sphinx
-snowballstemmer==1.2.0    # via sphinx
+snowballstemmer==1.2.1    # via sphinx
 sphinx-rtd-theme==0.1.9   # via sphinx
-sphinx==1.3.3
-urllib3==1.13             # via elasticsearch
+sphinx==1.3.6
+sqlparse==0.1.19
+urllib3==1.14             # via elasticsearch

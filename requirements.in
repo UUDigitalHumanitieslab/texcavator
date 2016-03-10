@@ -1,4 +1,4 @@
-Django==1.7.7
+Django==1.8.11
 django-celery
 numpy
 Celery
@@ -10,3 +10,5 @@ nose
 requests
 django-nose
 dicttoxml
+DAWG
+sqlparse
