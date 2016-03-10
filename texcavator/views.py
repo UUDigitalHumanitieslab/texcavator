@@ -8,7 +8,6 @@ from django.template import RequestContext
 from django.views.decorators.csrf import csrf_exempt
 
 from texcavator.utils import json_response_message, daterange2dates, flip_dict
-from texcavator.timestamp import TIMESTAMP
 
 
 def index(request):
@@ -51,8 +50,6 @@ def user_login(request):
             params = {
                 "user_id": user.id,
                 "user_name": user.username,
-                # TODO: what is timestamp used for? Is it really necessary
-                "timestamp": TIMESTAMP,
                 "next_url": next_url
             }
 

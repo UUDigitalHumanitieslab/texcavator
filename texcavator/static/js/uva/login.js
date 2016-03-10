@@ -176,14 +176,6 @@ var createLogin = function( projectname )
 
 				if( status === "SUCCESS" )
 				{
-					glob_server_timestamp = response[ "timestamp" ];
-					setServerTimestamp( glob_server_timestamp );		// timestamp.js
-					var client_timestamp = getClientTimestamp();		// timestamp.js
-					if( glob_server_timestamp == client_timestamp )
-					{ console.log( "timestamp: " + server_timestamp ); }
-					else
-					{ console.warn( "server: " + glob_server_timestamp + ", client: " + client_timestamp ); }
-
 					sessionId = response[ "session_id" ];
 					var btnUser = dijit.byId( "toolbar-user" );
 					var label = "<img src='/static/image/icon/Tango/22/apps/preferences-users.png')/>Logout";

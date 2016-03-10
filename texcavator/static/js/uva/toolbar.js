@@ -384,17 +384,6 @@ var createAbout = function() {
 		style: "clear: both"
 	}, aboutContainer.domNode);
 
-	var client_timestamp = getClientTimestamp(); // timestamp.js
-	var server_timestamp = getServerTimestamp(); // timestamp.js
-
-	dojo.create("div", {
-		innerHTML: "Client timestamp: " + client_timestamp,
-		style: "clear: both"
-	}, aboutContainer.domNode);
-	dojo.create("div", {
-		innerHTML: "Server timestamp: " + server_timestamp,
-		style: "clear: both"
-	}, aboutContainer.domNode);
 	dojo.create("div", {
 		innerHTML: "<hr>",
 		style: "clear: both"
