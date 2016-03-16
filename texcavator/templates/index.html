@@ -14,45 +14,7 @@
 {% block middle %}
 	<div data-dojo-type="dijit.layout.AccordionContainer" data-dojo-props="splitter:true, region:'leading'" style="width: 438px;" id="leftAccordion">
 		<div id="searchPane" data-dojo-type="dijit.layout.ContentPane" data-dojo-props="title:'Search'">
-
-		<!--<form action="services/kb/sru/" id="search" onsubmit="searchSubmit(); return false;"> -->
-			<form action="services/search/" id="search" onsubmit="searchSubmit(); return false;">
-				<input type="hidden" name="startRecord" id="startRecord" value="1" />
-
-				<input id="query" type="text"
-						data-dojo-type="dijit.form.TextBox"
-						data-dojo-props="name:'query', style:'width: 290px; font-size: 155%;'" 
-						value=""
-				>
-				</input>
-				<!-- value:'opium', -->
-
-				<button data-dojo-type="dijit.form.Button" id="searchButton"
-						data-dojo-props="iconClass:'dijitIcon dijitIconSearch', style:'font-size: 125%;', type: 'submit'">
-					<span>Search</span>
-				</button>
-
-				<button data-dojo-type="dijit.form.Button" id="clearButton"
-						data-dojo-props="iconClass:'dijitIcon dijitIconDelete', style:'font-size: 125%;', type: 'submit'">
-					<span>Clear</span>
-					<script type="dojo/method" event="onClick">
-					//	console.log( "Clear" );
-						dijit.byId( "query" ).set( "value", "" );
-						dijit.byId( "query" ).textbox.readOnly = false;
-					</script>
-				</button>
-
-				<!-- Period filter on toolbar; dateRange set inside searchSubmit() -->
-				<div id="filters" style="display: none; margin: 5px 0 5px 0;"></div>
-
-				<div id="div-year-range-slider">
-					<div id="div-year-range-legend"></div>
-				</div>
-				<div id="div-year-range-slider-2">
-					<div id="div-year-range-legend-2"></div>
-				</div>
-			</form>
-
+		    <input type="hidden" name="startRecord" id="startRecord" value="1" />
 			<div id="search-result">
 				Search for newspaper articles at the KB.
 			</div>
@@ -186,8 +148,6 @@ dojo.ready( function() {
 
 dojo.ready( function() { celeryCheckFailure( "None" ); } ); // celery.js
 dojo.ready( function() { storeDateLimits( "{{ PROJECT_MIN_DATE }}", "{{ PROJECT_MAX_DATE }}" ); } );    // toolbar.js
-dojo.ready( function() { createYearSlider( "{{ PROJECT_MIN_DATE }}", "{{ PROJECT_MAX_DATE }}" ); } );   // accordion.js
-dojo.ready( function() { createYearSlider( "{{ PROJECT_MIN_DATE }}", "{{ PROJECT_MAX_DATE }}", "-2" ); } ); // accordion.js
 
 
 dojo.ready( function() {
@@ -224,7 +184,8 @@ function searchSubmit(newStartRecord)
 	newStartRecord = typeof newStartRecord !== 'undefined' ? newStartRecord : 1;
 	dojo.byId('startRecord').value = newStartRecord;
 
-	if( dojo.byId( "query" ).value == "" )
+    var query = dojo.byId( "query" ).value.trim();
+	if (query === "")
 	{
 		console.log( "searchSubmit(): empty query: nothing to do." );
 		return;
@@ -237,23 +198,23 @@ function searchSubmit(newStartRecord)
 	}
 	
 	// sanitize_query.js
-	if (!validateQuery(dojo.byId( "query" ).value)) {
+	if (!validateQuery(query)) {
 		console.log('searchSubmit(): invalid query.');
 		return;
 	}
 
-	console.log( "searchSubmit()" );
+	console.log( "Starting search at record " + newStartRecord );
 	dojo.place( new dijit.ProgressBar( { indeterminate: true } ).domNode, dojo.byId( "search-result" ), "only" );
 
 	var params = getSearchParameters();        // get user-changeable parameters from config
+	params.query = query;
+	params.startRecord = newStartRecord;
 
-	// url from form: "services/search/"
 	dojo.xhrGet({
-		form: dojo.byId( "search" ),                  // query string
+		url: "services/search",
 		content: params,                              // key:value pairs
 		handleAs: "json",                             // data returned from the server
 		load: function( data ) {
-
 			if( data.status === "error" ){
 				dojo.byId( "search-result" ).innerHTML = "";
 				console.error( data.msg );
@@ -265,7 +226,6 @@ function searchSubmit(newStartRecord)
 				dojo.byId( "search-result" ).innerHTML = data.html; // put html text in panel
 				metadataGraphics( itemFromCurrentQuery() );         // Visualise meta
 			}
-
 		},
 		error: function( err ) {
 			console.error( err );  // display the error
@@ -277,6 +237,11 @@ function searchSubmit(newStartRecord)
 	});
 }
 
+
+function searchReset() {
+    dijit.byId("query").set("value", "");
+    storeDateLimits( "{{ PROJECT_MIN_DATE }}", "{{ PROJECT_MAX_DATE }}" );
+}
 
 
 function researchSubmit( item )
@@ -311,7 +276,6 @@ function setQueryMetadata(item) {
 
 	dijit.byId( "begindate" ).set( "value", beginDate );
 	dijit.byId( "enddate"   ).set( "value", endDate );
-	updateYearSlider(beginDate, endDate);
 
 	// Set the second search date
 	if (item.dates[1]) {
@@ -324,8 +288,7 @@ function setQueryMetadata(item) {
 		console.log("Date range 2: " + beginDate2 + " - " + endDate2);
 
 		dijit.byId( "begindate-2" ).set( "value", beginDate2 );
-		dijit.byId( "enddate-2"      ).set( "value", endDate2 );
-		updateYearSlider(beginDate2, endDate2, "-2");
+		dijit.byId( "enddate-2"   ).set( "value", endDate2 );
 	}
 	// Or set it to null
 	else if (beginDate2 !== undefined) {

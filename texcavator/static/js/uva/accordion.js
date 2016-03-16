@@ -9,7 +9,6 @@
 */
 
 dojo.require("dojo.store.JsonRest");
-dojo.require("dojox.form.RangeSlider");
 
 
 function accordionSelectChild(id) {
@@ -20,84 +19,6 @@ function accordionSelectChild(id) {
 		accordion.back();
 	} // show Search pane
 } // accordionSelectChild()
-
-
-function createYearSlider(min, max, n) {
-	// default value for n
-	n = typeof n !== 'undefined' ? n : "";
-
-	//	console.log( "createYearSlider()" );
-	storeDateLimits(min, max);
-
-	var min_year = beginDate.getFullYear();
-	var max_year = endDate.getFullYear();
-	//	console.log( "from: " + min_year  + " to: " + max_year );
-
-	var discrete_values = max_year - min_year + 1;
-	//	console.log( "discrete_values: " + discrete_values );
-
-	var rangeSlider = new dojox.form.HorizontalRangeSlider({
-		id: "year-range-slider" + n,
-		value: [min_year, max_year],
-		minimum: min_year,
-		maximum: max_year,
-		intermediateChanges: false,
-		discreteValues: discrete_values,
-		style: (n ? "display: none;" : ""),
-		onChange: function(value) {
-			//	console.log( "value:" + value );
-
-			var new_min_year = Math.ceil(value[0]);
-			var new_max_year = Math.floor(value[1]);
-			//	console.log( "from: " + new_min_year  + " to: " + new_max_year );
-
-			var old_min_date = n ? beginDate2 : beginDate;
-			var old_max_date = n ? endDate2 : endDate;
-			//	console.log( "old from: " + old_min_date + ", to: " + old_max_date );
-
-			var min_month = old_min_date.getMonth();
-			var max_month = old_max_date.getMonth();
-
-			var min_day = old_min_date.getDate();
-			var max_day = old_max_date.getDate();
-
-			//	console.log( "from: year: " + old_min_year + ", month: " + min_month + ", day: " + min_day );
-			//	console.log( "to: year:   " + old_max_year + ", month: " + max_month + ", day: " + max_day );
-
-			var new_min_date = new Date(new_min_year, min_month, min_day);
-			var new_max_date = new Date(new_max_year, max_month, max_day);
-
-			// update date widgets in toolbar
-			dijit.byId("begindate" + n).set("value", new_min_date);
-			dijit.byId("enddate" + n).set("value", new_max_date);
-		}
-	}, "div-year-range-slider" + n);
-
-	// create legend for year slider range
-	// parseInt with radix 10 to prevent trouble with leading 0's (octal, hex)
-	// substring: from index is included, to index is not included
-	var min_y = parseInt(min.substring(0, 4), 10);
-	var max_y = parseInt(max.substring(0, 4), 10);
-
-	var legend = '<span style="float:left">' + min_y + '</span>';
-	legend += '<span style="float:center">' + "search period" + '</span>';
-	legend += '<span style="float:right">' + max_y + '</span><hr>';
-
-	dojo.create("label", {
-		innerHTML: legend
-	}, "div-year-range-legend" + n);
-} // createYearSlider()
-
-
-function updateYearSlider(min_date, max_date, n) {
-	// default value for n
-	n = typeof n !== 'undefined' ? n : "";
-	// we get here from the toolbar date widgets
-	var min_year = min_date.getFullYear();
-	var max_year = max_date.getFullYear();
-	//	console.log( "from: " + min_year  + " to: " + max_year );
-	dijit.byId("year-range-slider" + n).set("value", [min_year, max_year]);
-}
 
 
 // Update the number of results for a Query, synchronically.

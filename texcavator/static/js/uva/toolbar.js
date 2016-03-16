@@ -135,9 +135,28 @@ var createToolbar = function() {
 		style: "height: 26px;"
 	}, "span-toolbar"); // id="span-toolbar" in base.html
 
+	var searchForm = new dijit.form.Form({
+		method: "",
+		action: "",
+		style: "display: inline;",
+		onsubmit: "searchSubmit(); return false;",
+		onreset: "searchReset(); return false;"
+	});
+
+	// Query input
+	var queryInputLabel = new dijit.form.Button({
+		label: "Search",
+		showLabel: true,
+		disabled: true
+	});
+
+	var queryInput = new dijit.form.TextBox({
+		id: "query",
+	});
+
 	// Search dates
 	var btnDateFilterBegin = new dijit.form.Button({
-		label: "<img src = '/static/image/icon/Tango/22/apps/office-calendar.png')/>Search period: from",
+		label: "from",
 		showLabel: true,
 		disabled: true
 	});
@@ -155,9 +174,6 @@ var createToolbar = function() {
 				require(["dojo/date"], function(date) {
 					endDateTB.constraints.min = date.add(beginDateTB.value, "day", 1);
 				});
-
-				// Update the slider
-				updateYearSlider(beginDateTB.value, endDateTB.value);
 			}
 		}
 	});
@@ -181,9 +197,6 @@ var createToolbar = function() {
 				require(["dojo/date"], function(date) {
 					beginDateTB.constraints.max = date.add(endDateTB.value, "day", -1);
 				});
-
-				// Update the slider
-				updateYearSlider(beginDateTB.value, endDateTB.value);
 			}
 		}
 	});
@@ -209,9 +222,6 @@ var createToolbar = function() {
 				require(["dojo/date"], function(date) {
 					endDateTB2.constraints.min = date.add(value, "day", 1);
 				});
-
-				// Update the slider
-				updateYearSlider(value, endDateTB2.value, "-2");
 			}
 		}
 	});
@@ -236,9 +246,6 @@ var createToolbar = function() {
 				require(["dojo/date"], function(date) {
 					beginDateTB2.constraints.max = date.add(value, "day", -1);
 				});
-
-				// Update the slider
-				updateYearSlider(beginDateTB2.value, value, "-2");
 			}
 		}
 	});
@@ -250,16 +257,37 @@ var createToolbar = function() {
 		onClick: toggleSecondDateFilter
 	});
 
-	toolbar.addChild(btnDateFilterBegin);
-	toolbar.addChild(beginDateTB);
-	toolbar.addChild(btnDateFilterEnd);
-	toolbar.addChild(endDateTB);
+	var submit = new dijit.form.Button({
+		id: "searchButton",
+		iconClass: "dijitIcon dijitIconSearch",
+		type: "submit",
+	});
 
-	toolbar.addChild(toggleBtn);
-	toolbar.addChild(btnDateFilterBegin2);
-	toolbar.addChild(beginDateTB2);
-	toolbar.addChild(btnDateFilterEnd2);
-	toolbar.addChild(endDateTB2);
+	var reset = new dijit.form.Button({
+		id: "resetButton",
+		iconClass: "dijitIcon dijitIconDelete",
+		type: "reset",
+	});
+
+	searchForm.domNode.appendChild(queryInputLabel.domNode);
+	searchForm.domNode.appendChild(queryInput.domNode);
+
+	searchForm.domNode.appendChild(btnDateFilterBegin.domNode);
+	searchForm.domNode.appendChild(beginDateTB.domNode);
+	searchForm.domNode.appendChild(btnDateFilterEnd.domNode);
+	searchForm.domNode.appendChild(endDateTB.domNode);
+
+	searchForm.domNode.appendChild(toggleBtn.domNode);
+
+	searchForm.domNode.appendChild(btnDateFilterBegin2.domNode);
+	searchForm.domNode.appendChild(beginDateTB2.domNode);
+	searchForm.domNode.appendChild(btnDateFilterEnd2.domNode);
+	searchForm.domNode.appendChild(endDateTB2.domNode);
+
+	searchForm.domNode.appendChild(submit.domNode);
+	searchForm.domNode.appendChild(reset.domNode);
+
+	toolbar.addChild(searchForm);
 
 	toolbar.addChild(new dijit.ToolbarSeparator({
 		id: "sep"
@@ -322,8 +350,7 @@ var toggleSecondDateFilter = function() {
 	// On click, toggle the second date selection filters and the slider
 	// TODO: This uses jQuery... as that's far more easy.
 	var toggleDiv = $("#toggleBtn").parent().parent();
-	toggleDiv.nextUntil($("#sep")).toggle();
-	$("#year-range-slider-2").toggle();
+	toggleDiv.nextUntil($("span[widgetid=searchButton]")).toggle();
 
 	// If toggled hidden, set variables to undefined  
 	if (beginDate2) {
