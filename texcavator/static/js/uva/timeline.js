@@ -50,6 +50,9 @@ var showTimeline = function(item) {
 	tc.selectChild(dijit.byId("timeline"));
 
 	loadGraphData(queryId);
+
+	// Toggle warning for advertisements
+	$("#timeline-advert-warning").toggle(getConfig().search.type.advert);
 };
 
 

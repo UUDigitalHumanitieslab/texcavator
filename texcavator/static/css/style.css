@@ -49,6 +49,18 @@
     font-size: 130%;
 }
 
+/* Timeline title and advertisement warning */
+#timeline-title {
+    color: grey;
+    text-align: center;
+}
+
+#timeline-advert-warning {
+    color: red;
+    text-align: center;
+    display: none;
+}
+
 /* Align filters next to each other */
 #div-article-distribution {
 	display: inline-block;
