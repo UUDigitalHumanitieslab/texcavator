@@ -150,6 +150,7 @@ var createLogin = function( projectname )
 				if ( status === "SUCCESS" )
 				{
 					createQueryList();		// using username to filter the Saved queries
+					$('#query').focus();
 
 					if ( next_url )
 					{

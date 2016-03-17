@@ -143,7 +143,7 @@ var createToolbar = function() {
 		onreset: "searchReset(); return false;"
 	});
 
-	// Query input
+	// Query input (editable via a modal dialog)
 	var queryInputLabel = new dijit.form.Button({
 		label: "Search",
 		showLabel: true,
@@ -152,6 +152,25 @@ var createToolbar = function() {
 
 	var queryInput = new dijit.form.TextBox({
 		id: "query",
+		style: "width: 200px",
+	});
+
+	var queryDialog = function() {
+		var textarea = new dijit.form.Textarea({
+			id: "queryEdit",
+			value: dojo.byId("query").value.trim(),
+		});
+
+		var updateQuery = function() {
+			dijit.byId("query").set("value", dojo.byId("queryEdit").value.trim());
+		};
+
+		genDialog("Edit query", textarea.domNode, { "OK": true, "Cancel": true }, updateQuery);
+	};
+
+	var queryInputEdit = new dijit.form.Button({
+		iconClass: "dijitIcon dijitIconEditTask",
+		onClick: queryDialog,
 	});
 
 	// Search dates
@@ -271,6 +290,7 @@ var createToolbar = function() {
 
 	searchForm.domNode.appendChild(queryInputLabel.domNode);
 	searchForm.domNode.appendChild(queryInput.domNode);
+	searchForm.domNode.appendChild(queryInputEdit.domNode);
 
 	searchForm.domNode.appendChild(btnDateFilterBegin.domNode);
 	searchForm.domNode.appendChild(beginDateTB.domNode);

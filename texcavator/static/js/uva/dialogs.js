@@ -19,14 +19,19 @@ var genDialog = function(title, message, buttons, callback) {
 
 	var dialogContainer = new dijit.layout.ContentPane({
 		title: "Dialog",
-		style: "width: 275px; height: 125px; text-align: left; line-height: 18px; margin: 5px;"
+		style: "width: 350px; height: 250px; text-align: left; line-height: 18px; margin: 5px;"
 	});
 	dialogContainer.placeAt(container);
 
-	var msgNode = dojo.create("div", {
-		innerHTML: message,
-		style: "clear: both;"
-	}, dialogContainer.domNode);
+	if (message instanceof HTMLElement) {
+		dialogContainer.domNode.appendChild(message);
+	}
+	else {
+		dojo.create("div", {
+			innerHTML: message,
+			style: "clear: both;"
+		}, dialogContainer.domNode);
+	}
 
 	var actionBar = dojo.create("div", {
 		className: "dijitDialogPaneActionBar",
@@ -52,10 +57,10 @@ var genDialog = function(title, message, buttons, callback) {
 		role: "presentation",
 		onClick: function() {
 			answer = "OK";
-			dialog.destroyRecursive();
 			if (typeof(callback) == "function") {
 				callback();
 			}
+			dialog.destroyRecursive();
 		}
 	});
 	actionBar.appendChild(bOK.domNode);
