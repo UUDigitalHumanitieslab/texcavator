@@ -448,7 +448,7 @@ var createAbout = function() {
 	}, aboutContainer.domNode);
 
 	dojo.create("div", {
-		innerHTML: "<a href='http://www.uu.nl' target='_blank'><img src='/static/image/logos/UniversiteitUtrecht.gif' height='50' align='left' /></a>",
+		innerHTML: "<a href='http://www.uu.nl' target='_blank'><img src='/static/image/logos/uu-logo.png' align='left' /></a>",
 		style: "clear: both"
 	}, aboutContainer.domNode);
 	dojo.create("div", {
