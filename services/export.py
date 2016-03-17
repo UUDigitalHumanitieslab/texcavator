@@ -12,59 +12,27 @@ from django.http import HttpResponse
 
 
 def export_csv(request):
-    """Export cloud data to a csv file
+    """
+    Export cloud data to a csv file
     """
     r = request.POST
 
-    try:
-        content = r["clouddata"]
-    except KeyError:
-        content = ""
+    content = r.get('clouddata', '')
 
-    try:
-        zipped_str = r["zipped"]
-        if zipped_str == '1':
-            zipped = True
-        else:
-            zipped = False
-    except KeyError:
-        zipped = False
+    zipped_str = r.get('zipped', '0')
+    zipped = zipped_str == '1'
 
-    try:
-        filename = r["filename"]
-    except KeyError:
-        if zipped:
-            filename = "cloud.csv.zip"
-        else:
-            filename = "cloud.csv"
+    default_filename = 'cloud.csv.zip' if zipped else 'cloud.csv'
+    filename = r.get('filename', default_filename)
 
-    try:
-        separator_str = r["separator"]
-    except KeyError:
-        separator_str = "tab"
-
-    if settings.DEBUG:
-        print >> stderr, "separator: %s" % separator_str
-    if separator_str == "comma":
-        separator = ','
-    else:
-        separator = '\t'
-
-    try:
-        str_zipped = r["zipped"]
-    except KeyError:
-        str_zipped = 0
-
-    if str_zipped == '1':
-        zipped = True
-    else:
-        zipped = False
+    separator_str = r.get('separator', 'tab')
+    separator = ',' if separator_str == 'comma' else '\t'
 
     if zipped:
-        response = HttpResponse(content_type="application/zip")
+        response = HttpResponse(content_type='application/zip')
         response['Content-Disposition'] = 'attachment; filename=' + filename
     else:
-        response = HttpResponse(content_type="text/csv")
+        response = HttpResponse(content_type='text/csv')
         response['Content-Disposition'] = 'attachment; filename=' + filename
 
     fout = StringIO.StringIO()  # in-memory temp output file
@@ -72,13 +40,11 @@ def export_csv(request):
     writer = csv.writer(fout, delimiter=separator)
 
     lines = content.split('\n')
-    for l in range(len(lines)):
-        line = lines[l]
-
+    for n, line in enumerate(lines):
         outlist = []
         components = line.split(',')
 
-        if l == 0:
+        if n == 0:
             ncomp0 = len(components)
         else:
             ncomp = len(components)
@@ -95,7 +61,7 @@ def export_csv(request):
 
     if zipped:
         zf = zipfile.ZipFile(response, 'w', zipfile.ZIP_DEFLATED)		# write zip to http response
-        zf.writestr("cloud.csv", fout.getvalue())						# write csv data to zip
+        zf.writestr('cloud.csv', fout.getvalue())						# write csv data to zip
         zf.close()
     else:
         response.write(fout.getvalue())								# write data to http response

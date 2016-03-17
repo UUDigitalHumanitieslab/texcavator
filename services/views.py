@@ -268,7 +268,7 @@ def log(request):
 @csrf_exempt
 @login_required
 def export_cloud(request):
-    """Export cloud data to cvs file"""
+    """Export cloud data to .csv file"""
     logger.info('services/export_cloud/')
 
     if settings.DEBUG:

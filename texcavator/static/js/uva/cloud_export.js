@@ -113,27 +113,19 @@ var createCloudDlg = function()
 		style: "background-color: white; width: 410px; height: 320px; line-height: 18pt"
 	}, "tc-div-cloud" );
 
-	/*
-	var form = new dijit.form.Form({
-		id: "frm-cloud-table",
-		method: "post"
-	});
-	tabCont.addChild( form );
-	*/
-
 	var term_src = getCloudSrc();
-	if( cloud_src === "article" )
-	{ var content_html = "<b>Single Article "; }
-	else if( cloud_src === "date range" )
-	{ var content_html = "<b>Date range "; }
-	else if( cloud_src === "burst" )
-	{ var content_html = "<b>Burst "; }
-	else
-	{ var content_html = "<b>"; }	// full range, or date_range
-
 	var term_count = getCloudTermCount();
-	content_html += "Word Cloud Data: " + term_count + " terms</b><br/>";
-	console.log( content_html );
+	var content_html = "<b>";
+	if ( cloud_src === "article" ) { 
+		content_html += "Single Article"; 
+	}
+	else if ( cloud_src === "date range" ) { 
+		content_html += "Date range";
+	}
+	else if ( cloud_src === "burst" ) { 
+		content_html += "Burst"; 
+	}
+	content_html += " Word Cloud Data: " + term_count + " terms</b><br/>";
 
 	// word cloud data tab
 	var cp_grid_cloud = new dijit.layout.ContentPane({
@@ -177,20 +169,15 @@ var createCloudDlg = function()
 		showLabel: true,
 		role: "presentation",
 		onClick: function() { dijit.byId( "dlg-cloud" ).destroyRecursive(); }
-	//	onClick: function() { dijit.byId( "dlg-cloud" ).hide(); }
 	});
 	actionBar.appendChild( bCancel.domNode );
 
-	if( term_count == 0 )
-	{ var export_disabled = true; }
-	else
-	{ var export_disabled = false; }
 	var bExport = new dijit.form.Button(
 	{
 		id: "btn-cloud-export",
 		label: "<img src='/static/image/icon/Tango/16/actions/dialog-ok.png'/> Export",
 		showLabel: true,
-		disabled: export_disabled,
+		disabled: term_count === 0,
 		role: "presentation",
 		onClick: function()
 		{
@@ -198,12 +185,10 @@ var createCloudDlg = function()
 			var filename = "cloud.csv";
 			exportCloudData( filename );
 			dijit.byId( "dlg-cloud" ).destroyRecursive();
-		//	dijit.byId( "dlg-cloud" ).hide();
 		}
 	});
 	actionBar.appendChild( bExport.domNode );
 }; // createCloudDlg
-
 
 
 var createCloudTableData = function()
@@ -259,8 +244,7 @@ var createCloudTableData = function()
 	}
 
 	return table_data;
-}
-
+};
 
 
 var fillCloudTable = function()
@@ -270,30 +254,18 @@ var fillCloudTable = function()
 	var grid_layout = getCloudGridLayout();
 
 	var cloud_store = new dojo.data.ItemFileWriteStore({ data: createCloudTableData() });
-//	dojo.forEach( data.items, function( item )
-//	{ cloud_store.loadItem( item ); });
-
 
 	var term_count = getCloudTermCount();
 	console.log( "term_count: " + term_count );
-//	dijit.byId( "cp-grid-cloud" ).set( "content", "<b>Word Cloud Data: " + term_count + " terms</b><br/>" );
 
-	if( term_count == 0 )
-	{ var export_disabled = true; }
-	else
-	{ var export_disabled = false; }
-	dijit.byId( "btn-cloud-export" ).set( "disabled", export_disabled );
-
+	dijit.byId( "btn-cloud-export" ).set( "disabled", term_count === 0 );
 
 	var divWData = dojo.create( "div", {
 		id: "div-grid-cloud"		// for the grid
 	}, dijit.byId( "cp-grid-cloud" ).domNode );
 
-
-//	dijit.byId( "grid-cloud" ).destroyRecursive();
-	var grid = dijit.byId( "grid-cloud" );
-	if( grid )
-	{ grid.destroy(); }
+	if( dijit.byId( "grid-cloud" ) )
+	{ dijit.byId( "grid-cloud" ).destroy(); }
 
 	var grid = new dojox.grid.EnhancedGrid({
 		id:          "grid-cloud",
@@ -311,19 +283,7 @@ var fillCloudTable = function()
 	});
 	grid.placeAt( dojo.byId( "div-grid-cloud" ) );
 	grid.startup();
-
-	/*
-	var div_grid = dojo.byId( "div-grid-cloud" );
-	if( div_grid )
-	{
-		grid.placeAt( div_grid );
-		grid.startup();
-	}
-	else
-	{ console.log( "No div-grid-cloud !" ); }
-	*/
 };
-
 
 
 function exportCloudData( filename )
@@ -361,17 +321,3 @@ function exportCloudData( filename )
 		function( err ) { console.error( err ); return err; }
     });
 }
-
-/*
-function exportCloudDataSelected()
-{
-	console.log( "exportCloudDataSelected()" );
-	var str = dijit.byId( "grid-cloud" ).exportSelected( "csv" );
-//	console.log( "str: " + str );
-	dojo.byId( "output" ).value = str;
-};
-*/
-
-
-
-// [eof]
