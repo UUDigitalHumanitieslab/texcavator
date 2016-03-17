@@ -1,3 +1,60 @@
+html, body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    overflow:hidden;
+}
+
+#borderContainer {
+    width: 100%;
+    height: 100%;
+}
+
+#top {
+    padding: 2px;
+    height: 32px;
+}
+
+#top h1 {
+    float: left;
+    margin: 11px;
+    font-size: 24pt;
+    width: 195px;
+}
+#top ul {
+    margin: 14px 0;
+}
+#top ul li {
+    float: left;
+    width: 80px;
+    list-style: none;
+    background-color: #99CCFF;
+    border-radius: 5px;
+    text-align: center;
+    margin: 5px;
+    font-size: 11pt;
+}
+#top ul li a {
+    color: white;
+    text-decoration: none;
+}
+#top ul li a:hover {
+    text-decoration: underline;
+}
+#top #logos {
+    float: right;
+}
+
+#sparksDialog .dijitTooltipContainer {
+    background-color: #CFE5FA;
+}
+
+#sparksCloudPane {
+    border: 1px solid #B5BCC7;
+    background-color: white;
+    margin-top: -12px;
+}
+
 #result>p {
 	color: #555;
 	margin: 0 0 5px 0;

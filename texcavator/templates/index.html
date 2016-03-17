@@ -5,10 +5,6 @@
 		@import url({{ STATIC_URL }}js/Dojo/dojox/form/resources/RangeSlider.css);
 		@import url({{ STATIC_URL }}css/style.css);
 	</style>
-	<style type="text/css">
-		#sparksDialog .dijitTooltipContainer { background-color: #CFE5FA; }
-		#sparksCloudPane { border: 1px solid #B5BCC7; background-color: white; margin-top: -12px;}
-	</style>
 {% endblock head %}
 
 {% block middle %}
@@ -20,8 +16,7 @@
 			</div>
 		</div>
 
-		<div id="lexicon" data-dojo-type="dijit.layout.ContentPane" 
-						  data-dojo-props="title:'Saved queries'">
+		<div id="lexicon" data-dojo-type="dijit.layout.ContentPane" data-dojo-props="title:'Saved queries'">
 			The creation of a lexicon starts with composing its query in the Search accordion. Give it a name and save the query. Then fetch the articles by clicking the 1st of the 4 small icons.<br /><br />
 			<textarea id="queryComment" name="queryComment" placeholder="Query comment (optional)"></textarea></br>
 			<input id="queryTitle" name="queryTitle" type="text" placeholder="Query title" />
@@ -56,7 +51,6 @@
 				</div>
 
 				<div id="timeline" title="Timeline" dojoType="dijit.layout.ContentPane" selected="false">  <!-- Timeline -->
-				<!-- <div id="chart"></div><br /> -->
 					<div id="timeline-title">
 						Hover over a bar to inspect the values, click a bar to show a word cloud for this period.
                         Click <a href="javascript:switchTimelineNormalize()">here</a> to switch between absolute and relative frequencies.
@@ -99,9 +93,7 @@
 		</div>
 		</div>
 	</script>
-
 {% endblock middle %}
-
 
 {% block outside %}
 <script type="text/javascript">
