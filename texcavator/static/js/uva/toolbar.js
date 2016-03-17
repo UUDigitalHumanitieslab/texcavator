@@ -319,12 +319,6 @@ var createToolbar = function() {
 		onClick: toolbarQuery
 	});
 
-	var btnCloud = new dijit.form.Button({
-		label: "<img src='/static/image/icon/Tango/22/actions/check-spelling.png')/>Cloud Data",
-		showLabel: true,
-		onClick: showCloudDlg
-	});
-
 	// remaining icons style: "float:right"
 
 	var btnAbout = new dijit.form.Button({
@@ -356,7 +350,6 @@ var createToolbar = function() {
 	});
 
 	toolbar.addChild(btnQuery);
-	toolbar.addChild(btnCloud);
 	// The order below is in reverse because of the "float:right" style above (probably).
 	toolbar.addChild(btnUser);
 	toolbar.addChild(btnAbout);

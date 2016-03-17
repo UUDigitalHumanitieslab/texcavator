@@ -555,6 +555,16 @@ function nextResults( amount )
 		}
 
 		placeCloudInTarget( cloud_src, cloud_data, target );
+
+        // Add download button
+        var btnCloud = new dijit.form.Button({
+            label: "Cloud data",
+            showLabel: true,
+		    iconClass: "dijitEditorIcon dijitEditorIconJustifyCenter",
+            style: "position: relative; top: -20px; display: inline; float: right;",
+            onClick: showCloudDlg,
+        });
+        $("#statusline").after(btnCloud.domNode);
 	}
 </script>
 

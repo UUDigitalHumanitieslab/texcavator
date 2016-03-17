@@ -511,7 +511,7 @@ function burstClicked(data) {
 	// Display burst cloud
 	dijit.byId('sparksDropDownButton').openDropDown();
 
-	var template = '<b>{burst}{start} - {end}: {count} documents.</b><br /><br /><div id="cloud"></div>';
+	var template = '<b>{burst}{start} - {end}: {count} documents.</b><div id="cloud"></div>';
 	var content = {
 		burst: (d.burst) ? "Burst " : "",
 		start: d.start.toString().substr(4, 11),
