@@ -75,7 +75,7 @@ Functions:
 
 			var identifier_list = identifier.split(":");
 				// ddd:010013335:mpeg21:p013:a0001
-			var article_id = article_id.split(":").pop();
+			article_id = article_id.split(":").pop();
 				// ddd:010013335:mpeg21:a0295
 			identifier_list.pop();
 			identifier_list.push(article_id);
@@ -96,29 +96,17 @@ Functions:
 		console.log( "generateImageForPage()" );
 		// Find common bounding box
 		var top, right, bottom, left;
-		var min = function( a, b ) { return ( a == undefined ) ? b : Math.min( a, b ); }
-		var max = function( a, b ) { return ( a == undefined ) ? b : Math.max( a, b ); }
-		var i = function( s ) { return parseInt( s ); }
+		var min = function( a, b ) { return ( a == undefined ) ? b : Math.min( a, b ); };
+		var max = function( a, b ) { return ( a == undefined ) ? b : Math.max( a, b ); };
+		var i = function( s ) { return parseInt( s ); };
 
-	//	var areas = record.getElementsByTagName("area");
 		console.log( typeof( record ) );
-		if( dojo.isMozilla )
-		{
+		var areaTagName = "area";
+		if( dojo.isMozilla ) {
 			console.log( "isMozilla" );
-			var areaTagName = "dcx:area";
-		}
-		else
-		{
-			console.log( "is?" );
-			var areaTagName = "area";
+			areaTagName = "dcx:area";
 		}
 		var areas = record.getElementsByTagName( areaTagName );
-		
-		/*
-		var areas = record.getElementsByTagName("area");
-		if( areas.length == 0 )
-			areas = record.getElementsByTagName("dcx:area");
-		*/
 
 		dojo.forEach(areas, function(area) {
 			top    = min(top,      area.getAttribute("vpos"));

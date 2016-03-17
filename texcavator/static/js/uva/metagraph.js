@@ -109,7 +109,7 @@ function addPieChart(filtered, data, id) {
 function filterSearch(id) {
     if (id === "#chart_articletype") return function(segmentData) {
         var selected = ES_REVERSE_MAPPING.st[segmentData.label].slice(3);
-        for (key in config.search.type) {
+        for (var key in config.search.type) {
             if (key === selected) {
                 config.search.type[key] = true;
             } else {
@@ -119,7 +119,7 @@ function filterSearch(id) {
         searchSubmit();
     }; else if (id === "#chart_distribution") return function(segmentData) {
         var selected = ES_REVERSE_MAPPING.sd[segmentData.label].slice(3);
-        for (key in config.search.distrib) {
+        for (var key in config.search.distrib) {
             if (key === selected) {
                 config.search.distrib[key] = true;
             } else {

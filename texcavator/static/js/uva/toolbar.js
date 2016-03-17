@@ -379,7 +379,7 @@ var toggleSecondDateFilter = function() {
 		dijit.byId("enddate-2").set("value", maxDate);
 		dijit.byId("toggleBtn").set("label", "<img src='/static/image/icon/Tango/22/actions/list-remove.png')/>");
 	}
-}
+};
 
 
 var toolbarQuery = function() {
@@ -501,7 +501,7 @@ function validateDates() {
 	if (dijit.byId("begindate").value == undefined || dijit.byId("enddate").value == undefined ||
 		dijit.byId("begindate-2").value == undefined || dijit.byId("enddate-2").value == undefined) 
 	{
-		var message = 'You entered an invalid date range. Please check your date filters.'
+		var message = 'You entered an invalid date range. Please check your date filters.';
         genDialog('Invalid date range', message, {OK: true});
 		return false;
 	}

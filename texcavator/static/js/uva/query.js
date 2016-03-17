@@ -471,12 +471,12 @@ function saveQuery(item, url) {
 
 			createQueryList();
 
-			var dialog = new dijit.Dialog({
+			var successDialog = new dijit.Dialog({
 				title: "Save query",
 				style: "width: 300px",
 				content: "Query saved successfully",
 			});
-			dialog.show();
+			successDialog.show();
 
 			accordionSelectChild("lexicon");
 		},
