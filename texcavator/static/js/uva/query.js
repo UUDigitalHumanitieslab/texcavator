@@ -470,6 +470,15 @@ function saveQuery(item, url) {
 			}
 
 			createQueryList();
+
+			var dialog = new dijit.Dialog({
+				title: "Save query",
+				style: "width: 300px",
+				content: "Query saved successfully",
+			});
+			dialog.show();
+
+			accordionSelectChild("lexicon");
 		},
 		error: function(err) {
 			console.error(err);

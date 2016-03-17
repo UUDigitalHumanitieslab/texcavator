@@ -12,12 +12,7 @@ dojo.require("dojo.store.JsonRest");
 
 
 function accordionSelectChild(id) {
-	// how to select accordion child?
-	var accordion = dijit.byId("leftAccordion");
-	var selected_child = accordion.get("selectedChildWidget");
-	if (selected_child.id !== id) {
-		accordion.back();
-	} // show Search pane
+	dijit.byId("leftAccordion").selectChild(id);
 } // accordionSelectChild()
 
 
