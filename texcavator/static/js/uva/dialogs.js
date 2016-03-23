@@ -57,7 +57,7 @@ var genDialog = function(title, message, buttons, callback) {
 		role: "presentation",
 		onClick: function() {
 			answer = "OK";
-			if (typeof(callback) == "function") {
+			if (callback && typeof(callback) === "function") {
 				callback();
 			}
 			dialog.destroyRecursive();

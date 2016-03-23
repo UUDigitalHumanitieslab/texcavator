@@ -315,7 +315,8 @@ def export_stopwords(request):
 @csrf_exempt
 @login_required
 def download_prepare(request):
-    """Prepares the ocr+meta-data zipfile for download
+    """
+    Prepares the ocr+meta-data zipfile for download.
     """
     if settings.DEBUG:
         print >> stderr, "download_prepare()"
@@ -329,8 +330,12 @@ def download_prepare(request):
         msg = 'You are not allowed to download query results. '
         msg += 'Please contact the administrators for further information.'
         return json_response_message('error', msg)
-    
-    query = Query.objects.get(title=request.GET.get('query_title'), user=user)
+
+    query = get_object_or_404(Query, pk=request.GET.get('pk'))
+
+    if user != query.user:
+        return json_response_message('error', 'You are not allowed to download this query.')
+
     count = count_results(query)
     if user.has_perm('query.download_many_documents'):
         maximum = settings.QUERY_DATA_MAX_RESULTS
@@ -424,6 +429,7 @@ def retrieve_timeframes(request):
     """Retrieves all timeframes of Terms as JSON objects
     """
     return json_response_message('ok', '', {'result': [{'id': t[0], 'name': t[1]} for t in Term.TIMEFRAME_CHOICES]})
+
 
 @login_required
 def export_newspapers(request):

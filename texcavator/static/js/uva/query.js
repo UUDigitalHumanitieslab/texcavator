@@ -8,13 +8,7 @@ function storeLexiconTitle( lexicon_title )
 function retrieveLexiconTitle()
 function storeLexiconQuery( lexicon_query )
 function retrieveLexiconQuery()
-function storeCollectionUsed( collection_used )
-function retrieveCollectionUsed()
-function getQueryList()
-function updateQueryDlg()
 function createQueryDlg()
-function okEdit( querySaveName, querySaveQuery )
-function okCreate( querySaveName )
 function okDownload( query_title )
 */
 
@@ -29,8 +23,7 @@ dojo.require("dojox.widget.Dialog");
 
 var lexiconID = null; // file global
 var lexiconTitle = null; // file global
-var lexiconQuey = null; // file global
-var collectionUsed = null; // file global
+var lexiconQuery = null; // file global
 
 var grid_3layout = [{
 	field: "id",
@@ -77,96 +70,15 @@ function retrieveLexiconQuery() {
 }
 
 
-function storeCollectionUsed(collection_used) {
-	//	console.log( "storeCollectionUsed(): " + collection_used );
-	collectionUsed = collection_used;
-}
+function downloadQueryDialog(item) {
+	console.log("downloadQueryDialog()");
 
-function retrieveCollectionUsed() {
-	//	console.log( "retriveCollectionUsed(): " + collection_used );
-	return collectionUsed;
-}
-
-
-function queryFromName(queryName) {
-	var query_content = "";
-
-	dojo.forEach(glob_lexiconData, function(item) {
-		var query_title = item.title;
-		// TODO: magic string "_daterange"
-		if (query_title === queryName && !query_title.endsWith("_daterange")) {
-			query_content = item.query;
-		}
-	});
-
-	return query_content;
-}
-
-
-function getQueryList() {
-	var queryList = [];
-	dojo.forEach(glob_lexiconData, function(item) {
-		var query_title = item.title;
-		var id = item.pk;
-		// do not show queries with *_daterange names TODO: magic string
-		if (!query_title.endsWith("_daterange")) {
-			queryList.push({
-				name: query_title,
-				id: id
-			});
-		}
-	});
-
-	return queryList;
-}
-
-
-function updateQueryDlg() {
-	console.log("updateQueryDlg()");
-
-	// update the query list
-	var querylistStore = new dojo.store.Memory({
-		data: getQueryList()
-	});
-
-	// update the Edit query list
-	dijit.byId("cb-query-edit").set("store", querylistStore);
-
-	// update the Data query list
-	dijit.byId("cb-query-data").set("store", querylistStore);
-}
-
-
-//dojo.addOnLoad( createQueryDlg );
-function createQueryDlg() {
-	console.log("createQueryDlg()");
-
-	var dlgQuery = new dijit.Dialog({
-		id: "dlg-query",
-		title: "Query"
-	});
-
-	dojo.style(dlgQuery.closeButtonNode, "visibility", "hidden"); // hide the ordinary close button
-
-	var container = dlgQuery.containerNode;
-
-	var tcdiv = dojo.create("div", {
-		id: "tc-div-query"
-	}, container);
-	var tabCont = new dijit.layout.TabContainer({
-		id: "tc-query",
-		style: "background-color: white; width: 410px; height: 320px; line-height: 18pt"
-	}, "tc-div-query");
-
-	// Download query data
-	//	console.log( "cpQData" );
 	var cpQData = new dijit.layout.ContentPane({
 		id: "cp-data",
-		title: "Data",
-		content: "<b>Download the query data (OCR and metadata)</b>"
+		content: "<strong>Download options</strong>",
 	});
 
-
+	// Output formats (json, xml, csv)
 	dojo.create("div", {
 		id: "div-qdata-format"
 	}, cpQData.domNode);
@@ -177,67 +89,37 @@ function createQueryDlg() {
 		innerHTML: "Export format: <br/>"
 	}, cpQData.domNode);
 
-	var jsonformat_val = config.querydataexport.format === "json";
+	var formats = {
+		'json': 'JSON (native format)',
+		'xml': 'XML (slow! conversion)',
+		'csv': 'CSV (TAB delimited)',
+	};
+	$.each(formats, function(key, value) {
+		var rb = new dijit.form.RadioButton({
+			id: "rb-qdata-" + key,
+			checked: config.querydataexport.format === key,
+			onChange: function(btn) {
+				if (btn) {
+					config.querydataexport.format = key;
+				}
+			},
+		});
+		rb.placeAt(cpQData.domNode);
 
-	var rbQDataJSON = new dijit.form.RadioButton({
-		id: "rb-qdata-json",
-		checked: jsonformat_val,
-		onChange: function(btn) {
-			if (btn) {
-				config.querydataexport.format = "json";
-			}
-		},
+		var label = dojo.create("label", {
+			id: "label-qdata-" + key,
+			for: "rb-qdata-" + key,
+			innerHTML: "&nbsp;" + value + "<br />",
+		}, cpQData.domNode);
 	});
-	rbQDataJSON.placeAt(cpQData.domNode);
-
-	var labelQDataJSON = dojo.create("label", {
-		id: "label-qdata-json",
-		for: "rb-qdata-json",
-		innerHTML: "&nbsp;JSON (native format)<br/>"
-	}, cpQData.domNode);
-
-
-	var xmlformat_val = config.querydataexport.format === "xml";
-
-	var rbQDataXML = new dijit.form.RadioButton({
-		id: "rb-qdata-xml",
-		checked: xmlformat_val,
-		onChange: function(btn) {
-			if (btn) {
-				config.querydataexport.format = "xml";
-			}
-		},
-	});
-	rbQDataXML.placeAt(cpQData.domNode);
-
-	var labelQueryDataFormatXML = dojo.create("label", {
-		id: "label-qdata-xml",
-		for: "rb-qdata-xml",
-		innerHTML: "&nbsp;XML (slow! conversion)<br/>"
-	}, cpQData.domNode);
-
-	var csvformat_val = config.querydataexport.format === "csv";
-
-	var rbQDataCSV = new dijit.form.RadioButton({
-		id: "rb-qdata-csv",
-		checked: csvformat_val,
-		onChange: function(btn) {
-			if (btn) {
-				config.querydataexport.format = "csv";
-			}
-		},
-	});
-	rbQDataCSV.placeAt(cpQData.domNode);
-
-	var labelQueryDataFormatCSV = dojo.create("label", {
-		id: "label-qdata-csv",
-		for: "rb-qdata-csv",
-		innerHTML: "&nbsp;CSV (TAB delimited)<br/>"
-	}, cpQData.domNode);
 
 	// Simplified export
+	var hrSimplifiedExport = dojo.create("hr", {
+		id: "hr-simplified-export",
+	}, cpQData.domNode);
+
 	var divSimplifiedExport = dojo.create("div", {
-		id: "div-simplified-export"
+		id: "div-simplified-export",
 	}, cpQData.domNode);
 
 	var cbSimplifiedExport = new dijit.form.CheckBox({
@@ -254,169 +136,23 @@ function createQueryDlg() {
 		innerHTML: "&nbsp;Simplified export (only article title and full text)<br/>"
 	}, cpQData.domNode);
 
+	var title = "Download the query data (OCR and metadata)";
+	var buttons = { "OK": true, "Cancel": true };
+	genDialog(title, cpQData.domNode, buttons, function() { okDownload(item); });
 
-	// fill the query list
-	var queryListStoreData = new dojo.store.Memory({
-		data: getQueryList()
-	});
-
-	var queryNameData = "";
-	var queryID = -1;
-	dojo.create("div", {
-		id: "div-query-data"
-	}, cpQData.domNode);
-
-	var cbQueryData = new dijit.form.ComboBox({
-		id: "cb-query-data",
-		name: "cbQueryData",
-		style: "width: 100%",
-		displayedValue: "Select query",
-		store: queryListStoreData,
-		searchAttr: "name",
-		onChange: function() {
-			bOK.set("disabled", false);
-			bValidate.set("disabled", false);
-			queryNameData = cbQueryData.get("value");
-			console.log("Query name: " + queryNameData);
-
-			dojo.forEach(glob_lexiconData, function(item) {
-				var query_title = item.title;
-				if (query_title === queryNameEdit && !query_title.endsWith("_daterange")) // do not show queries with *_daterange names
-				{
-					downloadQueryData(query_title);
-				}
-			});
-		}
-	});
-	cbQueryData.placeAt(cpQData.domNode);
-
-
-	var actionBar = dojo.create("div", {
-		className: "dijitDialogPaneActionBar",
-		style: "height: 30px"
-	}, container);
-
-	var bCancel = new dijit.form.Button({
-		label: "<img src='/static/image/icon/Tango/16/actions/dialog-cancel.png'/> Cancel",
-		showLabel: true,
-		role: "presentation",
-		onClick: function() {
-			dijit.byId("dlg-query").destroyRecursive();
-		}
-	});
-	actionBar.appendChild(bCancel.domNode);
-
-	var bValidate = new dijit.form.Button({
-		label: "<img src='/static/image/icon/Tango/16/categories/system.png'/> Validate",
-		disabled: true,
-		showLabel: true,
-		role: "presentation",
-		onClick: function() {
-			dijit.byId("dlg-query").destroyRecursive();
-		}
-	});
-	//	actionBar.appendChild( bValidate.domNode );
-
-	var bOK = new dijit.form.Button({
-		//	label: "<img src='/static/image/icon/Tango/16/actions/dialog-ok.png'/> OK",
-		label: " OK",
-		iconClass: "dijitIconSave",
-		disabled: true,
-		showLabel: true,
-		role: "presentation",
-		onClick: function() {
-			var selectedTab = dijit.byId("tc-query").get("selectedChildWidget");
-			//	console.log( selectedTab.title );
-
-			if (selectedTab.id === "cp-edit") {
-				okEdit(queryNameEdit, taQuery.get("value"));
-			} else if (selectedTab.id === "cp-create") {
-				okCreate(queryNameCreate);
-			} else if (selectedTab.id === "cp-data") {
-				okDownload(queryNameData);
-			}
-		}
-	});
-	actionBar.appendChild(bOK.domNode);
-
-
-	if (QUERY_DATA_DOWNLOAD) {
-		tabCont.addChild(cpQData);
-	} // guest has no email
-}
-
-
-function okEdit(querySaveName, querySaveQuery) {
-	console.log("okEdit");
-	console.log("Query name: " + querySaveName);
-	console.log("Query: " + querySaveQuery);
-
-	dijit.byId("dlg-query").destroyRecursive();
-
-	dojo.forEach(glob_lexiconData, function(item) // lexiconData: global {} in index.html
-		{
-			var query_title = item.title;
-			if (query_title === querySaveName) {
-				item.query = querySaveQuery;
-			}
-		});
-
-	if (querySaveQuery === "") {
-		console.log("empty query?");
-	} else {
-		// lexicon is the django app name; lexiconitem could be renamed to query
-		var data = {
-			"model": "lexicon.lexiconitem",
-			"fields": {
-				"overwrite": true,
-				"removetags": true, // remove existing Lexicon* tags; docs must be reloaded
-				"user": glob_username,
-				"title": querySaveName,
-				"query": querySaveQuery
-			}
-		};
-
-		lexiconStore.put(data).then(function(result) // HTTP POST
-			{
-				var status = result.status;
-				if (status === "SUCCESS") {
-					console.log("Query was saved");
-					dijit.byId("leftAccordion").selectChild("lexicon");
-					// update the lexicon container (in index.html)
-					createQueryList();
-				} else {
-					var title = "Save query";
-					var msg = "The query could not be saved:<br/>" + result.msg;
-					var buttons = {
-						"OK": true,
-						"Cancel": false
-					};
-					genDialog(title, msg, buttons);
-				}
-			});
-	}
-}
-
-
-// TODO: remove, deprecated functionality
-function okCreate(querySaveName) {
-	console.log("okCreate");
-	console.log("Query name: " + querySaveName);
-
-	dijit.byId("dlg-query").destroyRecursive();
+	//if (QUERY_DATA_DOWNLOAD) {
+	//	tabCont.addChild(cpQData);
+	//} // guest has no email
 }
 
 
 // Starts the download of a query
-function okDownload(query_title) {
-	console.log("okDownload() : " + query_title);
-
-	dijit.byId("dlg-query").destroyRecursive();
+function okDownload(item) {
+	console.log("okDownload() : " + item.pk);
 
 	var config = getConfig();
 	var params = {
-		collection: ES_INDEX,
-		query_title: query_title,
+		pk: item.pk,
 		format: config.querydataexport.format, // "json", "xml" or "csv"
 		simplified: config.querydataexport.simplified
 	};
@@ -447,7 +183,7 @@ function okDownload(query_title) {
 		"Your download is being prepared. This might take a while. When the download is finished, a message box will pop up.", {
 			"OK": true
 		});
-}
+};
 
 
 function saveQuery(item, url) {

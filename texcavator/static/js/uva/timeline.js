@@ -38,7 +38,6 @@ var showTimeline = function(item) {
 	storeLexiconID(queryId); // query.js
 	storeLexiconTitle(queryTitle); // query.js
 	storeLexiconQuery(queryString); // query.js
-	storeCollectionUsed(ES_INDEX); // query.js
 
 	var sparksDD = dijit.byId('sparksDropDownButton');
 	if (sparksDD !== undefined) {

@@ -34,7 +34,6 @@ var getBeginDate = function()
 var getEndDate = function()
 var createToolbar = function()
 var toolbarSearch = function()
-var toolbarQuery = function()
 var toolbarAbout = function()
 var showAbout = function()
 var createAbout = function()
@@ -309,18 +308,7 @@ var createToolbar = function() {
 
 	toolbar.addChild(searchForm);
 
-	toolbar.addChild(new dijit.ToolbarSeparator({
-		id: "sep"
-	}));
-
-	var btnQuery = new dijit.form.Button({
-		label: "<img src='/static/image/icon/Tango/22/actions/document-save.png')/>Export",
-		showLabel: true,
-		onClick: toolbarQuery
-	});
-
 	// remaining icons style: "float:right"
-
 	var btnAbout = new dijit.form.Button({
 		label: "<img src='/static/image/icon/gnome/22/actions/help-about.png' />About",
 		showLabel: true,
@@ -349,7 +337,6 @@ var createToolbar = function() {
 		}
 	});
 
-	toolbar.addChild(btnQuery);
 	// The order below is in reverse because of the "float:right" style above (probably).
 	toolbar.addChild(btnUser);
 	toolbar.addChild(btnAbout);
@@ -379,12 +366,6 @@ var toggleSecondDateFilter = function() {
 		dijit.byId("enddate-2").set("value", maxDate);
 		dijit.byId("toggleBtn").set("label", "<img src='/static/image/icon/Tango/22/actions/list-remove.png')/>");
 	}
-};
-
-
-var toolbarQuery = function() {
-	createQueryDlg(); // query.js : this fills the querylistStore
-	dijit.byId("dlg-query").show();
 };
 
 

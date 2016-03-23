@@ -126,6 +126,28 @@ function createQueryLine(item) {
 		}
 	})).domNode, buttonsNode);
 
+
+	// Add a download button if downloading is allowed.
+	if (QUERY_DATA_DOWNLOAD) {
+		btn = dijit.byId("btn-sq-download-" + item.pk);
+		if (btn !== undefined) {
+			if (debug_destroy) {
+				console.error("btn-sq-download button already exists");
+			}
+			btn.destroy();
+		}
+		
+		dojo.place((new dijit.form.Button({
+			id: "btn-sq-download-" + item.pk,
+			title: "Export your query results to .json, .xml or .csv",
+			iconClass: "dijitIconSave",
+			showLabel: false,
+			onClick: function() {
+				downloadQueryDialog(item); // query.js
+			}
+		})).domNode, buttonsNode);
+	}
+
 	//	console.log( "Button update for lexicon item" );
 	btn = dijit.byId("btn-sq-modify-" + item.pk);
 	if (btn !== undefined) {
@@ -138,7 +160,7 @@ function createQueryLine(item) {
 	dojo.place((new dijit.form.Button({
 		id: "btn-sq-modify-" + item.pk,
 		title: "Modify",
-		iconClass: "dijitIconSave",
+		iconClass: "dijitIconEditTask",
 		showLabel: false,
 		onClick: function() {
 			var newItem = itemFromCurrentQuery();
