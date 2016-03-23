@@ -25,51 +25,36 @@ var lexiconID = null; // file global
 var lexiconTitle = null; // file global
 var lexiconQuery = null; // file global
 
-var grid_3layout = [{
-	field: "id",
-	width: "25%"
-}, {
-	field: "count",
-	width: "25%"
-}, {
-	field: "term",
-	width: "50%"
-}, ];
 
-
+// Getters and setters for global variables above
 function storeLexiconID(lexicon_id) {
-	//	console.log( "storeLexiconID(): " + lexicon_id );
 	lexiconID = lexicon_id;
 }
 
 function retrieveLexiconID() {
-	//	console.log( "retrieveLexiconID(): " + lexiconID );
 	return lexiconID;
 }
 
 
 function storeLexiconTitle(lexicon_title) {
-	//	console.log( "storeLexiconTitle(): " + lexicon_title );
 	lexiconTitle = lexicon_title;
 }
 
 function retrieveLexiconTitle() {
-	//	console.log( "retrieveLexiconTitle(): " + lexiconTitle );
 	return lexiconTitle;
 }
 
 
 function storeLexiconQuery(lexicon_query) {
-	//	console.log( "storeLexiconQuery(): " + lexicon_query );
 	lexiconQuery = lexicon_query;
 }
 
 function retrieveLexiconQuery() {
-	//	console.log( "retrieveLexiconQuery(): " + lexiconQuery );
 	return lexiconQuery;
 }
 
 
+// Starts the download dialog
 function downloadQueryDialog(item) {
 	console.log("downloadQueryDialog()");
 
@@ -139,10 +124,6 @@ function downloadQueryDialog(item) {
 	var title = "Download the query data (OCR and metadata)";
 	var buttons = { "OK": true, "Cancel": true };
 	genDialog(title, cpQData.domNode, buttons, function() { okDownload(item); });
-
-	//if (QUERY_DATA_DOWNLOAD) {
-	//	tabCont.addChild(cpQData);
-	//} // guest has no email
 }
 
 
@@ -186,6 +167,7 @@ function okDownload(item) {
 };
 
 
+// Save a created or modified query
 function saveQuery(item, url) {
 	console.log("saveQuery() title: " + item.title + ", query: " + item.query);
 	console.log("url: " + url);

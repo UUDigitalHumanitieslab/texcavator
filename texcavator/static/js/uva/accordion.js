@@ -136,7 +136,7 @@ function createQueryLine(item) {
 			}
 			btn.destroy();
 		}
-		
+
 		dojo.place((new dijit.form.Button({
 			id: "btn-sq-download-" + item.pk,
 			title: "Export your query results to .json, .xml or .csv",
@@ -164,8 +164,11 @@ function createQueryLine(item) {
 		showLabel: false,
 		onClick: function() {
 			var newItem = itemFromCurrentQuery();
-			saveQuery(newItem, "query/" + item.pk + "/update");
-			createQueryList();
+			// Only modify the query when it has some data
+			if (newItem.title && newItem.query) {
+				saveQuery(newItem, "query/" + item.pk + "/update");
+				createQueryList();
+			}
 		}
 	})).domNode, buttonsNode);
 
