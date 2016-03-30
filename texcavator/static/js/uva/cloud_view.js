@@ -5,7 +5,7 @@ FL-10-Sep-2013 Changed
 Functions:
 var getCloudParameters	= function( params )
 var stopwordsGetTable	= function()
-function stopwordsFillTable( stopwordsList, editglob, target )
+function stopwordsFillTable( stopwordsList, target )
 var stopwordsSave		= function( word, stopwords_cat )
 var clearCloud			= function()
 var placeCloudInTarget	= function( cloud_src, data, target )
@@ -18,7 +18,6 @@ function destroyDlgCloudword()
 dojo.require( "dijit.Dialog" );
 dojo.require( "dijit.Tooltip" );
 dojo.require( "dojox.grid.DataGrid" );
-dojo.require( "dojox.grid.EnhancedGrid" );
 
 
 var getCloudParameters = function( params )
@@ -55,13 +54,12 @@ var getCloudParameters = function( params )
 	return params;
 };
 
+
+// retrieve stopwords table data, place at target div
 var stopwordsGetTable = function( target )
 {
-//	console.log( "stopwordsGetTable()" );
-	// retrieve stopwords table data, place at target div
-
 	dojo.xhrPost({
-		url: "query/stopwords",	// POST url must end with `/'
+		url: "query/stopwords",
 		handleAs: "json",
 		load: function(response)
 		{
@@ -69,7 +67,7 @@ var stopwordsGetTable = function( target )
 
 			if (status === "SUCCESS")
 			{
-				stopwordsFillTable( response.stopwords, response.editglob, target );
+				stopwordsFillTable( response.stopwords, target );
 			}
 			else
 			{
@@ -86,7 +84,7 @@ var stopwordsGetTable = function( target )
 };
 
 
-function stopwordsFillTable( stopwordsList, editglob, target )
+function stopwordsFillTable( stopwordsList, target )
 {
 //	console.log( "stopwordsFillTable()" );
 //	console.log( stopwordsList );
@@ -110,20 +108,16 @@ function stopwordsFillTable( stopwordsList, editglob, target )
 		var word  = entry.word;
 		var user  = entry.user;
 		var query = entry.query;
+		var disabled = user === "";
 
-		if( user === "" )
+		if ( user === "" )
 		{
-			if( editglob === true ) { var disabled = false; }
-			else { var disabled = true; }
-			if( query === "" ) { query = "(all)"; }
+			if ( query === "" ) { query = "(all)"; }
 		}
 		else
 		{
-			var disabled = false;
-			if( query === "" ) { query = "(all " + user + ")"; }
+			if ( query === "" ) { query = "(all " + user + ")"; }
 		}
-
-	//	console.log( i, word, user, query, editglob );
 
 		var btn = new dijit.form.Button({
 			id: "btn-stopw-delete-" + i,

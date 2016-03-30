@@ -284,8 +284,7 @@ def stopwords(request):
         stopwordlist.append(word.get_stopword_dict())
 
     params = {
-        'stopwords': stopwordlist,
-        'editglob': False
+        'stopwords': stopwordlist
     }
 
     return json_response_message('SUCCESS', '', params)
