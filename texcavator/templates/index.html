@@ -165,12 +165,6 @@ dojo.ready( function() {
 				if( window.focus ) { newwindow.focus(); }
 			}
 		}
-
-		if( newTab.id !== "timeline" )        // clicked on "Timeline"
-		{
-			var burst_sparks = dijit.byId( "sparksDropDownButton" );            // contains burst cloud
-			if( burst_sparks != undefined ) { burst_sparks.closeDropDown(); }
-		}
 	});
 });
 
@@ -491,11 +485,11 @@ function nextResults( amount )
 		console.log("processRecord: " + record_id);
 		writeTextview(article_title, ocr_text);         // update article in Text tab
 		scanImages(record_id);                          // scan_images.js : scan[s] + View at KB tab
-		retrieveRecordCloudData(record_id, ocr_text);   // create word cloud
+		retrieveRecordCloudData(record_id);             // create word cloud
 	}
 
 	// Creates a single article cloud
-	var retrieveRecordCloudData = function( record_id, ocr_text )
+	var retrieveRecordCloudData = function( record_id )
 	{
 		console.log( "retrieveRecordCloudData: " + record_id );
 
@@ -555,15 +549,43 @@ function nextResults( amount )
 		placeCloudInTarget( cloud_src, cloud_data, target );
 
         // Add download button
-        var btnCloud = new dijit.form.Button({
-            label: "Cloud data",
-            showLabel: true,
-		    iconClass: "dijitEditorIcon dijitEditorIconJustifyCenter",
-            style: "position: relative; top: -20px; display: inline; float: right;",
+        var cloudDownload = new dijit.form.Button({
+            label: "Show cloud data",
+		    style: "position: relative; top: -20px; display: inline; float: right;",
             onClick: showCloudDlg,
         });
-        $("#statusline").after(btnCloud.domNode);
+        $("#statusline").after(cloudDownload.domNode);
+
+        // Add button to switch between stemmed and non-stemmed cloud
+        var useStems = getConfig().cloud.stems;
+        var switchStem = new dijit.form.Button({
+            label: "Switch to " + (useStems ? "non-stemmed" : "stemmed") + " cloud",
+		    style: "position: relative; top: -20px; display: inline; float: right;",
+            onClick: function() {
+                getConfig().cloud.stems = !useStems;
+                refreshCloud(cloud_src);
+            },
+        });
+        $("#statusline").after(switchStem.domNode);
 	}
+
+	// Reloads the current cloud with other (possibly) different parameter settings.
+	function refreshCloud(cloud_src)
+	{
+        switch (cloud_src) {
+            case "article":
+                retrieveRecordCloudData($(".active-article").prop('id'));
+                break;
+            case "normal":
+                onClickExecuteCloud(retrieveLexiconID());
+                break;
+            case "burst":
+                burstCloud();
+                break;
+            default:
+                genDialog("Error while generating cloud", "Unknown method of cloud generation", { "OK": true });
+        }
+    }
 </script>
 
 <script type="text/javascript">

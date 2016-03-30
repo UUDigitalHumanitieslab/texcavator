@@ -1,5 +1,4 @@
-dojo.require("dijit.Tooltip");
-dojo.require("dijit.popup");
+dojo.require("dijit.TitlePane");
 
 /*
 function loadGraphData( queryId )
@@ -16,7 +15,6 @@ function createGraph() {
 }
 function burstClicked( data, index, element )
 function burstCloud( params )
-function closePopup() {}
 */
 
 var intervals = ['year']; // since zooming is broken, only query the year instead of ["year", "month", "day"];
@@ -38,11 +36,6 @@ var showTimeline = function(item) {
 	storeLexiconID(queryId); // query.js
 	storeLexiconTitle(queryTitle); // query.js
 	storeLexiconQuery(queryString); // query.js
-
-	var sparksDD = dijit.byId('sparksDropDownButton');
-	if (sparksDD !== undefined) {
-		sparksDD.closeDropDown();
-	}
 
 	// select the tab containing the timeline
 	var tc = dijit.byId("articleContainer");
@@ -316,12 +309,6 @@ function createGraph() {
 		if (isNaN(x.domain()[0].getTime()) || isNaN(x.domain()[1].getTime())) {
 			x.domain(previousXdomain);
 		}
-
-		// Close popup on zooming or panning
-		if ((previousXdomain[0].getTime() != x.domain()[0].getTime() ||
-				previousXdomain[1].getTime() != x.domain()[1].getTime())) {
-			closePopup();
-		}
 		
 		body.append("g")
 			.attr("class", "x axis")
@@ -466,33 +453,11 @@ function createGraph() {
 
 	// Raise the bars
 	y.range([h, 0]);
-
-	if (dijit.byId('sparksDialog') === undefined) {
-		var dialog = new dijit.TooltipDialog({
-			id: 'sparksDialog',
-			style: 'width: ' + dojo.position('chartDiv').w + 'px'
-		});
-	}
-
-	var button = dijit.byId('sparksDropDownButton');
-	if (button === undefined) {
-		button = new dijit.form.DropDownButton({
-			id: 'sparksDropDownButton',
-			label: "Tooltip",
-			dropDown: dialog,
-			dropDownPosition: ["below"],
-			style: 'position: absolute; left: 0; top: 280px; visibility: hidden;'
-		});
-	}
-
-	dojo.place(button.domNode, 'chartDiv');
 } // createGraph()
 
 
-function burstClicked(data) {
-	console.log("burstClicked(): " + data.docs.length + " records");
-
-	var d = data;
+function burstClicked(d) {
+	console.log("burstClicked(): " + d.docs.length + " records");
 
 	// Show burst articles in accordion; set timeline values in filters
 	var query = retrieveLexiconQuery();
@@ -507,20 +472,37 @@ function burstClicked(data) {
 	accordionSelectChild("searchPane");
 	searchSubmit();
 
-	// Display burst cloud
-	dijit.byId('sparksDropDownButton').openDropDown();
+	// Create container for the burst cloud
+	var cloudContainer = dijit.byId('cloudContainer');
+	if (cloudContainer === undefined) {
+		var cloudContainer = new dijit.TitlePane({
+			id: 'cloudContainer',
+			style: 'width: ' + dojo.position('chartDiv').w - 20 + 'px',
+			open: true,
+		});
+	}
 
-	var template = '<b>{burst}{start} - {end}: {count} documents.</b><div id="cloud"></div>';
+	// Set the title and content for the burst cloud
+	var template = '<b>{burst} from {start} to {end} ({count} document{plural})</b>';
 	var content = {
-		burst: (d.burst) ? "Burst " : "",
+		burst: (d.burst) ? "Burst cloud" : "Cloud",
 		start: d.start.toString().substr(4, 11),
 		end: d.end.toString().substr(4, 11),
-		count: d.count
+		count: d.count,
+		plural: d.count > 1 ? "s" : "",
 	};
+	cloudContainer.set("title", dojo.replace(template, content));
+	cloudContainer.set("content", "<div id='cloud'></div>");
 
-	dijit.byId("sparksDialog").set("content", dojo.replace(template, content));
+	dojo.place(cloudContainer.domNode, 'chartDiv');
 
-	// Load burst cloud here
+	burstCloud();
+} // burstClicked()
+
+
+function burstCloud() {
+	console.log("burstCloud()");
+
 	dojo.place(new dijit.ProgressBar({
 		indeterminate: true
 	}).domNode, dojo.byId("cloud"), "only");
@@ -531,12 +513,6 @@ function burstClicked(data) {
 		date_range: getDateRangeString()
 	};
 
-	burstCloud(params);
-} // burstClicked()
-
-
-function burstCloud(params) {
-	console.log("burstCloud()");
 	params = getCloudParameters(params); // add user-changeable parameters from config
 
 	dojo.xhrGet({
@@ -577,14 +553,6 @@ function burstCloud(params) {
 		}
 	});
 } // burstCloud()
-
-
-function closePopup() {
-	var sparksDD = dijit.byId('sparksDropDownButton');
-	if (sparksDD !== undefined) {
-		sparksDD.closeDropDown();
-	}
-} // closePopup()
 
 
 function switchTimelineNormalize() {
