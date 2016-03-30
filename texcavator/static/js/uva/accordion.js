@@ -238,8 +238,6 @@ function createQueryList() {
 				// see: http://higginsforpresident.net/2010/01/widgets-within-widgets/
 
 				var items = response.queries;
-				// TODO: delete this global variable
-				glob_lexiconData = items;
 
 				dojo.forEach(items, function(item) {
 					// create the divs for the saved queries
