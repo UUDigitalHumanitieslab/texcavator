@@ -4,8 +4,6 @@ FL-10-Sep-2013 Changed
 
 Functions:
 var getCloudParameters	= function( params )
-var stopwordsRemove		= function()
-var stopwordsGetString	= function()
 var stopwordsGetTable	= function()
 function stopwordsFillTable( stopwordsList, editglob, target )
 var stopwordsSave		= function( word, stopwords_cat )
@@ -56,14 +54,6 @@ var getCloudParameters = function( params )
 //	console.log( params );
 	return params;
 };
-
-
-var stopwordsRemove = function()
-{
-	var config = getConfig();
-	return config.cloud.stopwords;
-};
-
 
 var stopwordsGetTable = function( target )
 {

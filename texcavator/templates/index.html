@@ -612,21 +612,6 @@ function clearGui()
 }
 
 
-function onClickExecuteCloudStopwords( lexiconID )
-{
-	// Create a cloud for the documents
-	if( stopwordsRemove() )            // remove stopwords from cloud
-	{
-		// retrieve current stopword list from db, then call onClickExecuteCloud()
-		var call_func = true;
-		var boundFunction = dojo.hitch( this, onClickExecuteCloud, lexiconID );
-		stopwordsGetString( lexiconID, call_func, boundFunction );
-	}
-	else
-	{ onClickExecuteCloud( lexiconID ); }
-} // onClickExecuteCloudStopwords
-
-
 // button Uitvoeren: metadata graphics + query word cloud
 function onClickExecute(item)
 {
