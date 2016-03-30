@@ -18,7 +18,6 @@ urlpatterns = [
     url(r'^search/$', search),
 
     url(r'^scan/$', download_scan_image),
-    url(r'^logger/$', log),
 
     url(r'^metadata/$', metadata),
 

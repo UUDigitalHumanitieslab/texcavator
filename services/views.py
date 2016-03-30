@@ -257,16 +257,6 @@ def retrieve_document(request, doc_id):
 
 @csrf_exempt
 @login_required
-def log(request):
-    """Log the request message to the logger"""
-    logger.info('log')
-
-    logger.debug(request.GET['message'])
-    return json_response_message('success', 'Message logged')
-
-
-@csrf_exempt
-@login_required
 def export_cloud(request):
     """Export cloud data to .csv file"""
     logger.info('services/export_cloud/')
