@@ -551,7 +551,7 @@ function nextResults( amount )
         // Add download button
         var cloudDownload = new dijit.form.Button({
             label: "Show cloud data",
-		    style: "position: relative; top: -20px; display: inline; float: right;",
+		    style: "float: right;",
             onClick: showCloudDlg,
         });
         $("#statusline").after(cloudDownload.domNode);
@@ -560,13 +560,28 @@ function nextResults( amount )
         var useStems = getConfig().cloud.stems;
         var switchStem = new dijit.form.Button({
             label: "Switch to " + (useStems ? "non-stemmed" : "stemmed") + " cloud",
-		    style: "position: relative; top: -20px; display: inline; float: right;",
+		    style: "float: right;",
             onClick: function() {
                 getConfig().cloud.stems = !useStems;
                 refreshCloud(cloud_src);
             },
         });
         $("#statusline").after(switchStem.domNode);
+
+        // Add button to switch between absolute and normalized (tf-idf) frequencies
+        if (!useStems)
+        {
+            var useIdf = getConfig().cloud.idf;
+            var switchIdf = new dijit.form.Button({
+                label: "Switch to " + (useIdf ? "absolute" : "normalized") + " frequencies",
+                style: "float: right;",
+                onClick: function() {
+                    getConfig().cloud.idf = !useIdf;
+                    refreshCloud(cloud_src);
+                },
+            });
+            $("#statusline").after(switchIdf.domNode);
+        }
 	}
 
 	// Reloads the current cloud with other (possibly) different parameter settings.
