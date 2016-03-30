@@ -184,15 +184,11 @@ function stopwordsFillTable( stopwordsList, target )
 
 var stopwordsSave = function( word, stopwords_cat )
 {
-	var stopwords_clean = config.cloud.stopwords_clean;
-	if( stopwords_clean === true ) { stopwords_clean01 = 1; }
-	else { stopwords_clean01 = 0; }
-
 	var content = {
 		stopword: word
 	};
 
-	if( stopwords_cat === "singleq" )
+	if ( stopwords_cat === "singleq" )
 	{
 		content.query_id = lexiconID;
 	}
@@ -204,14 +200,8 @@ var stopwordsSave = function( word, stopwords_cat )
 		handleAs: "json",
 		content: content,
 		load: function(response) {
-			var status = response.status;
-			var msg = response.msg;
-			if( status !== "SUCCESS" )
-			{
-				console.log( status + ": " + msg );
-				var buttons = { "OK": true, "Cancel": false };
-				answer = genDialog( "Stopword save", msg, buttons );
-			}
+			var title = response.status !== "SUCCESS" ? "Error when saving stopword" : "Stopword added";
+			genDialog(title, response.msg, { "OK": true });
 		},
 		error: function( err ) {
 			console.error( err );
@@ -721,23 +711,6 @@ var d3CreateCloud = function( target, cloud_src, svg_width, svg_height, weightFa
 		}
 
 
-		var divGlobalStopw = dojo.create( "div", {
-			id: "div-global-stopw"
-		}, cp_grid_stopwords.domNode );
-
-		var cbGlobalStopw = new dijit.form.CheckBox({
-			id: "cb-global-stopw",
-			checked: config.cloud.stopwords_clean,
-			onChange: function( btn ) { config.cloud.stopwords_clean = btn; }
-		}, divGlobalStopw );
-
-		var labelGlobalStopw = dojo.create( "label", {
-			id: "label-global-stopw",
-			for: "cb-global-stopw",
-			innerHTML: "&nbsp;Remove superfluous stopwords on save<br/>"
-		}, cp_grid_stopwords.domNode );
-
-
 		dojo.create( "label", {
 			id: "label-grid-stopwords",
 			innerHTML: "stopwords:<br/>"
@@ -793,8 +766,7 @@ var d3CreateCloud = function( target, cloud_src, svg_width, svg_height, weightFa
 			role: "presentation",
 			onClick: function() {
 				answer = "OK";
-				var stopwords_clean = config.cloud.stopwords_clean;
-				stopwordsSave( word.text, stopwords_cat, stopwords_clean );
+				stopwordsSave( word.text, stopwords_cat );
 				dijit.byId( "tt-cancel-cloudword" ).destroyRecursive();
 				dijit.byId( "tt-ok-cloudword" ).destroyRecursive();
 				dijit.byId( "dlg-cloudword" ).destroyRecursive();

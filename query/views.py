@@ -250,7 +250,7 @@ def add_stopword(request):
 
     StopWord.objects.get_or_create(user=request.user, query=q, word=word)
 
-    return json_response_message('SUCCESS', 'Stopword added.')
+    return json_response_message('SUCCESS', 'Stopword "{}" added.'.format(word))
 
 
 @csrf_exempt

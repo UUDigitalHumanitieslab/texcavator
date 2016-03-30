@@ -50,7 +50,6 @@ var config = {
 
 		// settable cloud params
 		//	stopwords_cat:	"singleq",	// stopword category: "singleq", "allqs", "system"
-		stopwords_clean: false, // remove superfluous stopwords
 		stopwords: true, // remove stopwords from list
 		stopwords_default: true, // use default stopword set
 		stoplimit: 4, // require word length > stoplimit
