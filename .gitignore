@@ -10,7 +10,7 @@ Thumbs.db
 
 # Dojo/ShiCo
 texcavator/static/js/dojo-*
-texcavator/static/js/ShiCo-master
+texcavator/static/js/ShiCo
 
 # Local settings
 texcavator/settings_local.py
