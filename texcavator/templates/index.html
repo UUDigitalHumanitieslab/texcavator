@@ -172,6 +172,13 @@ dojo.ready( function() {
 	});
 });
 
+// Sets the given keyword on the query input element and starts the search
+function startSearch(keyword)
+{
+    $('#query').val(keyword);
+    searchSubmit();
+}
+
 
 // HTML search result in Search panel of accordion
 function searchSubmit(newStartRecord)
