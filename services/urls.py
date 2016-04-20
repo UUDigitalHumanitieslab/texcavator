@@ -21,5 +21,7 @@ urlpatterns = [
 
     url(r'^metadata/$', metadata),
 
+    url(r'^heatmap/(?P<query_id>\d+)$', heatmap),
+
     url(r'^stem/$', stemmed_form)
 ]

@@ -388,3 +388,26 @@ def stemmed_form(request):
     word = request.POST.get('word')
     stemmed = get_stemmed_form(settings.ES_INDEX, word)
     return json_response_message('success', 'Complete', {'stemmed': stemmed})
+
+
+@csrf_exempt
+@login_required
+def heatmap(request, query_id):
+    query = get_object_or_404(Query, pk=query_id)
+    params = query.get_query_dict()
+    year = 1936
+    range = daterange2dates(str(year - 5) + '0101,' + str(year + 5) + '1231')
+    result = metadata_aggregation(settings.ES_INDEX,
+                                  settings.ES_DOCTYPE,
+                                  params['query'],
+                                  range,
+                                  params['exclude_distributions'],
+                                  params['exclude_article_types'],
+                                  params['selected_pillars'])
+
+    articles_per_day = {}
+    for bucket in result['aggregations']['articles_over_time']['buckets']:
+        date = bucket['key'] / 1000
+        articles_per_day[date] = bucket['doc_count']
+
+    return json_response_message('success', 'Complete', {'articles_per_day': articles_per_day})

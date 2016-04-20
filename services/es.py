@@ -651,6 +651,12 @@ def metadata_dict():
                 "field": "paper_dc_title.raw",
                 "size": 10
             }
+        },
+        "articles_over_time": {
+            "date_histogram": {
+                "field": "paper_dc_date",
+                "interval": "day"
+            }
         }
     }
 
