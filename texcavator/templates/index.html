@@ -1,12 +1,5 @@
 {% extends "base.html" %}
 
-{% block head %}
-	<style type="text/css">
-		@import url({{ STATIC_URL }}js/Dojo/dojox/form/resources/RangeSlider.css);
-		@import url({{ STATIC_URL }}css/style.css);
-	</style>
-{% endblock head %}
-
 {% block middle %}
 	<div data-dojo-type="dijit.layout.AccordionContainer" data-dojo-props="splitter:true, region:'leading'" style="width: 438px;" id="leftAccordion">
 		<div id="searchPane" data-dojo-type="dijit.layout.ContentPane" data-dojo-props="title:'Search results'">
@@ -76,28 +69,28 @@
 
 	<!-- ConfirmDialog, see js/uva/dialogs.js -->
 	<script type="text/template" id="confirm-dialog-template">
-	<div style="width:300px;">
-		<div class="dijitDialogPaneContentArea">
-			<div data-dojo-attach-point="contentNode">
-				${message}
-			</div>
-		</div>
+        <div style="width:300px;">
+            <div class="dijitDialogPaneContentArea">
+                <div data-dojo-attach-point="contentNode">
+                    ${message}
+                </div>
+            </div>
 
-		<div class="dijitDialogPaneActionBar">
-			<button
-				data-dojo-type="dijit.form.Button"
-				data-dojo-attach-point="submitButton"
-				type="submit"
-				>OK
-			</button>
+            <div class="dijitDialogPaneActionBar">
+                <button
+                    data-dojo-type="dijit.form.Button"
+                    data-dojo-attach-point="submitButton"
+                    type="submit"
+                    >OK
+                </button>
 
-			<button
-				data-dojo-type="dijit.form.Button"
-				data-dojo-attach-point="cancelButton"
-				>Cancel
-			</button>
-		</div>
-		</div>
+                <button
+                    data-dojo-type="dijit.form.Button"
+                    data-dojo-attach-point="cancelButton"
+                    >Cancel
+                </button>
+            </div>
+        </div>
 	</script>
 {% endblock middle %}
 
@@ -426,7 +419,6 @@ function nextResults( amount )
 	dojo.require( "dijit.form.HorizontalRule" );
 	dojo.require( "dijit.form.HorizontalRuleLabels" );
 
-	dojo.require( "dojox.form.RangeSlider" );
 	dojo.require( "dojox.html.entities" );
 	dojo.require( "dojox.widget.Standby" );
 	dojo.require( "dojox.xml.parser" );

@@ -34,9 +34,6 @@ urlpatterns = [
     # Enable the admin:
     url(r'^admin/', include(admin.site.urls)),
 
-    # TODO: is this the proper way to refer to locally served JavaScripts?
-    url(r'^js/(?P<path>.*)$', serve, {'document_root': 'js/', 'show_indexes': True}),
-
     url(r'^$', index, name='index'),
     url(r'^login$', user_login),
     url(r'^logout$', user_logout),
