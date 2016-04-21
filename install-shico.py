@@ -5,17 +5,18 @@ import zipfile
 
 import requests
 
-GITHUB_URL = 'https://github.com/c-martinez/ShiCo/archive/demo.zip'
-DIST_DIR = 'ShiCo-demo/webapp/dist/'
+VERSION = '0.5'
+GITHUB_URL = 'https://github.com/NLeSC/ShiCo/archive/v{}.zip'.format(VERSION)
+DIST_DIR = 'ShiCo-{}/webapp/dist/'.format(VERSION)
 STATIC_DIR = 'texcavator/static/js/'
-TMP_DIR = 'ShiCo-demo'
+TMP_DIR = 'ShiCo-{}'.format(VERSION)
 FINAL_DIR = 'ShiCo'
 
-# Retrive the demo branch from GitHub
+# Retrieve the archive from GitHub
 r = requests.get(GITHUB_URL, stream=True)
 z = zipfile.ZipFile(StringIO.StringIO(r.content))
 
-# Extract files from the dist directory
+# Extract files from the DIST_DIR to the STATIC_DIR
 for f in z.namelist():
     if f.startswith(DIST_DIR):
         z.extract(f, STATIC_DIR)
