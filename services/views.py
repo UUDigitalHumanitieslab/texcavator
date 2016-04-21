@@ -18,7 +18,8 @@ from django.shortcuts import get_object_or_404
 
 from es import get_search_parameters, do_search, count_search_results, \
     single_document_word_cloud, get_document, \
-    metadata_aggregation, get_stemmed_form
+    metadata_aggregation, metadata_dict, articles_over_time, \
+    get_stemmed_form
 
 from texcavator.utils import json_response_message, daterange2dates, normalize_cloud
 
@@ -360,7 +361,8 @@ def metadata(request):
                                   params['dates'],
                                   params['distributions'],
                                   params['article_types'],
-                                  params['pillars'])
+                                  params['pillars'],
+                                  metadata_dict())
 
     # Categorize newspaper_ids per Pillar
     pillars = Counter()
@@ -392,18 +394,24 @@ def stemmed_form(request):
 
 @csrf_exempt
 @login_required
-def heatmap(request, query_id):
+def heatmap(request, query_id, year):
+    """
+    Retrieves heatmap data for the given Query and year.
+    """
     query = get_object_or_404(Query, pk=query_id)
     params = query.get_query_dict()
-    year = 1936
+
+    year = int(year)
     range = daterange2dates(str(year - 5) + '0101,' + str(year + 5) + '1231')
+
     result = metadata_aggregation(settings.ES_INDEX,
                                   settings.ES_DOCTYPE,
                                   params['query'],
                                   range,
                                   params['exclude_distributions'],
                                   params['exclude_article_types'],
-                                  params['selected_pillars'])
+                                  params['selected_pillars'],
+                                  articles_over_time())
 
     articles_per_day = {}
     for bucket in result['aggregations']['articles_over_time']['buckets']:
