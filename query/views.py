@@ -234,21 +234,20 @@ def timeline(request, query_id, resolution):
 @csrf_exempt
 @login_required
 def add_stopword(request):
-    """Adds a stopword to the stopword list.
+    """
+    Adds a Stopword.
     """
     query_id = request.POST.get('query_id')
     word = request.POST.get('stopword')
 
+    # Retrieve the Query, set to None if not found
     q = None
-
     try:
         q = Query.objects.get(pk=query_id)
     except Query.DoesNotExist:
         pass
-    except Exception as e:
-        return json_response_message('ERROR', str(e))
 
-    StopWord.objects.get_or_create(user=request.user, query=q, word=word)
+    StopWord.objects.create(user=request.user, query=q, word=word)
 
     return json_response_message('SUCCESS', 'Stopword "{}" added.'.format(word))
 
@@ -256,13 +255,12 @@ def add_stopword(request):
 @csrf_exempt
 @login_required
 def delete_stopword(request, stopword_id):
-    """Deletes a stopword from the stopword list.
     """
-    stopword = StopWord.objects.get(pk=stopword_id)
+    Deletes a Stopword.
+    """
+    stopword = StopWord.objects.get_object_or_404(pk=stopword_id)
 
-    if not stopword:
-        return json_response_message('ERROR', 'Stopword not found.')
-    if not request.user == stopword.user:
+    if request.user != stopword.user:
         return json_response_message('ERROR', 'Stopword does not belong to this user.')
 
     msg = 'Stopword {} deleted.'.format(stopword.word)
@@ -270,30 +268,23 @@ def delete_stopword(request, stopword_id):
     return json_response_message('SUCCESS', msg)
 
 
-# TODO: turn into get method (get user via currently logged in user)
 @csrf_exempt
 @login_required
-def stopwords(request):
-    """Returns the stopword list for a user and query.
+def retrieve_stopwords(request):
     """
-    stopwords = StopWord.objects.select_related().filter(user=request.user) \
-                                .order_by('word').order_by('query')
+    Returns all Stopwords for the currently logged in User.
+    """
+    stopwords = StopWord.objects.filter(user=request.user).order_by('query', 'word')
 
-    stopwordlist = []
-    for word in stopwords:
-        stopwordlist.append(word.get_stopword_dict())
-
-    params = {
-        'stopwords': stopwordlist
-    }
-
+    params = {'stopwords': [s.get_stopword_dict() for s in stopwords]}
     return json_response_message('SUCCESS', '', params)
 
 
 @csrf_exempt
 @login_required
 def export_stopwords(request):
-    """Exports all stopwords for the current user to a .csv-file
+    """
+    Exports all default Stopwords and the Stopwords specific for a User to a .csv-file.
     """
     sw = StopWord.objects.filter(Q(user=request.user) | Q(user=None)).order_by('word')
 
