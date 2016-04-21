@@ -270,23 +270,15 @@ def delete_stopword(request, stopword_id):
     return json_response_message('SUCCESS', msg)
 
 
-# TODO: turn into get method (get user via currently logged in user)
 @csrf_exempt
 @login_required
 def stopwords(request):
-    """Returns the stopword list for a user and query.
     """
-    stopwords = StopWord.objects.select_related().filter(user=request.user) \
-                                .order_by('word').order_by('query')
+    Returns all Stopwords for the currently logged in User.
+    """
+    stopwords = StopWord.objects.filter(user=request.user).order_by('word').order_by('query')
 
-    stopwordlist = []
-    for word in stopwords:
-        stopwordlist.append(word.get_stopword_dict())
-
-    params = {
-        'stopwords': stopwordlist
-    }
-
+    params = {'stopwords': [s.get_stopword_dict() for s in stopwords]}
     return json_response_message('SUCCESS', '', params)
 
 
