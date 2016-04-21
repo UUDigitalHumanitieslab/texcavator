@@ -51,21 +51,10 @@
 					<div style="color:grey; text-align: center;">Cloud.</div>
 				</div>
 
-				<div id="timeline" title="Timeline" dojoType="dijit.layout.ContentPane" selected="false">  <!-- Timeline -->
-					<div id="timeline-title">
-						Hover over a bar to inspect the values, click a bar to show a word cloud for this period.
-                        Click <a href="javascript:switchTimelineNormalize()">here</a> to switch between absolute and relative frequencies.
-                    </div>
-                    <div id="timeline-advert-warning">You query includes advertisements.
-                        As you may be aware, not all advertisements have been split correctly into individual items, so the counts displayed may be off.</div>
-				</div>
+                {% include "timeline.html" %}
 
 				<div id="record" title="OCR" dojoType="dijit.layout.ContentPane" selected="false">  <!-- OCR -->
 					<div style="color:grey; text-align: center;">Select an article.</div>
-				</div>
-
-				<div id="heatmap" title="Heat map" dojoType="dijit.layout.ContentPane" selected="false">  <!-- Heatmap -->
-					<div id="cal-heatmap" style="color:grey; text-align: center;">Heat map.</div>
 				</div>
 			</div>
 		</div>

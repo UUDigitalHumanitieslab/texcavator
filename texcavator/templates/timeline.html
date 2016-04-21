@@ -1,0 +1,19 @@
+<div id="timeline" title="Timeline" dojoType="dijit.layout.ContentPane" selected="false">
+    <div id="timeline-title">
+        Hover over a bar to inspect the values, click a bar to show a word cloud for this period.
+        Click <a href="javascript:switchTimelineNormalize()">here</a> to switch between absolute and relative frequencies.
+    </div>
+    <div id="timeline-advert-warning">
+        You query includes advertisements.
+        As you may be aware, not all advertisements have been split correctly into individual items, so the counts displayed may be off.
+    </div>
+    <div id="chartDiv" style="width: 100%; height: 280px; float: center;"></div>
+    <div id="cloudContainer" data-dojo-type="dijit.TitlePane" data-dojo-props="title: 'Cloud', open: false">
+        <div id="cloud"></div>
+    </div>
+    <div id="heatMapContainer" data-dojo-type="dijit.TitlePane" data-dojo-props="title: 'Heat map', open: false">
+        <button id="cal-heatmap-prev" data-dojo-type="dijit/form/Button" data-dojo-props="iconClass:'dijitEditorIcon dijitEditorIconUndo'"></button>
+        <button id="cal-heatmap-next" data-dojo-type="dijit/form/Button" data-dojo-props="iconClass:'dijitEditorIcon dijitEditorIconRedo'"></button>
+        <div id="cal-heatmap"></div>
+    </div>
+</div>

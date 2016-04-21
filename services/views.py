@@ -10,7 +10,7 @@ import requests
 from celery.result import AsyncResult
 
 from django.conf import settings
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.utils.html import escape
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
@@ -415,7 +415,7 @@ def heatmap(request, query_id, year):
 
     articles_per_day = {}
     for bucket in result['aggregations']['articles_over_time']['buckets']:
-        date = bucket['key'] / 1000
+        date = bucket['key'] / 1000  # Cal-HeatMap requires the date in seconds instead of milliseconds
         articles_per_day[date] = bucket['doc_count']
 
-    return json_response_message('success', 'Complete', {'articles_per_day': articles_per_day})
+    return JsonResponse(articles_per_day)

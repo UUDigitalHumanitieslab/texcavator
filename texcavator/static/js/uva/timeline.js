@@ -227,13 +227,8 @@ function getEndOfInterval(date, interval) {
 function createGraph() {
 	var config = getConfig();
 
-	// Create a place for the chart
-	var dest = dojo.byId("chartDiv");
-	if (dest === null) {
-		$('#timeline').append('<div id="chartDiv" style="width: 100%; height: 280px; float: center;"></div>');
-	} else {
-		dest.innerHTML = ""; // Clear existing destination
-	}
+	// Clear existing destination
+	dojo.byId("chartDiv").innerHTML = "";
 
 	// This follows the margin convention (http://bl.ocks.org/mbostock/3019563)
 	var margin = {top: 30, right: 30, bottom: 30, left: 50},
@@ -459,7 +454,8 @@ function createGraph() {
 function burstClicked(d) {
 	console.log("burstClicked(): " + d.docs.length + " records");
 
-	// Show burst articles in accordion; set timeline values in filters
+	// Show articles in search accordion; set timeline values in filters
+	var query_id = retrieveLexiconID();
 	var query = retrieveLexiconQuery();
 	beginDate = d.start;
 	endDate = d.end;
@@ -467,23 +463,13 @@ function burstClicked(d) {
 	dijit.byId("begindate").set("value", beginDate);
 	dijit.byId("enddate").set("value", endDate);
 	if (beginDate2 !== undefined) {
-        toggleSecondDateFilter();
-    }
+		toggleSecondDateFilter();
+	}
 	accordionSelectChild("searchPane");
 	searchSubmit();
 
-	// Create container for the burst cloud
-	var cloudContainer = dijit.byId('cloudContainer');
-	if (cloudContainer === undefined) {
-		var cloudContainer = new dijit.TitlePane({
-			id: 'cloudContainer',
-			style: 'width: ' + dojo.position('chartDiv').w - 20 + 'px',
-			open: true,
-		});
-	}
-
-	// Set the title and content for the burst cloud
-	var template = '<b>{burst} from {start} to {end} ({count} document{plural})</b>';
+	// Set the title for the cloud
+	var template = "{burst} from {start} to {end} ({count} document{plural})";
 	var content = {
 		burst: (d.burst) ? "Burst cloud" : "Cloud",
 		start: d.start.toString().substr(4, 11),
@@ -491,16 +477,18 @@ function burstClicked(d) {
 		count: d.count,
 		plural: d.count > 1 ? "s" : "",
 	};
+	var cloudContainer = dijit.byId("cloudContainer");
 	cloudContainer.set("title", dojo.replace(template, content));
-	cloudContainer.set("content", "<div id='cloud'></div>");
 
-	dojo.place(cloudContainer.domNode, 'chartDiv');
+	// Create the cloud
+	burstCloud(query_id);
 
-	burstCloud();
+	// Create the heat map
+	showHeatmap(query_id, d.start.getFullYear());
 } // burstClicked()
 
 
-function burstCloud() {
+function burstCloud(query_id) {
 	console.log("burstCloud()");
 
 	dojo.place(new dijit.ProgressBar({
@@ -508,7 +496,7 @@ function burstCloud() {
 	}).domNode, dojo.byId("cloud"), "only");
 
 	var params = {
-		queryID: retrieveLexiconID(),
+		queryID: query_id,
 		is_timeline: true,
 		date_range: getDateRangeString()
 	};
