@@ -4,7 +4,7 @@
 import logging
 from collections import Counter
 from datetime import datetime
-from sys import stderr, exc_info
+from sys import stderr
 
 import requests
 from celery.result import AsyncResult
@@ -324,22 +324,19 @@ def download_scan_image(request):
 
 
 @login_required
-def retrieve_kb_resolver(request):
+def retrieve_kb_resolver(request, doc_id):
     logger.info('services/kb/resolver/')
 
-    host = 'resolver.kb.nl'
-    port = 80
-    path = 'resolve'
-    logger.debug('retrieve_kb_resolver: %s', request.META["QUERY_STRING"])
-
-    kb_resolver_url = "http://" + host + ':' + str(port) + '/' + path + '?urn=' + request.GET["id"]
     try:
-        response = requests.get(kb_resolver_url)
-    except:
+        params = {
+            'identifier': 'DDD:{}'.format(doc_id),
+            'verb': 'GetRecord',
+            'metadataPrefix': 'didl'}
         if settings.DEBUG:
-            print >> stderr, "url: %s" % kb_resolver_url
-        type, value, tb = exc_info()
-        msg = "KB Resolver request failed: %s" % value.message
+            print >> stderr, 'url: {}, params: {}'.format(settings.KB_RESOLVER_URL, params)
+        response = requests.get(settings.KB_RESOLVER_URL + settings.KB_API_KEY, params=params)
+    except requests.exceptions.HTTPError as e:
+        msg = 'KB Resolver request failed: {}'.format(str(e))
         if settings.DEBUG:
             print >> stderr, msg
         return json_response_message('error', msg)
