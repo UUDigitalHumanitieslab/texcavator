@@ -150,3 +150,11 @@ html, body {
 	float: left;
 	margin-left: 1em;
 }
+
+/* Heatmap */
+#cal-heatmap,
+#cal-heatmap-buttons {
+    padding-top: 10px;
+    margin: 0 auto;
+    width: 80%;
+}

@@ -12,6 +12,7 @@ function showHeatmap(query_id, year) {
         range: 12,
         previousSelector: "#cal-heatmap-prev",
         nextSelector: "#cal-heatmap-next",
+        legendHorizontalPosition: "center",
         onClick: function(d) {
             beginDate = d;
 
