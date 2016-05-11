@@ -457,14 +457,8 @@ function burstClicked(d) {
 	// Show articles in search accordion; set timeline values in filters
 	var query_id = retrieveLexiconID();
 	var query = retrieveLexiconQuery();
-	beginDate = d.start;
-	endDate = d.end;
-	dijit.byId("query").set("value", query); 
-	dijit.byId("begindate").set("value", beginDate);
-	dijit.byId("enddate").set("value", endDate);
-	if (beginDate2 !== undefined) {
-		toggleSecondDateFilter();
-	}
+	dijit.byId("query").set("value", query);
+	setDateFilters(d.start, d.end);
 	accordionSelectChild("searchPane");
 	searchSubmit();
 

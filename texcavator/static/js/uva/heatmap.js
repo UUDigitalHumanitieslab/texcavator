@@ -14,19 +14,7 @@ function showHeatmap(query_id, year) {
         nextSelector: "#cal-heatmap-next",
         legendHorizontalPosition: "center",
         onClick: function(d) {
-            beginDate = d;
-
-            // Sets enddate to the day after the clicked date
-            // Code copied from http://stackoverflow.com/a/3674550/3710392
-            var tomorrow = new Date(d);
-            tomorrow.setDate(tomorrow.getDate() + 1);
-            endDate = tomorrow;
-            
-            dijit.byId("begindate").set("value", beginDate);
-            dijit.byId("enddate").set("value", endDate);
-            if (beginDate2 !== undefined) {
-                toggleSecondDateFilter();
-            }
+            setDateFilters(d, d);
             accordionSelectChild("searchPane");
             searchSubmit();
         },
