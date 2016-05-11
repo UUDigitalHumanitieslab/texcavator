@@ -137,9 +137,17 @@ var createToolbar = function() {
 	var searchForm = new dijit.form.Form({
 		method: "",
 		action: "",
-		style: "display: inline;",
-		onsubmit: "searchSubmit(); return false;",
-		onreset: "searchReset(); return false;"
+		style: "display: inline;"
+	});
+
+	searchForm.on('submit', function(event) {
+		event.preventDefault();
+		searchSubmit();
+	});
+
+	searchForm.on('reset', function(event) {
+		event.preventDefault();
+		searchReset();
 	});
 
 	// Query input (editable via a modal dialog)
@@ -352,7 +360,7 @@ var toggleSecondDateFilter = function() {
 	var toggleDiv = $("#toggleBtn").parent().parent();
 	toggleDiv.nextUntil($("span[widgetid=searchButton]")).toggle();
 
-	// If toggled hidden, set variables to undefined  
+	// If toggled hidden, set variables to undefined
 	if (beginDate2) {
 		beginDate2 = undefined;
 		endDate2 = undefined;
@@ -480,7 +488,7 @@ var createAbout = function() {
 // Basic validation of dates.
 function validateDates() {
 	if (dijit.byId("begindate").value == undefined || dijit.byId("enddate").value == undefined ||
-		dijit.byId("begindate-2").value == undefined || dijit.byId("enddate-2").value == undefined) 
+		dijit.byId("begindate-2").value == undefined || dijit.byId("enddate-2").value == undefined)
 	{
 		var message = 'You entered an invalid date range. Please check your date filters.';
         genDialog('Invalid date range', message, {OK: true});
