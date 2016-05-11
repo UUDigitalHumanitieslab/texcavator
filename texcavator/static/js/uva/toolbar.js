@@ -183,12 +183,12 @@ var createToolbar = function() {
 		id: "begindate",
 		style: "width: 90px;",
 		onChange: function() {
-			if (beginDateTB.value !== undefined && endDateTB.value !== undefined)
+			if (beginDateTB.value !== undefined)
 			{
 				// Set the global beginDate variable
 				beginDate = beginDateTB.value;
 
-				// set new min constraint for endDateTB
+				// Set new min constraint for endDateTB
 				require(["dojo/date"], function(date) {
 					endDateTB.constraints.min = date.add(beginDateTB.value, "day", 1);
 				});
@@ -206,7 +206,7 @@ var createToolbar = function() {
 		id: "enddate",
 		style: "width: 90px;",
 		onChange: function() {
-			if (beginDateTB.value !== undefined && endDateTB.value !== undefined)
+			if (endDateTB.value !== undefined)
 			{
 				// Set the global endDate variable
 				endDate = endDateTB.value;
@@ -231,12 +231,12 @@ var createToolbar = function() {
 		id: "begindate-2",
 		style: "width: 90px; display: none;",
 		onChange: function(value) {
-			if (beginDateTB2.value !== undefined && endDateTB2.value !== undefined)
+			if (beginDateTB2.value !== undefined)
 			{
 				// Set the global beginDate2 variable
 				beginDate2 = value;
 
-				// set new min constraint for endDateTB2
+				// Set new min constraint for endDateTB2
 				require(["dojo/date"], function(date) {
 					endDateTB2.constraints.min = date.add(value, "day", 1);
 				});
@@ -255,7 +255,7 @@ var createToolbar = function() {
 		id: "enddate-2",
 		style: "width: 90px; display: none;",
 		onChange: function(value) {
-			if (beginDateTB2.value !== undefined && endDateTB2.value !== undefined)
+			if (endDateTB2.value !== undefined)
 			{
 				// Set the global endDate2 variable
 				endDate2 = value;
