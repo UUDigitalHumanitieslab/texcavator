@@ -177,6 +177,7 @@ var createToolbar = function() {
 
 	var queryInputEdit = new dijit.form.Button({
 		iconClass: "dijitIcon dijitIconEditTask",
+		title: "Edit your query in a larger window",
 		onClick: queryDialog,
 	});
 
@@ -279,6 +280,7 @@ var createToolbar = function() {
 	var toggleBtn = new dijit.form.Button({
 		id: "toggleBtn",
 		label: "<img src='/static/image/icon/Tango/22/actions/list-add.png')/>",
+		title: "Add a second date filter",
 		// On click, toggle the second date selection filters and the slider
 		onClick: toggleSecondDateFilter
 	});
@@ -286,12 +288,14 @@ var createToolbar = function() {
 	var submit = new dijit.form.Button({
 		id: "searchButton",
 		iconClass: "dijitIcon dijitIconSearch",
+		title: "Search",
 		type: "submit",
 	});
 
 	var reset = new dijit.form.Button({
 		id: "resetButton",
 		iconClass: "dijitIcon dijitIconDelete",
+		title: "Clear the search form",
 		type: "reset",
 	});
 
@@ -365,6 +369,7 @@ var toggleSecondDateFilter = function() {
 		beginDate2 = undefined;
 		endDate2 = undefined;
 		dijit.byId("toggleBtn").set("label", "<img src='/static/image/icon/Tango/22/actions/list-add.png')/>");
+		dijit.byId("toggleBtn").set("title", "Add a second date filter");
 	}
 	// If toggled visible, set default min/max values
 	else {
@@ -373,6 +378,7 @@ var toggleSecondDateFilter = function() {
 		dijit.byId("begindate-2").set("value", minDate);
 		dijit.byId("enddate-2").set("value", maxDate);
 		dijit.byId("toggleBtn").set("label", "<img src='/static/image/icon/Tango/22/actions/list-remove.png')/>");
+		dijit.byId("toggleBtn").set("title", "Remove the second date filter");
 	}
 };
 
