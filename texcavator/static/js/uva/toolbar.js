@@ -355,8 +355,6 @@ var createToolbar = function() {
 	toolbar.addChild(btnConfig);
 }; // createToolbar()
 
-dojo.addOnLoad(createToolbar);
-
 
 var toggleSecondDateFilter = function() {
 	// On click, toggle the second date selection filters and the slider
