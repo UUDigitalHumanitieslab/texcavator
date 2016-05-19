@@ -34,9 +34,7 @@ var getBeginDate = function()
 var getEndDate = function()
 var createToolbar = function()
 var toolbarSearch = function()
-var toolbarAbout = function()
 var showAbout = function()
-var createAbout = function()
 */
 
 var minDate; // fixed minDate for project
@@ -325,7 +323,7 @@ var createToolbar = function() {
 		label: "<img src='/static/image/icon/gnome/22/actions/help-about.png' />About",
 		showLabel: true,
 		style: "float:right",
-		onClick: toolbarAbout
+		onClick: showAbout
 	});
 
 	var btnConfig = new dijit.form.Button({
@@ -356,9 +354,8 @@ var createToolbar = function() {
 }; // createToolbar()
 
 
+// Toggles the second date filter
 var toggleSecondDateFilter = function() {
-	// On click, toggle the second date selection filters and the slider
-	// TODO: This uses jQuery... as that's far more easy.
 	var toggleDiv = $("#toggleBtn").parent().parent();
 	toggleDiv.nextUntil($("span[widgetid=searchButton]")).toggle();
 
@@ -381,115 +378,13 @@ var toggleSecondDateFilter = function() {
 };
 
 
-var toolbarAbout = function() {
-	createAbout();
-	showAbout();
-};
-
-
+// Shows the about dialog
 var showAbout = function() {
-	dijit.byId("about").show();
+	dijit.byId("aboutDialog").show();
 };
 
 
-var createAbout = function() {
-	var title = "Texcavator - Collaborating Institutes";
-	var style = "width: 420px; height: 420px; text-align: right; line-height: 24px; margin: 5px;";
-
-	var dlgAbout = new dijit.Dialog({
-		id: "about",
-		title: title
-	});
-
-	dojo.style(dlgAbout.closeButtonNode, "visibility", "hidden"); // hide the ordinary close button
-
-	var container = dlgAbout.containerNode;
-
-	var cpdiv = dojo.create("div", {
-		id: "cp-div"
-	}, container);
-	var aboutContainer = new dijit.layout.ContentPane({
-		title: "About",
-		style: style
-	}, "cp-div");
-
-	dojo.create("div", {
-		innerHTML: "<a href='http://wahsp.nl' target='_blank'><img src='/static/image/logos/WAHSPlogo.png' height='48' align='left' /></a>",
-		style: "clear: both"
-	}, aboutContainer.domNode);
-
-	// var innerHTML = "<a href='/static/BiLand_manual.pdf' target='_blank'>BiLand Manual</a>";
-	var innerHTML = "<a href='/static/WAHSP_manual.pdf' target='_blank'>WAHSP/BiLand Manual</a>";
-
-	dojo.create("div", {
-		innerHTML: innerHTML,
-		style: "clear: both"
-	}, aboutContainer.domNode);
-
-	dojo.create("div", {
-		innerHTML: "<hr>",
-		style: "clear: both"
-	}, aboutContainer.domNode);
-
-	dojo.create("div", {
-		innerHTML: "<a href='http://www.uva.nl' target='_blank'><img src='/static/image/logos/UvA.gif' height='50' align='left' /></a>",
-		style: "clear: both"
-	}, aboutContainer.domNode);
-	dojo.create("div", {
-		innerHTML: "<hr>",
-		style: "clear: both"
-	}, aboutContainer.domNode);
-
-	dojo.create("div", {
-		innerHTML: "<a href='http://www.uu.nl' target='_blank'><img src='/static/image/logos/uu-logo.png' align='left' /></a>",
-		style: "clear: both"
-	}, aboutContainer.domNode);
-	dojo.create("div", {
-		innerHTML: "<hr>",
-		style: "clear: both"
-	}, aboutContainer.domNode);
-
-	dojo.create("div", {
-		innerHTML: "<a href='http://www.kb.nl' target='_blank'><img src='/static/image/logos/KB.gif' height='40' align='left' /></a>",
-		style: "clear: both"
-	}, aboutContainer.domNode);
-	dojo.create("div", {
-		innerHTML: "<hr>",
-		style: "clear: both"
-	}, aboutContainer.domNode);
-
-	dojo.create("div", {
-		innerHTML: "<a href='http://huygensinstituut.knaw.nl' target='_blank'><img src='/static/image/logos/HuygensInstituut.gif' height='30' align='left' /></a>",
-		style: "clear: both"
-	}, aboutContainer.domNode);
-
-	dojo.create("div", {
-		innerHTML: "<hr>",
-		style: "clear: both"
-	}, aboutContainer.domNode);
-	dojo.create("div", {
-		innerHTML: "<a href='http://staatsbibliothek-berlin.de/' target='_blank'><img src='/static/image/logos/StaatsbibliothekBerlin.png' height='40' align='left' /></a>",
-		style: "clear: both"
-	}, aboutContainer.domNode);
-
-	var actionBar = dojo.create("div", {
-		className: "dijitDialogPaneActionBar",
-		style: "height: 30px"
-	}, container);
-
-	var bClose = new dijit.form.Button({
-		label: "<img src='/static/image/icon/Tango/16/actions/dialog-close.png'/> Close",
-		showLabel: true,
-		role: "presentation",
-		onClick: function() {
-			dijit.byId("about").destroyRecursive();
-		}
-	});
-	actionBar.appendChild(bClose.domNode);
-}; // createAbout
-
-
-// Basic validation of dates.
+// Basic validation of dates
 function validateDates() {
 	if (dijit.byId("begindate").value == undefined || dijit.byId("enddate").value == undefined ||
 		dijit.byId("begindate-2").value == undefined || dijit.byId("enddate-2").value == undefined)

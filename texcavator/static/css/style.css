@@ -158,3 +158,11 @@ html, body {
     margin: 0 auto;
     width: 80%;
 }
+
+/* About page */
+.about-justify-images {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 550px;
+}
