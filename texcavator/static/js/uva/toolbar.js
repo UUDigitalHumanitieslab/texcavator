@@ -175,12 +175,6 @@ var createToolbar = function() {
 		genDialog("Edit query", textarea.domNode, { "OK": true, "Cancel": true }, updateQuery);
 	};
 
-	var queryInputEdit = new dijit.form.Button({
-		iconClass: "dijitIcon dijitIconEditTask",
-		title: "Edit your query in a larger window",
-		onClick: queryDialog,
-	});
-
 	// Search dates
 	var btnDateFilterBegin = new dijit.form.Button({
 		label: "from",
@@ -285,23 +279,28 @@ var createToolbar = function() {
 		onClick: toggleSecondDateFilter
 	});
 
+	var queryInputEdit = new dijit.form.Button({
+		label: "<img src='/static/image/icon/Tango/22/apps/utilities-text-editor.png')/>",
+		title: "Edit your query in a larger window",
+		onClick: queryDialog,
+	});
+
 	var submit = new dijit.form.Button({
 		id: "searchButton",
-		iconClass: "dijitIcon dijitIconSearch",
+		label: "<img src='/static/image/icon/Tango/22/actions/system-search.png')/>",
 		title: "Search",
 		type: "submit",
 	});
 
 	var reset = new dijit.form.Button({
 		id: "resetButton",
-		iconClass: "dijitIcon dijitIconDelete",
+		label: "<img src='/static/image/icon/Tango/22/actions/edit-clear.png')/>",
 		title: "Clear the search form",
 		type: "reset",
 	});
 
 	searchForm.domNode.appendChild(queryInputLabel.domNode);
 	searchForm.domNode.appendChild(queryInput.domNode);
-	searchForm.domNode.appendChild(queryInputEdit.domNode);
 
 	searchForm.domNode.appendChild(btnDateFilterBegin.domNode);
 	searchForm.domNode.appendChild(beginDateTB.domNode);
@@ -315,6 +314,7 @@ var createToolbar = function() {
 	searchForm.domNode.appendChild(btnDateFilterEnd2.domNode);
 	searchForm.domNode.appendChild(endDateTB2.domNode);
 
+	searchForm.domNode.appendChild(queryInputEdit.domNode);
 	searchForm.domNode.appendChild(submit.domNode);
 	searchForm.domNode.appendChild(reset.domNode);
 
