@@ -158,6 +158,20 @@ var createToolbar = function() {
 	var queryInput = new dijit.form.TextBox({
 		id: "query",
 		style: "width: 200px",
+		// Code below is a fix for Dojo issue #16266, adapted liberally
+		// from musicdemo. It prevents arrow key presses from moving the
+		// focus out of the text box.
+		// https://bugs.dojotoolkit.org/ticket/16266#comment:6
+		onKeyPress: function (e) {
+			var key = e.which || e.keyCode;
+			switch (key) {
+			case 35:  // end (down arrow)
+			case 36:  // home (up arrow)
+			case 37:  // left
+			case 39:  // right
+				e.stopPropagation();
+			}
+		}
 	});
 
 	var queryDialog = function() {
