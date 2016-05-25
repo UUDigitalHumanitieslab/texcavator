@@ -34,12 +34,11 @@ shutil.rmtree(os.path.join(STATIC_DIR, 'ShiCo-{}'.format(VERSION)))
 
 # Replace relative paths with absolute paths
 print 'Replacing paths...'
-print os.path.join(FINAL_DIR, 'scripts/app.js')
 with open(os.path.join(FINAL_DIR, 'scripts/app.js'), 'r+') as f:
     lines = []
     for line in f:
-        line = line.replace('config.json', urlparse.urljoin(FINAL_DIR, 'config.json'))
-        line = line.replace('/help/algorithm.md', urlparse.urljoin(FINAL_DIR, 'help/algorithm.md'))
+        line = line.replace('config.json', urlparse.urljoin('/static/js/ShiCo/', 'config.json'))
+        line = line.replace('/help/algorithm.md', urlparse.urljoin('/static/js/ShiCo/', 'help/algorithm.md'))
         lines.append(line)
 
     f.seek(0)
