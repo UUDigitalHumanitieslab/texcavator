@@ -17,7 +17,6 @@ from django.conf import settings
 from django.conf.urls import include, url
 from django.contrib import admin
 from django.views.generic import RedirectView, TemplateView
-from django.views.static import serve
 
 from .views import index, user_login, user_logout
 
@@ -33,9 +32,6 @@ urlpatterns = [
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     # Enable the admin:
     url(r'^admin/', include(admin.site.urls)),
-
-    # TODO: is this the proper way to refer to locally served JavaScripts?
-    url(r'^js/(?P<path>.*)$', serve, {'document_root': 'js/', 'show_indexes': True}),
 
     url(r'^$', index, name='index'),
     url(r'^login$', user_login),

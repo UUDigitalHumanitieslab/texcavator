@@ -622,10 +622,10 @@ def day_statistics(idx, typ, date_range, agg_name, distribution=None, article_ty
 
 
 def metadata_aggregation(idx, typ, query, date_ranges,
-                         exclude_distributions, exclude_article_types, selected_pillars):
-    body = create_query(query, date_ranges,
-                        exclude_distributions, exclude_article_types, selected_pillars)
-    body['aggs'] = metadata_dict()
+                         exclude_distributions, exclude_article_types, selected_pillars,
+                         aggregation_body):
+    body = create_query(query, date_ranges, exclude_distributions, exclude_article_types, selected_pillars)
+    body['aggs'] = aggregation_body
     return _es().search(index=idx, doc_type=typ, body=body, search_type='count')
 
 
@@ -650,6 +650,17 @@ def metadata_dict():
             "terms": {
                 "field": "paper_dc_title.raw",
                 "size": 10
+            }
+        }
+    }
+
+
+def articles_over_time():
+    return {
+        "articles_over_time": {
+            "date_histogram": {
+                "field": "paper_dc_date",
+                "interval": "day"
             }
         }
     }

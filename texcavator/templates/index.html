@@ -1,12 +1,5 @@
 {% extends "base.html" %}
 
-{% block head %}
-	<style type="text/css">
-		@import url({{ STATIC_URL }}js/Dojo/dojox/form/resources/RangeSlider.css);
-		@import url({{ STATIC_URL }}css/style.css);
-	</style>
-{% endblock head %}
-
 {% block middle %}
 	<div data-dojo-type="dijit.layout.AccordionContainer" data-dojo-props="splitter:true, region:'leading'" style="width: 438px;" id="leftAccordion">
 		<div id="searchPane" data-dojo-type="dijit.layout.ContentPane" data-dojo-props="title:'Search results'">
@@ -58,14 +51,7 @@
 					<div style="color:grey; text-align: center;">Cloud.</div>
 				</div>
 
-				<div id="timeline" title="Timeline" dojoType="dijit.layout.ContentPane" selected="false">  <!-- Timeline -->
-					<div id="timeline-title">
-						Hover over a bar to inspect the values, click a bar to show a word cloud for this period.
-                        Click <a href="javascript:switchTimelineNormalize()">here</a> to switch between absolute and relative frequencies.
-                    </div>
-                    <div id="timeline-advert-warning">You query includes advertisements.
-                        As you may be aware, not all advertisements have been split correctly into individual items, so the counts displayed may be off.</div>
-				</div>
+                {% include "timeline.html" %}
 
 				<div id="record" title="OCR" dojoType="dijit.layout.ContentPane" selected="false">  <!-- OCR -->
 					<div style="color:grey; text-align: center;">Select an article.</div>
@@ -78,56 +64,50 @@
 		</div>
 	</div>
 
+    {% include "about.html" %}
+
 	<!-- ConfirmDialog, see js/uva/dialogs.js -->
 	<script type="text/template" id="confirm-dialog-template">
-	<div style="width:300px;">
-		<div class="dijitDialogPaneContentArea">
-			<div data-dojo-attach-point="contentNode">
-				${message}
-			</div>
-		</div>
+        <div style="width:300px;">
+            <div class="dijitDialogPaneContentArea">
+                <div data-dojo-attach-point="contentNode">
+                    ${message}
+                </div>
+            </div>
 
-		<div class="dijitDialogPaneActionBar">
-			<button
-				data-dojo-type="dijit.form.Button"
-				data-dojo-attach-point="submitButton"
-				type="submit"
-				>OK
-			</button>
+            <div class="dijitDialogPaneActionBar">
+                <button
+                    data-dojo-type="dijit.form.Button"
+                    data-dojo-attach-point="submitButton"
+                    type="submit"
+                    >OK
+                </button>
 
-			<button
-				data-dojo-type="dijit.form.Button"
-				data-dojo-attach-point="cancelButton"
-				>Cancel
-			</button>
-		</div>
-		</div>
+                <button
+                    data-dojo-type="dijit.form.Button"
+                    data-dojo-attach-point="cancelButton"
+                    >Cancel
+                </button>
+            </div>
+        </div>
 	</script>
 {% endblock middle %}
 
 {% block outside %}
 <script type="text/javascript">
+// Show versions
+dojo.ready(function showDojoVersion() {
+    console.log( "Dojo version: " + dojo.version );
+});
+dojo.ready(function showjQueryVersion() {
+    console.log( "jQuery version: " + $.fn.jquery );
+});
+dojo.ready(function showD3Version() {
+    console.log( "D3 version: " + d3.version );
+});
 
-function showDojoVersion()
-{ console.log( "Dojo version: " + dojo.version ) }
-dojo.ready( showDojoVersion );
 
-function showjQueryVersion()
-{ console.log( "jQuery version: " + $.fn.jquery ) }
-dojo.ready( showjQueryVersion );
-
-function showD3Version()
-{ console.log( "D3 version: " + d3.version ) }
-dojo.ready( showD3Version );
-
-function showDojoLocale()
-{ console.log( "Dojo locale: " + dojoConfig.locale ) }
-dojo.ready( showDojoLocale );
-
-// global javascript variables from django template variables
-ES_INDEX = "{{ ES_INDEX }}";
-ES_REVERSE_MAPPING = {{ ES_REVERSE_MAPPING|safe }};
-
+// Metadata filter functionality (TODO: move somewhere else?)
 function hideResetButtons() {
 	$('.filter-reset-btn').hide();
 }
@@ -139,38 +119,24 @@ function resetAndSubmit(action, button) {
 	$(button.domNode).hide();
 }
 
-dojo.ready( function() { createLogin( "{{ PROJECT_NAME }}" ) } );   // login.js
-dojo.ready( showLogin );                                            // login.js
 
-dojo.ready( function() { 
+// Set global javascript variables from django template variables
+dojo.ready(function() {
+    ES_INDEX = "{{ ES_INDEX }}";
+    ES_REVERSE_MAPPING = {{ ES_REVERSE_MAPPING|safe }};
 	QUERY_DATA_DOWNLOAD = "{{ QUERY_DATA_DOWNLOAD_ALLOW }}" == "True";
 	WORDCLOUD_MIN_WORDS = {{ WORDCLOUD_MIN_WORDS }};
 	WORDCLOUD_MAX_WORDS = {{ WORDCLOUD_MAX_WORDS }};
-} );
-
-dojo.ready( function() { celeryCheckFailure( "None" ); } ); // celery.js
-dojo.ready( function() { storeDateLimits( "{{ PROJECT_MIN_DATE }}", "{{ PROJECT_MAX_DATE }}" ); } );    // toolbar.js
-
-
-dojo.ready( function() {
-	// event by selecting "View at KB" tab of articleContainer
-	dojo.connect(dijit.byId( "articleContainer" ), "_transition", function( newTab, oldTab )
-	{
-	//	console.log( newTab.id + ", " + newTab.title );
-		if( newTab.id === "kb-pane" )        // clicked on "View at KB"
-		{
-			var kblabel = dojo.byId( "kb-pane-art-ident" );
-			if( kblabel != null )
-			{
-				var art_ident = kblabel.innerHTML;
-				var articleurl = 'http://kranten.kb.nl/view/article/id/' + art_ident;
-				console.log( "articleurl: " + articleurl );
-				var newwindow = window.open( articleurl, 'kb', '' );
-				if( window.focus ) { newwindow.focus(); }
-			}
-		}
-	});
 });
+
+// Create the login window, the toolbar and the config on load
+dojo.ready( function() { createLogin( "{{ PROJECT_NAME }}" ) } );   // login.js
+dojo.ready( showLogin );                                            // login.js
+dojo.ready( createToolbar );                                        // toolbar.js
+dojo.ready( createConfig );                                         // config.js
+
+// Store the date limits
+dojo.ready( function() { storeDateLimits( "{{ PROJECT_MIN_DATE }}", "{{ PROJECT_MAX_DATE }}" ); } );    // toolbar.js
 
 // Sets the given keyword on the query input element and starts the search
 function startSearch(keyword)
@@ -180,7 +146,7 @@ function startSearch(keyword)
 }
 
 
-// HTML search result in Search panel of accordion
+// HTML search result in Search panel of accordion (TODO: move this and everything below somewhere else?)
 function searchSubmit(newStartRecord)
 {
     // Select the searchPane
@@ -437,7 +403,6 @@ function nextResults( amount )
 	dojo.require( "dijit.form.HorizontalRule" );
 	dojo.require( "dijit.form.HorizontalRuleLabels" );
 
-	dojo.require( "dojox.form.RangeSlider" );
 	dojo.require( "dojox.html.entities" );
 	dojo.require( "dojox.widget.Standby" );
 	dojo.require( "dojox.xml.parser" );

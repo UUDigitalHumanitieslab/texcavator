@@ -58,23 +58,12 @@ var getCloudParameters = function( params )
 // retrieve stopwords table data, place at target div
 var stopwordsGetTable = function( target )
 {
-	dojo.xhrPost({
+	dojo.xhrGet({
 		url: "query/stopwords",
 		handleAs: "json",
 		load: function(response)
 		{
-			var status = response.status;
-
-			if (status === "SUCCESS")
-			{
-				stopwordsFillTable( response.stopwords, target );
-			}
-			else
-			{
-				console.error( status );
-				var msg = response.msg;
-				console.error( msg );
-			}
+			stopwordsFillTable( response.stopwords, target );
 		},
 		error: function( err ) {
 			console.error( err );
@@ -86,9 +75,6 @@ var stopwordsGetTable = function( target )
 
 function stopwordsFillTable( stopwordsList, target )
 {
-//	console.log( "stopwordsFillTable()" );
-//	console.log( stopwordsList );
-
 	var label = dojo.byId( "label-grid-stopwords" );
 	if( label )
 	{ label.innerHTML = stopwordsList.length + " stopwords for user " + glob_username + ":<br/>"; }
@@ -190,7 +176,7 @@ var stopwordsSave = function( word, stopwords_cat )
 
 	if ( stopwords_cat === "singleq" )
 	{
-		content.query_id = lexiconID;
+		content.query_id = retrieveLexiconID();
 	}
 
 	console.log(content);
@@ -268,19 +254,19 @@ var placeCloudInTarget = function( cloud_src, json_data, target )
 
 	clearCloud();
 
-	var contentBox = dojo.contentBox( target );
+	var contentBox = dojo.getContentBox( target );
 	// -8 to prevent scroll bars popping up
 	var rwidth  = contentBox.w - 8;
 	var rheight = contentBox.h - 8;
 
-	var min_width = cloud_src == 'burst' ? 400 : 1000;
+	var min_width = 1000;
 	if( isNaN( rwidth ) || rwidth < min_width )
 	{
 	//	console.log( "placeCloudInTarget() bad rwidth: " + rwidth );
 		rwidth = min_width;		// just try something
 	}
 
-	var min_height = cloud_src == 'burst' ? 300 : 600;
+	var min_height = cloud_src == 'burst' ? 250 : 600;
 	if( isNaN( rheight ) || rheight < min_height )
 	{
 	//	console.log( "placeCloudInTarget() bad rheight: " + rheight );

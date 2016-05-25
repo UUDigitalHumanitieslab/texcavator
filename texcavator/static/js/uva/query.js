@@ -82,10 +82,10 @@ function downloadQueryDialog(item) {
 	$.each(formats, function(key, value) {
 		var rb = new dijit.form.RadioButton({
 			id: "rb-qdata-" + key,
-			checked: config.querydataexport.format === key,
+			checked: getConfig().querydataexport.format === key,
 			onChange: function(btn) {
 				if (btn) {
-					config.querydataexport.format = key;
+					getConfig().querydataexport.format = key;
 				}
 			},
 		});
@@ -109,9 +109,9 @@ function downloadQueryDialog(item) {
 
 	var cbSimplifiedExport = new dijit.form.CheckBox({
 		id: "cb-simplified-export",
-		checked: config.querydataexport.simplified,
+		checked: getConfig().querydataexport.simplified,
 		onChange: function(btn) {
-			config.querydataexport.simplified = btn;
+			getConfig().querydataexport.simplified = btn;
 		}
 	}, divSimplifiedExport);
 

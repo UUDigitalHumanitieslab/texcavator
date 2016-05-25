@@ -4,13 +4,13 @@
 import logging
 from collections import Counter
 from datetime import datetime
-from sys import stderr, exc_info
+from sys import stderr
 
 import requests
 from celery.result import AsyncResult
 
 from django.conf import settings
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.utils.html import escape
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
@@ -18,7 +18,8 @@ from django.shortcuts import get_object_or_404
 
 from es import get_search_parameters, do_search, count_search_results, \
     single_document_word_cloud, get_document, \
-    metadata_aggregation, get_stemmed_form
+    metadata_aggregation, metadata_dict, articles_over_time, \
+    get_stemmed_form
 
 from texcavator.utils import json_response_message, daterange2dates, normalize_cloud
 
@@ -324,22 +325,19 @@ def download_scan_image(request):
 
 
 @login_required
-def retrieve_kb_resolver(request):
+def retrieve_kb_resolver(request, doc_id):
     logger.info('services/kb/resolver/')
 
-    host = 'resolver.kb.nl'
-    port = 80
-    path = 'resolve'
-    logger.debug('retrieve_kb_resolver: %s', request.META["QUERY_STRING"])
-
-    kb_resolver_url = "http://" + host + ':' + str(port) + '/' + path + '?urn=' + request.GET["id"]
     try:
-        response = requests.get(kb_resolver_url)
-    except:
+        params = {
+            'identifier': 'DDD:{}'.format(doc_id),
+            'verb': 'GetRecord',
+            'metadataPrefix': 'didl'}
         if settings.DEBUG:
-            print >> stderr, "url: %s" % kb_resolver_url
-        type, value, tb = exc_info()
-        msg = "KB Resolver request failed: %s" % value.message
+            print >> stderr, 'url: {}, params: {}'.format(settings.KB_RESOLVER_URL, params)
+        response = requests.get(settings.KB_RESOLVER_URL + settings.KB_API_KEY, params=params)
+    except requests.exceptions.HTTPError as e:
+        msg = 'KB Resolver request failed: {}'.format(str(e))
         if settings.DEBUG:
             print >> stderr, msg
         return json_response_message('error', msg)
@@ -360,7 +358,8 @@ def metadata(request):
                                   params['dates'],
                                   params['distributions'],
                                   params['article_types'],
-                                  params['pillars'])
+                                  params['pillars'],
+                                  metadata_dict())
 
     # Categorize newspaper_ids per Pillar
     pillars = Counter()
@@ -388,3 +387,32 @@ def stemmed_form(request):
     word = request.POST.get('word')
     stemmed = get_stemmed_form(settings.ES_INDEX, word)
     return json_response_message('success', 'Complete', {'stemmed': stemmed})
+
+
+@csrf_exempt
+@login_required
+def heatmap(request, query_id, year):
+    """
+    Retrieves heatmap data for the given Query and year.
+    """
+    query = get_object_or_404(Query, pk=query_id)
+    params = query.get_query_dict()
+
+    year = int(year)
+    range = daterange2dates(str(year - 5) + '0101,' + str(year + 5) + '1231')
+
+    result = metadata_aggregation(settings.ES_INDEX,
+                                  settings.ES_DOCTYPE,
+                                  params['query'],
+                                  range,
+                                  params['exclude_distributions'],
+                                  params['exclude_article_types'],
+                                  params['selected_pillars'],
+                                  articles_over_time())
+
+    articles_per_day = {}
+    for bucket in result['aggregations']['articles_over_time']['buckets']:
+        date = bucket['key'] / 1000  # Cal-HeatMap requires the date in seconds instead of milliseconds
+        articles_per_day[date] = bucket['doc_count']
+
+    return JsonResponse(articles_per_day)

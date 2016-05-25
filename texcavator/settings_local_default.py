@@ -17,7 +17,7 @@ sys.path.append(PROJECT_PARENT)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
-SECRET_KEY = '5at!yd@mwyn_^xn54m&rg%(6zqprm22^)lke5$v&)-s$+yfj1f'
+SECRET_KEY = 'set-your-key-here'
 DEBUG = True
 ALLOWED_HOSTS = []
 STATIC_ROOT = os.path.join(PROJECT_GRANNY, "texcavator_static") + os.sep
@@ -82,6 +82,10 @@ WORDCLOUD_MAX_WORDS = 200
 
 # Temporary setting for whether or not stemming is available
 STEMMING_AVAILABLE = True
+
+# KB API settings
+KB_RESOLVER_URL = 'http://services.kb.nl/mdo/oai/'
+KB_API_KEY = 'set-your-key-here'
 
 # Temporary setting for whether or not the hotfix for duplicate newspapers should be used
 KB_HOTFIX_DUPLICATE_NEWSPAPERS = True
