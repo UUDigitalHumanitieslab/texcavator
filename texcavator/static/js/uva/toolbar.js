@@ -208,7 +208,8 @@ var createToolbar = function() {
 					endDateTB.constraints.min = date.add(beginDateTB.value, "day", 1);
 				});
 			}
-		}
+		},
+		intermediateChanges: true  // prevents issue #127
 	});
 
 	var btnDateFilterEnd = new dijit.form.Button({
@@ -231,7 +232,8 @@ var createToolbar = function() {
 					beginDateTB.constraints.max = date.add(endDateTB.value, "day", -1);
 				});
 			}
-		}
+		},
+		intermediateChanges: true  // prevents issue #127
 	});
 
 	// Optional second search date
