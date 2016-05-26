@@ -138,13 +138,6 @@ dojo.ready( createConfig );                                         // config.js
 // Store the date limits
 dojo.ready( function() { storeDateLimits( "{{ PROJECT_MIN_DATE }}", "{{ PROJECT_MAX_DATE }}" ); } );    // toolbar.js
 
-// Sets the given keyword on the query input element and starts the search
-function startSearch(keyword)
-{
-    $('#query').val(keyword);
-    searchSubmit();
-}
-
 
 // HTML search result in Search panel of accordion (TODO: move this and everything below somewhere else?)
 function searchSubmit(newStartRecord)
@@ -207,6 +200,20 @@ function searchSubmit(newStartRecord)
 			dojo.byId( "search-result" ).innerHTML = '<div>' + title + '.</div>';
 		}
 	});
+}
+
+
+/**
+ * Starts a search (called from the ShiCo iframe)
+ * - Sets the date filters to the first and last day of the given year
+ * - Sets the given keyword on the query input element
+ * - Starts the search
+ */
+function startSearch(keyword, year)
+{
+	setDateFilters(new Date(year, 0, 1), new Date(year, 11, 31));
+    $('#query').val(keyword);
+    searchSubmit();
 }
 
 
