@@ -100,6 +100,7 @@ class Query(models.Model):
                 'Can download larger numbers of results',
             ),
         )
+        verbose_name_plural = 'Queries'
 
     def get_query_dict(self):
         """Returns a JSON serializable representation of the query object, that
