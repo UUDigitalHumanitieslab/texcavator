@@ -56,19 +56,24 @@ function addTooltips() {
 				}
 			});
 
-	        dijit.popup.open({
-	            popup: shicoDialog,
-	            around: $(this).attr('id'),
-	        });
-	    });
+			dijit.popup.open({
+				popup: shicoDialog,
+				around: $(this).attr('id'),
+			});
+		});
 	});
 }
 
 // Starts searching for the term in ShiCo
-// TODO: this currently doesn't work as the content of #terms is not picked up by ShiCo
 function startShiCoSearch(term) {
+	// Select the ShiCo tab
 	dijit.byId('articleContainer').selectChild(dijit.byId('shico'));
-	$('#shicoframe').contents().find('#terms').val(term);
-	//angular.element($('#terms')).triggerHandler('input');
-	$('#shicoframe').contents().find('.btn-success').click();
+
+	var shicoFrame = $('#shicoframe').contents();
+	var shicoAngular = document.getElementById("shicoframe").contentWindow.angular;
+
+	// Set the 'terms' input field, trigger the Angular directive, and post the form
+	shicoFrame.find('#terms').val(term);
+	shicoAngular.element(shicoFrame.find('#terms')).trigger('input');
+	shicoAngular.element(shicoFrame.find('form')).scope().vm.doPost();
 }
