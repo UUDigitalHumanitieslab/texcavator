@@ -39,6 +39,8 @@ urlpatterns = [
 
     url(r'^services/', include('services.urls')),
     url(r'^query/', include('query.urls')),
+
+    url(r'^shico/$', TemplateView.as_view(template_name='shico.html'), name='shico'),
 ]
 
 if settings.DEBUG:

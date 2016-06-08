@@ -56,6 +56,10 @@
 				<div id="record" title="OCR" dojoType="dijit.layout.ContentPane" selected="false">  <!-- OCR -->
 					<div style="color:grey; text-align: center;">Select an article.</div>
 				</div>
+
+				<div id="shico" title="ShiCo" dojoType="dijit.layout.ContentPane" selected="false" style="overflow-x: hidden; overflow-y: hidden;">  <!-- ShiCo -->
+                    <iframe id="shicoframe" frameborder="0" height="100%" width="100%" src="{% url 'shico' %}"></iframe>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -196,6 +200,20 @@ function searchSubmit(newStartRecord)
 			dojo.byId( "search-result" ).innerHTML = '<div>' + title + '.</div>';
 		}
 	});
+}
+
+
+/**
+ * Starts a search (called from the ShiCo iframe)
+ * - Sets the date filters to the first and last day of the given year
+ * - Sets the given keyword on the query input element
+ * - Starts the search
+ */
+function startSearch(keyword, year)
+{
+	setDateFilters(new Date(year, 0, 1), new Date(year, 11, 31));
+    $('#query').val(keyword);
+    searchSubmit();
 }
 
 

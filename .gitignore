@@ -2,15 +2,18 @@
 *.log
 *.old
 *~
-texcavator/static/js/dojo-*
-texcavator/settings_local.py
 celeryev.pid
 .exvim.*
 *.exvim
-
 *.tar.gz
-
 Thumbs.db
+
+# Dojo/ShiCo
+texcavator/static/js/dojo-*
+texcavator/static/js/ShiCo
+
+# Local settings
+texcavator/settings_local.py
 
 # IDE stuff
 .*.sw[op]
