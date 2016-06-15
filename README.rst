@@ -107,6 +107,10 @@ Before issuing the below commands, make sure Elasticsearch, MySQL and Redis are 
 
     sh install-dojo.sh
 
+* Install ShiCo, that allows for visualizing shifting concepts over time::
+
+    python install-shico.py
+
 * Populate the database::
 
     python manage.py migrate
