@@ -6,7 +6,7 @@ import zipfile
 
 import requests
 
-VERSION = '0.6'
+VERSION = '0.7'
 GITHUB_URL = 'https://github.com/NLeSC/ShiCo/archive/v{}.zip'.format(VERSION)
 
 STATIC_DIR = 'texcavator/static/js/'
