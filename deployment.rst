@@ -25,8 +25,7 @@ First, let's install some dependencies::
     sudo apt-get install postfix
     sudo apt-get install libapache2-mod-wsgi libmysqlclient-dev libxml2-dev libxslt-dev
 
-During installation of ``mysql-server`` and ``postfix``.
-Make sure to jot down the details to set these in Texcavator's settings later on.
+During installation of ``mysql-server`` and ``postfix``, make sure to jot down the details to set these in Texcavator's settings later on.
 
 *************
 elasticsearch
