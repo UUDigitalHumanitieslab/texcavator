@@ -100,14 +100,14 @@ We use the mapping specified in ``mapping.rst``.
 Prerequisite commands
 *********************
 
-Texcavator requires some installation of external packages and management commands to be able to function correctly.
-Before issuing the below commands, make sure Elasticsearch, MySQL and Redis are still running at the specified ports.
+Texcavator requires you to install some external packages and management commands in order to function correctly.
+Before issuing the commands below, make sure Elasticsearch, MySQL and Redis are still running at the specified ports.
 
 * Install the JavaScript toolkit Dojo_, on which the user interface is built::
 
     sh install-dojo.sh
 
-* Install ShiCo, that allows for visualizing shifting concepts over time::
+* Install ShiCo, which allows for visualizing shifting concepts over time::
 
     python install-shico.py
 
@@ -146,7 +146,7 @@ Then, start Celery and Django's built-in webserver::
 
 Texcavator is now ready for use at ``http://127.0.0.1:8000``.
 
-Downloading of query data requires a running SMTP server; you can use Python's built-in for that::
+Downloading of query data requires a running SMTP server; you can use Python's built-in server for that::
 
     # In a separate terminal
     python -m smtpd -n -c DebuggingServer localhost:1025
