@@ -89,3 +89,7 @@ KB_API_KEY = 'set-your-key-here'
 
 # Temporary setting for whether or not the hotfix for duplicate newspapers should be used
 KB_HOTFIX_DUPLICATE_NEWSPAPERS = True
+
+# Guest account settings. Add this User using
+GUEST_USERNAME = 'guest'
+GUEST_PASSWORD = 'guest'
