@@ -34,9 +34,7 @@ var getBeginDate = function()
 var getEndDate = function()
 var createToolbar = function()
 var toolbarSearch = function()
-var toolbarAbout = function()
 var showAbout = function()
-var createAbout = function()
 */
 
 var minDate; // fixed minDate for project
@@ -160,6 +158,20 @@ var createToolbar = function() {
 	var queryInput = new dijit.form.TextBox({
 		id: "query",
 		style: "width: 200px",
+		// Code below is a fix for Dojo issue #16266, adapted liberally
+		// from musicdemo. It prevents arrow key presses from moving the
+		// focus out of the text box.
+		// https://bugs.dojotoolkit.org/ticket/16266#comment:6
+		onKeyPress: function (e) {
+			var key = e.which || e.keyCode;
+			switch (key) {
+			case 35:  // end (down arrow)
+			case 36:  // home (up arrow)
+			case 37:  // left
+			case 39:  // right
+				e.stopPropagation();
+			}
+		}
 	});
 
 	var queryDialog = function() {
@@ -175,11 +187,6 @@ var createToolbar = function() {
 		genDialog("Edit query", textarea.domNode, { "OK": true, "Cancel": true }, updateQuery);
 	};
 
-	var queryInputEdit = new dijit.form.Button({
-		iconClass: "dijitIcon dijitIconEditTask",
-		onClick: queryDialog,
-	});
-
 	// Search dates
 	var btnDateFilterBegin = new dijit.form.Button({
 		label: "from",
@@ -191,17 +198,18 @@ var createToolbar = function() {
 		id: "begindate",
 		style: "width: 90px;",
 		onChange: function() {
-			if (beginDateTB.value !== undefined && endDateTB.value !== undefined)
+			if (beginDateTB.value !== undefined)
 			{
 				// Set the global beginDate variable
 				beginDate = beginDateTB.value;
 
-				// set new min constraint for endDateTB
+				// Set new min constraint for endDateTB
 				require(["dojo/date"], function(date) {
 					endDateTB.constraints.min = date.add(beginDateTB.value, "day", 1);
 				});
 			}
-		}
+		},
+		intermediateChanges: true  // prevents issue #127
 	});
 
 	var btnDateFilterEnd = new dijit.form.Button({
@@ -214,7 +222,7 @@ var createToolbar = function() {
 		id: "enddate",
 		style: "width: 90px;",
 		onChange: function() {
-			if (beginDateTB.value !== undefined && endDateTB.value !== undefined)
+			if (endDateTB.value !== undefined)
 			{
 				// Set the global endDate variable
 				endDate = endDateTB.value;
@@ -224,7 +232,8 @@ var createToolbar = function() {
 					beginDateTB.constraints.max = date.add(endDateTB.value, "day", -1);
 				});
 			}
-		}
+		},
+		intermediateChanges: true  // prevents issue #127
 	});
 
 	// Optional second search date
@@ -239,12 +248,12 @@ var createToolbar = function() {
 		id: "begindate-2",
 		style: "width: 90px; display: none;",
 		onChange: function(value) {
-			if (beginDateTB2.value !== undefined && endDateTB2.value !== undefined)
+			if (beginDateTB2.value !== undefined)
 			{
 				// Set the global beginDate2 variable
 				beginDate2 = value;
 
-				// set new min constraint for endDateTB2
+				// Set new min constraint for endDateTB2
 				require(["dojo/date"], function(date) {
 					endDateTB2.constraints.min = date.add(value, "day", 1);
 				});
@@ -263,7 +272,7 @@ var createToolbar = function() {
 		id: "enddate-2",
 		style: "width: 90px; display: none;",
 		onChange: function(value) {
-			if (beginDateTB2.value !== undefined && endDateTB2.value !== undefined)
+			if (endDateTB2.value !== undefined)
 			{
 				// Set the global endDate2 variable
 				endDate2 = value;
@@ -279,25 +288,33 @@ var createToolbar = function() {
 	var toggleBtn = new dijit.form.Button({
 		id: "toggleBtn",
 		label: "<img src='/static/image/icon/Tango/22/actions/list-add.png')/>",
+		title: "Add a second date filter",
 		// On click, toggle the second date selection filters and the slider
 		onClick: toggleSecondDateFilter
 	});
 
+	var queryInputEdit = new dijit.form.Button({
+		label: "<img src='/static/image/icon/Tango/22/apps/utilities-text-editor.png')/>",
+		title: "Edit your query in a larger window",
+		onClick: queryDialog,
+	});
+
 	var submit = new dijit.form.Button({
 		id: "searchButton",
-		iconClass: "dijitIcon dijitIconSearch",
+		label: "<img src='/static/image/icon/Tango/22/actions/system-search.png')/>",
+		title: "Search",
 		type: "submit",
 	});
 
 	var reset = new dijit.form.Button({
 		id: "resetButton",
-		iconClass: "dijitIcon dijitIconDelete",
+		label: "<img src='/static/image/icon/Tango/22/actions/edit-clear.png')/>",
+		title: "Clear the search form",
 		type: "reset",
 	});
 
 	searchForm.domNode.appendChild(queryInputLabel.domNode);
 	searchForm.domNode.appendChild(queryInput.domNode);
-	searchForm.domNode.appendChild(queryInputEdit.domNode);
 
 	searchForm.domNode.appendChild(btnDateFilterBegin.domNode);
 	searchForm.domNode.appendChild(beginDateTB.domNode);
@@ -311,6 +328,7 @@ var createToolbar = function() {
 	searchForm.domNode.appendChild(btnDateFilterEnd2.domNode);
 	searchForm.domNode.appendChild(endDateTB2.domNode);
 
+	searchForm.domNode.appendChild(queryInputEdit.domNode);
 	searchForm.domNode.appendChild(submit.domNode);
 	searchForm.domNode.appendChild(reset.domNode);
 
@@ -321,7 +339,7 @@ var createToolbar = function() {
 		label: "<img src='/static/image/icon/gnome/22/actions/help-about.png' />About",
 		showLabel: true,
 		style: "float:right",
-		onClick: toolbarAbout
+		onClick: showAbout
 	});
 
 	var btnConfig = new dijit.form.Button({
@@ -351,12 +369,9 @@ var createToolbar = function() {
 	toolbar.addChild(btnConfig);
 }; // createToolbar()
 
-dojo.addOnLoad(createToolbar);
 
-
+// Toggles the second date filter
 var toggleSecondDateFilter = function() {
-	// On click, toggle the second date selection filters and the slider
-	// TODO: This uses jQuery... as that's far more easy.
 	var toggleDiv = $("#toggleBtn").parent().parent();
 	toggleDiv.nextUntil($("span[widgetid=searchButton]")).toggle();
 
@@ -365,6 +380,7 @@ var toggleSecondDateFilter = function() {
 		beginDate2 = undefined;
 		endDate2 = undefined;
 		dijit.byId("toggleBtn").set("label", "<img src='/static/image/icon/Tango/22/actions/list-add.png')/>");
+		dijit.byId("toggleBtn").set("title", "Add a second date filter");
 	}
 	// If toggled visible, set default min/max values
 	else {
@@ -373,119 +389,18 @@ var toggleSecondDateFilter = function() {
 		dijit.byId("begindate-2").set("value", minDate);
 		dijit.byId("enddate-2").set("value", maxDate);
 		dijit.byId("toggleBtn").set("label", "<img src='/static/image/icon/Tango/22/actions/list-remove.png')/>");
+		dijit.byId("toggleBtn").set("title", "Remove the second date filter");
 	}
 };
 
 
-var toolbarAbout = function() {
-	createAbout();
-	showAbout();
-};
-
-
+// Shows the about dialog
 var showAbout = function() {
-	dijit.byId("about").show();
+	dijit.byId("aboutDialog").show();
 };
 
 
-var createAbout = function() {
-	var title = "Texcavator - Collaborating Institutes";
-	var style = "width: 420px; height: 420px; text-align: right; line-height: 24px; margin: 5px;";
-
-	var dlgAbout = new dijit.Dialog({
-		id: "about",
-		title: title
-	});
-
-	dojo.style(dlgAbout.closeButtonNode, "visibility", "hidden"); // hide the ordinary close button
-
-	var container = dlgAbout.containerNode;
-
-	var cpdiv = dojo.create("div", {
-		id: "cp-div"
-	}, container);
-	var aboutContainer = new dijit.layout.ContentPane({
-		title: "About",
-		style: style
-	}, "cp-div");
-
-	dojo.create("div", {
-		innerHTML: "<a href='http://wahsp.nl' target='_blank'><img src='/static/image/logos/WAHSPlogo.png' height='48' align='left' /></a>",
-		style: "clear: both"
-	}, aboutContainer.domNode);
-
-	// var innerHTML = "<a href='/static/BiLand_manual.pdf' target='_blank'>BiLand Manual</a>";
-	var innerHTML = "<a href='/static/WAHSP_manual.pdf' target='_blank'>WAHSP/BiLand Manual</a>";
-
-	dojo.create("div", {
-		innerHTML: innerHTML,
-		style: "clear: both"
-	}, aboutContainer.domNode);
-
-	dojo.create("div", {
-		innerHTML: "<hr>",
-		style: "clear: both"
-	}, aboutContainer.domNode);
-
-	dojo.create("div", {
-		innerHTML: "<a href='http://www.uva.nl' target='_blank'><img src='/static/image/logos/UvA.gif' height='50' align='left' /></a>",
-		style: "clear: both"
-	}, aboutContainer.domNode);
-	dojo.create("div", {
-		innerHTML: "<hr>",
-		style: "clear: both"
-	}, aboutContainer.domNode);
-
-	dojo.create("div", {
-		innerHTML: "<a href='http://www.uu.nl' target='_blank'><img src='/static/image/logos/uu-logo.png' align='left' /></a>",
-		style: "clear: both"
-	}, aboutContainer.domNode);
-	dojo.create("div", {
-		innerHTML: "<hr>",
-		style: "clear: both"
-	}, aboutContainer.domNode);
-
-	dojo.create("div", {
-		innerHTML: "<a href='http://www.kb.nl' target='_blank'><img src='/static/image/logos/KB.gif' height='40' align='left' /></a>",
-		style: "clear: both"
-	}, aboutContainer.domNode);
-	dojo.create("div", {
-		innerHTML: "<hr>",
-		style: "clear: both"
-	}, aboutContainer.domNode);
-
-	dojo.create("div", {
-		innerHTML: "<a href='http://huygensinstituut.knaw.nl' target='_blank'><img src='/static/image/logos/HuygensInstituut.gif' height='30' align='left' /></a>",
-		style: "clear: both"
-	}, aboutContainer.domNode);
-
-	dojo.create("div", {
-		innerHTML: "<hr>",
-		style: "clear: both"
-	}, aboutContainer.domNode);
-	dojo.create("div", {
-		innerHTML: "<a href='http://staatsbibliothek-berlin.de/' target='_blank'><img src='/static/image/logos/StaatsbibliothekBerlin.png' height='40' align='left' /></a>",
-		style: "clear: both"
-	}, aboutContainer.domNode);
-
-	var actionBar = dojo.create("div", {
-		className: "dijitDialogPaneActionBar",
-		style: "height: 30px"
-	}, container);
-
-	var bClose = new dijit.form.Button({
-		label: "<img src='/static/image/icon/Tango/16/actions/dialog-close.png'/> Close",
-		showLabel: true,
-		role: "presentation",
-		onClick: function() {
-			dijit.byId("about").destroyRecursive();
-		}
-	});
-	actionBar.appendChild(bClose.domNode);
-}; // createAbout
-
-
-// Basic validation of dates.
+// Basic validation of dates
 function validateDates() {
 	if (dijit.byId("begindate").value == undefined || dijit.byId("enddate").value == undefined ||
 		dijit.byId("begindate-2").value == undefined || dijit.byId("enddate-2").value == undefined)

@@ -51,21 +51,20 @@
 					<div style="color:grey; text-align: center;">Cloud.</div>
 				</div>
 
-				<div id="timeline" title="Timeline" dojoType="dijit.layout.ContentPane" selected="false">  <!-- Timeline -->
-					<div id="timeline-title">
-						Hover over a bar to inspect the values, click a bar to show a word cloud for this period.
-                        Click <a href="javascript:switchTimelineNormalize()">here</a> to switch between absolute and relative frequencies.
-                    </div>
-                    <div id="timeline-advert-warning">You query includes advertisements.
-                        As you may be aware, not all advertisements have been split correctly into individual items, so the counts displayed may be off.</div>
-				</div>
+                {% include "timeline.html" %}
 
 				<div id="record" title="OCR" dojoType="dijit.layout.ContentPane" selected="false">  <!-- OCR -->
 					<div style="color:grey; text-align: center;">Select an article.</div>
 				</div>
+
+				<div id="shico" title="ShiCo" dojoType="dijit.layout.ContentPane" selected="false" style="overflow-x: hidden; overflow-y: hidden;">  <!-- ShiCo -->
+                    <iframe id="shicoframe" frameborder="0" height="100%" width="100%" src="{% url 'shico' %}"></iframe>
+				</div>
 			</div>
 		</div>
 	</div>
+
+    {% include "about.html" %}
 
 	<!-- ConfirmDialog, see js/uva/dialogs.js -->
 	<script type="text/template" id="confirm-dialog-template">
@@ -96,27 +95,19 @@
 
 {% block outside %}
 <script type="text/javascript">
+// Show versions
+dojo.ready(function showDojoVersion() {
+    console.log( "Dojo version: " + dojo.version );
+});
+dojo.ready(function showjQueryVersion() {
+    console.log( "jQuery version: " + $.fn.jquery );
+});
+dojo.ready(function showD3Version() {
+    console.log( "D3 version: " + d3.version );
+});
 
-function showDojoVersion()
-{ console.log( "Dojo version: " + dojo.version ) }
-dojo.ready( showDojoVersion );
 
-function showjQueryVersion()
-{ console.log( "jQuery version: " + $.fn.jquery ) }
-dojo.ready( showjQueryVersion );
-
-function showD3Version()
-{ console.log( "D3 version: " + d3.version ) }
-dojo.ready( showD3Version );
-
-function showDojoLocale()
-{ console.log( "Dojo locale: " + dojoConfig.locale ) }
-dojo.ready( showDojoLocale );
-
-// global javascript variables from django template variables
-ES_INDEX = "{{ ES_INDEX }}";
-ES_REVERSE_MAPPING = {{ ES_REVERSE_MAPPING|safe }};
-
+// Metadata filter functionality (TODO: move somewhere else?)
 function hideResetButtons() {
 	$('.filter-reset-btn').hide();
 }
@@ -128,41 +119,27 @@ function resetAndSubmit(action, button) {
 	$(button.domNode).hide();
 }
 
-dojo.ready( function() { createLogin( "{{ PROJECT_NAME }}" ) } );   // login.js
-dojo.ready( showLogin );                                            // login.js
 
-dojo.ready( function() { 
+// Set global javascript variables from django template variables
+dojo.ready(function() {
+    ES_INDEX = "{{ ES_INDEX }}";
+    ES_REVERSE_MAPPING = {{ ES_REVERSE_MAPPING|safe }};
 	QUERY_DATA_DOWNLOAD = "{{ QUERY_DATA_DOWNLOAD_ALLOW }}" == "True";
 	WORDCLOUD_MIN_WORDS = {{ WORDCLOUD_MIN_WORDS }};
 	WORDCLOUD_MAX_WORDS = {{ WORDCLOUD_MAX_WORDS }};
-} );
+});
 
-dojo.ready( function() { celeryCheckFailure( "None" ); } ); // celery.js
+// Create the login window, the toolbar and the config on load
+dojo.ready( function() { createLogin( "{{ PROJECT_NAME }}" ) } );   // login.js
+dojo.ready( showLogin );                                            // login.js
+dojo.ready( createToolbar );                                        // toolbar.js
+dojo.ready( createConfig );                                         // config.js
+
+// Store the date limits
 dojo.ready( function() { storeDateLimits( "{{ PROJECT_MIN_DATE }}", "{{ PROJECT_MAX_DATE }}" ); } );    // toolbar.js
 
 
-dojo.ready( function() {
-	// event by selecting "View at KB" tab of articleContainer
-	dojo.connect(dijit.byId( "articleContainer" ), "_transition", function( newTab, oldTab )
-	{
-	//	console.log( newTab.id + ", " + newTab.title );
-		if( newTab.id === "kb-pane" )        // clicked on "View at KB"
-		{
-			var kblabel = dojo.byId( "kb-pane-art-ident" );
-			if( kblabel != null )
-			{
-				var art_ident = kblabel.innerHTML;
-				var articleurl = 'http://kranten.kb.nl/view/article/id/' + art_ident;
-				console.log( "articleurl: " + articleurl );
-				var newwindow = window.open( articleurl, 'kb', '' );
-				if( window.focus ) { newwindow.focus(); }
-			}
-		}
-	});
-});
-
-
-// HTML search result in Search panel of accordion
+// HTML search result in Search panel of accordion (TODO: move this and everything below somewhere else?)
 function searchSubmit(newStartRecord)
 {
     // Select the searchPane
@@ -223,6 +200,20 @@ function searchSubmit(newStartRecord)
 			dojo.byId( "search-result" ).innerHTML = '<div>' + title + '.</div>';
 		}
 	});
+}
+
+
+/**
+ * Starts a search (called from the ShiCo iframe)
+ * - Sets the date filters to the first and last day of the given year
+ * - Sets the given keyword on the query input element
+ * - Starts the search
+ */
+function startSearch(keyword, year)
+{
+	setDateFilters(new Date(year, 0, 1), new Date(year, 11, 31));
+    $('#query').val(keyword);
+    searchSubmit();
 }
 
 

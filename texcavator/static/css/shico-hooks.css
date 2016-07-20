@@ -1,0 +1,5 @@
+/* Fix the height of the force-directed graphs */
+nvd3[data="yearData"] svg {
+    height: 296px;
+    width: 300px;
+}

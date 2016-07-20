@@ -10,7 +10,7 @@ import requests
 from celery.result import AsyncResult
 
 from django.conf import settings
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.utils.html import escape
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
@@ -18,7 +18,8 @@ from django.shortcuts import get_object_or_404
 
 from es import get_search_parameters, do_search, count_search_results, \
     single_document_word_cloud, get_document, \
-    metadata_aggregation, get_stemmed_form
+    metadata_aggregation, metadata_dict, articles_over_time, \
+    get_stemmed_form
 
 from texcavator.utils import json_response_message, daterange2dates, normalize_cloud
 
@@ -266,63 +267,6 @@ def export_cloud(request):
     return export_csv(request)
 
 
-@csrf_exempt
-@login_required
-def download_scan_image(request):
-    """
-    Download scan image file
-    TODO: This is not called anywhere from the front-end. Remove?
-    """
-    logger.info('download_scan_image')
-
-    from django.core.servers.basehttp import FileWrapper
-    import os
-
-    if settings.DEBUG:
-        print >> stderr, "download_scan_image()"
-
-    req_dict = request.GET
-    _id = req_dict["id"]
-    id_parts = _id.split('-')
-    zipfile = req_dict["zipfile"]
-    scandir = zipfile.split('_')[0]
-    if settings.DEBUG:
-        print >> stderr, _id, id_parts
-        print >> stderr, zipfile, scandir
-
-    # The filenames in the stabi dirs are not named in a consequent way.
-    # Some contain the dir name, some not.
-    # We added the dirname to the downsized jpegs if it was missing
-    if _id.count('-') == 2:           # YYYY-MM-DD
-        id4 = _id + '-'
-        id4 += scandir
-        filename = id4 + "_Seite_1.jpeg"
-    else:
-        # dirname = id_parts[ 3 ]
-        id4 = _id
-        filename = _id + "_Seite_1.jpeg"
-
-    basedir = os.path.join(settings.STABI_IMG_DOWNLOAD, scandir, id4)
-
-    pathname = os.path.join(settings.PROJECT_GRANNY, basedir, filename)
-
-    if settings.DEBUG:
-        print >> stderr, "basedir:  %s" % basedir
-        print >> stderr, "filename: %s" % filename
-        print >> stderr, "pathname: %s" % pathname
-
-#   filename = "1863-07-01-9838247_Seite_1.png"
-#   filename = "1872-01-17-9838247.pdf"
-
-    if settings.DEBUG:
-        print >> stderr, pathname
-
-    wrapper = FileWrapper(open(pathname))
-    response = HttpResponse(wrapper, content_type='content_type')
-    response['Content-Disposition'] = "attachment; filename=%s" % filename
-    return response
-
-
 @login_required
 def retrieve_kb_resolver(request, doc_id):
     logger.info('services/kb/resolver/')
@@ -357,7 +301,8 @@ def metadata(request):
                                   params['dates'],
                                   params['distributions'],
                                   params['article_types'],
-                                  params['pillars'])
+                                  params['pillars'],
+                                  metadata_dict())
 
     # Categorize newspaper_ids per Pillar
     pillars = Counter()
@@ -385,3 +330,32 @@ def stemmed_form(request):
     word = request.POST.get('word')
     stemmed = get_stemmed_form(settings.ES_INDEX, word)
     return json_response_message('success', 'Complete', {'stemmed': stemmed})
+
+
+@csrf_exempt
+@login_required
+def heatmap(request, query_id, year):
+    """
+    Retrieves heatmap data for the given Query and year.
+    """
+    query = get_object_or_404(Query, pk=query_id)
+    params = query.get_query_dict()
+
+    year = int(year)
+    range = daterange2dates(str(year - 5) + '0101,' + str(year + 5) + '1231')
+
+    result = metadata_aggregation(settings.ES_INDEX,
+                                  settings.ES_DOCTYPE,
+                                  params['query'],
+                                  range,
+                                  params['exclude_distributions'],
+                                  params['exclude_article_types'],
+                                  params['selected_pillars'],
+                                  articles_over_time())
+
+    articles_per_day = {}
+    for bucket in result['aggregations']['articles_over_time']['buckets']:
+        date = bucket['key'] / 1000  # Cal-HeatMap requires the date in seconds instead of milliseconds
+        articles_per_day[date] = bucket['doc_count']
+
+    return JsonResponse(articles_per_day)
