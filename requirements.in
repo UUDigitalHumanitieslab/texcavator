@@ -1,4 +1,4 @@
-Django==1.8.13
+Django>=1.8,<1.9
 elasticsearch==1.9.0
 Celery
 redis
