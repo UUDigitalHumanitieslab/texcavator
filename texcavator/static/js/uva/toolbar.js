@@ -350,6 +350,7 @@ var createToolbar = function() {
 	});
 
 	var btnStart = new dijit.form.Button({
+		id: "toolbar-start",
 		label: "<img src='/static/image/icon/Tango/22/categories/system.png' />Start",
 		showLabel: true,
 		style: "float:right",
@@ -375,6 +376,9 @@ var createToolbar = function() {
 	toolbar.addChild(btnLogout);
 	toolbar.addChild(btnAbout);
 	toolbar.addChild(btnConfig);
+
+	// Hide the logout button by default
+	$("#toolbar-logout").hide();
 }; // createToolbar()
 
 

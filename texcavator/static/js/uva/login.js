@@ -125,7 +125,7 @@ var createLogin = function( projectname )
 	{
 		hideLogin();
 
-		glob_username = dijit.byId( "tb-username" ).get( "value" );
+		var username = dijit.byId( "tb-username" ).get( "value" );
 		var password = dijit.byId( "tb-password" ).get( "value" );
 		var next = location.search.split('next=')[1]; // TODO: dirty way to retrieve next url
 
@@ -137,7 +137,7 @@ var createLogin = function( projectname )
 			url: "login",
 			handleAs: "json",
 			content: {
-				"username" : glob_username,
+				"username" : username,
 				"password" : password,
 				"next_url" : next
 			},
@@ -145,8 +145,7 @@ var createLogin = function( projectname )
 			{
 				if ( response.status === "SUCCESS" )
 				{
-					createQueryList();		// using username to filter the Saved queries
-					$('#query').focus();
+					createUserEnv(username);
 
 					var next_url = response.next_url;
 					if ( next_url )
@@ -194,6 +193,30 @@ var createLogin = function( projectname )
 	actionBar.appendChild( bCancel.domNode );
 };
 
+
+function doGuestLogin() {
+	dojo.xhrPost({
+		url: "guest_login",
+		handleAs: "json",
+		load: function(response)
+		{
+			if ( response.status === "SUCCESS" )
+			{
+				createUserEnv(response.username);
+			}
+			else
+			{
+				genDialog("Login failed", response.msg, {"OK": true});
+			}
+		},
+		error: function( err ) {
+			console.error( err );
+			return err;
+		}
+	});
+}
+
+
 var createLogout = function()
 {
 	var dlgLogout = new dijit.Dialog({
@@ -208,19 +231,15 @@ var createLogout = function()
 	var cpdiv = dojo.create( "div", { id: "logout-div" }, container );
 	var logoutContainer = new dijit.layout.ContentPane({
 		title: "Logout",
-		style: "width: 275px; height: 125px; text-align: right; line-height: 24px; margin: 5px;"
+		style: "width: 275px; height: 125px; margin: 5px;"
 	}, "logout-div" );
 
-	dojo.create( "div", {
-		innerHTML: "<img src='/static/image/icon/Tango/48/apps/preferences-users.png' height='50' align='left' />",
-		style: "clear: both"
-	}, logoutContainer.domNode );
-
-	var msg = "Goodbye " + glob_username;
+	var msg = "Thanks for using Texcavator. " +
+		"Clicking the logout button below will end your session. " +
+		"Click the cancel button to continue using Texcavator.";
 	var msgNode = dojo.create( "div",
 	{
 		innerHTML: msg,
-		style: "text-align: left"
 	}, logoutContainer.domNode );
 
 	var actionBar = dojo.create( "div", {
@@ -251,10 +270,7 @@ var createLogout = function()
 			    handleAs: "json",
 			    load: function(response)
 			    {
-			        hideLogout();
-			        glob_username = "";
-			        clearGui();		// cloud, article, lexicons...
-			        showStart();
+			        clearUserEnv();		// cloud, article, lexicons...
 			    },
 			    error: function( err ) {
 				    console.error( err );
@@ -267,28 +283,55 @@ var createLogout = function()
 	actionBar.appendChild( bLogout.domNode );
 };
 
-function doGuestLogin() {
-	dojo.xhrPost({
-		url: "guest_login",
-		handleAs: "json",
-		load: function(response)
-		{
-			if ( response.status === "SUCCESS" )
-			{
-				createQueryList();		// using username to filter the Saved queries
-				$('#query').focus();
-			}
-			else
-			{
-				genDialog("Login failed", response.msg, {"OK": true});
-			}
-		},
-		error: function( err ) {
-			console.error( err );
-			return err;
-		}
-	});
+
+// Create the user environment
+function createUserEnv(username) {
+	glob_username = username; 			// Set the global username
+	createQueryList();					// Use username to filter the Saved queries
+	$("#toolbar-logout").show();		// Show log-out button
+	$("#toolbar-start").hide();			// Hide start button
+	$("#query").focus();				// Set focus on the query text
 }
+
+
+// called after logout: glob_username = ""
+function clearUserEnv()
+{
+	hideLogout();
+	glob_username = "";
+	$("#toolbar-logout").hide();		// Hide log-out button
+	$("#toolbar-start").show();			// Show start button
+	showStart();
+
+	dojo.byId( "search-result" ).innerHTML = "Search for newspaper articles at the KB."; // default search result text
+	dojo.empty( dojo.byId( "lexiconItems" ) );
+	dijit.byId( "query" ).set( "value", "" );
+
+	clearCloud();                                       // Cloud, in cloud_view.js
+	clearTextview();                                    // OCR text, in ocr.js
+
+	// KB
+	if( dojo.byId( "record" )     != undefined ) { dojo.empty( dojo.byId( "record" ) ); }       // clear ocr
+	if( dojo.byId( "metadata" )   != undefined ) { dojo.empty( dojo.byId( "metadata" ) ); }     // clear Metadata
+	if( dojo.byId( "timeline" )   != undefined ) { dojo.empty( dojo.byId( "timeline" ) ); }     // clear Timeline
+
+	// close panes of scans & kb
+	var tabs = dijit.byId( "articleContainer" ).getChildren();
+	for( var tab = 0; tab < tabs.length; tab++ )
+	{
+		var cp = tabs[ tab ];
+		var cp_id = cp.get( "id" );
+		if( cp_id === "kb-pane" || 
+			cp_id === "kb-original" || 
+			cp_id === "kb-original1" || 
+			cp_id === "kb-original2")
+		{
+		//	console.log( "Closing tab id: " + cp_id );
+			dijit.byId( "articleContainer" ).closeChild( cp );
+		}
+	}
+}
+
 
 var showLogin = function() { dijit.byId( "dlg-login" ).show(); };
 var hideLogin = function() { dijit.byId( "dlg-login" ).hide(); };

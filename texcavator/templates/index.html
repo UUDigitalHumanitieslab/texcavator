@@ -583,41 +583,6 @@ function nextResults( amount )
 </script>
 
 <script type="text/javascript">
-// called after logout: glob_username = ""
-function clearGui()
-{
-//	dijit.byId( 'leftAccordion' ).selectChild( -1 ); // how to select Search panel?
-
-	dojo.byId( "search-result" ).innerHTML = "Search for newspaper articles at the KB."; // default search result text
-	dojo.empty( dojo.byId( "lexiconItems" ) );
-	dijit.byId( "query" ).set( "value", "" );
-
-	clearCloud();                                       // Cloud, in cloud_view.js
-	clearTextview();                                    // OCR text, in ocr.js
-
-	// KB
-	if( dojo.byId( "record" )     != undefined ) { dojo.empty( dojo.byId( "record" ) ); }       // clear ocr
-	if( dojo.byId( "metadata" )   != undefined ) { dojo.empty( dojo.byId( "metadata" ) ); }     // clear Metadata
-	if( dojo.byId( "timeline" )   != undefined ) { dojo.empty( dojo.byId( "timeline" ) ); }     // clear Timeline
-
-	// close panes of scans & kb
-	var tabs = dijit.byId( "articleContainer" ).getChildren();
-	for( var tab = 0; tab < tabs.length; tab++ )
-	{
-		var cp = tabs[ tab ];
-		var cp_id = cp.get( "id" );
-		if( cp_id === "kb-pane" || 
-			cp_id === "kb-original" || 
-			cp_id === "kb-original1" || 
-			cp_id === "kb-original2")
-		{
-		//	console.log( "Closing tab id: " + cp_id );
-			dijit.byId( "articleContainer" ).closeChild( cp );
-		}
-	}
-}
-
-
 // button Uitvoeren: metadata graphics + query word cloud
 function onClickExecute(item)
 {

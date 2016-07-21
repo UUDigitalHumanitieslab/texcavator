@@ -48,8 +48,6 @@ def user_login(request):
             login(request, user)
 
             params = {
-                "user_id": user.id,
-                "user_name": user.username,
                 "next_url": next_url
             }
 
@@ -70,8 +68,7 @@ def guest_login(request):
             login(request, user)
 
             params = {
-                "user_id": user.id,
-                "user_name": user.username,
+                "username": user.username,
             }
 
             return json_response_message('SUCCESS', '', params)
