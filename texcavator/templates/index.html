@@ -64,6 +64,7 @@
 		</div>
 	</div>
 
+	{% include "start.html" %}
     {% include "about.html" %}
 
 	<!-- ConfirmDialog, see js/uva/dialogs.js -->
@@ -76,17 +77,12 @@
             </div>
 
             <div class="dijitDialogPaneActionBar">
-                <button
-                    data-dojo-type="dijit.form.Button"
-                    data-dojo-attach-point="submitButton"
-                    type="submit"
-                    >OK
+                <button data-dojo-type="dijit.form.Button" data-dojo-attach-point="submitButton" type="submit">
+                    OK
                 </button>
 
-                <button
-                    data-dojo-type="dijit.form.Button"
-                    data-dojo-attach-point="cancelButton"
-                    >Cancel
+                <button data-dojo-type="dijit.form.Button" data-dojo-attach-point="cancelButton">
+                    Cancel
                 </button>
             </div>
         </div>
@@ -131,7 +127,7 @@ dojo.ready(function() {
 
 // Create the login window, the toolbar and the config on load
 dojo.ready( function() { createLogin( "{{ PROJECT_NAME }}" ) } );   // login.js
-dojo.ready( showLogin );                                            // login.js
+dojo.ready( showStart );                                            // toolbar.js
 dojo.ready( createToolbar );                                        // toolbar.js
 dojo.ready( createConfig );                                         // config.js
 

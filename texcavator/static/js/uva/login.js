@@ -123,7 +123,7 @@ var createLogin = function( projectname )
 
 	var fSubmit = function()
 	{
-		dijit.byId( "dlg-login" ).hide();
+		hideLogin();
 
 		glob_username = dijit.byId( "tb-username" ).get( "value" );
 		var password = dijit.byId( "tb-password" ).get( "value" );
@@ -143,15 +143,12 @@ var createLogin = function( projectname )
 			},
 			load: function(response)
 			{
-				var status = response.status;
-				var msg = response.msg;
-				var next_url = response.next_url;
-
-				if ( status === "SUCCESS" )
+				if ( response.status === "SUCCESS" )
 				{
 					createQueryList();		// using username to filter the Saved queries
 					$('#query').focus();
 
+					var next_url = response.next_url;
 					if ( next_url )
 					{
 						window.location.href = next_url;
@@ -159,9 +156,7 @@ var createLogin = function( projectname )
 				}
 				else
 				{
-					var retry = true;
-					createResponse( msg, retry );
-					showResponse();
+					genDialog("Login failed", response.msg, {"OK": true}, showLogin);
 				}
 			},
 			error: function( err ) {
@@ -182,18 +177,22 @@ var createLogin = function( projectname )
 		role: "presentation",
 		onClick: fSubmit
 	});
+
+	var bCancel = new dijit.form.Button({
+		label: "<img src='/static/image/icon/Tango/16/actions/dialog-cancel.png'/> Cancel",
+		title: "Cancel",
+		text: "Cancel",
+		showLabel: true,
+		role: "presentation",
+		onClick: function() {
+			hideLogin();
+			showStart();
+		}
+	});
+
 	actionBar.appendChild( bSubmit.domNode );
+	actionBar.appendChild( bCancel.domNode );
 };
-
-var showLogin = function()
-{
-	if( dijit.byId( "dlg-login" ) === undefined )
-	{ console.log( "showLogin: dlg-login is undefined" ); }
-
-	dijit.byId( "dlg-login" ).show();
-};
-
-var hideLogin = function() { dijit.byId( "dlg-login" ).hide(); };
 
 var createLogout = function()
 {
@@ -211,11 +210,6 @@ var createLogout = function()
 		title: "Logout",
 		style: "width: 275px; height: 125px; text-align: right; line-height: 24px; margin: 5px;"
 	}, "logout-div" );
-
-//	if( retry )
-//	{ var icon = "<img src='/static/image/icon/Tango/48/status/dialog-warning.png' height='50' align='left' />"; }
-//	else
-//	{ var icon = "<img src='/static/image/icon/Tango/48/status/dialog-information.png' height='50' align='left' />"; }
 
 	dojo.create( "div", {
 		innerHTML: "<img src='/static/image/icon/Tango/48/apps/preferences-users.png' height='50' align='left' />",
@@ -235,7 +229,7 @@ var createLogout = function()
 	}, container );
 
 	var bClose = new dijit.form.Button({
-		label: "<img src='/static/image/icon/Tango/16/actions/dialog-cancel.png'/>&nbsp;Cancel",
+		label: "<img src='/static/image/icon/Tango/16/actions/dialog-cancel.png'/> Cancel",
 		title: "Cancel",
 		text: "Cancel",
 		showLabel: true,
@@ -257,14 +251,14 @@ var createLogout = function()
 			    handleAs: "json",
 			    load: function(response)
 			    {
-			        dijit.byId( "dlg-logout" ).hide();
+			        hideLogout();
 			        glob_username = "";
 			        clearGui();		// cloud, article, lexicons...
-			        showLogin();
+			        showStart();
 			    },
 			    error: function( err ) {
 				    console.error( err );
-				    dijit.byId( "dlg-login" ).destroyRecursive();
+				    dijit.byId( "dlg-logout" ).destroyRecursive();
 				    return err;
                 }
 			});
@@ -273,67 +267,30 @@ var createLogout = function()
 	actionBar.appendChild( bLogout.domNode );
 };
 
-var showLogout = function() { dijit.byId( "dlg-logout" ).show(); };
-var hideLogout = function() { dijit.byId( "dlg-logout" ).hide(); };
-
-var createResponse = function( msg, retry )
-{
-	var dlgResponse = new dijit.Dialog({
-		id: "message",
-		title: "Login"
-	});
-
-	dojo.style( dlgResponse.closeButtonNode, "visibility", "hidden" );   // hide the ordinary close button
-
-	var container = dlgResponse.containerNode;
-
-	var loginrespdiv = dojo.create( "div", { id: "login-resp-div" }, container );
-
-	var style = "width: 275px; height: 125px; text-align: right; line-height: 24px; margin: 5px;";
-//	if( retry )
-//	{ style += "background-color: LightPink"; }
-//	else
-//	{ style += "background-color: LightYellow"; }
-
-	var respContainer = new dijit.layout.ContentPane({
-		title: "Resp",
-		style: style
-	}, "login-resp-div" );
-
-	var icon = "<img src='/static/image/icon/Tango/48/status/dialog-information.png' height='50' align='left' />";
-	if( retry )
-	{ icon = "<img src='/static/image/icon/Tango/48/status/dialog-warning.png' height='50' align='left' />"; }
-
-	dojo.create( "div", {
-		innerHTML: icon,
-		style: "clear: both"
-	}, respContainer.domNode );
-
-	var msgNode = dojo.create( "div",
-	{
-		innerHTML: msg,
-		style: "text-align: left"
-	}, respContainer.domNode );
-
-	var actionBar = dojo.create( "div", {
-		className: "dijitDialogPaneActionBar",
-		style: "height: 30px"
-	}, container );
-
-	var bOK = new dijit.form.Button({
-		label: "<img src='/static/image/icon/Tango/16/actions/dialog-ok.png'/>&nbsp;OK",
-		title: "OK",
-		text: "OK",
-		showLabel: true,
-		role: "presentation",
-		retry: retry,
-		onClick: function( ev ) {
-			dijit.byId( "message" ).destroyRecursive();
-			if( retry )
-			{ showLogin(); }
+function doGuestLogin() {
+	dojo.xhrPost({
+		url: "guest_login",
+		handleAs: "json",
+		load: function(response)
+		{
+			if ( response.status === "SUCCESS" )
+			{
+				createQueryList();		// using username to filter the Saved queries
+				$('#query').focus();
+			}
+			else
+			{
+				genDialog("Login failed", response.msg, {"OK": true});
+			}
+		},
+		error: function( err ) {
+			console.error( err );
+			return err;
 		}
 	});
-	actionBar.appendChild( bOK.domNode );
-};
+}
 
-var showResponse = function() { dijit.byId( "message" ).show(); };
+var showLogin = function() { dijit.byId( "dlg-login" ).show(); };
+var hideLogin = function() { dijit.byId( "dlg-login" ).hide(); };
+var showLogout = function() { dijit.byId( "dlg-logout" ).show(); };
+var hideLogout = function() { dijit.byId( "dlg-logout" ).hide(); };

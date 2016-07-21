@@ -18,7 +18,7 @@ from django.conf.urls import include, url
 from django.contrib import admin
 from django.views.generic import RedirectView, TemplateView
 
-from .views import index, user_login, user_logout
+from .views import index, user_login, guest_login, user_logout
 
 admin.autodiscover()
 
@@ -35,6 +35,7 @@ urlpatterns = [
 
     url(r'^$', index, name='index'),
     url(r'^login$', user_login),
+    url(r'^guest_login$', guest_login),
     url(r'^logout$', user_logout),
 
     url(r'^services/', include('services.urls')),

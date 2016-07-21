@@ -56,10 +56,30 @@ def user_login(request):
             return json_response_message('SUCCESS', '', params)
         else:
             return json_response_message('ERROR', 'Account disabled.\n'
-                                         'Please contact the system '
-                                         'administrator.')
+                                         'Please contact the system administrator.')
+    else:
+        return json_response_message('ERROR', 'The username or password you entered is invalid.')
 
-    return json_response_message('ERROR', 'The username or password you entered is invalid.')
+
+@csrf_exempt
+def guest_login(request):
+    user = authenticate(username=settings.GUEST_USERNAME, password=settings.GUEST_PASSWORD)
+
+    if user is not None:
+        if user.is_active:
+            login(request, user)
+
+            params = {
+                "user_id": user.id,
+                "user_name": user.username,
+            }
+
+            return json_response_message('SUCCESS', '', params)
+        else:
+            return json_response_message('ERROR', 'Account disabled.\n'
+                                         'Please contact the system administrator.')
+    else:
+        return json_response_message('ERROR', 'The username or password you entered is invalid.')
 
 
 @csrf_exempt

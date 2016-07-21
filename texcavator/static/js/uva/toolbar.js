@@ -336,7 +336,7 @@ var createToolbar = function() {
 
 	// remaining icons style: "float:right"
 	var btnAbout = new dijit.form.Button({
-		label: "<img src='/static/image/icon/gnome/22/actions/help-about.png' />About",
+		label: "<img src='/static/image/icon/Tango/22/actions/help-about.png' />About",
 		showLabel: true,
 		style: "float:right",
 		onClick: showAbout
@@ -349,8 +349,15 @@ var createToolbar = function() {
 		onClick: showConfig // config.js
 	});
 
-	var btnUser = new dijit.form.Button({
-		id: "toolbar-user",
+	var btnStart = new dijit.form.Button({
+		label: "<img src='/static/image/icon/Tango/22/categories/system.png' />Start",
+		showLabel: true,
+		style: "float:right",
+		onClick: showStart
+	});
+
+	var btnLogout = new dijit.form.Button({
+		id: "toolbar-logout",
 		label: "<img src='/static/image/icon/Tango/22/actions/application-exit.png' />Logout",
 		showLabel: true,
 		style: "float:right",
@@ -364,7 +371,8 @@ var createToolbar = function() {
 	});
 
 	// The order below is in reverse because of the "float:right" style above (probably).
-	toolbar.addChild(btnUser);
+	toolbar.addChild(btnStart);
+	toolbar.addChild(btnLogout);
 	toolbar.addChild(btnAbout);
 	toolbar.addChild(btnConfig);
 }; // createToolbar()
@@ -394,10 +402,10 @@ var toggleSecondDateFilter = function() {
 };
 
 
-// Shows the about dialog
-var showAbout = function() {
-	dijit.byId("aboutDialog").show();
-};
+var showStart = function() { dijit.byId("startDialog").show(); };
+var hideStart = function() { dijit.byId("startDialog").hide(); };
+var showAbout = function() { dijit.byId("aboutDialog").show(); };
+var hideAbout = function() { dijit.byId("aboutDialog").hide(); };
 
 
 // Basic validation of dates

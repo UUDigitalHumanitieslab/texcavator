@@ -407,7 +407,6 @@ def download_data(request, zip_name):
     return response
 
 
-@login_required
 def retrieve_pillars(request):
     """Retrieves all Pillars as JSON objects
     """

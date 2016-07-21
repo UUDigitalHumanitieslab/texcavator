@@ -35,8 +35,11 @@
         </p>
     </div>
     <div class="dijitDialogPaneActionBar">
-        <button data-dojo-type="dijit/form/Button" type="button" data-dojo-props="onClick:function(){ aboutDialog.hide(); }">
+        <button data-dojo-type="dijit/form/Button" type="button" data-dojo-props="onClick:function(){ hideAbout(); }">
             <img src="{% static 'image/icon/Tango/16/actions/dialog-close.png' %}"> Close
+        </button>
+        <button data-dojo-type="dijit/form/Button" type="button" data-dojo-props="onClick:function(){ hideAbout(); showStart(); }">
+            <img src="{% static 'image/icon/Tango/16/actions/dialog-cancel.png' %}"> Back
         </button>
     </div>
 </div>
