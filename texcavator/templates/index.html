@@ -564,7 +564,7 @@ function nextResults( amount )
                 onClickExecuteCloud(retrieveLexiconID());
                 break;
             case "burst":
-                burstCloud();
+                burstCloud(retrieveLexiconID());
                 break;
             default:
                 genDialog("Error while generating cloud", "Unknown method of cloud generation", { "OK": true });
