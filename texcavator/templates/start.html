@@ -1,0 +1,32 @@
+{% load staticfiles %}
+
+<div data-dojo-type="dijit/Dialog" data-dojo-id="startDialog" id="startDialog" title="Texcavator">
+    <div data-dojo-type="dijit/layout/ContentPane" style="width: 600px">
+        <h2>Welcome to Texcavator!</h2>
+        <p>
+            Texcavator allows you to use full-text search on the newspaper archive of the
+            <a href="https://www.kb.nl/en" target="_blank">Dutch Royal Library</a>.
+            On top of that, it allows for visualizations like word clouds, time lines and heat maps.
+            It also provides services to enhance your search experience like filtering, stopword removal, normalization and stemming.
+            Please read our <a href="#">documentation</a> to check all available options.
+        </p>
+        <p>
+            You don't need to log in to use Texcavator's basic functionality,
+            but if you want the full set of options available,
+            please log in with your researcher account.
+            If you want to apply for a researcher account, please send an e-mail to
+            <a href="mailto:J.deKruif@uu.nl">José de Kruif</a>.
+        </p>
+    </div>
+    <div class="dijitDialogPaneActionBar">
+        <button data-dojo-type="dijit/form/Button" type="button" data-dojo-props="onClick:function(){ hideStart(); doGuestLogin(); }">
+            <img src="{% static 'image/icon/Tango/16/apps/preferences-users.png' %}"> Guest login
+        </button>
+        <button data-dojo-type="dijit/form/Button" type="button" data-dojo-props="onClick:function(){ hideStart(); showLogin(); }">
+            <img src="{% static 'image/icon/Tango/16/status/dialog-password.png' %}"> Researcher login
+        </button>
+        <button data-dojo-type="dijit/form/Button" type="button" data-dojo-props="onClick:function(){ hideStart(); showAbout(); }">
+            <img src="{% static 'image/icon/Tango/16/actions/help-about.png' %}"> About Texcavator
+        </button>
+    </div>
+</div>

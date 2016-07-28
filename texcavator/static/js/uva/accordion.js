@@ -128,7 +128,7 @@ function createQueryLine(item) {
 
 
 	// Add a download button if downloading is allowed.
-	if (QUERY_DATA_DOWNLOAD) {
+	if (QUERY_DATA_DOWNLOAD && !is_guest) {
 		btn = dijit.byId("btn-sq-download-" + item.pk);
 		if (btn !== undefined) {
 			if (debug_destroy) {
@@ -159,7 +159,7 @@ function createQueryLine(item) {
 
 	dojo.place((new dijit.form.Button({
 		id: "btn-sq-modify-" + item.pk,
-		title: "Modify",
+		title: "Re-save your query, using the current filter settings",
 		iconClass: "dijitIconEditTask",
 		showLabel: false,
 		onClick: function() {
