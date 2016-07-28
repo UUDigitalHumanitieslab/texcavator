@@ -326,28 +326,16 @@ function clearUserEnv()
 	// Empty the saved queries
 	dojo.empty( dojo.byId( "lexiconItems" ) );
 
-	// Clear the other views
+	// Clear the tabs
+	$("#metadata svg").empty();			// Metadata
 	clearCloud();						// Cloud, in cloud_view.js
 	clearTextview();					// OCR text, in ocr.js
-	if( dojo.byId( "record" )     != undefined ) { dojo.empty( dojo.byId( "record" ) ); }       // clear ocr
-	if( dojo.byId( "metadata" )   != undefined ) { dojo.empty( dojo.byId( "metadata" ) ); }     // clear Metadata
-	if( dojo.byId( "timeline" )   != undefined ) { dojo.empty( dojo.byId( "timeline" ) ); }     // clear Timeline
 
-	// Close panes of scans & kb (TODO: is this necessary?)
-	var tabs = dijit.byId( "articleContainer" ).getChildren();
-	for( var tab = 0; tab < tabs.length; tab++ )
-	{
-		var cp = tabs[ tab ];
-		var cp_id = cp.get( "id" );
-		if( cp_id === "kb-pane" || 
-			cp_id === "kb-original" || 
-			cp_id === "kb-original1" || 
-			cp_id === "kb-original2")
-		{
-		//	console.log( "Closing tab id: " + cp_id );
-			dijit.byId( "articleContainer" ).closeChild( cp );
-		}
-	}
+	// Clear timeline
+	$("#timeline-advert-warning").hide();
+	dojo.empty(dojo.byId("chartDiv"));
+	dojo.empty(dojo.byId("cloud"));
+	dojo.empty(dojo.byId("cal-heatmap"));
 }
 
 
