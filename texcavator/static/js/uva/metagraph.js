@@ -9,7 +9,7 @@ function metadataGraphics(item) {
         content: item,
     }).then(function(response) {
         // Describe what is being visualised
-        $('#metadata_top').text('Metadata for query "' + item.query + '"');
+        $('#metadata_help').text('Metadata for query "' + item.query + '".');
 
         // Add pie charts
         var filtered = {

@@ -43,8 +43,11 @@ var showTimeline = function(item) {
 
 	loadGraphData(queryId);
 
+	// Hide help, display title.
+	$("#timeline_help").hide();
+	$("#timeline_title").show();
 	// Toggle warning for advertisements
-	$("#timeline-advert-warning").toggle(getConfig().search.type.advert);
+	$("#timeline_advert_warning").toggle(getConfig().search.type.advert);
 };
 
 
@@ -411,24 +414,12 @@ function createGraph() {
 				return s;
 			});
 
-		// Update period
-		svg.selectAll("text.period")
-			.data([0])
-			.enter().append("svg:text")
-			.attr("class", "period")
-			.attr("fill", "#555")
-			.attr("x", 50)
-			.attr("y", 0)
-			.attr("dy", "1em")
-			.attr("text-anchor", "left");
-
-		var title = "Period: " + toDateString(beginDate) + " - " + toDateString(endDate); 
+		var period = "from " + toDateStringHyphen(beginDate) + " to " + toDateStringHyphen(endDate); 
 		if (beginDate2) {
-			title += " & " + toDateString(beginDate2) + " - " + toDateString(endDate2);
+			period += " and from " + toDateStringHyphen(beginDate2) + " to " + toDateStringHyphen(endDate2);
 		}
-		title += ", Query title: " + retrieveLexiconTitle();
-
-		svg.selectAll("text.period").text(title);
+		var title = "Now showing query \"" + retrieveLexiconTitle() + "\" " + period + ".";
+		$("#timeline_title").prepend(title + "<br>");
 
 		// If we have newData, set up animation
 		if (newData !== undefined) {

@@ -90,15 +90,9 @@ var toDateString = function(date) {
 }; // toDateString()
 
 
-var getDate_Begin_Str = function() {
-	var bds = toDateString(beginDate);
-	return bds.substring(0, 4) + '-' + bds.substring(4, 6) + '-' + bds.substring(6, 8);
-};
-
-
-var getDate_End_Str = function() {
-	var eds = toDateString(endDate);
-	return eds.substring(0, 4) + '-' + eds.substring(4, 6) + '-' + eds.substring(6, 8);
+var toDateStringHyphen = function(date) {
+	var d = toDateString(date);
+	return d.substring(6, 8) + '-' + d.substring(4, 6) + '-' + d.substring(0, 4);
 };
 
 

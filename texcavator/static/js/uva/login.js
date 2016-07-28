@@ -294,6 +294,10 @@ function createUserEnv(username) {
 	$("#toolbar-start").hide();			// Hide start button
 	$("#query").focus();				// Set focus on the query text
 
+	// Hide the timeline title and advert warning
+	$("#timeline_title").hide();
+	$("#timeline_advert_warning").hide();
+
 	// Add a warning that queries for guest users will be deleted.
 	if (is_guest) {
 		var msg = "Queries saved by guests will be deleted <strong>every day</strong>.";
@@ -332,7 +336,9 @@ function clearUserEnv()
 	clearTextview();					// OCR text, in ocr.js
 
 	// Clear timeline
-	$("#timeline-advert-warning").hide();
+	$("#timeline_help").show();
+	$("#timeline_title").hide();
+	$("#timeline_advert_warning").hide();
 	dojo.empty(dojo.byId("chartDiv"));
 	dojo.empty(dojo.byId("cloud"));
 	dojo.empty(dojo.byId("cal-heatmap"));

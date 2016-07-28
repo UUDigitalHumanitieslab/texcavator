@@ -1,9 +1,14 @@
 <div id="timeline" title="Timeline" dojoType="dijit.layout.ContentPane" selected="false">
-    <div id="timeline-title">
-        Hover over a bar to inspect the values, click a bar to show a word cloud for this period.
+    <div id="timeline_help" class="alert alert-info">
+        This is the <strong>timeline view</strong>.
+        Click on the timeline button next to a saved query to create a timeline graph.<br>
+        By clicking on the bars, you can then show a word cloud and heat map for the selected period.
+    </div>
+    <div id="timeline_title" class="alert alert-info">
+        Hover over a bar to inspect the values, click a bar to show a word cloud and heat map for this period.
         Click <a href="javascript:switchTimelineNormalize()">here</a> to switch between absolute and relative frequencies.
     </div>
-    <div id="timeline-advert-warning">
+    <div id="timeline_advert_warning" class="alert alert-warning">
         You query includes advertisements.
         As you may be aware, not all advertisements have been split correctly into individual items, so the counts displayed may be off.
     </div>

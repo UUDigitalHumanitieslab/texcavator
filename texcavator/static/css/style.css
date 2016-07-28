@@ -146,11 +146,6 @@ html, body {
 	max-width: 58ex;
 }
 
-#record a {
-	float: left;
-	margin-left: 1em;
-}
-
 /* Heatmap */
 #cal-heatmap,
 #cal-heatmap-buttons {
@@ -188,6 +183,13 @@ html, body {
     margin-bottom: 20px;
     border: 1px solid transparent;
     border-radius: 4px;
+    text-align: center;
+}
+
+.alert-info {
+    color: #31708f;
+    background-color: #d9edf7;
+    border-color: #bce8f1;
 }
 
 .alert-warning {
