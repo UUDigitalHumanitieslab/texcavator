@@ -39,24 +39,10 @@
 	<div id="cp-div-center" data-dojo-type="dijit.layout.ContentPane" data-dojo-props="splitter:true, region:'center'">
 		<div id="borderContainer" data-dojo-type="dijit.layout.BorderContainer" data-dojo-props="gutters:false, liveSplitters:true">
 			<div id="articleContainer" data-dojo-type="dijit.layout.TabContainer" data-dojo-props="splitter:true, region:'center', tabPosition: 'top', style:'height: 100%;'">
-				<div id="metadata" title="Metadata" dojoType="dijit.layout.ContentPane" selected="true"> <!-- Metadata -->
-					<div id="metadata_top" style="color:grey; text-align: center;">Metadata.</div>
-					<div id="chart_articletype" style="display: inline-block;"><h1>Article types<button class="filter-reset-btn" data-dojo-type="dijit.form.Button" id="filter-reset-btn-type" onclick="resetAndSubmit(resetArticleTypes, this);">Reset filter</button></h1><svg style="height: 400px; width: 525px;"></svg></div>
-					<div id="chart_distribution" style="display: inline-block;"><h1>Distributions<button class="filter-reset-btn" data-dojo-type="dijit.form.Button" id="filter-reset-btn-distrib" onclick="resetAndSubmit(resetDistributions, this);">Reset filter</button></h1><svg style="height: 400px; width: 525px;"></svg></div>
-					<div id="chart_pillar" style="display: inline-block;"><h1>Pillars<button class="filter-reset-btn" data-dojo-type="dijit.form.Button" id="filter-reset-btn-pillar" onclick="resetAndSubmit(resetPillars, this);">Reset filter</button></h1><svg style="height: 400px; width: 525px;"></svg></div>
-					<div id="chart_newspapers"><h1>Newspapers</h1><svg style="height: 400px; width: 1050px"></svg></div>
-				</div>
-
-				<div id="cloudPane" title="Cloud" dojoType="dijit.layout.ContentPane" selected="false"> <!-- Cloud -->
-					<div style="color:grey; text-align: center;">Cloud.</div>
-				</div>
-
+				{% include "metadata.html" %}
+                {% include "cloud.html" %}
                 {% include "timeline.html" %}
-
-				<div id="record" title="OCR" dojoType="dijit.layout.ContentPane" selected="false">  <!-- OCR -->
-					<div style="color:grey; text-align: center;">Select an article.</div>
-				</div>
-
+				{% include "ocr.html %}
 				<div id="shico" title="ShiCo" dojoType="dijit.layout.ContentPane" selected="false" style="overflow-x: hidden; overflow-y: hidden;">  <!-- ShiCo -->
                     <iframe id="shicoframe" frameborder="0" height="100%" width="100%" src="{% url 'shico' %}"></iframe>
 				</div>

@@ -166,3 +166,18 @@ html, body {
     align-items: center;
     width: 550px;
 }
+
+/* Metadata pie charts */
+#metadata .pie-chart {
+    display: inline-table;
+}
+
+#metadata .pie-chart svg {
+    height: 400px;
+    width: 525px;
+}
+
+#metadata #chart-newspapers svg {
+    height: 400px;
+    width: 1050px;
+}

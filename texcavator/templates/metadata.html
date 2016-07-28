@@ -1,0 +1,27 @@
+<div id="metadata" title="Metadata" dojoType="dijit.layout.ContentPane" selected="true">
+    <div id="metadata_top" style="color:grey; text-align: center;">Metadata.</div>
+    <div id="chart_articletype" class="pie-chart">
+        <h1>
+            Article types
+            <button class="filter-reset-btn" data-dojo-type="dijit.form.Button" id="filter-reset-btn-type" onclick="resetAndSubmit(resetArticleTypes, this);">Reset filter</button>
+        </h1>
+        <svg class="pie-chart"></svg>
+    </div>
+    <div id="chart_distribution" class="pie-chart">
+        <h1>
+            Distributions
+            <button class="filter-reset-btn" data-dojo-type="dijit.form.Button" id="filter-reset-btn-distrib" onclick="resetAndSubmit(resetDistributions, this);">Reset filter</button>
+        </h1><svg></svg>
+    </div>
+    <div id="chart_pillar" class="pie-chart">
+        <h1>
+            Pillars
+            <button class="filter-reset-btn" data-dojo-type="dijit.form.Button" id="filter-reset-btn-pillar" onclick="resetAndSubmit(resetPillars, this);">Reset filter</button>
+        </h1>
+        <svg class="pie-chart"></svg>
+    </div>
+    <div id="chart_newspapers">
+        <h1>Newspapers</h1>
+        <svg></svg>
+    </div>
+</div>
