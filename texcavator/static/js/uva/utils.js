@@ -17,10 +17,18 @@ function setDateFilters(dateStart, dateEnd) {
 	beginDate = dateStart;
 	endDate = dateEnd;
 
-	// Use the false flag to prevent onChange from firing
-	// (hence setting the global variables above)
-	dijit.byId("begindate").set("value", dateStart, false);
-	dijit.byId("enddate").set("value", dateEnd, false);
+	// Use the false flag to prevent onChange from firing (hence setting the global variables above)
+	// Also, we should temporarily set intermediateChanges to false, otherwise the onChange still fires.
+	// See https://bugs.dojotoolkit.org/ticket/17361 for details.
+	bDate = dijit.byId("begindate");
+	bDate.set("intermediateChanges", false);
+	bDate.set("value", dateStart, false);
+	bDate.set("intermediateChanges", true);
+
+	eDate = dijit.byId("enddate");
+	eDate.set("intermediateChanges", false);
+	eDate.set("value", dateEnd, false);
+	eDate.set("intermediateChanges", true);
 
 	if (beginDate2 !== undefined) {
 		toggleSecondDateFilter();
