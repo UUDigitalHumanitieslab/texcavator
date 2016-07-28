@@ -17,7 +17,8 @@ var createResponse = function( msg, retry )
 var showResponse = function()
 */
 
-glob_username  = "";		// global
+glob_username  = "";	// global variable that saves the username
+is_guest = true;		// global variable that signals whether this user is a guest
 
 
 var createLogin = function( projectname )
@@ -145,6 +146,7 @@ var createLogin = function( projectname )
 			{
 				if ( response.status === "SUCCESS" )
 				{
+					is_guest = false;
 					createUserEnv(username);
 
 					var next_url = response.next_url;
@@ -291,31 +293,47 @@ function createUserEnv(username) {
 	$("#toolbar-logout").show();		// Show log-out button
 	$("#toolbar-start").hide();			// Hide start button
 	$("#query").focus();				// Set focus on the query text
+
+	// Add a warning that queries for guest users will be deleted.
+	if (is_guest) {
+		var msg = "Queries saved by guests will be deleted <strong>every day</strong>.";
+		var msg_div = "<p class='alert alert-warning alert-warning-guest'>" + msg + "</p>";
+		$("#saveQueryPane").append(msg_div);
+		$("#lexicon").append(msg_div);
+	}
 }
 
 
 // called after logout: glob_username = ""
 function clearUserEnv()
 {
-	hideLogout();
+	// Reset global variables
 	glob_username = "";
+	is_guest = true;
+
+	hideLogout();						// Hide log-out dialog
 	$("#toolbar-logout").hide();		// Hide log-out button
 	$("#toolbar-start").show();			// Show start button
-	showStart();
+	showStart();						// Show start dialog
 
-	dojo.byId( "search-result" ).innerHTML = "Search for newspaper articles at the KB."; // default search result text
-	dojo.empty( dojo.byId( "lexiconItems" ) );
+	// Remove warnings for guests
+	$(".alert-warning-guest").remove();
+
+	// Remove query results and query
+	dojo.byId( "search-result" ).innerHTML = "Search for newspaper articles at the KB.";
 	dijit.byId( "query" ).set( "value", "" );
 
-	clearCloud();                                       // Cloud, in cloud_view.js
-	clearTextview();                                    // OCR text, in ocr.js
+	// Empty the saved queries
+	dojo.empty( dojo.byId( "lexiconItems" ) );
 
-	// KB
+	// Clear the other views
+	clearCloud();						// Cloud, in cloud_view.js
+	clearTextview();					// OCR text, in ocr.js
 	if( dojo.byId( "record" )     != undefined ) { dojo.empty( dojo.byId( "record" ) ); }       // clear ocr
 	if( dojo.byId( "metadata" )   != undefined ) { dojo.empty( dojo.byId( "metadata" ) ); }     // clear Metadata
 	if( dojo.byId( "timeline" )   != undefined ) { dojo.empty( dojo.byId( "timeline" ) ); }     // clear Timeline
 
-	// close panes of scans & kb
+	// Close panes of scans & kb (TODO: is this necessary?)
 	var tabs = dijit.byId( "articleContainer" ).getChildren();
 	for( var tab = 0; tab < tabs.length; tab++ )
 	{
