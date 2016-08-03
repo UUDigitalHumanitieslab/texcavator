@@ -9,6 +9,7 @@
 */
 
 dojo.require("dojo.store.JsonRest");
+dojo.require("dijit.ProgressBar");
 
 
 function accordionSelectChild(id) {

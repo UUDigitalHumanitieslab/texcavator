@@ -141,3 +141,14 @@ function filterSearch(id) {
         searchSubmit();
     };
 }
+
+
+function hideResetButtons() {
+    $('.filter-reset-btn').hide();
+}
+
+function resetAndSubmit(action, button) {
+    action();
+    searchSubmit();
+    $(button.domNode).hide();
+}

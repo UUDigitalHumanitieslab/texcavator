@@ -22,8 +22,6 @@ dojo.require("dijit.form.TextBox");
 dojo.require("dijit.layout.ContentPane");
 dojo.require("dijit.layout.TabContainer");
 
-dojo.require("dojox.widget.Dialog");
-
 /*
 var storeDateLimits = function( min, max )
 var toDateString = function( date )
