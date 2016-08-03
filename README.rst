@@ -131,6 +131,10 @@ Before issuing the commands below, make sure Elasticsearch, MySQL and Redis are 
 
     python manage.py gathertermcounts
 
+* Run the management command ``add_guest_user`` to add a guest environment (with limited options)::
+
+    python manage.py add_guest_user
+
 .. _Dojo: http://dojotoolkit.org/
 
 ******************
