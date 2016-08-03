@@ -87,7 +87,7 @@ function addPieChart(filtered, data, id) {
                 return d.doc_count;
             })
             .valueFormat(d3.format(",d"))
-            .showLabels(true);
+            .showLabels(false);
         
         if (filtered) {
             $(id).find('.filter-reset-btn').show();
