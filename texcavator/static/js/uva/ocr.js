@@ -1,9 +1,9 @@
 // Clears the text view
 function clearTextview() {
-	if (dojo.byId("record") === undefined) {
+	if (dojo.byId("record_text") === undefined) {
 		return;
 	} else {
-		dojo.byId("record").innerHTML = "";
+		dojo.byId("record_text").innerHTML = "";
 	}
 }
 
@@ -14,7 +14,7 @@ function writeTextview(article_title, ocr_text) {
 	// Replace line feeds
 	article_text = article_text.replace(/\n\n/g, "</br></br>");
 
-	dojo.byId("record").innerHTML = "<h1>" + article_title + "</h1><p id='article-text'>" + wrapWords(article_text) + "</p>";
+	dojo.byId("record_text").innerHTML = "<h1>" + article_title + "</h1><p id='article-text'>" + wrapWords(article_text) + "</p>";
 	addTooltips();
 }
 

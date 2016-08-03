@@ -63,7 +63,7 @@ function scanImagesKB( record, metadata_xml )
 		var hyperlink = $('<a>');
 		hyperlink.attr({href: url, target: '_blank'});
 		hyperlink.html(generateImageForPage(recordItems[item]));
-		hyperlink.appendTo('#record');
+		hyperlink.appendTo('#record_text');
 	}
 } // scanImagesKB()
 

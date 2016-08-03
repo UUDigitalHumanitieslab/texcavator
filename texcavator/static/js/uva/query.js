@@ -312,7 +312,6 @@ var retrieveRecord = function( record_id )
 	// colons in the id otherwise.
 	$('[id="' + record_id + '"]').addClass('active-article');
 	
-	dojo.place( new dijit.ProgressBar( { indeterminate: true } ).domNode, dojo.byId( ocr_pane ), "only" );
 	dojo.place( new dijit.ProgressBar( { indeterminate: true } ).domNode, dojo.byId( cloud_pane ), "only" );
 
 	dojo.xhrGet({
@@ -321,7 +320,6 @@ var retrieveRecord = function( record_id )
 		handleAs: "json",
 		load: function( resp )
 		{
-			dojo.empty( dojo.byId( ocr_pane ) );            // remove ProgressBar
 			dojo.empty( dojo.byId( cloud_pane ) );          // remove ProgressBar
 
 			if( resp.status === "SUCCESS" )
