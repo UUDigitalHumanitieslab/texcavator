@@ -6,21 +6,21 @@ function searchSubmit(newStartRecord)
 	// Hide the search help
 	$("#search_help").hide();
 
-    // Select the searchPane
+	// Select the searchPane
 	accordionSelectChild( "searchPane" );
 
 	// Set the new start record, if set
 	newStartRecord = typeof newStartRecord !== 'undefined' ? newStartRecord : 1;
 	dojo.byId('startRecord').value = newStartRecord;
 
-    var query = dojo.byId( "query" ).value.trim();
+	var query = dojo.byId( "query" ).value.trim();
 	if (query === "")
 	{
 		console.log( "searchSubmit(): empty query: nothing to do." );
 		return;
 	}
 
-    // toolbar.js
+	// toolbar.js
 	if (!validateDates()) {
 		console.log('searchSubmit(): invalid date range.');
 		return;
@@ -41,8 +41,8 @@ function searchSubmit(newStartRecord)
 
 	dojo.xhrGet({
 		url: "services/search",
-		content: params,                              // key:value pairs
-		handleAs: "json",                             // data returned from the server
+		content: params,
+		handleAs: "json",
 		load: function( data ) {
 			if( data.status === "error" ){
 				dojo.byId( "search-result" ).innerHTML = "";
@@ -53,7 +53,7 @@ function searchSubmit(newStartRecord)
 				return;
 			} else {
 				dojo.byId( "search-result" ).innerHTML = data.html; // put html text in panel
-				metadataGraphics( itemFromCurrentQuery() );         // Visualise meta
+				metadataGraphics( itemFromCurrentQuery() );         // Visualise metadata
 			}
 		},
 		error: function( err ) {
@@ -76,14 +76,14 @@ function searchSubmit(newStartRecord)
 function startSearch(keyword, year)
 {
 	setDateFilters(new Date(year, 0, 1), new Date(year, 11, 31));
-    $('#query').val(keyword);
-    searchSubmit();
+	$('#query').val(keyword);
+	searchSubmit();
 }
 
 
 function searchReset() {
-    dijit.byId("query").set("value", "");
-    storeDateLimits( "{{ PROJECT_MIN_DATE }}", "{{ PROJECT_MAX_DATE }}" );
+	dijit.byId("query").set("value", "");
+	storeDateLimits( "{{ PROJECT_MIN_DATE }}", "{{ PROJECT_MAX_DATE }}" );
 }
 
 
@@ -95,16 +95,20 @@ function researchSubmit( item )
 	setQueryMetadata(item);
 
 	searchSubmit();
-
 } // researchSubmit()
 
 
 function nextResults( amount )
 {
-	if( dojo.byId( "query" ).value == "" ) { return; }        // nothing to do
+	if ( dojo.byId( "query" ).value === "" ) { 
+		return;		// nothing to do
+	}
+
 	var oldStartRecord = parseInt( dojo.byId( 'startRecord' ).value );
 	var newStartRecord = oldStartRecord + amount;
-	if( newStartRecord < 1 ) { newStartRecord = 1; }
+	if ( newStartRecord < 1 ) {
+		newStartRecord = 1;
+	}
 
-	searchSubmit(newStartRecord);                // HTML search result in Search panel of accordion
+	searchSubmit(newStartRecord);		// HTML search result in Search panel of accordion
 }

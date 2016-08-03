@@ -20,8 +20,7 @@ function onClickExecuteCloud( queryID )
 
 	// Clear the canvas
 	canvas = dojo.byId("cloudCanvas");
-	if (canvas && canvas.getContext)
-	{
+	if (canvas && canvas.getContext) {
 		var context = canvas.getContext( '2d' );        // get the 2d context
 		if( context ) { context.clearRect ( 0, 0, canvas.width, canvas.height ); }
 	}
@@ -39,26 +38,25 @@ function onClickExecuteCloud( queryID )
 		failOk: false,            // true: No dojo console error message
 		handleAs: "json",
 	}).then(function( resp ){
-			if( typeof( resp ) == "string" )
-			{ var json_data = dojo.fromJson( resp ); }
-			else
-			{ var json_data = resp; }
-				var status = json_data.status;
+		var json_data = resp;
+		if ( typeof( json_data ) == "string" ) { 
+			json_data = dojo.fromJson( json_data ); 
+		}
+		
+		var status = json_data.status;
 
-			if( json_data.status != "ok" )
-			{
-				console.warn( "onClickExecuteCloud: " + json_data.error );
-				var title = "Cloud data request failed";
-				var buttons = { "OK": true };
-				dojo.byId('cloudPane').innerHTML = '<div>' + title + '.</div>';
-				genDialog( title, json_data.error, buttons );
-				return null;
-			}
-			else
-			{
-				console.log("got task_id: "+json_data.task);
-				return json_data.task;
-			}
+		if ( json_data.status != "ok" ) {
+			console.warn( "onClickExecuteCloud: " + json_data.error );
+			var title = "Cloud data request failed";
+			var buttons = { "OK": true };
+			dojo.byId('cloudPane').innerHTML = '<div>' + title + '.</div>';
+			genDialog( title, json_data.error, buttons );
+			return null;
+		}
+		else {
+			console.log("got task_id: " + json_data.task);
+			return json_data.task;
+		}
 		}, function( err ) { console.error( err ); }
 	).then(function(task_id) {
 		console.log("Start polling!");
@@ -192,7 +190,7 @@ var retrieveRecordCloudData = function( record_id )
 			return error;
 		}
 	});
-}
+};
 
 var createCloud = function( cloud_src, cloud_data, target, container )
 {
@@ -200,7 +198,7 @@ var createCloud = function( cloud_src, cloud_data, target, container )
 
 	if ( cloud_src != "burst" ) {
         var contentBox = dojo.contentBox( target );
-        var rheight = contentBox[ "h" ] -4;
+        var rheight = contentBox.h -4;
 
         // Animate the cloud coming into view
         var animation = dojo.animateProperty({
@@ -249,7 +247,7 @@ var createCloud = function( cloud_src, cloud_data, target, container )
         });
         $("#statusline").after(switchIdf.domNode);
     }
-}
+};
 
 // Reloads the current cloud with other (possibly) different parameter settings.
 function refreshCloud(cloud_src)
