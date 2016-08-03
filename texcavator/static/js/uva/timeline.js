@@ -419,7 +419,10 @@ function createGraph() {
 			period += " and from " + toDateStringHyphen(beginDate2) + " to " + toDateStringHyphen(endDate2);
 		}
 		var title = "Now showing query \"" + retrieveLexiconTitle() + "\" " + period + ".";
-		$("#timeline_title").prepend(title + "<br>");
+        title += "<br>";
+		title += "Hover over a bar to inspect the values, click a bar to show a word cloud and heat map for this period. ";
+        title += "Click <a href='javascript:switchTimelineNormalize()'>here</a> to switch between absolute and relative frequencies.";
+		$("#timeline_title").html(title);
 
 		// If we have newData, set up animation
 		if (newData !== undefined) {
