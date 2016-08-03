@@ -5,16 +5,18 @@
 		<div id="searchPane" data-dojo-type="dijit.layout.ContentPane" data-dojo-props="title:'Search results'">
             <a name="search"></a>
 		    <input type="hidden" name="startRecord" id="startRecord" value="1" />
-			<div id="search-result">
-				Search for newspaper articles at the KB.
+			<div id="search_help" class="alert alert-info">
+				Use the form in the toolbar above to search the
+				<a href="https://www.kb.nl/en" target="_blank">Royal Library</a> newspaper archive.
 			</div>
+			<div id="search-result"></div>
 		</div>
 
 		<div id="saveQueryPane" data-dojo-type="dijit.layout.ContentPane" data-dojo-props="title:'Save current query'">
-			<p>
+			<div class="alert alert-info">
                 You can save your current query for additional analysis and later reference in this panel.
                 Give it a proper title and (optionally) a description.
-            </p>
+            </div>
 			<label for="queryTitle">Title: <br/>
                 <input id="queryTitle" name="queryTitle" type="text" />
             </label><br /><br />
@@ -124,6 +126,9 @@ dojo.ready( function() { storeDateLimits( "{{ PROJECT_MIN_DATE }}", "{{ PROJECT_
 // HTML search result in Search panel of accordion (TODO: move this and everything below somewhere else?)
 function searchSubmit(newStartRecord)
 {
+	// Hide the search help
+	$("#search_help").hide();
+
     // Select the searchPane
 	accordionSelectChild( "searchPane" );
 

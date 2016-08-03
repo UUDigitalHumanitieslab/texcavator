@@ -324,7 +324,8 @@ function clearUserEnv()
 	$(".alert-warning-guest").remove();
 
 	// Remove query results and query
-	dojo.byId( "search-result" ).innerHTML = "Search for newspaper articles at the KB.";
+	dojo.empty(dojo.byId( "search-result" ));
+	$("#search_help").show();
 	dijit.byId( "query" ).set( "value", "" );
 
 	// Empty the saved queries
