@@ -56,8 +56,7 @@ def search(request):
                                 params['pillars'],
                                 sort_order=params['sort_order'])
     if valid_q:
-        html_str = elasticsearch_htmlresp(settings.ES_INDEX,
-                                          params['start'],
+        html_str = elasticsearch_htmlresp(params['start'],
                                           params['result_size'],
                                           result)
         return json_response_message('ok', 'Search completed', {'html': html_str})

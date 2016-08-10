@@ -10,13 +10,10 @@ from sys import stderr
 from django.conf import settings
 
 
-def elasticsearch_htmlresp(collection, start_record, chunk_size, es_dict):
+def elasticsearch_htmlresp(start_record, chunk_size, es_dict):
     """Create HTML response from ElasticSearch request.
 
     Parameters:
-        collection : str
-            The collection search results have been retrieved from. For
-            Texcavator the collection is the ElasticSearch index name.
         start_record : int
             Search results are returned as a numbered list. The start record is
             the number this list should start with (pagination).
@@ -39,8 +36,7 @@ def elasticsearch_htmlresp(collection, start_record, chunk_size, es_dict):
     hits_list = hits["hits"]
     hits_retrieved = len(hits_list)
 
-    html_str = '<head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></head>'
-    html_str += '<body>'
+    html_str = ''
     if hits_retrieved != hits_total:  # did not get everything
         html_str += paging_links(start_record, chunk_size, hits_total)
     if hits_total == 0 or not hits_max_score:
@@ -57,28 +53,20 @@ def elasticsearch_htmlresp(collection, start_record, chunk_size, es_dict):
         _id = hit["_id"]
         _score = hit["_score"]
 
-        if collection == settings.ES_INDEX:
-            article_dc_title = hit["fields"]["article_dc_title"][0]
-            paper_dcterms_temporal = hit["fields"]["paper_dcterms_temporal"][0]
-            paper_dcterms_spatial = hit["fields"]["paper_dcterms_spatial"][0]
-        else:
-            try:
-                article_dc_title = hit["fields"]["article_dc_title"][0]
-            except:
-                article_dc_title = ""
-            paper_dcterms_temporal = ""
-            paper_dcterms_spatial = ""
+        article_dc_title = hit["fields"]["article_dc_title"][0]
+        paper_dcterms_temporal = hit["fields"]["paper_dcterms_temporal"][0]
+        paper_dcterms_spatial = hit["fields"]["paper_dcterms_spatial"][0]
 
         paper_dc_title = hit["fields"]["paper_dc_title"][0]
         paper_dc_date = hit["fields"]["paper_dc_date"][0]
 
-        item_str = '<li id="{}">'.format(_id)
-        item_str += '<a href=javascript:retrieveRecord("' + _id + '"); '
+        item_str = u'<li id="{}">'.format(_id)
+        item_str += u'<a href="javascript:retrieveRecord(\'{}\');" title="{}">'.format(_id, article_dc_title)
 
         if len(article_dc_title) > 45:  # limit displayed title length
-            item_str += 'title=' + article_dc_title + '><b>' + article_dc_title[0:45] + '</b>...</a>'
+            item_str += '<b>' + article_dc_title[0:45] + '</b>...</a>'
         else:
-            item_str += 'title=' + article_dc_title + '><b>' + article_dc_title + '</b></a>'
+            item_str += '<b>' + article_dc_title + '</b></a>'
 
         item_str += '<br>' + paper_dc_title
         item_str += '<br>' + paper_dc_date
@@ -99,7 +87,6 @@ def elasticsearch_htmlresp(collection, start_record, chunk_size, es_dict):
     html_str += '</ol>'
     html_str += paging_links(start_record, chunk_size, hits_total)
     html_str += '<a href="#search">Back to top</a>'
-    html_str += '</body>'
 
     return html_str
 
