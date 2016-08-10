@@ -52,7 +52,7 @@ function searchSubmit(newStartRecord)
 				genDialog( title, data.msg, buttons );
 				return;
 			} else {
-				dojo.byId( "search-result" ).innerHTML = data.html; // put html text in panel
+				displaySearchResults(data.hits, newStartRecord, params.maximumRecords);
 				metadataGraphics( itemFromCurrentQuery() );         // Visualise metadata
 			}
 		},
@@ -66,6 +66,95 @@ function searchSubmit(newStartRecord)
 	});
 }
 
+
+// Turns ElasticSearch hits into HTML
+function displaySearchResults(hits, start_record, chunk_size) {
+	var hits_total = hits.total;
+	var hits_max_score = hits.max_score;
+	var hits_list = hits.hits;
+
+	var html_str = '';
+	
+	if (hits_list.length !== hits_total) {  // did not get everything
+		html_str += paging_links(start_record, chunk_size, hits_total);
+	}
+
+	if (hits_total === 0 || !hits_max_score) {  // no results found OR not sorting on score
+		html_str += '<p>Found ' + hits_total + ' records.</p>';
+	}
+	else {
+		html_str += '<p>Found ' + hits_total + ' records, ';
+		html_str += 'max score = ' + hits_max_score.toFixed(2) + '.</p>';
+	}
+
+	html_str += '<ol start="' + start_record + '">';
+
+	for (var i = 0; i < hits_list.length; i++) {
+		var hit = hits_list[i];
+
+		var article_dc_title = hit.fields.article_dc_title[0];
+		var paper_dcterms_temporal = hit.fields.paper_dcterms_temporal[0];
+		var paper_dcterms_spatial = hit.fields.paper_dcterms_spatial[0];
+		var paper_dc_title = hit.fields.paper_dc_title[0];
+		var paper_dc_date = hit.fields.paper_dc_date[0];
+
+		var item_str = '<li id="' + hit._id + '">';
+		item_str += '<a href="javascript:retrieveRecord(\'' + hit._id + '\');" title="' + article_dc_title + '">';
+
+		// limit displayed title length
+		if (article_dc_title.length > 45) {
+			item_str += '<b>' + article_dc_title.substring(0, 45) + '</b>...</a>';
+		}
+		else {
+			item_str += '<b>' + article_dc_title + '</b></a>';
+		}
+
+		item_str += '<br>' + paper_dc_title;
+		item_str += '<br>' + paper_dc_date;
+
+		if (paper_dcterms_temporal !== "") {
+			item_str += ', ' + paper_dcterms_temporal;
+		}
+		if (paper_dcterms_spatial !== "") {
+			item_str += ', ' + paper_dcterms_spatial;
+		}
+
+		if (hit._score) {
+			item_str += ' [score: ' + hit._score.toFixed(2) + ']';
+		}
+			
+		item_str += '</li>';
+		html_str += item_str;
+	}
+
+	html_str += '</ol>';
+	html_str += paging_links(start_record, chunk_size, hits_total);
+	html_str += '<a href="#search">Back to top</a>';
+
+	dojo.byId( "search-result" ).innerHTML = html_str;
+}
+
+function paging_links(start_record, chunk_size, hits_total) {
+	have_prev = start_record > 1;
+	have_next = start_record + chunk_size < hits_total;
+
+	href_prev = '<a href="javascript:nextResults(-' + chunk_size + ');">previous</a>';
+	href_next = '<a href="javascript:nextResults(+' + chunk_size + ');">next</a>';
+
+	result = '<span style="float:right">';
+	if (have_prev && have_next) {
+		result += href_prev + ' | ' + href_next;
+	}
+	else if (have_prev) {
+		result += href_prev;
+	}
+	else if (have_next) {
+		result += href_next;
+	}
+	result += '</span>';
+
+	return result;
+}
 
 /**
  * Starts a search (called from the ShiCo iframe)

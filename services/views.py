@@ -10,7 +10,7 @@ import requests
 from celery.result import AsyncResult
 
 from django.conf import settings
-from django.http import HttpResponse, JsonResponse
+from django.http import JsonResponse
 from django.utils.html import escape
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
@@ -24,11 +24,9 @@ from es import get_search_parameters, do_search, count_search_results, \
 from texcavator.utils import json_response_message, daterange2dates, normalize_cloud
 
 from query.models import Query, StopWord, Newspaper
-from query.utils import get_query_object
 
 from services.export import export_csv
 from services.tasks import generate_tv_cloud
-from services.elasticsearch_biland import elasticsearch_htmlresp
 
 logger = logging.getLogger(__name__)
 
@@ -56,10 +54,7 @@ def search(request):
                                 params['pillars'],
                                 sort_order=params['sort_order'])
     if valid_q:
-        html_str = elasticsearch_htmlresp(params['start'],
-                                          params['result_size'],
-                                          result)
-        return json_response_message('ok', 'Search completed', {'html': html_str})
+        return json_response_message('ok', 'Search completed', {'hits': result['hits']})
     else:
         result = escape(result).replace('\n', '<br />')
         msg = 'Unable to parse query "{q}"<br /><br />'. \
