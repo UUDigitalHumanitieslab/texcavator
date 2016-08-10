@@ -233,17 +233,12 @@ def download_collect(req_dict, zip_basename, to_email, email_message):
 
     # send email
     from_email = 'digitalhumanities@uu.nl'
-    to_email = to_email
     subject = 'Texcavator data download'
     msg = 'sending email to %s' % to_email
     logger.debug(msg)
     if settings.DEBUG:
         print >> stderr, msg
-    send_mail(subject,
-              email_message,
-              from_email,
-              [to_email],
-              fail_silently=False)
+    send_mail(subject, email_message, from_email, [to_email])
 
 
 def get_es_chunk(req_dict, start_record, chunk_size):

@@ -1,0 +1,12 @@
+Dear {{ user.get_full_name }},
+
+The export of your query {{ query.title }} is now complete.
+You can retrieve the resulting file at {{ download_url }}.
+
+Please note that generated exports will be deleted every few days.
+If your file happens to be deleted, you can request a new export for your query in Texcavator.
+
+Best,
+The Texcavator team.
+
+This message was generated automatically.
