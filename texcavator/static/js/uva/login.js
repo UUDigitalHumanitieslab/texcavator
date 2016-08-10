@@ -300,7 +300,8 @@ function createUserEnv(username) {
 
 	// Add a warning that queries for guest users will be deleted.
 	if (is_guest) {
-		var msg = "Queries saved by guests will be deleted <strong>every day</strong>.";
+		var msg = "Queries saved by guests are limited to <strong>" + GUEST_MAX_RESULTS + " hits</strong>."; 
+		msg += "<br>Also, queries saved by guests will be deleted <strong>every day</strong>.";
 		var msg_div = "<p class='alert alert-warning alert-warning-guest'>" + msg + "</p>";
 		$("#saveQueryPane").append(msg_div);
 		$("#savedQueries").append(msg_div);

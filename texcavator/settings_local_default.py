@@ -90,6 +90,7 @@ KB_API_KEY = 'set-your-key-here'
 # Temporary setting for whether or not the hotfix for duplicate newspapers should be used
 KB_HOTFIX_DUPLICATE_NEWSPAPERS = True
 
-# Guest account settings. Add this User using
+# Guest account settings. Add this User using python manage.py add_guest_user.
 GUEST_USERNAME = 'guest'
 GUEST_PASSWORD = 'guest'
+GUEST_MAX_RESULTS = 50000  # Don't allow a guest to save queries with more than GUEST_MAX_RESULTS items.

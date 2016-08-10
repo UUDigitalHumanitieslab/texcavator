@@ -215,8 +215,7 @@ function itemFromCurrentQuery() {
 
 
 // button Save query
-function saveQueryStart()
-{
+function saveQueryStart() {
 	var dialog = new dijit.Dialog({
 		title: "Save query",
 		style: "width: 300px",
@@ -224,6 +223,7 @@ function saveQueryStart()
 
 	var item = itemFromCurrentQuery();
 
+	// Check if query is empty
 	if( isWhitespaceOrEmpty( item.query ) )        // utils.js
 	{
 		var title = "Save query";
@@ -232,9 +232,21 @@ function saveQueryStart()
 		return;
 	}
 	
+	// Validate the query
 	if (!validateQuery(item.query)) return;  // sanitize_query.js
+
+	// Check whether the query exceeds the maximum number of results for guests
+	if (is_guest && getResultCount(item) > GUEST_MAX_RESULTS)
+	{
+		var title = "Save query";
+		var buttons = { "OK": true };
+		var msg = "Your query exceeds the maximum number of hits allowed for queries saved by guests. ";
+		msg += "Please use the filters to narrow down your query.";
+		genDialog( title, msg, buttons );
+		return;
+	}
 	
-	// optionally overwrite an existing query
+	// Optionally overwrite an existing query
 	var formerItem = $('#queryTitle').data('activeItem');
 	if (formerItem && item.title == formerItem.title) {
 		var title = 'Overwrite query';
@@ -247,14 +259,37 @@ function saveQueryStart()
 		return;
 	}
 
-	// validate CQL -> ES; when valid, stores query
+	// If all checks are OK, create a new query
 	saveQuery(item, "query/create");     // query.js
 } // saveQueryStart
 
 
+// Returns the number of results for the current query (synchronously)
+function getResultCount(item) {
+	var result = undefined;
+
+    dojo.xhrGet({
+        url: "services/doc_count/",
+        handleAs: "json",
+        content: item,
+		sync: true
+    }).then(function(response) {
+    	if (response.status === "ok") {
+    		result = response.doc_count;
+    	}
+    	else {
+    		genDialog('Failed to retrieve result count', response.msg, { "OK": true })
+    	}
+    }, function(err) {
+        console.error(err);
+    });
+
+    return result;
+}
+
+
 // button cloud creation: metadata graphics + query word cloud
-function onClickExecute(item)
-{
+function onClickExecute(item) {
 	queryID = item.pk;
 	query = item.query;
 
@@ -266,8 +301,7 @@ function onClickExecute(item)
 } // onClickExecute
 
 
-var retrieveRecord = function( record_id )
-{
+var retrieveRecord = function( record_id ) {
 	console.log("retrieveRecord: " + record_id);
 
 	var ocr_pane = "record";
@@ -310,8 +344,7 @@ var retrieveRecord = function( record_id )
 };
 
 // Process a record: write the OCR, retrieve the scan and create the single article cloud
-var processRecord = function(record_id, article_title, ocr_text)
-{
+var processRecord = function(record_id, article_title, ocr_text) {
 	console.log("processRecord: " + record_id);
 	writeTextview(article_title, ocr_text);         // update article in Text tab
 	scanImages(record_id);                          // scan_images.js : scan[s] + View at KB tab

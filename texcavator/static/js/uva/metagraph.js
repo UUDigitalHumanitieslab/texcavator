@@ -5,7 +5,6 @@ function metadataGraphics(item) {
     dojo.xhrGet({
         url: "services/metadata/",
         handleAs: "json",
-        // TODO: it's better not to pass the search parameters here. See also TODO in backend.
         content: item,
     }).then(function(response) {
         // Describe what is being visualised

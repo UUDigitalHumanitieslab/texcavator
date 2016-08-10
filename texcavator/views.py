@@ -30,6 +30,7 @@ def index(request):
         "ES_REVERSE_MAPPING": json.dumps(config_reverse_mapping),
         "WORDCLOUD_MIN_WORDS": settings.WORDCLOUD_MIN_WORDS,
         "WORDCLOUD_MAX_WORDS": settings.WORDCLOUD_MAX_WORDS,
+        "GUEST_MAX_RESULTS": settings.GUEST_MAX_RESULTS,
     }
 
     return render_to_response('index.html', data, RequestContext(request))

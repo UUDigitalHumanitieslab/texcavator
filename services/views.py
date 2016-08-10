@@ -86,48 +86,33 @@ def validate_dates(date_ranges):
 @csrf_exempt
 @login_required
 def doc_count(request):
-    """Returns the number of documents returned by a query
+    """
+    Returns the number of documents returned by the current query
     """
     logger.info('services/doc_count/ - user: {}'.format(request.user.username))
 
     if settings.DEBUG:
         print >> stderr, "doc_count()"
 
-    query_id = request.GET.get('queryID')
-    logger.info('services/doc_count/ - queryID: {}'.format(query_id))
-
-    if query_id:
-        query, response = get_query_object(query_id)
-
-        if not query:
-            logger.info('services/doc_count/ - returned cached response.')
-            return response
-    else:
-        logger.info('services/doc_count/ - returned "missing query id".')
-        return json_response_message('error', 'Missing query id.')
-
-    params = query.get_query_dict()
-    logger.info('services/doc_count/ - params: {}'.format(params))
+    params = get_search_parameters(request.GET)
 
     result = count_search_results(settings.ES_INDEX,
                                   settings.ES_DOCTYPE,
                                   params['query'],
                                   params['dates'],
-                                  params['exclude_distributions'],
-                                  params['exclude_article_types'],
-                                  params['selected_pillars'])
-    logger.info('services/doc_count/ - ES returned normally')
+                                  params['distributions'],
+                                  params['article_types'],
+                                  params['pillars'])
 
-    count = result.get('count', 'error')
+    count = result.get('count', None)
 
-    if not count == 'error':
-        params = {'doc_count': str(count)}
+    if count:
+        params = {'doc_count': count}
         logger.info('services/doc_count/ - returned calculated count.')
         return json_response_message('ok', 'Retrieved document count.', params)
 
     logger.info('services/doc_count/ - returned "unable to retrieve".')
-    return json_response_message('error', 'Unable to retrieve document count'
-                                 ' for query "{query}"' % query)
+    return json_response_message('error', 'Unable to retrieve document count')
 
 
 @csrf_exempt
@@ -291,8 +276,6 @@ def retrieve_kb_resolver(request, doc_id):
 @login_required
 def metadata(request):
     """This view will show metadata aggregations"""
-    # TODO: the current implementation depends upon correct settings in UI.
-    # TODO: (cont) it's better to retrieve values from the saved query directly.
     params = get_search_parameters(request.GET)
     result = metadata_aggregation(settings.ES_INDEX,
                                   settings.ES_DOCTYPE,
