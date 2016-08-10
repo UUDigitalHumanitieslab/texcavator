@@ -176,7 +176,7 @@ var stopwordsSave = function( word, stopwords_cat )
 
 	if ( stopwords_cat === "singleq" )
 	{
-		content.query_id = retrieveLexiconID();
+		content.query_id = retrieveQueryID();
 	}
 
 	console.log(content);

@@ -33,9 +33,9 @@ var showTimeline = function(item) {
 
 	setQueryMetadata(item);
 
-	storeLexiconID(queryId); // query.js
-	storeLexiconTitle(queryTitle); // query.js
-	storeLexiconQuery(queryString); // query.js
+	storeQueryID(queryId); // query.js
+	storeQueryTitle(queryTitle); // query.js
+	storeQueryQuery(queryString); // query.js
 
 	// select the tab containing the timeline
 	var tc = dijit.byId("articleContainer");
@@ -418,7 +418,7 @@ function createGraph() {
 		if (beginDate2) {
 			period += " and from " + toDateStringHyphen(beginDate2) + " to " + toDateStringHyphen(endDate2);
 		}
-		var title = "Now showing query \"" + retrieveLexiconTitle() + "\" " + period + ".";
+		var title = "Now showing query \"" + retrieveQueryTitle() + "\" " + period + ".";
         title += "<br>";
 		title += "Hover over a bar to inspect the values, click a bar to show a word cloud and heat map for this period. ";
         title += "Click <a href='javascript:switchTimelineNormalize()'>here</a> to switch between absolute and relative frequencies.";
@@ -449,8 +449,8 @@ function burstClicked(d) {
 	console.log("burstClicked(): " + d.docs.length + " records");
 
 	// Show articles in search accordion; set timeline values in filters
-	var query_id = retrieveLexiconID();
-	var query = retrieveLexiconQuery();
+	var query_id = retrieveQueryID();
+	var query = retrieveQueryQuery();
 	dijit.byId("query").set("value", query);
 	setDateFilters(d.start, d.end);
 	accordionSelectChild("searchPane");
@@ -539,7 +539,7 @@ function switchTimelineNormalize() {
 
 	// Reload the timeline graph
 	dojo.xhrGet({
-		url: 'query/' + retrieveLexiconID(),
+		url: 'query/' + retrieveQueryID(),
 		handleAs: 'json',
 		sync: true,
 		load: function(response) {

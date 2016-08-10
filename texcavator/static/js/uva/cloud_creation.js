@@ -257,10 +257,10 @@ function refreshCloud(cloud_src)
             retrieveRecordCloudData($(".active-article").prop('id'));
             break;
         case "normal":
-            onClickExecuteCloud(retrieveLexiconID());
+            onClickExecuteCloud(retrieveQueryID());
             break;
         case "burst":
-            burstCloud(retrieveLexiconID());
+            burstCloud(retrieveQueryID());
             break;
         default:
             genDialog("Error while generating cloud", "Unknown method of cloud generation", { "OK": true });

@@ -87,7 +87,7 @@ function createQueryLine(item) {
 		}
 	})).domNode, buttonsNode);
 
-	//	console.log( "Button cloud for lexicon item" );
+	//	console.log( "Button cloud for query item" );
 	btn = dijit.byId("btn-sq-cloud-" + item.pk);
 	if (btn !== undefined) {
 		if (debug_destroy) {
@@ -107,7 +107,7 @@ function createQueryLine(item) {
 	})).domNode, buttonsNode);
 
 
-	//	console.log( "Button timeline for lexicon item" );
+	//	console.log( "Button timeline for query item" );
 	btn = dijit.byId("btn-sq-timeline-" + item.pk);
 	if (btn !== undefined) {
 		if (debug_destroy) {
@@ -116,7 +116,7 @@ function createQueryLine(item) {
 		btn.destroy();
 	}
 
-	// timeline for lexicon item
+	// timeline for query item
 	dojo.place((new dijit.form.Button({
 		id: "btn-sq-timeline-" + item.pk,
 		title: "Timeline",
@@ -149,7 +149,7 @@ function createQueryLine(item) {
 		})).domNode, buttonsNode);
 	}
 
-	//	console.log( "Button update for lexicon item" );
+	//	console.log( "Button update for query item" );
 	btn = dijit.byId("btn-sq-modify-" + item.pk);
 	if (btn !== undefined) {
 		if (debug_destroy) {
@@ -173,7 +173,7 @@ function createQueryLine(item) {
 		}
 	})).domNode, buttonsNode);
 
-	//	console.log( "Button delete for lexicon item" );
+	//	console.log( "Button delete for query item" );
 	btn = dijit.byId("btn-sq-delete-" + item.pk);
 	if (btn !== undefined) {
 		if (debug_destroy) {
@@ -222,20 +222,20 @@ function createQueryList() {
 
 	dojo.place(new dijit.ProgressBar({
 		indeterminate: true
-	}).domNode, dojo.byId("lexiconItems"), "only");
+	}).domNode, dojo.byId("queryItems"), "only");
 
 	dojo.xhrGet({
 		url: "query/",
 		handleAs: "json",
 		load: function(response) {
 			if (response.status != "OK") {
-				var msg = "We could not read the lexicons:<br/>" + response.msg;
+				var msg = "Error while fetching saved queries:<br/>" + response.msg;
 				var buttons = {
 					"OK": true
 				};
 				genDialog(title, msg, buttons);
 			} else {
-				dojo.empty(dojo.byId("lexiconItems")); // this does not delete the buttons!, memory leak: 
+				dojo.empty(dojo.byId("queryItems")); // this does not delete the buttons!, memory leak: 
 				// see: http://higginsforpresident.net/2010/01/widgets-within-widgets/
 
 				var items = response.queries;
@@ -246,7 +246,7 @@ function createQueryList() {
 						id: "query-" + item.pk,
 						innerHTML: "", // title, counts & date are added later
 						style: 'clear: both;'
-					}, dojo.byId("lexiconItems"));
+					}, dojo.byId("queryItems"));
 				});
 
 				dojo.forEach(items, function(item) {

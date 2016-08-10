@@ -23,13 +23,13 @@
 			<label for="queryComment">Description (optional):
                 <textarea id="queryComment" name="queryComment"></textarea>
             </label><br />
-			<button data-dojo-type="dijit.form.Button" data-dojo-props="onClick: queryToLexicon, iconClass: 'dijitIconSave'">
+			<button data-dojo-type="dijit.form.Button" data-dojo-props="onClick: saveQueryStart, iconClass: 'dijitIconSave'">
 				Save query
 			</button>
         </div>
 
-		<div id="lexicon" data-dojo-type="dijit.layout.ContentPane" data-dojo-props="title:'Your saved queries'">
-			<div id="lexiconItems">
+		<div id="savedQueries" data-dojo-type="dijit.layout.ContentPane" data-dojo-props="title:'Your saved queries'">
+			<div id="queryItems">
 			</div>
             <br/><br/>
 			<button data-dojo-type="dijit.form.Button" data-dojo-props="onClick: createQueryList, iconClass: 'dijitIconUndo'">

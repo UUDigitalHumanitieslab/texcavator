@@ -272,7 +272,7 @@ var createLogout = function()
 			    handleAs: "json",
 			    load: function(response)
 			    {
-			        clearUserEnv();		// cloud, article, lexicons...
+			        clearUserEnv();
 			    },
 			    error: function( err ) {
 				    console.error( err );
@@ -303,7 +303,7 @@ function createUserEnv(username) {
 		var msg = "Queries saved by guests will be deleted <strong>every day</strong>.";
 		var msg_div = "<p class='alert alert-warning alert-warning-guest'>" + msg + "</p>";
 		$("#saveQueryPane").append(msg_div);
-		$("#lexicon").append(msg_div);
+		$("#savedQueries").append(msg_div);
 	}
 }
 
@@ -329,7 +329,7 @@ function clearUserEnv()
 	dijit.byId( "query" ).set( "value", "" );
 
 	// Empty the saved queries
-	dojo.empty( dojo.byId( "lexiconItems" ) );
+	dojo.empty( dojo.byId( "queryItems" ) );
 
 	// Clear the tabs
 	$("#metadata svg").empty();			// Metadata

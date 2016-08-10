@@ -2,12 +2,12 @@
 // FL-13-Dec-2013 Changed
 
 /*
-function storeLexiconID( lexicon_id )
-function retrieveLexiconID()
-function storeLexiconTitle( lexicon_title )
-function retrieveLexiconTitle()
-function storeLexiconQuery( lexicon_query )
-function retrieveLexiconQuery()
+function storeQueryID( query_id )
+function retrieveQueryID()
+function storeQueryTitle( query_title )
+function retrieveQueryTitle()
+function storeQueryQuery( query_query )
+function retrieveQueryQuery()
 function createQueryDlg()
 function okDownload( query_title )
 */
@@ -20,36 +20,36 @@ dojo.require("dijit.layout.TabContainer");
 dojo.require("dijit.ProgressBar");
 
 
-var lexiconID = null; // file global
-var lexiconTitle = null; // file global
-var lexiconQuery = null; // file global
+var queryID = null; // file global
+var queryTitle = null; // file global
+var queryQuery = null; // file global
 
 
 // Getters and setters for global variables above
-function storeLexiconID(lexicon_id) {
-	lexiconID = lexicon_id;
+function storeQueryID(query_id) {
+	queryID = query_id;
 }
 
-function retrieveLexiconID() {
-	return lexiconID;
-}
-
-
-function storeLexiconTitle(lexicon_title) {
-	lexiconTitle = lexicon_title;
-}
-
-function retrieveLexiconTitle() {
-	return lexiconTitle;
+function retrieveQueryID() {
+	return queryID;
 }
 
 
-function storeLexiconQuery(lexicon_query) {
-	lexiconQuery = lexicon_query;
+function storeQueryTitle(query_title) {
+	queryTitle = query_title;
 }
 
-function retrieveLexiconQuery() {
-	return lexiconQuery;
+function retrieveQueryTitle() {
+	return queryTitle;
+}
+
+
+function storeQueryQuery(query_query) {
+	queryQuery = query_query;
+}
+
+function retrieveQueryQuery() {
+	return queryQuery;
 }
 
 
@@ -195,7 +195,7 @@ function saveQuery(item, url) {
 			});
 			successDialog.show();
 
-			accordionSelectChild("lexicon");
+			accordionSelectChild("savedQueries");
 		},
 		error: function(err) {
 			console.error(err);
@@ -215,7 +215,7 @@ function itemFromCurrentQuery() {
 
 
 // button Save query
-function queryToLexicon()
+function saveQueryStart()
 {
 	var dialog = new dijit.Dialog({
 		title: "Save query",
@@ -249,7 +249,7 @@ function queryToLexicon()
 
 	// validate CQL -> ES; when valid, stores query
 	saveQuery(item, "query/create");     // query.js
-} // queryToLexicon
+} // saveQueryStart
 
 
 // button cloud creation: metadata graphics + query word cloud
@@ -260,7 +260,7 @@ function onClickExecute(item)
 
 	console.log( "onClickExecute() queryID: " + queryID + " : " + query );
 
-	storeLexiconID(queryID);
+	storeQueryID(queryID);
 	setQueryMetadata(item);
 	onClickExecuteCloud(queryID);
 } // onClickExecute
