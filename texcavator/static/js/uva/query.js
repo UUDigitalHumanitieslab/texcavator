@@ -163,7 +163,7 @@ function okDownload(item) {
 		"Your download is being prepared. This might take a while. When the download is finished, a message box will pop up.", {
 			"OK": true
 		});
-};
+}
 
 
 // Save a created or modified query
@@ -224,7 +224,7 @@ function queryToLexicon()
 
 	var item = itemFromCurrentQuery();
 
-	if( isWhitespaceOrEmpty( item.query ) == true )        // utils.js
+	if( isWhitespaceOrEmpty( item.query ) )        // utils.js
 	{
 		var title = "Save query";
 		var buttons = { "OK": true };
@@ -252,47 +252,17 @@ function queryToLexicon()
 } // queryToLexicon
 
 
-// button Uitvoeren: metadata graphics + query word cloud
+// button cloud creation: metadata graphics + query word cloud
 function onClickExecute(item)
 {
 	queryID = item.pk;
 	query = item.query;
 
 	console.log( "onClickExecute() queryID: " + queryID + " : " + query );
-	console.log(item);
 
-	storeLexiconID( queryID );            // query.js
-
+	storeLexiconID(queryID);
 	setQueryMetadata(item);
-
-	// Cloud
-	var config = getConfig();
-	var params = {
-		queryID    : queryID,
-		dateRange  : getDateRangeString()
-	}
-	params = getCloudParameters( params );
-
-//	console.log( params );
-	dojo.xhrGet({
-		url: "services/doc_count/",
-		handleAs: "json",
-		content: params,
-		load: function( data )
-		{
-			if( data.status !== "ok" )
-			{
-				var title = "Request failed";
-				var buttons = { "OK": true };
-				genDialog( title, data.msg, buttons );
-				return;
-			}
-			else
-			{
-				onClickExecuteCloud( queryID );
-			} 
-		}
-	});
+	onClickExecuteCloud(queryID);
 } // onClickExecute
 
 
@@ -337,7 +307,7 @@ var retrieveRecord = function( record_id )
 		},
 		error: function( err ) { console.error( err ); }
 	});
-}
+};
 
 // Process a record: write the OCR, retrieve the scan and create the single article cloud
 var processRecord = function(record_id, article_title, ocr_text)
@@ -346,7 +316,7 @@ var processRecord = function(record_id, article_title, ocr_text)
 	writeTextview(article_title, ocr_text);         // update article in Text tab
 	scanImages(record_id);                          // scan_images.js : scan[s] + View at KB tab
 	retrieveRecordCloudData(record_id);             // create word cloud
-}
+};
 
 
 function setQueryMetadata(item) {
