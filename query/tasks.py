@@ -15,7 +15,7 @@ from sys import exc_info, stderr
 from dicttoxml import dicttoxml
 
 from django.conf import settings
-from django.core.mail import send_mail
+from django.core.mail.message import EmailMessage
 from django.http import HttpResponse
 
 from services.es import do_search
@@ -232,13 +232,15 @@ def download_collect(req_dict, zip_basename, to_email, email_message):
         print >> stderr, "hits_zipped:", hits_zipped
 
     # send email
-    from_email = 'digitalhumanities@uu.nl'
     subject = 'Texcavator data download'
     msg = 'sending email to %s' % to_email
     logger.debug(msg)
     if settings.DEBUG:
         print >> stderr, msg
-    send_mail(subject, email_message, from_email, [to_email])
+
+    mail = EmailMessage(subject, email_message, settings.EMAIL_FROM, [to_email],
+                        reply_to=[settings.EMAIL_REPLY_TO])
+    mail.send()
 
 
 def get_es_chunk(req_dict, start_record, chunk_size):

@@ -71,6 +71,8 @@ TEXCAVATOR_DATE_RANGE = "18500101,19901231"
 # Email settings
 EMAIL_HOST = 'localhost'
 EMAIL_PORT = 1025
+EMAIL_FROM = ''
+EMAIL_REPLY_TO = ''
 
 # Login URL
 LOGIN_URL = '/'
