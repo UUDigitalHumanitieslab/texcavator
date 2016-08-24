@@ -172,8 +172,7 @@ html, body {
     width: 525px;
 }
 
-#metadata #chart-newspapers svg {
-    height: 400px;
+#metadata #chart_newspapers svg {
     width: 1050px;
 }
 
