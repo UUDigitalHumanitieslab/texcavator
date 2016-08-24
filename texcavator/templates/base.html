@@ -7,9 +7,9 @@
 	<title>{% block title %}{{ PROJECT_NAME }}{% endblock title %}</title>
 
     <!-- Stylesheets -->
-	<link rel="stylesheet" href="{% static 'js/Dojo/dojo/resources/dojo.css' %}">
-	<link rel="stylesheet" href="{% static 'js/Dojo/dijit/themes/claro/claro.css' %}">
-	<link rel="stylesheet" href="{% static 'js/Dojo/dojox/grid/resources/claroGrid.css' %}">
+	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/dojo/1.8.12/dojo/resources/dojo.css">
+	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/dojo/1.8.12/dijit/themes/claro/claro.css">
+	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/dojo/1.8.12/dojox/grid/resources/claroGrid.css">
 	<link rel="stylesheet" href="{% static 'css/style.css' %}">
 
 	<!-- jQuery + jQuery wordcloud -->
@@ -47,7 +47,8 @@
 	</script>
 
 	<!-- Dojo core -->
-	<script type="text/javascript" src="{% static 'js/Dojo/dojo/dojo.js' %}" data-dojo-config="parseOnLoad: true, isDebug: true"></script>
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/dojo/1.8.12/dojo/dojo.js"
+			data-dojo-config="parseOnLoad: true, isDebug: true"></script>
 
 	<!-- Custom JavaScript -->
 	<script type="text/javascript" src="{% static 'js/uva/dialogs.js' %}"></script>

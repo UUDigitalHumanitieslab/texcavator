@@ -8,8 +8,7 @@ celeryev.pid
 *.tar.gz
 Thumbs.db
 
-# Dojo/ShiCo
-texcavator/static/js/dojo-*
+# ShiCo
 texcavator/static/js/ShiCo
 
 # Local settings
