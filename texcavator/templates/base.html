@@ -7,13 +7,13 @@
 	<title>{% block title %}{{ PROJECT_NAME }}{% endblock title %}</title>
 
     <!-- Stylesheets -->
-	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/dojo/1.8.12/dojo/resources/dojo.css">
-	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/dojo/1.8.12/dijit/themes/claro/claro.css">
-	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/dojo/1.8.12/dojox/grid/resources/claroGrid.css">
+	<link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/dojo/1.8.12/dojo/resources/dojo.css">
+	<link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/dojo/1.8.12/dijit/themes/claro/claro.css">
+	<link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/dojo/1.8.12/dojox/grid/resources/claroGrid.css">
 	<link rel="stylesheet" href="{% static 'css/style.css' %}">
 
 	<!-- jQuery + jQuery wordcloud -->
-	<script type="text/javascript" src="{% static 'js/jQuery/jquery.min.js' %}"></script>
+	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 	<script type="text/javascript" src="{% static 'js/jQuery/jquery.wordcloud.js' %}"></script>
 
 	<!-- Query input restrictions -->
@@ -24,16 +24,16 @@
 	</script>
 
 	<!-- Timeline & SVG cloud visualization with D3 -->
-	<script type="text/javascript" src="{% static 'js/D3/d3.v3.min.js' %}"></script>
+	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script>
 	<script type="text/javascript" src="{% static 'js/D3/d3.layout.cloud.js' %}"></script>
 
     <!-- Metadata graphs with nvd3 -->
-    <link rel="stylesheet" href="{% static 'js/D3/nv.d3.min.css' %}">
-	<script type="text/javascript" src="{% static 'js/D3/nv.d3.min.js' %}"></script>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/nvd3/1.7.1/nv.d3.min.css">
+	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/nvd3/1.7.1/nv.d3.min.js"></script>
 
     <!-- Heatmaps with Cal-heatmap -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/cal-heatmap/3.5.2/cal-heatmap.css">
-	<script type="text/javascript" src="https://cdn.jsdelivr.net/cal-heatmap/3.5.2/cal-heatmap.min.js"></script>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/cal-heatmap/3.6.0/cal-heatmap.css">
+	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/cal-heatmap/3.6.0/cal-heatmap.min.js"></script>
 
 	<!-- dojoConfig BEFORE including the Dojo core -->
 	<script type="text/javascript">

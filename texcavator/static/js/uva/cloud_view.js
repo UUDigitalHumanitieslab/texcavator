@@ -255,9 +255,9 @@ var placeCloudInTarget = function( cloud_src, json_data, target )
 	clearCloud();
 
 	var contentBox = dojo.getContentBox( target );
-	// -8 to prevent scroll bars popping up
-	var rwidth  = contentBox.w - 8;
-	var rheight = contentBox.h - 8;
+	// -10 to prevent scroll bars popping up
+	var rwidth  = contentBox.w - 10;
+	var rheight = contentBox.h - 10;
 
 	var min_width = 1000;
 	if( isNaN( rwidth ) || rwidth < min_width )

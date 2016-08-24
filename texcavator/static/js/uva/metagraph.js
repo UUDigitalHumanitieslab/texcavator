@@ -34,6 +34,8 @@ function metadataGraphics(item) {
             "#chart_pillar"
         );
 
+        console.log(response.newspapers);
+
         // Create newspapers bar chart
         data_newspapers = [{
             "key": "Newspapers",
@@ -56,8 +58,7 @@ function metadataGraphics(item) {
                 })
                 .valueFormat(d3.format(",d"))
                 .showValues(true)
-                .showControls(false)
-                .tooltips(false);
+                .showControls(false);
 
             chart.yAxis
                 .tickFormat(d3.format(",d"));
