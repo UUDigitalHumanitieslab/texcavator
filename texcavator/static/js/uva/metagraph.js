@@ -34,8 +34,6 @@ function metadataGraphics(item) {
             "#chart_pillar"
         );
 
-        console.log(response.newspapers);
-
         // Create newspapers bar chart
         data_newspapers = [{
             "key": "Newspapers",
