@@ -343,7 +343,7 @@ var createToolbar = function() {
 
 	var btnStart = new dijit.form.Button({
 		id: "toolbar-start",
-		label: "<img src='/static/image/icon/Tango/22/categories/system.png' />Start",
+		label: "<img src='/static/image/icon/Tango/22/actions/media-playback-start.png' />Start",
 		showLabel: true,
 		style: "float:right",
 		onClick: showStart
