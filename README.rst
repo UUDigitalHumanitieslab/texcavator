@@ -7,7 +7,7 @@
       |_|\___/_/\_\___\__,_| \_/ \__,_|\__\___/|_|   
 
 
-Copyright `Netherlands eScience Center`_, `University of Amsterdam`_.
+Copyright 'Digital Humanities lab @ Utrecht University',`Netherlands eScience Center`_, `University of Amsterdam`_. 
 
 From 2015 onwards developed by the `Digital Humanities lab`_, Utrecht University.
 
