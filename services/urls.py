@@ -8,7 +8,7 @@ urlpatterns = [
     url(r'^doc_count/$', doc_count),
 
     url(r'^cloud/$', tv_cloud),
-    url(r'^export_cloud/$', export_cloud),
+    url(r'^export_cloud/$', export_cloud, name='export_cloud'),
 
     url(r'^task_status/(?P<task_id>[\w-]+)$', check_status_by_task_id),
     url(r'^cancel_task/(?P<task_id>[\w-]+)$', cancel_by_task_id),

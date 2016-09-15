@@ -15,9 +15,6 @@ function exportCloudData( filename )
 
 
 dojo.require( "dojo.data.ItemFileWriteStore" );
-//dojo.require( "dojo.io.iframe" );			// obsolete in 1.8, use: dojo/request/iframe
-dojo.require( "dojo.request.iframe" );		// Dojo-1.8
-dojo.require( "dojo.request.xhr" );			// Dojo-1.8
 
 dojo.require( "dijit.form.Form" );
 
@@ -294,30 +291,12 @@ function exportCloudData( filename )
 
 	dijit.byId( "grid-cloud" ).exportGrid( "csv", function( str )
 	{
-		var url = "services/export_cloud/";
-		var cdata = {
-			"clouddata": str,				// the cloud data
-			"filename": filename,
-			"separator": config.cloudexport.separator,
-			"zipped": '0',					// {0|1} compression
-		};
-		var options = {
-			handleAs: "text",
-			data: cdata,			// clouddata
-			timeout: 30000			// 30 sec		REQUIRED, otherwise it only works once
-		};
-
-		// Dojo expects the response in a <textarea> element of a html document
-		// we sent a text/csv file
-		// So Dojo does not know when the response is done, and waits forever
-		// a timeout fixes that
-
-		dojo.request.iframe( url, options ).then( function( resp )		// iframe uses POST
-		{
-			// with xhr we get the clouddata, with iframe we see nothing
-		//	console.log( "resp: " + resp );
-		//	console( "dojo.request: got response" );
-		}),
-		function( err ) { console.error( err ); return err; }
+		// Copy the data to a form and then export
+		// TODO: yes, this is ugly; but I'm not sure of an alternative to send POST data and to return a .csv-response
+		$("input[name='separator']").val(config.cloudexport.separator);
+		$("input[name='filename']").val(filename);
+		$("input[name='zipped']").val(0);  // 0 or 1 for zipped (TODO: magic number)
+		$("input[name='clouddata']").val(str);
+		$("input[name='export_cloud']").click();
     });
 }

@@ -38,8 +38,8 @@ urlpatterns = [
     url(r'^guest_login$', guest_login),
     url(r'^logout$', user_logout),
 
-    url(r'^services/', include('services.urls')),
-    url(r'^query/', include('query.urls')),
+    url(r'^services/', include('services.urls', namespace='services')),
+    url(r'^query/', include('query.urls', namespace='query')),
 
     url(r'^shico/$', TemplateView.as_view(template_name='shico.html'), name='shico'),
 ]

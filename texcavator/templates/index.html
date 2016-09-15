@@ -75,6 +75,17 @@
             </div>
         </div>
 	</script>
+
+	<!-- Form to download a word cloud to .csv -->
+	<div style="display: none;">
+		<form action="{% url 'services:export_cloud' %}" method="post">{% csrf_token %}
+			<input name="separator" type="hidden" />
+			<input name="filename" type="hidden" />
+			<input name="zipped" type="hidden" />
+			<input name="clouddata" type="hidden" />
+			<input name="export_cloud" type="submit">
+		</form>
+	</div>
 {% endblock middle %}
 
 {% block outside %}
