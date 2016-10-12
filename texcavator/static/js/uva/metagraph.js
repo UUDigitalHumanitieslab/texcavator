@@ -55,6 +55,7 @@ function metadataGraphics(item) {
                     left: 250
                 })
                 .valueFormat(d3.format(",d"))
+                .tooltips(false)
                 .showValues(true)
                 .showControls(false);
 
