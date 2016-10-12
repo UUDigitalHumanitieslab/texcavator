@@ -27,9 +27,14 @@ function wrapWords(article_text) {
 		if (!/\d+/g.test(w)) {
 			var w_id = 'w' + i.toString();
 
-			// Don't include non alphanumeric characters from the span tag.
-			var m = w.match(/[^A-Za-z\u00C0-\u017F]*$/); 
-			text[i] = '<span id="' + w_id + '">' + w.substring(0, m.index) + '</span>' + w.substring(m.index, w.length);
+			// Don't include non alphanumeric characters in the span tag. Do allow apostrophes and hyphens.
+			var m = w.match(/[^A-Za-z\u00C0-\u017F\-'].*$/);
+			if (m !== null) {
+			    text[i] = '<span id="' + w_id + '">' + w.substring(0, m.index) + '</span>' + w.substring(m.index, w.length);
+			}
+			else {
+			    text[i] = '<span id="' + w_id + '">' + w + '</span>';
+			}
 		}
 		else {
 			text[i] = w;
