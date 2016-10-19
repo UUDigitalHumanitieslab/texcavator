@@ -12,7 +12,7 @@ function isWhitespaceOrEmpty( text ) {
 	return !/[^\s]/.test( text );
 }
 
-// Sets the begindate and enddate filters and sets the globale variables
+// Sets the begindate and enddate filters and sets the global variables
 function setDateFilters(dateStart, dateEnd) {
 	beginDate = dateStart;
 	endDate = dateEnd;

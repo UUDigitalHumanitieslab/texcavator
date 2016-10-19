@@ -78,13 +78,11 @@ function generateImageForPage( record )
 	var max = function( a, b ) { return ( a == undefined ) ? b : Math.max( a, b ); };
 	var i = function( s ) { return parseInt( s ); };
 
-	console.log( typeof( record ) );
-	var areaTagName = "area";
-	if( dojo.isMozilla ) {
-		console.log( "isMozilla" );
-		areaTagName = "dcx:area";
+	var areas = record.getElementsByTagName("dcx:area");
+	if (areas.length === 0 ) {
+		// If the area element is not found, try again without specifying the namespace
+		areas = record.getElementsByTagName("area");
 	}
-	var areas = record.getElementsByTagName( areaTagName );
 
 	dojo.forEach(areas, function(area) {
 		top    = min(top,      area.getAttribute("vpos"));
