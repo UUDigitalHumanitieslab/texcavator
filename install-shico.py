@@ -6,7 +6,7 @@ import zipfile
 
 import requests
 
-VERSION = '0.7'
+VERSION = '0.8'
 GITHUB_URL = 'https://github.com/NLeSC/ShiCo/archive/v{}.zip'.format(VERSION)
 
 STATIC_DIR = 'texcavator/static/js/'
@@ -38,7 +38,7 @@ with open(os.path.join(FINAL_DIR, 'scripts/app.js'), 'r+') as f:
     lines = []
     for line in f:
         line = line.replace('config.json', urlparse.urljoin('/static/js/ShiCo/', 'config.json'))
-        line = line.replace('/help/algorithm.md', urlparse.urljoin('/static/js/ShiCo/', 'help/algorithm.md'))
+        line = line.replace('/help/', urlparse.urljoin('/static/js/ShiCo/', 'help/'))
         lines.append(line)
 
     f.seek(0)

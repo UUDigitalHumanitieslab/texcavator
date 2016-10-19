@@ -12,14 +12,19 @@
     </head>
     <body>
         <!--[if lt IE 10]>
-        <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+        <p class="browsehappy">
+            You are using an <strong>outdated</strong> browser.
+            Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.
+        </p>
         <![endif]-->
         <div class="container" ng-controller="FormController as vm" cg-busy="vm.trackerPromise">
             <div class="jumbotron">
                 <form ng-submit="vm.doPost()">
                     <tracker-parameters></tracker-parameters>
                     <div class="form-horizontal col-md-12">
-                        <div class="form-group"><button type="submit" class="btn btn-success">Submit</button></div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-success">Submit</button>
+                        </div>
                     </div>
                 </form>
                 <parameter-io></parameter-io>
