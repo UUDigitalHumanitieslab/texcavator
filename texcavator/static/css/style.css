@@ -155,6 +155,10 @@ html, body {
 }
 
 /* About page */
+.about-right {
+    float: right;
+}
+
 .about-justify-images {
     display: flex;
     justify-content: center;

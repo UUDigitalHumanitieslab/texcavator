@@ -7,7 +7,8 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.views.decorators.csrf import csrf_exempt
 
-from texcavator.utils import json_response_message, daterange2dates, flip_dict
+from . import __version__
+from .utils import json_response_message, daterange2dates, flip_dict
 
 
 def index(request):
@@ -22,6 +23,7 @@ def index(request):
     date_limits = daterange2dates(settings.TEXCAVATOR_DATE_RANGE)
 
     data = {
+        "VERSION": __version__,
         "PROJECT_NAME": settings.PROJECT_NAME,
         "PROJECT_MIN_DATE": date_limits[0]['lower'],
         "PROJECT_MAX_DATE": date_limits[0]['upper'],
