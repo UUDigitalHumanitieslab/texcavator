@@ -11,17 +11,17 @@
             Please read our <a href="{% static 'endusermanual.pdf' %}" target="_blank">documentation</a> to check all available options.
         </p>
         <p>
-            You don't need to log in to use Texcavator's basic functionality,
-            but if you want the full set of options available,
-            please log in with your researcher account.
+            Regrettably, we had to close  the guest account at the request of the Royal Library for copyright reasons on 14-12-2016.
             If you want to apply for a researcher account, please send an e-mail to
             <a href="mailto:J.deKruif@uu.nl">José de Kruif</a>.
         </p>
     </div>
     <div class="dijitDialogPaneActionBar">
+        {% if GUEST_AVAILABLE %}
         <button data-dojo-type="dijit/form/Button" type="button" data-dojo-props="onClick:function(){ hideStart(); doGuestLogin(); }">
             <img src="{% static 'image/icon/Tango/16/apps/preferences-users.png' %}"> Guest login
         </button>
+        {% endif %}
         <button data-dojo-type="dijit/form/Button" type="button" data-dojo-props="onClick:function(){ hideStart(); showLogin(); }">
             <img src="{% static 'image/icon/Tango/16/status/dialog-password.png' %}"> Researcher login
         </button>
