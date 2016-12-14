@@ -34,8 +34,7 @@ INSTALLED_APPS = (
     'services',
     'query',
 
-    'djcelery',
-    'django_nose'
+    'django_nose',
 )
 
 MIDDLEWARE_CLASSES = (

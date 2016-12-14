@@ -1,0 +1,51 @@
+{% load staticfiles %}
+
+<div data-dojo-type="dijit/Dialog" data-dojo-id="aboutDialog" id="aboutDialog" title="About Texcavator">
+    <div data-dojo-type="dijit/layout/ContentPane" style="width: 600px;">
+        <p class="about-right">
+            <em>
+                Current version:
+                <a href="https://github.com/UUDigitalHumanitieslab/texcavator/releases/tag/v{{VERSION}}" target="_blank">{{ VERSION }}</a>
+            </em>
+        </p>
+        <h2>Useful links and documentation</h2>
+        <ul>
+            <li><a href="{% static 'endusermanual.pdf' %}" target="_blank">End-user manual</a></li>
+            <li><a href="https://en.wikipedia.org/wiki/History_of_Dutch_orthography" target="_blank">Wikipedia on Dutch orthography</a></li>
+            <li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/1.7/query-dsl-query-string-query.html" target="_blank">elasticsearch Query String Query syntax</a></li>
+        </ul>
+        <h2>Colloborating institutes</h2>
+        <div class="about-justify-images">
+            <a href="https://www.kb.nl/en" target="_blank"><img src="{% static 'image/logos/kb.png' %}" width="250px" style="margin-right: 10px"></a>
+            <a href="https://www.esciencecenter.nl/" target="_blank"><img src="{% static 'image/logos/esciencecenter.jpg' %}" width="250px"></a>
+        </div>
+        <div class="about-justify-images">
+            <a href="http://www.uu.nl/en" target="_blank"><img src="{% static 'image/logos/uu.png' %}" width="275px"></a>
+            <a href="http://www.uva.nl/en" target="_blank"><img src="{% static 'image/logos/uva.jpg' %}" width="275px"></a>
+        </div>
+        <div class="about-justify-images">
+            <a href="http://dig.hum.uu.nl" target="_blank"><img src="{% static 'image/logos/dhlab.png' %}"></a>
+        </div>
+        <h2>Texcavator: A Short History</h2>
+        <p>
+            Texcavator originated from the earlier text mining applications WAHSP and BiLand.
+            During the <a href="http://translantis.wp.hum.uu.nl/" target="_blank">Translantis project</a>,
+            the application was renamed to Texcavator and further developed by the <a href="http://www.uva.nl" target="_blank">UvA</a> (Fons Laan).
+            In May 2014, development was taken over by the <a href="https://www.esciencecenter.nl/" target="_blank">Netherlands eScience Center</a> (Janneke van der Zwaan).
+            From April 2015 onwards, Texcavator was developed at the <a href="http://dig.hum.uu.nl">Digital Humanities lab</a> of
+            <a href="http://www.uu.nl" target="_blank">Utrecht University</a> (Julian Gonggrijp and Martijn van der Klis).
+        </p>
+        <p>
+            Texcavator is licensed under the <a href="http://www.apache.org/licenses/LICENSE-2.0" target="_blank">Apache license</a>.
+            The source code can be found on <a href="https://github.com/UUDigitalHumanitieslab/texcavator/" target="_blank">GitHub</a>.
+        </p>
+    </div>
+    <div class="dijitDialogPaneActionBar">
+        <button data-dojo-type="dijit/form/Button" type="button" data-dojo-props="onClick:function(){ hideAbout(); }">
+            <img src="{% static 'image/icon/Tango/16/actions/dialog-close.png' %}"> Close
+        </button>
+        <button data-dojo-type="dijit/form/Button" type="button" data-dojo-props="onClick:function(){ hideAbout(); showStart(); }">
+            <img src="{% static 'image/icon/Tango/16/actions/dialog-cancel.png' %}"> Back
+        </button>
+    </div>
+</div>

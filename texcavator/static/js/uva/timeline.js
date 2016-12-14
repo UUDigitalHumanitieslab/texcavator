@@ -33,9 +33,9 @@ var showTimeline = function(item) {
 
 	setQueryMetadata(item);
 
-	storeLexiconID(queryId); // query.js
-	storeLexiconTitle(queryTitle); // query.js
-	storeLexiconQuery(queryString); // query.js
+	storeQueryID(queryId); // query.js
+	storeQueryTitle(queryTitle); // query.js
+	storeQueryQuery(queryString); // query.js
 
 	// select the tab containing the timeline
 	var tc = dijit.byId("articleContainer");
@@ -43,8 +43,11 @@ var showTimeline = function(item) {
 
 	loadGraphData(queryId);
 
+	// Hide help, display title.
+	$("#timeline_help").hide();
+	$("#timeline_title").show();
 	// Toggle warning for advertisements
-	$("#timeline-advert-warning").toggle(getConfig().search.type.advert);
+	$("#timeline_advert_warning").toggle(getConfig().search.type.advert);
 };
 
 
@@ -227,13 +230,8 @@ function getEndOfInterval(date, interval) {
 function createGraph() {
 	var config = getConfig();
 
-	// Create a place for the chart
-	var dest = dojo.byId("chartDiv");
-	if (dest === null) {
-		$('#timeline').append('<div id="chartDiv" style="width: 100%; height: 280px; float: center;"></div>');
-	} else {
-		dest.innerHTML = ""; // Clear existing destination
-	}
+	// Clear existing destination
+	dojo.byId("chartDiv").innerHTML = "";
 
 	// This follows the margin convention (http://bl.ocks.org/mbostock/3019563)
 	var margin = {top: 30, right: 30, bottom: 30, left: 50},
@@ -416,24 +414,15 @@ function createGraph() {
 				return s;
 			});
 
-		// Update period
-		svg.selectAll("text.period")
-			.data([0])
-			.enter().append("svg:text")
-			.attr("class", "period")
-			.attr("fill", "#555")
-			.attr("x", 50)
-			.attr("y", 0)
-			.attr("dy", "1em")
-			.attr("text-anchor", "left");
-
-		var title = "Period: " + toDateString(beginDate) + " - " + toDateString(endDate); 
+		var period = "from " + toDateStringHyphen(beginDate) + " to " + toDateStringHyphen(endDate); 
 		if (beginDate2) {
-			title += " & " + toDateString(beginDate2) + " - " + toDateString(endDate2);
+			period += " and from " + toDateStringHyphen(beginDate2) + " to " + toDateStringHyphen(endDate2);
 		}
-		title += ", Query title: " + retrieveLexiconTitle();
-
-		svg.selectAll("text.period").text(title);
+		var title = "Now showing query \"" + retrieveQueryTitle() + "\" " + period + ".";
+        title += "<br>";
+		title += "Hover over a bar to inspect the values, click a bar to show a word cloud and heat map for this period. ";
+        title += "Click <a href='javascript:switchTimelineNormalize()'>here</a> to switch between absolute and relative frequencies.";
+		$("#timeline_title").html(title);
 
 		// If we have newData, set up animation
 		if (newData !== undefined) {
@@ -459,31 +448,16 @@ function createGraph() {
 function burstClicked(d) {
 	console.log("burstClicked(): " + d.docs.length + " records");
 
-	// Show burst articles in accordion; set timeline values in filters
-	var query = retrieveLexiconQuery();
-	beginDate = d.start;
-	endDate = d.end;
-	dijit.byId("query").set("value", query); 
-	dijit.byId("begindate").set("value", beginDate);
-	dijit.byId("enddate").set("value", endDate);
-	if (beginDate2 !== undefined) {
-        toggleSecondDateFilter();
-    }
+	// Show articles in search accordion; set timeline values in filters
+	var query_id = retrieveQueryID();
+	var query = retrieveQueryQuery();
+	dijit.byId("query").set("value", query);
+	setDateFilters(d.start, d.end);
 	accordionSelectChild("searchPane");
 	searchSubmit();
 
-	// Create container for the burst cloud
-	var cloudContainer = dijit.byId('cloudContainer');
-	if (cloudContainer === undefined) {
-		var cloudContainer = new dijit.TitlePane({
-			id: 'cloudContainer',
-			style: 'width: ' + dojo.position('chartDiv').w - 20 + 'px',
-			open: true,
-		});
-	}
-
-	// Set the title and content for the burst cloud
-	var template = '<b>{burst} from {start} to {end} ({count} document{plural})</b>';
+	// Set the title for the cloud
+	var template = "{burst} from {start} to {end} ({count} document{plural})";
 	var content = {
 		burst: (d.burst) ? "Burst cloud" : "Cloud",
 		start: d.start.toString().substr(4, 11),
@@ -491,16 +465,18 @@ function burstClicked(d) {
 		count: d.count,
 		plural: d.count > 1 ? "s" : "",
 	};
+	var cloudContainer = dijit.byId("cloudContainer");
 	cloudContainer.set("title", dojo.replace(template, content));
-	cloudContainer.set("content", "<div id='cloud'></div>");
 
-	dojo.place(cloudContainer.domNode, 'chartDiv');
+	// Create the cloud
+	burstCloud(query_id);
 
-	burstCloud();
+	// Create the heat map
+	showHeatmap(query_id, d.start.getFullYear());
 } // burstClicked()
 
 
-function burstCloud() {
+function burstCloud(query_id) {
 	console.log("burstCloud()");
 
 	dojo.place(new dijit.ProgressBar({
@@ -508,7 +484,7 @@ function burstCloud() {
 	}).domNode, dojo.byId("cloud"), "only");
 
 	var params = {
-		queryID: retrieveLexiconID(),
+		queryID: query_id,
 		is_timeline: true,
 		date_range: getDateRangeString()
 	};
@@ -563,7 +539,7 @@ function switchTimelineNormalize() {
 
 	// Reload the timeline graph
 	dojo.xhrGet({
-		url: 'query/' + retrieveLexiconID(),
+		url: 'query/' + retrieveQueryID(),
 		handleAs: 'json',
 		sync: true,
 		load: function(response) {

@@ -79,15 +79,15 @@ fuzzed = (term / phrase) ('~' nonzero_integer?)?
 // quikc~1
 // "fox quick"~5
 
-term = $( wildcard_initial / wildcard_any )
+term = $( wildcard_initial / wildcard_any+ )
 
-wildcard_initial = wildcard wildcard_any {
+wildcard_initial = wildcard wildcard_any* {
 	error('Wildcards at the start of a term are not allowed.');
 }
 // *ing
 // ?ing
 
-wildcard_any = (escape / wildcard / nonreserved)+
+wildcard_any = (escape / wildcard / nonreserved)
 // qu?ck
 // bro*
 // quick

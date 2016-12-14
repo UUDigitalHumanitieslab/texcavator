@@ -7,7 +7,8 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.views.decorators.csrf import csrf_exempt
 
-from texcavator.utils import json_response_message, daterange2dates, flip_dict
+from . import __version__
+from .utils import json_response_message, daterange2dates, flip_dict
 
 
 def index(request):
@@ -21,7 +22,10 @@ def index(request):
 
     date_limits = daterange2dates(settings.TEXCAVATOR_DATE_RANGE)
 
+    guest = authenticate(username=settings.GUEST_USERNAME, password=settings.GUEST_PASSWORD)
+
     data = {
+        "VERSION": __version__,
         "PROJECT_NAME": settings.PROJECT_NAME,
         "PROJECT_MIN_DATE": date_limits[0]['lower'],
         "PROJECT_MAX_DATE": date_limits[0]['upper'],
@@ -30,6 +34,8 @@ def index(request):
         "ES_REVERSE_MAPPING": json.dumps(config_reverse_mapping),
         "WORDCLOUD_MIN_WORDS": settings.WORDCLOUD_MIN_WORDS,
         "WORDCLOUD_MAX_WORDS": settings.WORDCLOUD_MAX_WORDS,
+        "GUEST_MAX_RESULTS": settings.GUEST_MAX_RESULTS,
+        "GUEST_AVAILABLE": guest is not None and guest.is_active,
     }
 
     return render_to_response('index.html', data, RequestContext(request))
@@ -48,18 +54,35 @@ def user_login(request):
             login(request, user)
 
             params = {
-                "user_id": user.id,
-                "user_name": user.username,
                 "next_url": next_url
             }
 
             return json_response_message('SUCCESS', '', params)
         else:
             return json_response_message('ERROR', 'Account disabled.\n'
-                                         'Please contact the system '
-                                         'administrator.')
+                                         'Please contact the system administrator.')
+    else:
+        return json_response_message('ERROR', 'The username or password you entered is invalid.')
 
-    return json_response_message('ERROR', 'The username or password you entered is invalid.')
+
+@csrf_exempt
+def guest_login(request):
+    user = authenticate(username=settings.GUEST_USERNAME, password=settings.GUEST_PASSWORD)
+
+    if user is not None:
+        if user.is_active:
+            login(request, user)
+
+            params = {
+                "username": user.username,
+            }
+
+            return json_response_message('SUCCESS', '', params)
+        else:
+            return json_response_message('ERROR', 'Account disabled.\n'
+                                         'Please contact the system administrator.')
+    else:
+        return json_response_message('ERROR', 'The username or password you entered is invalid.')
 
 
 @csrf_exempt

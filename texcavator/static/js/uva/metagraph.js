@@ -5,11 +5,10 @@ function metadataGraphics(item) {
     dojo.xhrGet({
         url: "services/metadata/",
         handleAs: "json",
-        // TODO: it's better not to pass the search parameters here. See also TODO in backend.
         content: item,
     }).then(function(response) {
         // Describe what is being visualised
-        $('#metadata_top').text('Metadata for query "' + item.query + '"');
+        $('#metadata_help').text('Metadata for query "' + item.query + '".');
 
         // Add pie charts
         var filtered = {
@@ -56,9 +55,9 @@ function metadataGraphics(item) {
                     left: 250
                 })
                 .valueFormat(d3.format(",d"))
+                .tooltips(false)
                 .showValues(true)
-                .showControls(false)
-                .tooltips(false);
+                .showControls(false);
 
             chart.yAxis
                 .tickFormat(d3.format(",d"));
@@ -87,7 +86,7 @@ function addPieChart(filtered, data, id) {
                 return d.doc_count;
             })
             .valueFormat(d3.format(",d"))
-            .showLabels(true);
+            .showLabels(false);
         
         if (filtered) {
             $(id).find('.filter-reset-btn').show();
@@ -140,4 +139,15 @@ function filterSearch(id) {
         });
         searchSubmit();
     };
+}
+
+
+function hideResetButtons() {
+    $('.filter-reset-btn').hide();
+}
+
+function resetAndSubmit(action, button) {
+    action();
+    searchSubmit();
+    $(button.domNode).hide();
 }

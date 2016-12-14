@@ -16,6 +16,7 @@ from django.db import IntegrityError
 from django.db.models import Q, Min, Max, Sum
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
+from django.template.loader import render_to_string
 from django.views.decorators.csrf import csrf_exempt
 
 from .models import Distribution, ArticleType, Query, DayStatistic, \
@@ -358,13 +359,13 @@ def download_prepare(request):
         return json_response_message('error', msg)
 
     zip_basename = create_zipname(user, query)
-    url = urljoin('http://{}'.format(request.get_host()),
-                  "/query/download/" + quote_plus(zip_basename))
-    email_message = "Texcavator query: " + query.title + "\n" + zip_basename + \
-        "\nURL: " + url
-    if settings.DEBUG:
-        print >> stderr, email_message
-        print >> stderr, 'http://{}'.format(request.get_host())
+    url = urljoin('http://{}'.format(request.get_host()), "/query/download/" + quote_plus(zip_basename))
+    params = {
+        'download_url': url,
+        'query': query,
+        'user': user,
+    }
+    email_message = render_to_string('mail/download.txt', params)
 
     # zip documents by celery background task
     execute(query, request.GET.dict(), zip_basename, user.email, email_message)
@@ -407,7 +408,6 @@ def download_data(request, zip_name):
     return response
 
 
-@login_required
 def retrieve_pillars(request):
     """Retrieves all Pillars as JSON objects
     """

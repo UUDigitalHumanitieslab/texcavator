@@ -1,0 +1,38 @@
+{% load staticfiles %}
+
+<html ng-app="shico">
+    <head>
+        <meta charset="utf-8">
+        <title>shico</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width">
+        <link rel="stylesheet" href="{% static 'js/ShiCo/styles/vendor.css' %}">
+        <link rel="stylesheet" href="{% static 'js/ShiCo/styles/app.css' %}">
+        <link rel="stylesheet" href="{% static 'css/shico-hooks.css' %}">
+    </head>
+    <body>
+        <!--[if lt IE 10]>
+        <p class="browsehappy">
+            You are using an <strong>outdated</strong> browser.
+            Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.
+        </p>
+        <![endif]-->
+        <div class="container" ng-controller="FormController as vm" cg-busy="vm.trackerPromise">
+            <div class="jumbotron">
+                <form ng-submit="vm.doPost()">
+                    <tracker-parameters></tracker-parameters>
+                    <div class="form-horizontal col-md-12">
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-success">Submit</button>
+                        </div>
+                    </div>
+                </form>
+                <parameter-io></parameter-io>
+            </div>
+            <tracker-graphs></tracker-graphs>
+        </div>
+        <script src="{% static 'js/ShiCo/scripts/vendor.js' %}"></script>
+        <script src="{% static 'js/ShiCo/scripts/app.js' %}"></script>
+        <script src="{% static 'js/shico-hooks.js' %}"></script>
+    </body>
+</html>
