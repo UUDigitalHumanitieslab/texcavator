@@ -22,6 +22,8 @@ def index(request):
 
     date_limits = daterange2dates(settings.TEXCAVATOR_DATE_RANGE)
 
+    guest = authenticate(username=settings.GUEST_USERNAME, password=settings.GUEST_PASSWORD)
+
     data = {
         "VERSION": __version__,
         "PROJECT_NAME": settings.PROJECT_NAME,
@@ -33,6 +35,7 @@ def index(request):
         "WORDCLOUD_MIN_WORDS": settings.WORDCLOUD_MIN_WORDS,
         "WORDCLOUD_MAX_WORDS": settings.WORDCLOUD_MAX_WORDS,
         "GUEST_MAX_RESULTS": settings.GUEST_MAX_RESULTS,
+        "GUEST_AVAILABLE": guest is not None and guest.is_active,
     }
 
     return render_to_response('index.html', data, RequestContext(request))

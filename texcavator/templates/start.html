@@ -19,9 +19,11 @@
         </p>
     </div>
     <div class="dijitDialogPaneActionBar">
+        {% if GUEST_AVAILABLE %}
         <button data-dojo-type="dijit/form/Button" type="button" data-dojo-props="onClick:function(){ hideStart(); doGuestLogin(); }">
             <img src="{% static 'image/icon/Tango/16/apps/preferences-users.png' %}"> Guest login
         </button>
+        {% endif %}
         <button data-dojo-type="dijit/form/Button" type="button" data-dojo-props="onClick:function(){ hideStart(); showLogin(); }">
             <img src="{% static 'image/icon/Tango/16/status/dialog-password.png' %}"> Researcher login
         </button>
