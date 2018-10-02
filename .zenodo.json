@@ -1,0 +1,41 @@
+{
+    "creators": [
+        {
+            "affiliation": "Utrecht University",
+            "name": "van der Klis, Martijn"
+        },
+        {
+            "affiliation": "University of Amsterdam",
+            "name": "Laan, Fons"
+        },
+        {
+            "affiliation": "Netherlands eScience Center",
+            "name": "van der Zwaan, Janneke M.",
+            "orcid": "0000-0002-8329-7000"
+        },
+        {
+            "affiliation": "Utrecht University",
+            "name": "Gonggrijp, Julian"
+        },
+        {
+            "affiliation": "Netherlands eScience Center",
+            "name": "Buitinck, Lars"
+        },
+        {
+            "affiliation": "Netherlands eScience Center",
+            "name": "Bos, Patrick"
+        },
+        {
+            "affiliation": "Utrecht University",
+            "name": "de Kruif, José"
+        },
+        {
+            "name": "Sassmann, Mario"
+        }
+    ],
+    "description": "Texcavator allows you to use full-text search on the newspaper archive of the Dutch Royal Library. On top of that, it allows for visualizations like word clouds, time lines and heat maps. It also provides services to enhance your search experience like filtering, stopword removal, normalization and stemming.",
+    "license": {
+        "id": "Apache-2.0"
+    },
+    "title": "Text mining on the Royal Library newspaper corpus"
+}

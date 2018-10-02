@@ -1,0 +1,47 @@
+# YAML 1.2
+---
+title: "Text mining on the Royal Library newspaper corpus"
+abstract: "Texcavator allows you to use full-text search on the newspaper archive of the Dutch Royal Library. On top of that, it allows for visualizations like word clouds, time lines and heat maps. It also provides services to enhance your search experience like filtering, stopword removal, normalization and stemming."
+authors:
+  -
+    affiliation: "Utrecht University"
+    family-names: Klis
+    given-names: Martijn
+    name-particle: "van der"
+  -
+    affiliation: "University of Amsterdam"
+    family-names: Laan
+    given-names: Fons
+  -
+    affiliation: "Netherlands eScience Center"
+    family-names: Zwaan
+    given-names: "Janneke M."
+    name-particle: "van der"
+    orcid: "https://orcid.org/0000-0002-8329-7000"
+  -
+    affiliation: "Utrecht University"
+    family-names: Gonggrijp
+    given-names: Julian
+  -
+    affiliation: "Netherlands eScience Center"
+    family-names: Buitinck
+    given-names: Lars
+  -
+    affiliation: "Netherlands eScience Center"
+    family-names: Bos
+    given-names: Patrick
+  -
+    affiliation: "Utrecht University"
+    family-names: Kruif
+    given-names: "José"
+    name-particle: de
+  -
+    family-names: Sassmann
+    given-names: Mario
+cff-version: "1.0.3"
+license: "Apache-2.0"
+message: "If you use this software, please cite it using these metadata."
+repository-code: "https://github.com/UUDigitalHumanitieslab/texcavator"
+version: "v1.2.3"
+date-released: 2018-10-02
+...
