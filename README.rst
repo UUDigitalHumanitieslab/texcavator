@@ -1,3 +1,5 @@
+**This project is no longer maintained and has been archived. It is succeeded by I-Analyzer, which is actively developed: https://github.com/UUDigitalHumanitieslab/I-analyzer.**
+
 ::
 
      _____                             _             
